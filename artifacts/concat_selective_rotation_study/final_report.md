@@ -29,8 +29,8 @@ changes nothing when the hidden slice is zero → no leakage into the e-slice.
 (rel-L2 0.0, `CONCAT_SELECTIVE_EMBEDDING_AUDIT.md`); adapter `install()` asserts
 the table checksum; the primary path applies NO transform to the e-slice
 (structurally impossible: the only input op is the Linear itself). Negative
-control F4 (e·R1 into untouched W_e) collapses to **1.509** (drop 2.25, 20/20
-gate prompts degraded... n=8 gate: 100% prompts).
+control F4 (e·R1 into untouched W_e) collapses to **1.509** (paired drop 2.245,
+8/8 gate prompts degraded).
 
 ## 4. Does the recurrent projection absorb hidden-side R1ᵀ via W_h·R1?
 **YES.** `projection_recurrent_preR = [W_e | W_h·R1]`; algebra
@@ -54,9 +54,11 @@ counts (117 first / 468 recurrent).
 - draft-only full W4A4: concat-selective 1.2450 vs prev-B2 1.2684 —
   Δ = −0.023, CI [−0.056, +0.005] → inconclusive/equivalent-leaning.
 - both-quantized (Q11): concat-selective 1.2140 vs prev-B2 1.1692 —
-  Δ = **+0.045, CI [+0.020, +0.068]** — statistically above zero but BELOW the
-  pre-registered ε = 0.05 → practically equivalent (tiny edge to the new
-  architecture when both models are quantized).
+  Δ = **+0.045, CI [+0.020, +0.068]** — formal pre-registered decision:
+  **inconclusive** (the CI excludes 0, so the new architecture is
+  statistically better, but the CI is not contained inside ±ε=0.05, so the
+  effect cannot be declared either meaningful or equivalent). Point estimate
+  is sub-ε.
 No architecture rescues W4A4 draft quantization.
 
 ## 8. Did rotating the embedding (previous B2) increase quantization error?
@@ -72,19 +74,22 @@ quantization bottleneck; the fc projections are.
 (224 QuaRot CUTLASS linears): REAL_Q10 (fp16 draft) = **3.281**;
 REAL_Q11 (draft real W4A4: both pre-R projections via bias-wrapped QuaRot +
 7 AR linears) = **1.0955**; FAKE draft counterpart on identical prompts =
-1.1734. Real vs fake draft quantization differ by only 0.08 accepted
-tokens/round — the fake-quant conclusions (projection-driven collapse) carry
-over to the real packed kernels; the residual gap reflects the recipe
-difference (per-channel sym absmax/7 + per-token sym int4 vs RTN+MSE-clip +
-per-token asym). Dispatch proven per module (forward counters + module types;
+1.1734. Real vs fake draft quantization on the SAME 20 prompts: paired
+Δ = −0.078, CI [−0.100, −0.056] — a small but statistically meaningful recipe
+difference (real symmetric absmax/7 is slightly worse than fake RTN+MSE-clip
+asym). The QUALITATIVE conclusion (projection-driven collapse to ≈1.1-1.2)
+holds under both; this consistency claim rests on this one architecture/config
+pair and the kernel-level emulation match (rel 1.8e-2). Dispatch proven per module (forward counters + module types;
 `real_w4a4_dispatch/real_e2e_dispatch_proof.csv`); KV fp16; kernel-level
 match vs fp emulation rel 1.8e-2.
 
 ## 10. Does quantized tree verification preserve the target's output?
 **fp16: YES** — verifier-consistency (EAGLE KVCache): full-sequence vs
 chunked-KV vs token-incremental logits agree at **top-1 = 1.000** on all
-evaluated positions (rel-L2 ≈ 0.0017, certificate fraction 0.97-1.0), and every
-fp16 config is output-preserving (exact 1.0). **fake-W4A4 target: execution-
+evaluated positions (rel-L2 ≈ 0.0017, certificate fraction 0.97-1.0); every
+fp16 config is output-preserving at the Gate-A setting (exact 1.0, n=8×48),
+and 19/20 in the longer 20×64 matrix run (CS_fp16_baseline: one late
+low-margin flip on prompt 95). **fake-W4A4 target: execution-
 shape sensitivity is real and now quantified** — full-sequence vs chunked/
 incremental KV paths agree only at **top-1 = 0.906-0.911** (certificate
 fraction ||Δ||∞<margin/2 = 0.43, rel-L2 0.37, mean max|Δ| ≈ 6 logits;

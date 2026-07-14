@@ -40,7 +40,10 @@ def test_real_trace_contract():
         import pytest
         pytest.skip("run scripts/validate_concat_selective_fp.py first")
     rows = [json.loads(l) for l in open(TRACE)]
-    rows = [r for r in rows if r.get("nc_mode", "") == ""]
+    # concat-selective rows only (the trace also holds prev-B2 rows with the
+    # 'projection_selected' schema); primary modes only
+    rows = [r for r in rows
+            if "selected_projection" in r and r.get("nc_mode", "") == ""]
     assert rows
     from collections import defaultdict
     per = defaultdict(list)

@@ -191,6 +191,10 @@ class ConcatSelectiveDraftAdapter(VariantAdapter):
         assert nc in NC_MODES, nc
         if nc in ("Rt_on_whole_concat", "gamma_on_embedding"):
             assert variant == "explicit", f"nc={nc} is an explicit-path control"
+        if nc in ("embedding_rotated", "orig_PL_recurrent", "R_before_PL"):
+            # table/weight-level controls; the explicit path would double-apply
+            # or silently ignore them
+            assert variant == "folded", f"nc={nc} is a folded-path control"
         self.variant, self.nc = variant, nc
         self.quant_first, self.quant_recurrent = quant_first, quant_recurrent
         self.quant_ar, self.quant_embed = quant_ar, quant_embed
@@ -365,8 +369,7 @@ class ConcatSelectiveDraftAdapter(VariantAdapter):
                     embedding_basis="original",
                     hidden_basis=("a=nR1" if idx == 0 else "r_d=h_dR1"),
                     output_basis="rotated(post_projection_R1)",
-                    gamma_applied=bool(sel == "first" and
-                                       adapter.nc != "gamma_omitted"),
+                    gamma_applied=bool(sel == "first"),
                     post_projection_R1_executed=bool(
                         adapter.nc != "no_output_R"),
                     quantization_mode=(adapter.quant_first if sel == "first"

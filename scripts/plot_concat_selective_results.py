@@ -285,8 +285,13 @@ def main():
         rs = json.load(open(p))
         names = [r["config"] for r in rs["configs"]]
         vals = [r["mean_acceptance"] for r in rs["configs"]]
-        pretty = [n.replace("_target", "\ntarget ").replace("_draft", " / draft ")
-                  for n in names]
+        PRETTY = {"REAL_Q10_targetRealW4A4_draftFP16":
+                  "Target REAL W4A4\nDraft FP16",
+                  "REAL_Q11_targetRealW4A4_draftRealW4A4_concat":
+                  "Target REAL W4A4\nDraft REAL W4A4\n(concat-selective)",
+                  "FAKE_Q11cmp_targetRealW4A4_draftFakeW4A4_concat":
+                  "Target REAL W4A4\nDraft fake W4A4\n(comparison)"}
+        pretty = [PRETTY.get(n, n) for n in names]
         fig, ax = plt.subplots(figsize=(7.0, 3.2))
         b = ax.bar(range(len(names)), vals, 0.55, color=[C[0], C[1], C[2]])
         for bb, v in zip(b, vals):
