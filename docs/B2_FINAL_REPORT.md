@@ -184,8 +184,10 @@ language; the operational split is in §13.
   under the real kernel as well).
 - Under fake-quant targets, ea-vs-naive token equality degrades (dynamic
   per-token activation quantization is batch-shape sensitive between tree and
-  incremental forwards); at fp16 the equality is exact (Gate A). Acceptance
-  length is the primary metric throughout.
+  incremental forwards); at fp16 the equality is exact in the Gate-A setting
+  (8 prompts × 48 tok, 1.0 for every correct config) and 19/20 in the longer
+  matrix run (one late low-margin flip at 64 tok). Acceptance length is the
+  primary metric throughout.
 - Greedy only; stochastic multi-seed evaluation not run in this pass.
 - n=20 MT-bench prompts. All non-control effects are decided "meaningful
   decrease" at the pre-registered ε=0.05; magnitudes range from |Δ|=0.099

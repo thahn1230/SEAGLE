@@ -175,6 +175,10 @@ class B2SplitDraftAdapter(VariantAdapter):
         super().__init__(ea_model, stash, device, dtype)
         assert arch in ("B", "A_folded")
         assert nc in NC_MODES, nc
+        if nc in ("explicit_Mgamma", "gamma_elementwise"):
+            # these transforms emit ROTATED-basis features; arch A_folded's
+            # recurrent path consumes original-basis h -> control undefined
+            assert arch == "B", f"nc={nc} is only a valid control for arch B" 
         self.arch, self.nc = arch, nc
         self.quant_first, self.quant_recurrent = quant_first, quant_recurrent
         self.quant_ar, self.ar_r2r4 = quant_ar, ar_r2r4
@@ -201,9 +205,8 @@ class B2SplitDraftAdapter(VariantAdapter):
         self._cycle = 0
         self._fc_idx = 0
         self._cycle_first_calls = 0
-        # cross-prompt draft KV must be dropped by the harness (ea_generate
-        # resets stable_kv via ea_layer.reset()); assert leftover state is sane
-        assert getattr(self.ea_layer, "stable_kv", None) is None or True
+        # cross-prompt draft-KV reset is performed by ea_generate itself
+        # (ea_model reset_kv at entry); nothing to assert here beyond counters
 
     def install(self):
         ea = self.ea_layer

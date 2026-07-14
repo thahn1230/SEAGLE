@@ -270,6 +270,8 @@ def convert_draft_state(sd: dict, R1: torch.Tensor, gamma: torch.Tensor,
     Returns (new_state_dict, extra) with extra['head_weight_fold'] describing
     the head fold to use ('gamma' or 'r1')."""
     assert mode in ("gamma", "r1")
+    assert not any(k.startswith("layers.1.") for k in sd), \
+        "convert_draft_state assumes a SINGLE-decoder-layer draft (EAGLE-1)"
     D = sd["fc.weight"].shape[0]          # infer hidden dim (4096 for 7B; tiny in tests)
     R1 = R1.double()
     gamma = gamma.double()
