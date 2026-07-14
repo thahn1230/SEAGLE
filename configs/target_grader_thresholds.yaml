@@ -1,0 +1,8 @@
+# Operational category thresholds (predeclared before inspecting results)
+quality_tolerance_ce: 0.05        # nats/token: |CE_q - CE_fp| <= 0.05 -> quality-preserving
+kl_small: 0.10                    # KL(fp||q) at the position <= 0.10 -> "KL small"
+entropy_increase: 0.05            # nats
+margin_decrease: 0.10             # logits
+tree_mass_increase: 0.01          # probability
+depth_change_min: 1               # rounds classified as change iff |д depth| >= 1
+path_artifact_top1_tol: 1.0       # full-vs-tree verifier top-1 must agree, else EXECUTION_PATH_ARTIFACT

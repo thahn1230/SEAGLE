@@ -1,0 +1,14 @@
+# Bitwidth-AL component-causality study
+gpus: {cuda_device_order: PCI_BUS_ID, cuda_visible_devices: "6,7",
+       note: "physical GPU 7 dropped off the bus 2026-07-15; running on physical 6 only (documented deviation)"}
+models: {target: meta-llama/Llama-2-7b-chat-hf, draft: yuhuili/EAGLE-llama2-chat-7B}
+metric: "tau = accepted draft tokens + 1 target bonus token per round"
+matrix:
+  cells: [T16_D16, T16_D8, T16_D4, T8_D16, T8_D8, T8_D4, T4_D16, T4_D8, T4_D4]
+  kv: fp16
+  pilot: {num_prompts: 20, max_new_tokens: 64}
+  final: {num_prompts: 80, max_new_tokens: 128}
+quant:
+  weight: per-output-channel symmetric RTN + MSE clip (SpinQuant WeightQuantizer)
+  activation: per-token asymmetric, reduction ONLY over final feature dim (verified in code)
+stats: {bootstrap: 10000, ci: 0.95, eps_abs: 0.05, eps_rel: "1% baseline"}
