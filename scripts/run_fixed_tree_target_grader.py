@@ -67,7 +67,6 @@ def stage1_cache(model, ids_list, tree, dev, max_rounds=16, max_new=64):
                                    tree_decoding, evaluate_posterior,
                                    update_inference_inputs, reset_tree_mode)
     from eagle.model.kv_cache import initialize_past_key_values
-    from eagle.model.cnets import generate_tree_buffers  # noqa: F401
     cached = []
     for pi, ids in enumerate(ids_list):
         model.ea_layer.reset_kv()
@@ -86,8 +85,11 @@ def stage1_cache(model, ids_list, tree, dev, max_rounds=16, max_new=64):
             lgts, hidden_state_new, outputs = tree_decoding(
                 model, tree_candidates, past, tb["tree_position_ids"],
                 input_ids, tb["retrieve_indices"])
-            best_candidate, accept_length = evaluate_posterior(
-                lgts, candidates, None)[:2]
+            # v1 signature: 8 required positionals; the trailing five are
+            # unused on the greedy (logits_processor=None) branch
+            best_candidate, accept_length, sample_p = evaluate_posterior(
+                lgts, candidates, None, cart_candidates_prob, None, None,
+                tree_candidates, None)
             root_logits = lgts[0, 0].float().cpu()   # dist at the root position
             root_children = sorted(set(
                 candidates[:, 1].tolist()) - {-1})
@@ -98,12 +100,15 @@ def stage1_cache(model, ids_list, tree, dev, max_rounds=16, max_new=64):
                 fp_accept_length=int(accept_length),
                 fp_root_logits=root_logits,
                 root_children=root_children))
-            input_ids, tree_logits, sample_token, hidden_state, new_token = \
+            # v1 return order (utils.py:472 / ea_model.py:229):
+            # (input_ids, tree_logits, new_token, hidden_state, sample_token);
+            # 10th arg is the raw KV tensor list, last arg is sample_p
+            input_ids, tree_logits, new_token, hidden_state, sample_token = \
                 update_inference_inputs(
                     input_ids, candidates, best_candidate, accept_length,
                     tb["retrieve_indices"], None, logits,
-                    tree_logits, new_token, past, cur_len,
-                    model, hidden_state, hidden_state_new, sample_token)
+                    tree_logits, new_token, pkv_data, cur_len,
+                    model, hidden_state, hidden_state_new, sample_p)
             if new_token > max_new or input_ids.shape[1] > ids.shape[1] + max_new:
                 break
     return cached
@@ -125,7 +130,9 @@ def stage2_verify(model, cached, tree_buffers, dev):
             model, rec["tree_candidates"].to(dev), past,
             tree_buffers["tree_position_ids"], prefix,
             tree_buffers["retrieve_indices"])
-        best, acc = evaluate_posterior(lgts, rec["candidates"].to(dev), None)[:2]
+        best, acc = evaluate_posterior(
+            lgts, rec["candidates"].to(dev), None, None, None, None,
+            rec["tree_candidates"].to(dev), None)[:2]
         out.append(dict(accept_length=int(acc),
                         root_logits=lgts[0, 0].float().cpu()))
         del past, _pd, _cl
@@ -147,6 +154,12 @@ def classify(row, thr):
     d = row["accept_delta"]
     if abs(d) < thr["depth_change_min"]:
         return "UNCHANGED"
+    # fp16 recheck (same weights, stage-2 path) already disagrees with
+    # stage 1 on this round -> the flip is attributable to the execution
+    # path, not to quantization (consumes path_artifact_top1_tol).
+    if abs(row["recheck_accept_delta"]) >= thr["path_artifact_top1_tol"] or \
+            not row["recheck_top1_same_fp"]:
+        return "EXECUTION_PATH_ARTIFACT"
     if d > 0:
         if row["fp_q_top1_same"] and row["kl_fp_q"] <= thr["kl_small"] and \
                 row["ce_delta"] <= thr["quality_tolerance_ce"]:
@@ -193,14 +206,25 @@ def main():
         "none", "random_hadamard", "none", 0, device=dev, rotations_root=rr)
     tok = eagle_bridge.get_tokenizer(model)
     study.set_draft_tree(model, tree, dev)
-    # EaModel keeps tree buffers on the model for the utils path
-    from eagle.model.cnets import generate_tree_buffers
+    # EaModel keeps tree buffers on the model for the utils path.
+    # MUST be the verifier-side builder (eagle.model.utils) — the cnets
+    # star-import resolves to utils_c's DRAFT builder, which lacks
+    # retrieve_indices/tree_attn_mask/tree_position_ids.
+    from eagle.model.utils import generate_tree_buffers
     model.tree_buffers = generate_tree_buffers(tree, dev)
     model.tree_buffers["retrieve_indices"] = \
         model.tree_buffers["retrieve_indices"].to(dev)
     ids_list = [build_prompt(tok, p["text"]).to(dev) for p in prompts]
     cached = stage1_cache(model, ids_list, tree, dev)
     print(f"[grader] cached {len(cached)} rounds", flush=True)
+    # fp16(recheck) control: SAME weights through the stage-2 execution path
+    # (fresh prefill instead of incrementally compacted KV). Rounds where this
+    # alone flips accept/top-1 are execution-path artifacts, not quantization.
+    recheck = stage2_verify(model, cached, model.tree_buffers, dev)
+    n_flip = sum(r["accept_length"] != rec["fp_accept_length"]
+                 for rec, r in zip(cached, recheck))
+    print(f"[grader] fp16 recheck: {n_flip}/{len(cached)} rounds flip accept "
+          f"under the stage-2 path", flush=True)
     ce_fp, denom = wikitext_ce(model, tok, dev)
     print(f"[grader] fp16 wikitext CE={ce_fp:.4f} ({denom} tok)", flush=True)
     del model
@@ -226,9 +250,10 @@ def main():
         quality.append(dict(target=tprec, wikitext_ce=round(ce_q, 5),
                             wikitext_ppl=round(float(np.exp(ce_q)), 4),
                             n_tokens=dn))
-        for rec, r in zip(cached, res):
+        for rec, r, rc in zip(cached, res, recheck):
             zf, zq = rec["fp_root_logits"], r["root_logits"]
             mf, mq = dist_metrics(zf), dist_metrics(zq)
+            mrc = dist_metrics(rc["root_logits"])
             pf = F.softmax(zf, -1); pq = F.softmax(zq, -1)
             kl = float(F.kl_div(F.log_softmax(zq, -1), pf,
                                 reduction="sum"))
@@ -241,6 +266,12 @@ def main():
                 fp_accept=rec["fp_accept_length"],
                 q_accept=r["accept_length"],
                 accept_delta=r["accept_length"] - rec["fp_accept_length"],
+                recheck_accept=rc["accept_length"],
+                recheck_accept_delta=rc["accept_length"]
+                - rec["fp_accept_length"],
+                recheck_top1_same_fp=bool(mrc["top1"] == mf["top1"]),
+                accept_delta_vs_recheck=r["accept_length"]
+                - rc["accept_length"],
                 fp_q_top1_same=bool(mf["top1"] == mq["top1"]),
                 q_top1_in_tree=bool(mq["top1"] in ch),
                 fp_top1_in_tree=bool(mf["top1"] in ch),
@@ -270,11 +301,23 @@ def main():
             frac_decrease=round(len(dec) / len(g), 4),
             frac_unchanged=round((g.category == "UNCHANGED").mean(), 4),
             mean_accept_delta=round(float(g.accept_delta.mean()), 4),
-            categories=dict(g.category.value_counts()),
-            increase_categories=dict(inc.category.value_counts()),
-            decrease_categories=dict(dec.category.value_counts()))
+            categories={str(k): int(v)
+                        for k, v in g.category.value_counts().items()},
+            increase_categories={str(k): int(v)
+                                 for k, v in inc.category.value_counts().items()},
+            decrease_categories={str(k): int(v)
+                                 for k, v in dec.category.value_counts().items()})
+    recheck_summ = dict(
+        n_rounds=len(cached),
+        n_accept_flips=int(sum(
+            r["accept_length"] != rec["fp_accept_length"]
+            for rec, r in zip(cached, recheck))),
+        flip_fraction=round(sum(
+            r["accept_length"] != rec["fp_accept_length"]
+            for rec, r in zip(cached, recheck)) / max(len(cached), 1), 4))
     with open(os.path.join(ART, "categories_summary.json"), "w") as f:
-        json.dump(dict(thresholds=thr, quality=quality, per_target=summ),
+        json.dump(dict(thresholds=thr, quality=quality,
+                       fp16_recheck=recheck_summ, per_target=summ),
                   f, indent=2, default=str)
     print(json.dumps(summ, indent=2, default=str), flush=True)
     print("[grader] DONE", flush=True)
