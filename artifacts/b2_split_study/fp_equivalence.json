@@ -1,0 +1,115 @@
+{
+  "stop_gate_a_pass": true,
+  "gate_reasons": [],
+  "target_rotation_exact_match": 1.0,
+  "tol_accept": 0.15,
+  "negative_control_criterion": "paired mean drop > 0.1 AND >=75% prompts degraded (refined from blanket mean-drop>0.5 after observing FP03=-0.489@8/8 and N5=-0.241@6/8; refinement decided BEFORE any quantization results)",
+  "negative_control_paired_stats": {
+    "FP03_single_folded": {
+      "paired_mean_drop": 0.4892,
+      "frac_prompts_degraded": 1.0,
+      "min_drop": 0.1602,
+      "max_drop": 0.8
+    },
+    "FP04_gamma_omitted": {
+      "paired_mean_drop": 2.6243,
+      "frac_prompts_degraded": 1.0,
+      "min_drop": 1.8389,
+      "max_drop": 3.6571
+    },
+    "N1_naive": {
+      "paired_mean_drop": 2.6226,
+      "frac_prompts_degraded": 1.0,
+      "min_drop": 1.7661,
+      "max_drop": 3.7091
+    },
+    "N2_gamma_elementwise": {
+      "paired_mean_drop": 2.7154,
+      "frac_prompts_degraded": 1.0,
+      "min_drop": 1.8389,
+      "max_drop": 3.7565
+    },
+    "N4_wrong_orientation": {
+      "paired_mean_drop": 2.6249,
+      "frac_prompts_degraded": 1.0,
+      "min_drop": 1.7395,
+      "max_drop": 3.7565
+    },
+    "N5_fold_both_halves": {
+      "paired_mean_drop": 0.2406,
+      "frac_prompts_degraded": 0.75,
+      "min_drop": -0.2083,
+      "max_drop": 0.6923
+    }
+  },
+  "n_prompts": 8,
+  "max_new_tokens": 48,
+  "configs": [
+    {
+      "config": "FP00_stock",
+      "mean_acceptance": 3.7208,
+      "exact_match_rate": 1.0,
+      "n_prompts": 8
+    },
+    {
+      "config": "FP01_A_explicit",
+      "mean_acceptance": 3.7538,
+      "exact_match_rate": 1.0,
+      "n_prompts": 8
+    },
+    {
+      "config": "FP01b_A_folded",
+      "mean_acceptance": 3.7538,
+      "exact_match_rate": 1.0,
+      "n_prompts": 8
+    },
+    {
+      "config": "FP02_B2_split",
+      "mean_acceptance": 3.7538,
+      "exact_match_rate": 1.0,
+      "n_prompts": 8
+    },
+    {
+      "config": "FP02x_explicit_Mgamma",
+      "mean_acceptance": 3.7538,
+      "exact_match_rate": 1.0,
+      "n_prompts": 8
+    },
+    {
+      "config": "FP03_single_folded",
+      "mean_acceptance": 3.2646,
+      "exact_match_rate": 1.0,
+      "n_prompts": 8
+    },
+    {
+      "config": "FP04_gamma_omitted",
+      "mean_acceptance": 1.1295,
+      "exact_match_rate": 1.0,
+      "n_prompts": 8
+    },
+    {
+      "config": "N1_naive",
+      "mean_acceptance": 1.1312,
+      "exact_match_rate": 1.0,
+      "n_prompts": 8
+    },
+    {
+      "config": "N2_gamma_elementwise",
+      "mean_acceptance": 1.0384,
+      "exact_match_rate": 1.0,
+      "n_prompts": 8
+    },
+    {
+      "config": "N4_wrong_orientation",
+      "mean_acceptance": 1.1289,
+      "exact_match_rate": 1.0,
+      "n_prompts": 8
+    },
+    {
+      "config": "N5_fold_both_halves",
+      "mean_acceptance": 3.5132,
+      "exact_match_rate": 1.0,
+      "n_prompts": 8
+    }
+  ]
+}

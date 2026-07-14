@@ -1,0 +1,5 @@
+projection,backend,kernel,packed_shape,packed_bytes,weight_quant_scale_shape,weight_quant_scale_checksum,rel_l2_vs_fp_emulation,rel_l2_vs_fp16,ms_per_call_real,ms_per_call_fp16,dispatch_ok
+projection_first,real_packed_W4A4,quarot CUTLASS INT4xINT4 (sym_quant/matmul/sym_dequant),"[4096, 4096]",16777216,"[4096, 1]",180.2461,0.018003,0.266515,1.4811,0.038,True
+projection_first,real_packed_W4A16,"aten._weight_int4pack_mm (tinygemm, group=128 asym, bf16 act)",,,,,,0.100935,,,True
+projection_recurrent,real_packed_W4A4,quarot CUTLASS INT4xINT4 (sym_quant/matmul/sym_dequant),"[4096, 4096]",16777216,"[4096, 1]",180.2461,0.017846,0.251647,0.0767,0.0359,True
+projection_recurrent,real_packed_W4A16,"aten._weight_int4pack_mm (tinygemm, group=128 asym, bf16 act)",,,,,,0.100792,,,True

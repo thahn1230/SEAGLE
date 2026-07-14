@@ -1,0 +1,14 @@
+config,projection,calls
+FP01b_A_folded,projection_first,117
+FP01b_A_folded,projection_recurrent,468
+FP02_B2_split,projection_first,117
+FP02_B2_split,projection_recurrent,468
+FP02x_explicit_Mgamma,projection_recurrent,585
+FP03_single_folded,projection_first,655
+FP04_gamma_omitted,projection_first,349
+FP04_gamma_omitted,projection_recurrent,1396
+N2_gamma_elementwise,projection_recurrent,1890
+N4_wrong_orientation,projection_first,350
+N4_wrong_orientation,projection_recurrent,1400
+N5_fold_both_halves,projection_first,124
+N5_fold_both_halves,projection_recurrent,496

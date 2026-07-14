@@ -1,0 +1,181 @@
+candidates:
+- candidate_name: llama2-7b-chat
+  hf_target_model: meta-llama/Llama-2-7b-chat-hf
+  hf_eagle_draft_or_training_source: yuhuili/EAGLE-llama2-chat-7B
+  architecture: LlamaForCausalLM
+  eagle_support_status: official-weights
+  spinquant_support_status: official-script
+  recommended_initial_candidate: true
+  reason: 'Only 7B candidate that is first-class on BOTH sides: official EAGLE-1 draft weights + dedicated
+    llama2chat eval scripts on the v1 branch, and SpinQuant''s headline Llama-2 family with published
+    W4A4KV4 results. Fits one RTX 4090 (~13.5GB target fp16 + ~0.5GB draft). Caveats: HF repo is GATED
+    (accept Meta license + HF token; SpinQuant --access_token / huggingface-cli login); SpinQuant''s published
+    pre-optimized rotations cover only the BASE Llama-2-7B, so R1/R2 must be optimized locally for the
+    chat model (100 steps).
+
+    '
+  checks:
+    architecture_rotatable: true
+    target_weights_cached: true
+    draft_is_repo: true
+    draft_weights_cached: true
+    target_config: ok
+    draft_config: ok
+    target_hidden_size: 4096
+    target_vocab_size: 32000
+    target_num_heads: 32
+    target_rope_theta: 10000.0
+    target_tie_word_embeddings: false
+    hidden_size_match: true
+    vocab_size_match: true
+- candidate_name: vicuna-7b-v1.3
+  hf_target_model: lmsys/vicuna-7b-v1.3
+  hf_eagle_draft_or_training_source: yuhuili/EAGLE-Vicuna-7B-v1.3
+  architecture: LlamaForCausalLM
+  eagle_support_status: official-weights
+  spinquant_support_status: architecture-compatible
+  recommended_initial_candidate: false
+  reason: 'Best NON-GATED fallback if meta-llama access is unavailable. Official EAGLE-1 draft + vicuna
+    eval scripts. LLaMA-1-based (2048 ctx, no GQA) and outside SpinQuant''s official script list, so quantization
+    results are not comparable to the SpinQuant paper tables.
+
+    '
+  checks:
+    architecture_rotatable: true
+    target_weights_cached: false
+    draft_is_repo: true
+    draft_weights_cached: false
+    target_config: ok
+    draft_config: ok
+    target_hidden_size: 4096
+    target_vocab_size: 32000
+    target_num_heads: 32
+    target_rope_theta: 10000.0
+    target_tie_word_embeddings: false
+    hidden_size_match: true
+    vocab_size_match: true
+- candidate_name: vicuna-7b-v1.5
+  hf_target_model: lmsys/vicuna-7b-v1.5
+  hf_eagle_draft_or_training_source: train-from-scratch (eagle/ge_data/ge_data_all_vicuna.py + eagle/train/main.py,
+    vicuna_7B_config.json)
+  architecture: LlamaForCausalLM
+  eagle_support_status: training-path-only
+  spinquant_support_status: architecture-compatible
+  recommended_initial_candidate: false
+  reason: 'Non-gated and Llama-2-based, but requires training an EAGLE-1 draft from scratch (~68k ShareGPT
+    samples) before any integration work can start.
+
+    '
+  checks:
+    architecture_rotatable: true
+    target_weights_cached: false
+    draft_is_repo: false
+    draft_weights_cached: false
+    target_config: ok
+    draft_config: training-path-only
+    target_hidden_size: 4096
+    target_vocab_size: 32000
+    target_num_heads: 32
+    target_rope_theta: 10000.0
+    target_tie_word_embeddings: false
+- candidate_name: llama2-13b-chat
+  hf_target_model: meta-llama/Llama-2-13b-chat-hf
+  hf_eagle_draft_or_training_source: yuhuili/EAGLE-llama2-chat-13B
+  architecture: LlamaForCausalLM
+  eagle_support_status: official-weights
+  spinquant_support_status: official-script
+  recommended_initial_candidate: false
+  reason: 'Supported on both sides but ~26GB fp16 exceeds one 24GB RTX 4090; would need multi-GPU sharding
+    that EAGLE v1''s runtime handles poorly. Possible follow-up.
+
+    '
+  checks:
+    architecture_rotatable: true
+    target_weights_cached: false
+    draft_is_repo: true
+    draft_weights_cached: false
+    target_config: ok
+    draft_config: ok
+    target_hidden_size: 5120
+    target_vocab_size: 32000
+    target_num_heads: 40
+    target_rope_theta: 10000.0
+    target_tie_word_embeddings: false
+    hidden_size_match: true
+    vocab_size_match: true
+- candidate_name: llama3-8b-instruct
+  hf_target_model: meta-llama/Meta-Llama-3-8B-Instruct
+  hf_eagle_draft_or_training_source: yuhuili/EAGLE-LLaMA3-Instruct-8B (listed on EAGLE main branch only)
+  architecture: LlamaForCausalLM
+  eagle_support_status: unsupported-on-v1
+  spinquant_support_status: official-script
+  recommended_initial_candidate: false
+  reason: 'Strong second experiment but requires either patching v1''s RoPE to read rope_theta or moving
+    to the main-branch EAGLE-2 runtime; out of scope for the first EAGLE-1 result.
+
+    '
+  checks:
+    architecture_rotatable: true
+    target_weights_cached: false
+    draft_is_repo: false
+    draft_weights_cached: false
+    target_config: ok
+    draft_config: training-path-only
+    target_hidden_size: 4096
+    target_vocab_size: 128256
+    target_num_heads: 32
+    target_rope_theta: 500000.0
+    target_tie_word_embeddings: false
+- candidate_name: mixtral-8x7b-instruct
+  hf_target_model: mistralai/Mixtral-8x7B-Instruct-v0.1
+  hf_eagle_draft_or_training_source: yuhuili/EAGLE-mixtral-instruct-8x7B
+  architecture: MixtralForCausalLM
+  eagle_support_status: official-weights
+  spinquant_support_status: unsupported
+  recommended_initial_candidate: false
+  reason: Outside the intersection; also far exceeds single-GPU memory.
+  checks:
+    architecture_rotatable: false
+    target_weights_cached: false
+    draft_is_repo: true
+    draft_weights_cached: false
+    target_config: ok
+    draft_config: ok
+    target_hidden_size: 4096
+    target_vocab_size: 32000
+    target_num_heads: 32
+    target_rope_theta: 1000000.0
+    target_tie_word_embeddings: false
+    hidden_size_match: true
+    vocab_size_match: true
+_local_repo_evidence:
+  eagle_eval_scripts:
+  - gen_baseline_answer_llama2chat.py
+  - gen_baseline_answer_mix.py
+  - gen_baseline_answer_vicuna.py
+  - gen_ea_alpha_llama2chat.py
+  - gen_ea_alpha_vicuna.py
+  - gen_ea_answer_llama2chat.py
+  - gen_ea_answer_mix.py
+  - gen_ea_answer_vicuna.py
+  eagle_ge_data_scripts:
+  - ge_data_all_llama2chat.py
+  - ge_data_all_vicuna.py
+  eagle_train_configs:
+  - Mixtral_8x7B_config.json
+  - llama_2_chat_13B_config.json
+  - llama_2_chat_70B_config.json
+  - llama_2_chat_7B_config.json
+  - vicuna_13B_config.json
+  - vicuna_33B_config.json
+  - vicuna_7B_config.json
+  spinquant_modeling_files:
+  - modeling_llama.py
+  - modeling_llama_quant.py
+  spinquant_scripts:
+  - 10_optimize_rotation.sh
+  - 11_optimize_rotation_fsdp.sh
+  - 2_eval_ptq.sh
+  - 31_optimize_rotation_executorch.sh
+  - 32_eval_ptq_executorch.sh
+_verified_at: '2026-07-02'

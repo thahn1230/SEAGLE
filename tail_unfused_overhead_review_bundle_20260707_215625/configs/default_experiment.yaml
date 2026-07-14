@@ -1,0 +1,75 @@
+# Default experiment configuration — EAGLE-1 x SpinQuant W4A4
+# All scripts read this via --config; CLI flags override.
+
+experiment:
+  name: rotated_eagle1_llama2_7b_chat
+  seed: 42
+  output_dir: outputs
+
+model:
+  # See configs/model_candidates.yaml; fallback candidate: vicuna-7b-v1.3
+  target: meta-llama/Llama-2-7b-chat-hf
+  eagle_draft: yuhuili/EAGLE-llama2-chat-7B
+  architecture: LlamaForCausalLM
+  dtype: bfloat16
+
+paths:
+  eagle_repo: third_party/EAGLE
+  spinquant_repo: third_party/SpinQuant
+  rotation_checkpoint: outputs/rotations/R.bin   # produced by scripts/10_optimize_rotation.py
+  # M-1: resolved from local HF cache 2026-07-02 (weights confirmed present).
+  target_weights_local: /home/thahn1230/.cache/huggingface/hub/models--meta-llama--Llama-2-7b-chat-hf/snapshots/f5db02db724555f92da89c216ac04704f23d4590
+  draft_weights_local: /home/thahn1230/.cache/huggingface/hub/models--yuhuili--EAGLE-llama2-chat-7B/snapshots/44e37ec383348306fe9b1dfe7c79e145c96db3d0
+
+rotation:
+  # scripts/10_optimize_rotation.sh semantics; w_bits=16 because PTQ uses GPTQ
+  optimize_w_bits: 16
+  optimize_a_bits: 4
+  optimize_kv_bits: 4
+  learning_rate: 1.5
+  max_steps: 100
+  seqlen: 2048
+  per_device_batch_size: 1
+  nproc_per_node: 1             # escalate 2/4/8 on OOM (DDP = throughput only; task R-1)
+  gradient_checkpointing: true
+
+quantization:
+  # W4A4:   w=4 a=4 k=16 v=16   |   W4A4KV4: w=4 a=4 k=4 v=4
+  w_bits: 4
+  a_bits: 4
+  k_bits: 4
+  v_bits: 4
+  w_method: gptq                # gptq | rtn  (gptq is SpinQuant default; rtn faster for smoke tests)
+  w_clip: true
+  a_asym: true
+  k_asym: true
+  v_asym: true
+  k_groupsize: 128
+  v_groupsize: 128
+  gptq_calib_samples: 128       # wikitext-2
+
+integration:
+  variant: A                    # A = explicit unrotation | B = conjugated fc | C = retrained draft
+  keep_original_lm_head_copy: true
+  keep_original_draft_embedding: true
+
+draft_training:                 # Variant C (tasks V-2/V-3)
+  data_samples: 20000
+  data_source: sharegpt         # ShareGPT_V4.3_unfiltered_cleaned_split.json
+  v_w: 1.0                      # SmoothL1 feature-loss weight (EAGLE default)
+  p_w: 0.1                      # soft-CE logit-loss weight (EAGLE default)
+  epochs: 1
+  mixed_precision: bf16
+
+evaluation:
+  ppl_dataset: wikitext2
+  ppl_seqlen: 2048
+  bench_name: mt_bench
+  temperature: 0.0
+  max_new_tokens: 512
+  tree_choices: mc_sim_7b_63    # EAGLE-1 static tree
+  batch_sizes: [1, 2, 4, 8]     # sweep via eagle/modelbsne1 (task X-3; primary path is bs=1)
+
+hardware:
+  gpus_available: 8             # RTX 4090 24GB
+  default_visible_devices: "0"

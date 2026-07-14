@@ -1,0 +1,9 @@
+projection weights built: first [4096, 8192], recurrent [4096, 8192], bias [4096]
+quarot module: /data/thahn1230/quarot/quarot/__init__.py
+kernels: quarot.sym_quant / quarot.matmul (CUTLASS INT4xINT4->INT32) / quarot.sym_dequant; weight fmt=pack_i4 per-channel sym (absmax/7); act fmt=per-token sym int4 dynamic; accum=INT32; group=per-channel (weight) x per-token (act); zero-point=none (symmetric); KV=fp16
+projection_first W4A4: rel_vs_emul=1.80e-02 rel_vs_fp16=0.2665 real 1.481ms vs fp16 0.038ms
+projection_first W4A16: rel_vs_fp16=0.1009
+projection_recurrent W4A4: rel_vs_emul=1.78e-02 rel_vs_fp16=0.2516 real 0.077ms vs fp16 0.036ms
+projection_recurrent W4A16: rel_vs_fp16=0.1008
+separate weight_quant_scales for first/recurrent: False
+STOP_GATE_B_PASS=False
