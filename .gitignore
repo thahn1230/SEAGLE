@@ -1,0 +1,14 @@
+__pycache__/
+*.pyc
+runs/
+outputs/
+results/
+artifacts/*/raw_traces/
+artifacts/*/logs/
+*.tar.gz
+rotation_*bundle*/
+third_party/
+.venv/
+envs/
+*.bin
+*.safetensors

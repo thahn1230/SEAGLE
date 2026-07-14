@@ -1,0 +1,419 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EAGLE × SpinQuant — Naive vs Variant A·B·C</title>
+<style>
+  :root {
+    --bg: #14141d;
+    --surface: #1c1d29;
+    --surface2: #21222f;
+    --border: #2b2d3e;
+    --text: #e7e8f0;
+    --muted: #9298ae;
+    --rot: #a78bfa;     /* 회전 좌표계 */
+    --orig: #6bc7e6;    /* 원본 좌표계 */
+    --bad: #f27b72;     /* 불일치 */
+    --good: #5cd69a;    /* 판정: 정상 */
+    --warn: #e3b36a;    /* 판정: 부분 */
+    --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Pretendard Variable", Pretendard, "Apple SD Gothic Neo",
+                 "Noto Sans KR", "Malgun Gothic", "Segoe UI", sans-serif;
+    font-size: 15px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1060px; margin: 0 auto; padding: 44px 24px 72px; }
+
+  header h1 {
+    font-size: 25px; font-weight: 800; letter-spacing: -0.01em;
+    margin: 0 0 6px; text-wrap: balance;
+  }
+  header p.sub { color: var(--muted); margin: 0; max-width: 62ch; }
+  header .sub b { color: var(--text); font-weight: 600; }
+
+  /* ---- 문제 정의 + 범례 ---- */
+  .context {
+    display: grid; grid-template-columns: 1fr auto; gap: 20px 36px;
+    align-items: center;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 20px 24px; margin: 28px 0 34px;
+  }
+  .formula {
+    font-family: var(--mono); font-size: 15px; letter-spacing: 0.01em;
+    display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: baseline;
+  }
+  .formula .rot  { color: var(--rot); }
+  .formula .orig { color: var(--orig); }
+  .formula .dim  { color: var(--muted); }
+  .context .note { color: var(--muted); font-size: 13.5px; margin-top: 8px; max-width: 66ch; }
+  .legend { display: grid; gap: 9px; font-size: 13px; min-width: 240px; }
+  .legend .item { display: flex; align-items: center; gap: 10px; color: var(--muted); }
+  .legend .item b { color: var(--text); font-weight: 600; }
+  .swatch { width: 26px; height: 0; border-top: 3px solid; border-radius: 2px; flex: none; }
+  .swatch.rot  { border-color: var(--rot); }
+  .swatch.orig { border-color: var(--orig); }
+  .xmark {
+    width: 18px; height: 18px; border-radius: 50%; flex: none;
+    border: 1.5px solid var(--bad); color: var(--bad);
+    font-size: 11px; font-weight: 800; display: grid; place-items: center;
+  }
+
+  /* ---- 변형 카드 ---- */
+  .cards { display: grid; gap: 18px; }
+  .card {
+    display: grid; grid-template-columns: 252px 1fr; gap: 8px 20px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 22px 24px 16px;
+  }
+  .rail .eyebrow {
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em;
+    color: var(--muted); text-transform: uppercase; margin-bottom: 4px;
+  }
+  .rail h2 { font-size: 17px; font-weight: 700; margin: 0 0 10px; letter-spacing: -0.01em; }
+  .chip {
+    display: inline-block; font-size: 12px; font-weight: 700;
+    padding: 3px 10px; border-radius: 999px; border: 1px solid; margin-bottom: 14px;
+  }
+  .chip.bad  { color: var(--bad);  border-color: color-mix(in srgb, var(--bad) 45%, transparent);  background: color-mix(in srgb, var(--bad) 10%, transparent); }
+  .chip.good { color: var(--good); border-color: color-mix(in srgb, var(--good) 45%, transparent); background: color-mix(in srgb, var(--good) 10%, transparent); }
+  .chip.warn { color: var(--warn); border-color: color-mix(in srgb, var(--warn) 45%, transparent); background: color-mix(in srgb, var(--warn) 10%, transparent); }
+  .stats { display: grid; gap: 6px; margin-bottom: 4px; }
+  .stat { display: flex; justify-content: space-between; align-items: baseline; gap: 12px;
+          border-bottom: 1px dashed var(--border); padding-bottom: 5px; }
+  .stat .k { color: var(--muted); font-size: 12.5px; }
+  .stat .v { font-family: var(--mono); font-variant-numeric: tabular-nums;
+             font-size: 16px; font-weight: 700; }
+  .diagram { overflow-x: auto; align-self: center; }
+  .diagram svg { display: block; min-width: 720px; width: 100%; height: auto; }
+  .card .desc {
+    grid-column: 1 / -1; color: var(--muted); font-size: 13.5px;
+    border-top: 1px solid var(--border); padding-top: 12px; margin: 6px 0 0;
+    max-width: 92ch;
+  }
+  .card .desc b { color: var(--text); font-weight: 600; }
+  .card .desc code { font-family: var(--mono); font-size: 12.5px; color: var(--orig); }
+
+  /* ---- 비교 표 ---- */
+  .tablewrap { overflow-x: auto; margin-top: 40px; }
+  table { border-collapse: collapse; width: 100%; min-width: 760px; font-size: 13.5px; }
+  caption { text-align: left; font-size: 17px; font-weight: 700; padding-bottom: 12px; }
+  th, td { padding: 9px 14px; text-align: left; border-bottom: 1px solid var(--border); }
+  thead th { color: var(--muted); font-size: 12px; font-weight: 600; letter-spacing: 0.06em; }
+  td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; font-size: 14px; }
+  td .bar { display: inline-block; height: 5px; border-radius: 3px; background: var(--orig);
+            vertical-align: middle; margin-left: 10px; opacity: 0.75; }
+  tr.hl td { background: color-mix(in srgb, var(--good) 6%, transparent); }
+  td .best { color: var(--good); font-weight: 700; }
+  td .worst { color: var(--bad); font-weight: 700; }
+  .foot { color: var(--muted); font-size: 12.5px; margin-top: 18px; max-width: 92ch; }
+  .foot code { font-family: var(--mono); font-size: 11.5px; }
+
+  @media (max-width: 760px) {
+    .context { grid-template-columns: 1fr; }
+    .card { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+
+<div class="wrap">
+  <header>
+    <h1>Naive vs Variant A · B · C — 무엇이 다른가</h1>
+    <p class="sub">SpinQuant로 회전·양자화된 타겟(Llama-2-7B-chat, W4A4)이 내놓는 hidden은
+    <b>회전 좌표계의 ĥ</b>인데, EAGLE-1 draft는 <b>원본 좌표계의 h</b>로 학습되어 있습니다.
+    네 방식의 유일한 차이는 이 간극을 <b>어디서, 어떻게</b> 메우는가입니다.</p>
+  </header>
+
+  <div class="context">
+    <div>
+      <div class="formula">
+        <span><span class="rot">ĥ</span> <span class="dim">=</span> (<span class="orig">h</span> <span class="dim">⊘</span> γ<sub>f</sub>) <span class="dim">·</span> R1</span>
+        <span class="dim">⇄</span>
+        <span><span class="orig">h</span> <span class="dim">=</span> (<span class="rot">ĥ</span> <span class="dim">·</span> R1ᵀ) <span class="dim">⊙</span> γ<sub>f</sub></span>
+      </div>
+      <p class="note">γ<sub>f</sub>(마지막 RMSNorm 스케일)는 SpinQuant가 lm_head에 접어 넣기 때문에,
+      단순 역회전 <code>ĥ·R1ᵀ</code>만으로는 부족하고 γ<sub>f</sub>를 다시 곱해야 정확히 복원됩니다.</p>
+    </div>
+    <div class="legend">
+      <div class="item"><span class="swatch rot"></span><span><b>회전 좌표계</b> — 타겟이 내놓는 ĥ</span></div>
+      <div class="item"><span class="swatch orig"></span><span><b>원본 좌표계</b> — draft가 아는 h, e, f</span></div>
+      <div class="item"><span class="xmark">✕</span><span><b>좌표계 불일치</b>가 발생하는 지점</span></div>
+    </div>
+  </div>
+
+  <div class="cards" id="cards"></div>
+
+  <div class="tablewrap">
+    <table>
+      <caption>실측 결과 — 평균 acceptance length (타겟 forward 1회당 수락 토큰 수, 1.0 = 이득 없음)</caption>
+      <thead>
+        <tr>
+          <th>방식</th>
+          <th>FP 회전만<br>(양자화 없음)</th>
+          <th>W4A4</th>
+          <th>W4A4KV4</th>
+          <th>런타임 오버헤드</th>
+          <th>요약</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>원본 EAGLE-1 (회전 없는 FP16 기준)</td>
+          <td class="num">4.36</td>
+          <td class="num">—</td>
+          <td class="num">—</td>
+          <td class="num">—</td>
+          <td>비교 기준선</td>
+        </tr>
+        <tr>
+          <td>Naive</td>
+          <td class="num"><span class="worst">1.10</span></td>
+          <td class="num">1.14<span class="bar" style="width:20px"></span></td>
+          <td class="num">1.12</td>
+          <td class="num">0</td>
+          <td>좌표계 불일치로 붕괴 — 양자화 탓이 아님</td>
+        </tr>
+        <tr class="hl">
+          <td>Variant A — 언회전</td>
+          <td class="num"><span class="best">4.36</span></td>
+          <td class="num"><span class="best">2.94</span><span class="bar" style="width:52px"></span></td>
+          <td class="num"><span class="best">2.85</span></td>
+          <td class="num">38 µs/호출</td>
+          <td>FP에서 완전 복구, 전 구간 최고 — 권장</td>
+        </tr>
+        <tr>
+          <td>Variant B — fc 가중치 접기</td>
+          <td class="num">2.18</td>
+          <td class="num">2.14<span class="bar" style="width:38px"></span></td>
+          <td class="num">2.13</td>
+          <td class="num">0 (오프라인 접기)</td>
+          <td>첫 forward만 정확 — f 재귀에서 어긋남</td>
+        </tr>
+        <tr>
+          <td>Variant C — draft 재학습</td>
+          <td class="num">—</td>
+          <td class="num">2.65<span class="bar" style="width:47px"></span></td>
+          <td class="num">2.57</td>
+          <td class="num">38 µs (A 배선)</td>
+          <td>B는 이기지만 소규모 학습으론 A 미만</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="foot">측정: MT-bench 프롬프트, greedy, RTX 4090 1장 · 데이터:
+  <code>results/final_sweep_summary.csv</code>, <code>results/unrotate_interface_eval.jsonl</code>.
+  W4A4 실행은 fake-quant(QDQ + FP16 matmul)이므로 절대 속도는 배포 수치가 아니며,
+  acceptance length와 동일 타겟 대비 상대 속도만 유효한 지표입니다.</p>
+</div>
+
+<script>
+(function () {
+  const C = {
+    rot: "#a78bfa", orig: "#6bc7e6", bad: "#f27b72",
+    muted: "#9298ae", text: "#e7e8f0",
+    surface: "#21222f", border: "#2b2d3e", bg: "#14141d",
+  };
+
+  // 공유 골격 좌표 — 네 카드 모두 동일 (차이만 색으로 드러나게)
+  const Y = 84, H = 56, CY = Y + H / 2;                    // 본선 y
+  const B = {
+    target: { x: 8,   w: 150 },
+    slot:   { x: 196, w: 160 },
+    fc:     { x: 408, w: 118 },
+    dec:    { x: 554, w: 112 },
+    head:   { x: 716, w: 132 },
+  };
+  const cx = (b) => b.x + b.w / 2;
+  const right = (b) => b.x + b.w;
+
+  function esc(s) { return s.replace(/&/g, "&amp;").replace(/</g, "&lt;"); }
+
+  function box(b, l1, l2, stroke, opts = {}) {
+    const dash = opts.dashed ? ' stroke-dasharray="5 4"' : "";
+    const fill = opts.fill || `color-mix(in srgb, ${stroke} 7%, ${C.surface})`;
+    const single = !l2;
+    let t = `<rect x="${b.x}" y="${Y}" width="${b.w}" height="${H}" rx="7"
+      fill="${fill}" stroke="${stroke}" stroke-width="1.4"${dash}/>`;
+    t += `<text x="${cx(b)}" y="${single ? CY + 4.5 : CY - 3}" text-anchor="middle"
+      font-size="13" font-weight="700" fill="${C.text}">${esc(l1)}</text>`;
+    if (l2) t += `<text x="${cx(b)}" y="${CY + 15}" text-anchor="middle"
+      font-size="10.5" fill="${C.muted}">${esc(l2)}</text>`;
+    return t;
+  }
+
+  function arrow(x1, x2, color, mid) {
+    return `<line x1="${x1}" y1="${CY}" x2="${x2 - 7}" y2="${CY}"
+      stroke="${color}" stroke-width="2" marker-end="url(#${mid})"/>`;
+  }
+
+  function badge(x, y, kind) {
+    const col = kind === "x" ? C.bad : "#5cd69a";
+    const g = kind === "x" ? "✕" : "✓";
+    return `<circle cx="${x}" cy="${y}" r="9.5" fill="${C.bg}" stroke="${col}" stroke-width="1.6"/>
+      <text x="${x}" y="${y + 3.8}" text-anchor="middle" font-size="10.5"
+      font-weight="800" fill="${col}">${g}</text>`;
+  }
+
+  function diagram(cfg) {
+    const id = cfg.id;
+    const m = (c, n) => `${id}-m${n}`;
+    let s = "";
+
+    // 타겟 → (어댑터 슬롯) → fc
+    if (cfg.adapter) {
+      s += arrow(right(B.target), B.slot.x, C.rot, m(C.rot, "rot"));
+      s += `<text x="${(right(B.target) + B.slot.x) / 2}" y="${CY - 10}" text-anchor="middle"
+        font-size="12" font-family="var(--mono)" fill="${C.rot}">ĥ</text>`;
+      s += box(B.slot, "언회전", "h = (ĥ·R1ᵀ) ⊙ γ", C.orig);
+      s += arrow(right(B.slot), B.fc.x, C.orig, m(C.orig, "or"));
+      s += `<text x="${(right(B.slot) + B.fc.x) / 2}" y="${CY - 10}" text-anchor="middle"
+        font-size="12" font-family="var(--mono)" fill="${C.orig}">h</text>`;
+    } else {
+      s += `<rect x="${B.slot.x}" y="${Y}" width="${B.slot.w}" height="${H}" rx="7"
+        fill="none" stroke="${C.border}" stroke-width="1.2" stroke-dasharray="5 4"/>`;
+      s += `<text x="${cx(B.slot)}" y="${Y + H + 16}" text-anchor="middle"
+        font-size="10.5" fill="${C.muted}">(어댑터 없음)</text>`;
+      s += arrow(right(B.target), B.fc.x, C.rot, m(C.rot, "rot"));
+      s += `<text x="${cx(B.slot)}" y="${CY - 10}" text-anchor="middle"
+        font-size="12" font-family="var(--mono)" fill="${C.rot}">ĥ  (회전 좌표계)</text>`;
+    }
+
+    // 타겟 박스
+    s += box(B.target, "회전 타겟 7B", "SpinQuant W4A4", C.rot);
+
+    // draft: fc / 디코더
+    const fcStroke = cfg.foldedFc ? C.rot : C.orig;
+    s += box(B.fc, "fc (2D→D)", cfg.foldedFc ? "W_h·diag(γ)·R1 접음" : "cat[e, h]", fcStroke);
+    s += arrow(right(B.fc), B.dec.x, C.orig, m(C.orig, "or2"));
+    s += box(B.dec, "디코더 ×1", "draft 본체", C.orig);
+
+    // 재학습 오버레이 (Variant C)
+    if (cfg.retrained) {
+      s += `<rect x="${B.fc.x - 8}" y="${Y - 8}" width="${right(B.dec) - B.fc.x + 16}"
+        height="${H + 16}" rx="10" fill="none" stroke="#e3b36a"
+        stroke-width="1.3" stroke-dasharray="6 4"/>`;
+      s += `<text x="${(B.fc.x + right(B.dec)) / 2}" y="${Y + H + 24}" text-anchor="middle"
+        font-size="10.5" fill="#e3b36a">W4A4 feature로 재학습 (fp32, draft만)</text>`;
+    }
+
+    // f → head → 토큰
+    s += arrow(right(B.dec), B.head.x, C.orig, m(C.orig, "or3"));
+    s += `<text x="${(right(B.dec) + B.head.x) / 2}" y="${CY - 10}" text-anchor="middle"
+      font-size="12" font-family="var(--mono)" fill="${C.orig}">f</text>`;
+    s += box(B.head, "원본 lm_head 사본", "동결 · 회전 전 가중치", C.orig);
+    s += arrow(right(B.head), 876, C.orig, m(C.orig, "or4"));
+
+    // e 입력 (항상 원본 좌표계)
+    const ex = cx(B.fc) - 18;
+    s += `<line x1="${ex}" y1="192" x2="${ex}" y2="${Y + H + 7}" stroke="${C.orig}"
+      stroke-width="1.8" marker-end="url(#${m(C.orig, "up")})"/>`;
+    s += `<text x="${ex}" y="210" text-anchor="middle" font-size="11" fill="${C.orig}">draft 임베딩 e</text>`;
+    s += `<text x="${ex}" y="224" text-anchor="middle" font-size="10" fill="${C.muted}">(원본 · 동결)</text>`;
+
+    // f 재귀 루프 (디코더 → fc, 트리 레벨 2+)
+    const rc = cfg.recycleBad ? C.bad : C.orig;
+    const rx = cx(B.fc) + 22, dx = cx(B.dec);
+    s += `<path d="M ${dx} ${Y} V 46 H ${rx} V ${Y - 8}" fill="none" stroke="${rc}"
+      stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#${cfg.recycleBad ? m(C.bad, "bd") : m(C.orig, "rc")})"/>`;
+    s += `<text x="${(rx + dx) / 2}" y="38" text-anchor="middle" font-size="11"
+      fill="${rc}">f 재귀 (트리 레벨 2+)</text>`;
+    if (cfg.recycleBad) s += badge(rx, 62, "x");
+
+    // fc 입력 판정 배지
+    if (cfg.inputBadge) s += badge(B.fc.x, CY, cfg.inputBadge);
+
+    const defs = `<defs>
+      <marker id="${m(C.rot, "rot")}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="${C.rot}"/></marker>
+      ${["or", "or2", "or3", "or4", "rc"].map(n => `
+      <marker id="${m(C.orig, n)}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="${C.orig}"/></marker>`).join("")}
+      <marker id="${m(C.orig, "up")}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="${C.orig}"/></marker>
+      <marker id="${m(C.bad, "bd")}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="${C.bad}"/></marker>
+    </defs>`;
+
+    return `<svg viewBox="0 0 880 232" role="img" aria-label="${cfg.name} 데이터 흐름도"
+      font-family="inherit">${defs}${s}</svg>`;
+  }
+
+  const variants = [
+    {
+      id: "naive", eyebrow: "대조군", name: "Naive — 그대로 연결",
+      chip: { cls: "bad", label: "인터페이스 붕괴" },
+      stats: [["FP 회전 (양자화 X)", "1.10"], ["W4A4", "1.14"]],
+      cfg: { id: "naive", adapter: false, foldedFc: false, retrained: false,
+             inputBadge: "x", recycleBad: false },
+      desc: `회전된 <b>ĥ</b>를 기존 draft에 그대로 입력합니다. fc는 원본 좌표계의 h로
+        학습되어 있어 입력 분포가 완전히 어긋나고, <b>양자화가 전혀 없어도</b>(FP 회전만으로)
+        4.36 → 1.10으로 붕괴합니다. 붕괴의 원인이 양자화 오차가 아니라 <b>좌표계 불일치</b>임을
+        분리 증명하는 대조군입니다.`,
+    },
+    {
+      id: "va", eyebrow: "Variant A", name: "언회전 — 입구에서 좌표계 복원",
+      chip: { cls: "good", label: "완전 복구 · 권장" },
+      stats: [["FP 회전 (양자화 X)", "4.36"], ["W4A4", "2.94"], ["오버헤드", "38 µs"]],
+      cfg: { id: "va", adapter: true, foldedFc: false, retrained: false,
+             inputBadge: null, recycleBad: false },
+      desc: `draft 직전에 <code>h = (ĥ·R1ᵀ) ⊙ γ</code> 한 번을 명시적으로 계산해 원본
+        좌표계로 되돌립니다. draft는 <b>무수정</b>이므로 FP에서는 원본 EAGLE과 동일(4.36)하게
+        복구되고, 내부의 f 재귀도 처음부터 끝까지 원본 좌표계라 <b>어긋날 곳이 없습니다</b>.
+        비용은 4096×4096 행렬곱 1회 = 호출당 38µs.`,
+    },
+    {
+      id: "vb", eyebrow: "Variant B", name: "가중치 접기 — fc에 변환을 미리 곱함",
+      chip: { cls: "warn", label: "첫 토큰만 정확" },
+      stats: [["FP 회전 (양자화 X)", "2.18"], ["W4A4", "2.14"], ["항등성(1-step)", "1.4e-5"]],
+      cfg: { id: "vb", adapter: false, foldedFc: true, retrained: false,
+             inputBadge: "check", recycleBad: true },
+      desc: `언회전 행렬을 fc의 hidden 블록에 오프라인으로 접어 넣어(<code>W_h ← W_h·diag(γ)·R1</code>)
+        런타임 연산을 없앤 방식. 밖에서 오는 ĥ에는 정확하지만(첫 forward 오차 1.4e-5),
+        트리 확장 시 draft가 <b>자기 예측 f(원본 좌표계)를 같은 fc에 재귀 입력</b>합니다 —
+        접힌 fc는 회전 좌표계를 기대하므로 <b>2단계부터 어긋납니다</b>. 이번 실험에서 발견된 사실로,
+        "A ≡ B"라던 계획 문서를 수정했습니다 (docs/04).`,
+    },
+    {
+      id: "vc", eyebrow: "Variant C", name: "draft 재학습 — 양자화 노이즈에 적응",
+      chip: { cls: "warn", label: "부분 회복 (학습 규모 제한)" },
+      stats: [["W4A4", "2.65"], ["W4A4KV4", "2.57"], ["학습 loss", "5.0 → 2.7"]],
+      cfg: { id: "vc", adapter: true, foldedFc: false, retrained: true,
+             inputBadge: null, recycleBad: false },
+      desc: `배선은 A와 동일하되, <b>양자화된 타겟이 실제로 내놓는 노이즈 낀 feature</b>로
+        draft(fc+디코더)만 fp32 미세조정한 방식. 좌표계 문제가 아니라 <b>양자화 노이즈</b>를
+        학습으로 흡수하려는 시도입니다. B는 이기지만, wikitext 1,200 시퀀스라는 소규모
+        학습으로는 원본 draft(A, 2.94)를 넘지 못했습니다 — EAGLE 정식 레시피(ShareGPT 68k)가
+        다음 단계입니다.`,
+    },
+  ];
+
+  const host = document.getElementById("cards");
+  host.innerHTML = variants.map(v => `
+    <section class="card" aria-labelledby="h-${v.id}">
+      <div class="rail">
+        <div class="eyebrow">${v.eyebrow}</div>
+        <h2 id="h-${v.id}">${v.name}</h2>
+        <span class="chip ${v.chip.cls}">${v.chip.label}</span>
+        <div class="stats">
+          ${v.stats.map(([k, val]) => `
+            <div class="stat"><span class="k">${k}</span><span class="v">${val}</span></div>`).join("")}
+        </div>
+      </div>
+      <div class="diagram">${diagram(v.cfg)}</div>
+      <p class="desc">${v.desc}</p>
+    </section>`).join("");
+})();
+</script>
+
+</body>
+</html>
