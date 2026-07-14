@@ -43,7 +43,17 @@ from .study import VariantAdapter, fold_matrix
 NC_MODES = (None, "embedding_rotated", "gamma_on_embedding",
             "Rt_on_whole_concat", "orig_PL_recurrent", "first_for_recurrent",
             "recurrent_for_first", "no_output_R", "R_before_PL")
-QUANT_MODES = ("fp16", "fake_w4a16", "fake_w4a4", "fake_w8a8")
+# mode -> (w_bits, a_bits); weight/act quant enabled iff bits < 16.
+# "activation-only" (w16aX) keeps the EXACT transformed FP weight.
+QUANT_BITS = {"fp16": (16, 16),
+              "fake_w4a16": (4, 16), "fake_w8a16": (8, 16),
+              "fake_w16a8": (16, 8), "fake_w16a4": (16, 4),
+              "fake_w8a8": (8, 8), "fake_w4a4": (4, 4)}
+QUANT_MODES = tuple(QUANT_BITS)
+# first-projection hidden-block fold, by what the TARGET tail supplies:
+#   gamma_R1 : fused rotated target exposes a_t=n·R1  -> W_h·D_γ·R1
+#   identity : STOCK fp16 target exposes h_t (γ incl.) -> W_h (unchanged)
+FIRST_HIDDEN_MODES = ("gamma_R1", "identity")
 
 
 # ---------------------------------------------------------------------------
@@ -52,14 +62,21 @@ QUANT_MODES = ("fp16", "fake_w4a16", "fake_w4a4", "fake_w8a8")
 
 def build_concat_selective_weights(sd: dict, R1: torch.Tensor,
                                    gamma: torch.Tensor,
-                                   nc: str | None = None):
-    """Returns (W_first_preR, W_rec_preR, bias_original). fp64 math."""
+                                   nc: str | None = None,
+                                   first_hidden_mode: str = "gamma_R1"):
+    """Returns (W_first_preR, W_rec_preR, bias_original). fp64 math.
+    first_hidden_mode: 'gamma_R1' (fused target supplies a_t=n·R1) or
+    'identity' (STOCK fp16 target supplies h_t directly -> W_h unchanged)."""
+    assert first_hidden_mode in FIRST_HIDDEN_MODES
     D = sd["fc.weight"].shape[0]
     W = sd["fc.weight"].double()
     W_e, W_h = W[:, :D].clone(), W[:, D:].clone()
     R1 = R1.double()
     M = fold_matrix(R1, gamma.double())            # D_γ·R1
-    W_first = torch.cat([W_e, W_h @ M], dim=1)     # [W_e | W_h D_γ R1]
+    if first_hidden_mode == "identity":
+        W_first = torch.cat([W_e, W_h], dim=1)     # [W_e | W_h]  (h_t input)
+    else:
+        W_first = torch.cat([W_e, W_h @ M], dim=1)  # [W_e | W_h D_γ R1]
     W_rec = torch.cat([W_e, W_h @ R1], dim=1)      # [W_e | W_h R1]
     if nc == "orig_PL_recurrent":                  # F5: no hidden-side absorption
         W_rec = torch.cat([W_e, W_h], dim=1)
@@ -158,17 +175,94 @@ def _make_linear(Wt, bias, device, dtype):
     return lin.to(device)
 
 
-def _maybe_quantize(lin, mode, name, device):
+def _maybe_quantize(lin, mode, name, device, branch_act=None):
+    """branch_act=(e_bits, h_bits): BRANCHWISE per-token activation quant with
+    independent scales per concat slice (H2 ablation); the mode then supplies
+    only the weight bits."""
     assert mode in QUANT_MODES, mode
-    if mode == "fp16":
-        return lin, dict(kernel="torch.nn.Linear fp16", weight_bits=16, act_bits=16)
-    w_bits = 8 if mode == "fake_w8a8" else 4
-    a_bits = {"fake_w4a16": 16, "fake_w4a4": 4, "fake_w8a8": 8}[mode]
-    m = fq.FakeW4A4Linear(lin.weight, lin.bias, name, quant_weight=True,
+    w_bits, a_bits = QUANT_BITS[mode]
+    if branch_act is not None:
+        m = BranchwiseActLinear(lin.weight, lin.bias, name, w_bits=w_bits,
+                                e_bits=branch_act[0],
+                                h_bits=branch_act[1]).to(device)
+        return m, dict(kernel=f"BranchwiseActLinear(w{w_bits},"
+                              f"eA{branch_act[0]},hA{branch_act[1]})",
+                       weight_bits=w_bits, act_bits=str(branch_act))
+    if w_bits == 16 and a_bits == 16:
+        return lin, dict(kernel="torch.nn.Linear fp16", weight_bits=16,
+                         act_bits=16)
+    m = fq.FakeW4A4Linear(lin.weight, lin.bias, name,
+                          quant_weight=(w_bits < 16),
                           quant_act=(a_bits < 16), w_bits=w_bits,
                           a_bits=a_bits).to(device)
     return m, dict(kernel=f"FakeW4A4Linear(w{w_bits}a{a_bits})",
                    weight_bits=w_bits, act_bits=a_bits)
+
+
+class BranchwiseActLinear(nn.Module):
+    """Concat projection with BRANCHWISE per-token activation fake quant:
+    [Q_e(e-slice) | Q_h(h-slice)] using INDEPENDENT row scales, then one GEMM.
+    bits=16 for a slice -> fp16 passthrough. Weight fake-quant optional."""
+
+    def __init__(self, weight, bias, name, w_bits=16, e_bits=16, h_bits=4):
+        super().__init__()
+        self.name = name
+        self.w_bits, self.e_bits, self.h_bits = w_bits, e_bits, h_bits
+        self.register_buffer("w_fake",
+                             fq._weight_fake_quant(weight.data, w_bits)
+                             if w_bits < 16 else weight.data.clone())
+        self.register_buffer("bias_", bias.data.clone()
+                             if bias is not None else None)
+        self.in_features = weight.shape[1]
+        self.D = self.in_features // 2
+        self.aq_e = fq._act_quantizer(e_bits) if e_bits < 16 else None
+        self.aq_h = fq._act_quantizer(h_bits) if h_bits < 16 else None
+        self.n_forward = 0
+        self.n_act_quant = 0
+        self.n_weight_quant = 1 if w_bits < 16 else 0
+
+    @property
+    def weight(self):
+        return self.w_fake
+
+    def forward(self, x):
+        shp = x.shape[:-1]
+        x2 = x.reshape(-1, self.in_features)
+        e, h = x2[:, :self.D], x2[:, self.D:]
+        if self.aq_e is not None:
+            self.aq_e.find_params(e); e = self.aq_e(e); self.n_act_quant += 1
+        if self.aq_h is not None:
+            self.aq_h.find_params(h); h = self.aq_h(h); self.n_act_quant += 1
+        y = torch.nn.functional.linear(torch.cat([e, h], -1), self.w_fake,
+                                       self.bias_)
+        self.n_forward += 1
+        return y.reshape(*shp, -1)
+
+
+class EmbedOutputActQuant(nn.Module):
+    """Wraps the draft embedding: table weight untouched; the LOOKED-UP vector
+    is per-token fake-quantized (embedding-OUTPUT activation ablation)."""
+
+    def __init__(self, embed, a_bits):
+        super().__init__()
+        self.embed = embed
+        self.a_bits = a_bits
+        self.aq = fq._act_quantizer(a_bits)
+        self.n_forward = 0
+        self.n_act_quant = 0
+
+    @property
+    def weight(self):
+        return self.embed.weight
+
+    def forward(self, ids):
+        e = self.embed(ids)
+        e2 = e.reshape(-1, e.shape[-1])
+        self.aq.find_params(e2)
+        out = self.aq(e2).reshape(e.shape)
+        self.n_forward += 1
+        self.n_act_quant += 1
+        return out.to(e.dtype)
 
 
 # ---------------------------------------------------------------------------
@@ -185,9 +279,12 @@ class ConcatSelectiveDraftAdapter(VariantAdapter):
     def __init__(self, ea_model, stash, device="cuda:0", dtype=torch.float16,
                  variant="folded", nc: str | None = None,
                  quant_first="fp16", quant_recurrent="fp16", quant_ar="fp16",
-                 quant_embed="fp16", ar_r2r4=False, trace=True, trace_cap=4000):
+                 quant_embed="fp16", quant_embed_act="fp16", quant_head="fp16",
+                 first_hidden_mode="gamma_R1", branch_act=None,
+                 ar_r2r4=False, trace=True, trace_cap=4000):
         super().__init__(ea_model, stash, device, dtype)
         assert variant in ("folded", "explicit")
+        assert first_hidden_mode in FIRST_HIDDEN_MODES
         assert nc in NC_MODES, nc
         if nc in ("Rt_on_whole_concat", "gamma_on_embedding"):
             assert variant == "explicit", f"nc={nc} is an explicit-path control"
@@ -198,6 +295,9 @@ class ConcatSelectiveDraftAdapter(VariantAdapter):
         self.variant, self.nc = variant, nc
         self.quant_first, self.quant_recurrent = quant_first, quant_recurrent
         self.quant_ar, self.quant_embed = quant_ar, quant_embed
+        self.quant_embed_act, self.quant_head = quant_embed_act, quant_head
+        self.first_hidden_mode = first_hidden_mode
+        self.branch_act = branch_act
         self.ar_r2r4 = ar_r2r4
         self.name = f"concat_selective_{variant}" + (f"_nc-{nc}" if nc else "")
         W = ra.in_fold(stash["lm_head_weight"].cpu().double(),
@@ -207,6 +307,12 @@ class ConcatSelectiveDraftAdapter(VariantAdapter):
         self.head = head.to(device=device, dtype=dtype)
         for p in self.head.parameters():
             p.requires_grad = False
+        if quant_head != "fp16":
+            hw, ha = QUANT_BITS[quant_head]
+            self.head = fq.FakeW4A4Linear(
+                self.head.weight, None, "draft_lm_head",
+                quant_weight=(hw < 16), quant_act=(ha < 16),
+                w_bits=hw, a_bits=ha).to(device)
         self._cycle = 0
         self._fc_idx = 0
         self._prompt_id = -1
@@ -247,17 +353,26 @@ class ConcatSelectiveDraftAdapter(VariantAdapter):
             new_sd["embed_tokens.weight"] = ra.in_basis_rows(
                 sd["embed_tokens.weight"], R1c).to(sd["embed_tokens.weight"].dtype)
         if self.quant_embed != "fp16":                        # embedding ablation
-            w_bits = 8 if self.quant_embed == "fake_w8a8" else 4
+            w_bits, _ea = QUANT_BITS[self.quant_embed]
+            assert w_bits < 16, "table-weight quant needs w_bits<16; use quant_embed_act for A-only"
             new_sd["embed_tokens.weight"] = fq._weight_fake_quant(
                 new_sd["embed_tokens.weight"], w_bits)
         ea.load_state_dict({k: v.to(ea.fc.weight.dtype) for k, v in new_sd.items()},
                            strict=True)
         ea.to(dev)
+        self._orig_embed = None
+        if self.quant_embed_act != "fp16":
+            _ew, ea_bits = QUANT_BITS[self.quant_embed_act]
+            assert _ew == 16, "use quant_embed for table-weight quantization"
+            self._orig_embed = ea.embed_tokens
+            ea.embed_tokens = EmbedOutputActQuant(ea.embed_tokens,
+                                                  ea_bits).to(dev)
         emb_checksum_before = float(
             ea.embed_tokens.weight.detach().float().abs().sum())
 
         # ---- projection module
-        W_first, W_rec, bias = build_concat_selective_weights(sd, R1c, gc, self.nc)
+        W_first, W_rec, bias = build_concat_selective_weights(
+            sd, R1c, gc, self.nc, first_hidden_mode=self.first_hidden_mode)
         self._orig_fc = ea.fc
         dtype = self._orig_fc.weight.dtype
         self._fc_orig_weight = sd["fc.weight"].to(dev, dtype)
@@ -295,13 +410,18 @@ class ConcatSelectiveDraftAdapter(VariantAdapter):
             lin_f = _make_linear(W_first, bias, dev, dtype)
             lin_r = _make_linear(W_rec, bias, dev, dtype)
             pf, qmeta_f = _maybe_quantize(lin_f, self.quant_first,
-                                          "projection_first_preR", dev)
+                                          "projection_first_preR", dev,
+                                          branch_act=self.branch_act)
             pr_, qmeta_r = _maybe_quantize(lin_r, self.quant_recurrent,
-                                           "projection_recurrent_preR", dev)
+                                           "projection_recurrent_preR", dev,
+                                           branch_act=self.branch_act)
             self.split = ConcatSelectiveProjection(pf, pr_, post_r1, self.nc)
         ea.fc = self.split
-        self.meta_quant = {"projection_first_preR": qmeta_f,
+        self.meta_quant = {"first_hidden_mode": self.first_hidden_mode,
+                           "projection_first_preR": qmeta_f,
                            "projection_recurrent_preR": qmeta_r,
+                           "draft_lm_head": {"mode": self.quant_head},
+                           "embedding_act": {"mode": self.quant_embed_act},
                            "post_projection_R1": {"kernel": "dense fp32 GEMM"},
                            "ar_head": {"mode": self.quant_ar, "r2r4": self.ar_r2r4},
                            "embedding": {"mode": self.quant_embed,
@@ -404,6 +524,9 @@ class ConcatSelectiveDraftAdapter(VariantAdapter):
             del self._orig_ea_forward
         for parent, attr, orig in getattr(self, "_replaced_ar", []):
             setattr(parent, attr, orig)
+        if getattr(self, "_orig_embed", None) is not None:
+            ea.embed_tokens = self._orig_embed
+            self._orig_embed = None
         if hasattr(self, "_orig_fc"):
             ea.fc = self._orig_fc
             del self._orig_fc

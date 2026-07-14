@@ -1,4 +1,6 @@
-cdb54418786abf58d7bb5a281bcf28926ff1efd2
+8a4711c085ecac8ad9efb232140c13dc41cf1c5c
+8a4711c Verification workflow PASS: all audit fixes applied (trace-filter test 12/12 green, report §3/§7/§9/§10 corrected w/ real-vs-fake paired CI -0.078[-0.100,-0.056], fig11 labels, NC variant guards)
+41b5890 CS Gate B PASS (REAL_Q10 3.281 / REAL_Q11 1.0955 / fake cmp 1.1734); VC quantified; final report + figs 11-12
 cdb5441 CS matrix analyzed (arch practically equivalent: Q01 -0.023/Q11 +0.045; first-vs-rec -0.604; embed free +0.006); VC fp16 top-1 1.0; REAL_Q10 3.281 dispatched; report draft + figures 1-10
 8183c32 Concat-selective: CS GATE A PASS (F1=F2=F3=3.7538 token-identical; 6 NCs degrade 100% prompts incl. embedding-rotated 1.51 / orig-PL 2.32 / no-output-R 1.00); matrix+analysis+VC scripts; 5 docs
 9c59d94 Hardening per algebra audit (arch-B-only nc transforms, single-layer precondition, dead assert removed) + fp16-equality nuance in report; verification workflow: PASS

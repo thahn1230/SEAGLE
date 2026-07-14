@@ -330,6 +330,12 @@ QUANT_CFGS = {
     "w4a16": {"w_bits": 4, "a_bits": 16, "k_bits": 16, "v_bits": 16},
     "w4a4": {"w_bits": 4, "a_bits": 4, "k_bits": 16, "v_bits": 16},
     "w4a4kv4": {"w_bits": 4, "a_bits": 4, "k_bits": 4, "v_bits": 4},
+    # bitwidth-AL component-causality study (weight quant auto-skipped when
+    # w_bits==16 via `spec.w_bits < 16`; ActQuantizer no-ops at bits==16)
+    "w8a8": {"w_bits": 8, "a_bits": 8, "k_bits": 16, "v_bits": 16},
+    "w8a16": {"w_bits": 8, "a_bits": 16, "k_bits": 16, "v_bits": 16},
+    "w16a8": {"w_bits": 16, "a_bits": 8, "k_bits": 16, "v_bits": 16},
+    "w16a4": {"w_bits": 16, "a_bits": 4, "k_bits": 16, "v_bits": 16},
 }
 
 ROTATION_COMPONENTS = {

@@ -1,0 +1,54 @@
+=== pwd ===
+/home/thahn1230/eagle_spinquant_w4a4
+=== git? ===
+fatal: not a git repository (or any of the parent directories): .git
+=== third_party git hashes ===
+-- third_party/EAGLE:
+4a9cf3a1f6cd4a294e6d30a4e7c77cba246d7ca5
+v1
+-- third_party/SpinQuant:
+8f47aa3f00e8662caf1a484153920a07e5281c3a
+main
+=== EAGLE branch check (v1?) ===
+choices.py
+cnets.py
+configs.py
+ea_model.py
+__init__.py
+kv_cache.py
+modeling_llama_kv.py
+modeling_mixtral_kv.py
+__pycache__
+utils_alpha.py
+=== loadavg ===
+7.03 8.58 9.98 5/2272 3507633
+=== GPUs ===
+0, NVIDIA GeForce RTX 4090, 0 MiB, 24564 MiB
+1, NVIDIA GeForce RTX 4090, 0 MiB, 24564 MiB
+2, NVIDIA GeForce RTX 4090, 21787 MiB, 24564 MiB
+3, NVIDIA GeForce RTX 4090, 0 MiB, 24564 MiB
+4, NVIDIA GeForce RTX 4090, 0 MiB, 24564 MiB
+5, NVIDIA GeForce RTX 4090, 0 MiB, 24564 MiB
+6, NVIDIA GeForce RTX 4090, 0 MiB, 24564 MiB
+7, NVIDIA GeForce RTX 4090, 0 MiB, 24564 MiB
+=== quarot kernels ===
+benchmarks
+build
+build.log
+CMakeCache.txt
+CMakeFiles
+=== versions ===
+Python 3.12.4
+Build cuda_11.5.r11.5/compiler.30672275_0
+=== pip freeze (key) ===
+accelerate==0.26.0
+datasets==3.5.0
+fast_hadamard_transform @ git+https://github.com/Dao-AILab/fast-hadamard-transform.git@e7706faf8d1c3b9f241e36860640ad1dac644ede
+matplotlib @ file:///croot/matplotlib-suite_1713336378214/work
+matplotlib-inline @ file:///work/perseverance-python-buildout/croot/matplotlib-inline_1698864771271/work
+numpy @ file:///croot/numpy_and_numpy_base_1708638617955/work/dist/numpy-1.26.4-cp312-cp312-linux_x86_64.whl#sha256=1d700f51d8b4fa684d858c9e3b56b1656bc5c82b6b79ff08d4e3b491c430059f
+numpydoc @ file:///croot/numpydoc_1718279157024/work
+pandas @ file:///croot/pandas_1718308974269/work/dist/pandas-2.2.2-cp312-cp312-linux_x86_64.whl#sha256=92c518f7e09edd50b5caa5862636c51d6a29391803f3ada62f68aa52f27d8f92
+scipy @ file:///croot/scipy_1717521478074/work/dist/scipy-1.13.1-cp312-cp312-linux_x86_64.whl#sha256=a60c1bdf983ee297b25e41830d00cc2af50f00bcb47e55578703fef1594ec56e
+torch==2.6.0
+transformers==4.51.3
