@@ -1,8 +1,10 @@
 # Bitwidth → Accepted-Length Component Causality — FINAL REPORT
 
-Status: **IN PROGRESS** — pilot (20×64) + gates complete; final 80×128 matrix
-running; component ablations pending. PRELIMINARY numbers are n=20 pilot
-values; they will be replaced by the 80-prompt final values.
+Status: **COMPLETE** (pending adversarial verification pass) — all phases
+executed: forensics (GATE A), 9-cell validation, pilot 20×64, fixed-tree
+grader, verifier consistency (GATE B), final 80×128 matrix, component
+precision ablations (n=20, 5 groups), distribution capture. Matrix numbers
+are FINAL (80×128); ablation numbers are n=20×64.
 
 - Branch: `exp/eagle1-bitwidth-al-component-causality`
 - Target: meta-llama/Llama-2-7b-chat-hf · Draft: yuhuili/EAGLE-llama2-chat-7B
@@ -176,6 +178,14 @@ dominant e-block (absmax 0.744) quantizes the h-block coarsely.
 Cross-row activation evidence stands: an identical D8 draft loses 1.495 AL
 consuming unrotated h_t vs 0.192 consuming rotated a_t (H7), and
 branchwise scales recover A4 to 91% of stock (Q14).
+
+Activation capture (4 prompts, `distributions/act_channel_absmax.npz`)
+quantifies the mechanism: h_t absmax 80.06 / kurtosis 35.4 / p99.9 11.2 vs
+a_t absmax 4.93 / kurtosis 2.99 / p99.9 3.28 — rotation suppresses the
+hidden outliers 16.2×. The draft embedding output is tiny (absmax 0.134,
+597× below h_t): with one per-token scale over the whole [e|h] concat at
+A4, the e-slice quantizes to ≈0 effective levels — exactly why branchwise
+[Q_e|Q_h] scales recover +1.65 AL.
 
 ### 14. Does branchwise concat quantization recover AL?
 
