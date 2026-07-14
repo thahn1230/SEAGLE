@@ -438,9 +438,7 @@ class ConcatSelectiveDraftAdapter(VariantAdapter):
         # ---- AR-head quantization
         self._replaced_ar = []
         if self.quant_ar != "fp16":
-            w_bits = 8 if self.quant_ar == "fake_w8a8" else 4
-            a_bits = {"fake_w4a16": 16, "fake_w4a4": 4,
-                      "fake_w8a8": 8}[self.quant_ar]
+            w_bits, a_bits = QUANT_BITS[self.quant_ar]
             had_K = (self._ar_meta["had_K"].to(dev)
                      if self._ar_meta.get("had_K") is not None else None)
 
@@ -451,7 +449,7 @@ class ConcatSelectiveDraftAdapter(VariantAdapter):
                     lin.weight, getattr(lin, "bias", None), nm,
                     online_had=online, had_K=had_K if online else None,
                     K=self._ar_meta.get("K") if online else None,
-                    quant_weight=True, quant_act=(a_bits < 16),
+                    quant_weight=(w_bits < 16), quant_act=(a_bits < 16),
                     w_bits=w_bits, a_bits=a_bits).to(dev)
                 setattr(parent, attr, m)
             attn, mlp = ea.layers[0].self_attn, ea.layers[0].mlp
