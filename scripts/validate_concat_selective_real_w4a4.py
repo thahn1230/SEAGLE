@@ -142,11 +142,13 @@ def main():
     from eagle.model.choices import mc_sim_7b_63 as tree_full
     tree = [list(p) for p in tree_full]
 
-    # rotated fp16 target -> swap its 7x32 linears to REAL QuaRot W4A4
-    print("[csreal] building rotated fp16 target ...", flush=True)
+    # rotated fp16 target -> swap its 7x32 linears to REAL QuaRot W4A4.
+    # Rotation 'r1r2' (NOT 'full'): swap_target_linears folds R4 into down_proj
+    # itself; building with 'full' would double-fold R4 (realint4 convention).
+    print("[csreal] building rotated fp16 target (r1r2) ...", flush=True)
     model, stash, _ = study.build_study_target(
         paths["target_path"], paths["draft_path"], cfg["model"]["target"],
-        "full", "random_hadamard", "none", 0, device=dev, rotations_root=rr)
+        "r1r2", "random_hadamard", "none", 0, device=dev, rotations_root=rr)
     tok = eagle_bridge.get_tokenizer(model)
     study.set_draft_tree(model, tree, dev)
     ids_list = [build_prompt(tok, p["text"]).to(dev) for p in prompts]
@@ -170,7 +172,8 @@ def main():
         swapped = realify_draft(adapter, dev) if realify else []
         accs, ok = [], []
         for pi, ids in enumerate(ids_list):
-            adapter.set_context(prompts[pi]["question_id"])
+            if hasattr(adapter, "set_context"):
+                adapter.set_context(prompts[pi]["question_id"])
             eg, deltas = run_gen(model.ea_generate(
                 ids, temperature=0.0, max_steps=args.max_new_tokens + 8,
                 tree_choices=tree), ids.shape[1], args.max_new_tokens)
@@ -187,6 +190,10 @@ def main():
             proof, cov_ok = dispatch_proof(swapped)
             for r in proof:
                 disp_rows.append(dict(config=name, **r))
+            # restore the fp16 modules swapped OUTSIDE the adapter's tracking,
+            # so adapter.uninstall()'s strict load_state_dict succeeds
+            for parent, attr, old, _real in swapped:
+                setattr(parent, attr, old)
         adapter.uninstall()
         res = dict(config=name, mean_acceptance=round(float(np.mean(accs)), 4),
                    exact_match_rate=round(float(np.mean(ok)), 4),

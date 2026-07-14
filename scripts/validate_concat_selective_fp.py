@@ -75,6 +75,8 @@ def verifier_consistency(model, seqs, dev, tag, rows):
         o1 = bm(ids[:, :cut], past_key_values=past, use_cache=True)
         o2 = bm(ids[:, cut:], past_key_values=past, use_cache=True)
         lg_chunk = torch.cat([o1.logits[0].float(), o2.logits[0].float()], 0)
+        del past, _pd, _cl, o1, o2                 # ~2GiB preallocated cache
+        torch.cuda.empty_cache()
 
         past2, _pd2, _cl2 = initialize_past_key_values(bm)
         out = bm(ids[:, :cut], past_key_values=past2, use_cache=True)
@@ -83,6 +85,8 @@ def verifier_consistency(model, seqs, dev, tag, rows):
             out = bm(ids[:, t:t + 1], past_key_values=past2, use_cache=True)
             lg_inc.append(out.logits[0].float())
         lg_inc = torch.cat(lg_inc, 0)
+        del past2, _pd2, _cl2, out
+        torch.cuda.empty_cache()
         sl = slice(cut - 1, T - 1)
         for name, lg in (("chunked_kv", lg_chunk), ("incremental_kv", lg_inc)):
             a, b = lg[sl], lg_full[sl]

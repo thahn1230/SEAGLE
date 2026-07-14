@@ -3,3 +3,7 @@ CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES=6,7 scripts/validate_concat_se
 CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES=6,7 scripts/validate_concat_selective_fp.py --device cuda:0 --num-prompts 8 --max-new-tokens 48
 CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES=6,7 scripts/validate_concat_selective_fp.py --device cuda:0 --num-prompts 8 --max-new-tokens 48
 CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES=6,7 scripts/validate_concat_selective_fp.py --device cuda:0 --num-prompts 8 --max-new-tokens 48
+CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES=6,7 scripts/validate_concat_selective_real_w4a4.py --device cuda:1 --num-prompts 20 --max-new-tokens 64
+CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES=6,7 scripts/validate_concat_selective_real_w4a4.py --device cuda:1 --num-prompts 20 --max-new-tokens 64
+CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES=6,7 scripts/validate_concat_selective_real_w4a4.py --device cuda:1 --num-prompts 20 --max-new-tokens 64
+CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES=6,7 scripts/validate_concat_selective_real_w4a4.py --device cuda:1 --num-prompts 20 --max-new-tokens 64
