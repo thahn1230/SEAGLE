@@ -45,7 +45,7 @@
 
 ## Measured implementation facts
 
-- Commutator: ‖D_γR1 − R1D_γ‖_F / ‖D_γR1‖_F = 0.393 (real R1) — gamma does not
+- Commutator: ‖D_γR1 − R1D_γ‖_F / ‖D_γR1‖_F = 0.0925 (real R1 + real gamma) — gamma does not
   commute; elementwise-γ in the rotated basis is wrong (N2 collapses to 1.04).
 - fc weight structure: 100% of the 4096 output rows attain their absmax in the
   shared EMBEDDING block (mean |w|max 0.308 vs h-block 0.129 first / 0.073

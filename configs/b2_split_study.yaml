@@ -1,0 +1,15 @@
+# B2 split-projection study configuration (see docs/B2_EXPERIMENT_PROTOCOL.md)
+gpus: {cuda_device_order: PCI_BUS_ID, cuda_visible_devices: "6,7", assert_count: 2}
+models:
+  target: meta-llama/Llama-2-7b-chat-hf
+  draft: yuhuili/EAGLE-llama2-chat-7B     # EAGLE v1 @4a9cf3a
+rotation: {type: random_hadamard, seed: 0, r_bin: outputs/rotations/random_hadamard/R.bin}
+decoding: {mode: greedy, temperature: 0.0, tree: mc_sim_7b_63, chat_template: llama2}
+gate_a: {num_prompts: 8, max_new_tokens: 48}
+matrix: {num_prompts: 20, max_new_tokens: 64}
+common_prefix: {num_prompts: 12, max_new_tokens: 64}
+stats: {bootstrap: 10000, ci: 0.95, epsilon: "max(0.05, 1% baseline)", sensitivity: [0.02, 0.05, 0.10]}
+quant:
+  fake: {weights: per_channel_sym_RTN_MSEclip, acts: per_token_asym, via: SpinQuant quant_utils}
+  real_w4a4: {kernel: QuaRot CUTLASS INT4xINT4, weights: per_channel_sym_absmax7, acts: per_token_sym_int4, accum: INT32, kv: fp16}
+  real_w4a16: {kernel: aten._weight_int4pack_mm tinygemm, group: 128, zero_point: asym}
