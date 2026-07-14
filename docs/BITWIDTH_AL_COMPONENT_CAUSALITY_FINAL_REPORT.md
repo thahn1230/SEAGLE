@@ -1,6 +1,8 @@
 # Bitwidth → Accepted-Length Component Causality — FINAL REPORT
 
-Status: **COMPLETE** (pending adversarial verification pass) — all phases
+Status: **COMPLETE** — adversarially verified (23-agent audit workflow;
+17 flagged discrepancies all confirmed and corrected in this revision) —
+all phases
 executed: forensics (GATE A), 9-cell validation, pilot 20×64, fixed-tree
 grader, verifier consistency (GATE B), final 80×128 matrix, component
 precision ablations (n=20, 5 groups), distribution capture. Matrix numbers
@@ -124,7 +126,7 @@ sensitive component" is licensed. Converging evidence:
 (a) **Input dynamic range**: the projection consumes the concat [e|h] whose
 h-slice, in identity mode, is the raw h_t with unsuppressed channel
 outliers; per-token quantization of that input is what W16A8/W16A4 degrade
-(3.40→2.17/1.72 with exact weights). The AR decoder operates after this
+(3.42→2.17/1.72 with exact weights). The AR decoder operates after this
 bottleneck on already-projected states and has R2/R4 rotations applied.
 (b) **Weight dynamic range**: the concat weight's per-channel absmax is
 dominated by the e-block (ratio 2.8–19.9×), and the identity-mode h-block
@@ -149,15 +151,17 @@ full W4A4 on the isolated scoring head (3.43).
 
 ANSWERED (behaviorally): head-only quantization leaves hidden features
 untouched by construction (it is applied only to the isolated scoring
-head), and the resulting AL is statistically at stock for every mode — so
-whatever ranking perturbations it introduces do not alter the accepted
-tree in practice at 7B scale (top-10 candidate margins dominate 4-bit head
-noise).
+head), and the resulting AL stays within 0.04 of the family's best cell
+for every mode (3.39–3.43; paired contrasts are practically equivalent or
+inconclusive, all well inside the ε margin) — so whatever ranking
+perturbations it introduces do not alter the accepted tree in practice at
+7B scale (top-10 candidate margins dominate 4-bit head noise).
 
 ### 12. Does Projection quantization corrupt the complete recurrent trajectory?
 
 ANSWERED: yes. Quantizing ONLY the first projection (one application per
-cycle) already collapses AL to 1.04–2.17 depending on mode; quantizing only
+cycle) already collapses AL to 1.04–2.17 in five of six modes (only
+W8A16 stays at stock, 3.40); quantizing only
 the recurrent projection (applied at depths ≥1) costs less at equal mode
 (1.97–3.40). Depth histograms (`analysis/depth_hist.csv`, fig 04) show D4
 cells lose almost all depth-≥1 acceptances — once the first projected state
@@ -183,7 +187,7 @@ Activation capture (4 prompts, `distributions/act_channel_absmax.npz`)
 quantifies the mechanism: h_t absmax 80.06 / kurtosis 35.4 / p99.9 11.2 vs
 a_t absmax 4.93 / kurtosis 2.99 / p99.9 3.28 — rotation suppresses the
 hidden outliers 16.2×. The draft embedding output is tiny (absmax 0.134,
-597× below h_t): with one per-token scale over the whole [e|h] concat at
+598× below h_t): with one per-token scale over the whole [e|h] concat at
 A4, the e-slice quantizes to ≈0 effective levels — exactly why branchwise
 [Q_e|Q_h] scales recover +1.65 AL.
 
@@ -191,9 +195,9 @@ A4, the e-slice quantizes to ≈0 effective levels — exactly why branchwise
 
 ANSWERED: **yes for activations, decisively.** Per-branch activation scales
 [Q_e(e)|Q_h(h)] at A4 on both projections: 1.4589 (full-concat single
-scale) → 3.1089 (branchwise), +1.650 [1.449, 1.872] — 91% of stock.
+scale) → 3.1089 (branchwise), +1.650 [1.442, 1.869] — 91% of stock.
 At W4A4 it helps but cannot rescue the 4-bit weights: 1.0415 → 1.2104
-(+0.169 [0.135, 0.209]). Branch asymmetry confirmed: quantizing only the
+(+0.169 [0.135, 0.208]). Branch asymmetry confirmed: quantizing only the
 e-branch at A4 is free (3.422), only the h-branch costs (3.145);
 Δ(e-vs-h) ≈ +0.28 in both the fp16- and A8-other-branch variants.
 
@@ -210,8 +214,9 @@ dynamic range.
 ### 16. Does recurrent error accumulate with depth?
 
 ANSWERED: yes — two lines of evidence. (a) Depth histograms: quantized-draft
-cells concentrate mass at accepted-depth 0 (D4 rows: >85% of cycles accept
-zero draft tokens), while stock spreads to depth 4+. (b) Component split:
+cells concentrate mass at accepted-depth 0 (D4 rows: 74–95% of cycles
+accept zero draft tokens — T16_D4 95.2%, T8_D4 73.8%, T4_D4 77.0% — and
+>99% accept at most one), while stock spreads to depth 4+. (b) Component split:
 recurrent-only quantization (applied only at depths ≥1) still costs up to
 −1.45 (W4A4), showing depth-≥1 states are corrupted by repeated projection
 passes even when the first projected state is exact.
@@ -225,11 +230,14 @@ T8_D16 = 3.6076). Under the T16 identity interface it recovers far less
 ### 18. Which component should remain FP16/8-bit in a mixed-precision policy?
 
 ANSWERED: keep the **draft projections (first + recurrent) at ≥8 bits** —
-they are the only components whose quantization below 8 bits collapses AL.
+they are the only components whose quantization collapses AL. Note that
+8 bits is sufficient **only under the rotated a_t interface**: in the
+identity-mode ablation setting, 8-bit activations on the first projection
+already collapse AL (W8A8 = 2.10, W16A8 = 2.17 vs anchor 3.4158).
 Everything else tolerates 4 bits: draft embed/head/AR decoder, target
-embed/head, and (at ~0.4 AL cost) the target body. At 8 bits everything is
-safe: the all-8-bit draft costs −0.19 under a rotated interface and the
-W8A8 target is free.
+embed/head, and (at ~0.4 AL cost) the target body. Under the rotated
+interface, 8 bits everywhere is safe: the all-8-bit draft costs −0.19 and
+the W8A8 target is free.
 
 ### 19. When Target AL increases: benign generosity / flattening / degradation / rank flip / path artifact?
 
@@ -246,7 +254,7 @@ DEGRADED_FALSE_REJECTION 16 (top-1 still in tree; rejected anyway) vs
 STRICTER_ALIGNMENT_LOSS 11 (top-1 left the proposed tree / tree mass fell).
 So both mechanisms occur, false rejections slightly ahead.
 
-### 21. Why did Stock and transformed FP EAGLE differ in AL (3.4158 vs 3.4116)?
+### 21. Why did Stock and transformed FP EAGLE differ in AL (3.4158 vs 3.4116 in the prior non-deterministic run; 3.4134 under deterministic flags)?
 
 ANSWERED (forensics, deterministic settings, 20 prompts): the transform is
 **algebraically exact** — swapping only the two pre-R projections to fp32
@@ -272,8 +280,9 @@ here.
 ### 24. Which conclusions are path-confounded?
 
 GATE B labeling: the **W4A4 target's own verification is partially
-execution-path-sensitive** — cross-shape top-1 agreement 0.84–1.0 (mean
-≈0.92; anchors 0.906–0.911 reproduced) vs 0.97–1.0 (W8A8) and 1.0 (fp16).
+execution-path-sensitive** — cross-shape top-1 agreement 0.75–1.0 (mean
+≈0.91; anchors 0.906–0.911 reproduced; floor 0.75 at prompt 0) vs 0.97–1.0
+(W8A8) and 1.0 (fp16).
 Therefore T4-row live AL values carry a path-sensitivity component and are
 labeled accordingly. The fixed-tree grader results are NOT path-confounded
 (0/189 recheck flips); W8A8-row results are effectively clean.
@@ -283,18 +292,25 @@ labeled accordingly. The fixed-tree grader results are NOT path-confounded
 RECOMMENDATION (fake-quant AL evidence only; no latency claims):
 
 1. **Target W8A8 (rotated, fused): adopt freely** — AL −0.020 (CI includes
-   0), wikitext CE +0.003, verifier path-clean, fixed-tree grading 98.9%
-   unchanged.
+   0), wikitext CE +0.003, verifier effectively path-clean (cross-path
+   top-1 agreement 0.97–1.0; only fp16 is strictly 1.0 — see Q24),
+   fixed-tree grading 98.9% unchanged.
 2. **Target W4A4: acceptable where memory dominates** — costs −0.35 AL
    (~10% of stock) driven by the body's trajectory shift; embedding/head
    need no protection. Label results path-sensitive (Q24).
 3. **Draft: quantize everything EXCEPT the projections to 4 bits for
    free** (embed, scoring head, AR decoder ≤ −0.15). Keep both projections
-   at ≥8 bits; W8A8 projections cost only −0.19 AL when the draft
-   consumes a rotated interface (a_t basis).
+   at ≥8 bits; the all-W8A8 draft (projections plus all other components
+   at 8 bits) costs only −0.19 AL when it consumes a rotated interface
+   (a_t basis). A projections-only rotated-interface cell was not
+   measured, and effects are non-additive, so −0.19 is the whole-draft
+   number — a defensible upper bound for the projections' share given the
+   other components are ~free in the identity-mode ablations.
 4. **Never feed a quantized draft the unrotated h_t** (identity mode):
-   the same W8A8 draft loses 1.50 vs 0.19 — interface basis is the single
-   largest lever in the whole study.
+   the same W8A8 draft loses 1.50 vs 0.19 — a 1.30 AL swing from the
+   interface basis alone, the largest interaction in the bitwidth matrix
+   (the draft-bitwidth axis itself, up to −2.58, and the branchwise-scale
+   contrast, +1.65, are larger absolute deltas).
 5. If A4 activations on the projections are required, use **branchwise
    [e|h] scales** (recovers to 91% of stock at exact weights); 4-bit
    projection *weights* remain the hard floor — no measured mitigation
