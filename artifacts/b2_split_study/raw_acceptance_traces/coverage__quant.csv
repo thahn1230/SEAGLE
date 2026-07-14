@@ -1,0 +1,10 @@
+config,module,mode,n_forward,covered
+Q11_targetW4A4_draftW4A4_B2split,projection_first,fake_w4a4,1119,True
+Q11_targetW4A4_draftW4A4_B2split,projection_recurrent,fake_w4a4,4476,True
+Q11_targetW4A4_draftW4A4_B2split,ar.q_proj,fake_w4a4,5595,True
+Q11_targetW4A4_draftW4A4_B2split,ar.k_proj,fake_w4a4,5595,True
+Q11_targetW4A4_draftW4A4_B2split,ar.v_proj,fake_w4a4,5595,True
+Q11_targetW4A4_draftW4A4_B2split,ar.o_proj,fake_w4a4,5595,True
+Q11_targetW4A4_draftW4A4_B2split,ar.gate_proj,fake_w4a4,5595,True
+Q11_targetW4A4_draftW4A4_B2split,ar.up_proj,fake_w4a4,5595,True
+Q11_targetW4A4_draftW4A4_B2split,ar.down_proj,fake_w4a4,5595,True

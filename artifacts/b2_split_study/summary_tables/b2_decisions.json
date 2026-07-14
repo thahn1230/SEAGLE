@@ -354,5 +354,23 @@
       "target_ppl": 10.627,
       "baseline_target_ppl": 6.945
     }
-  ]
+  ],
+  "direct_component_contrasts": {
+    "first_only_vs_recurrent_only": {
+      "delta": -0.5604,
+      "ci95": [
+        -0.6286,
+        -0.4861
+      ],
+      "decision": "meaningful (first-only worse)"
+    },
+    "first_only_vs_both_proj": {
+      "delta": 0.1377,
+      "ci95": [
+        0.0862,
+        0.1955
+      ],
+      "decision": "meaningful (both worse than first-only)"
+    }
+  }
 }
