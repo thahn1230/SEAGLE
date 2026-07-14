@@ -1,0 +1,5 @@
+CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES=6,7 scripts/run_component_precision_ablation.py --run-dir runs/bwal_comp_final_20260715_0522 --group draft --device cuda:0 --num-prompts 20 --max-new-tokens 64
+CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES=6,7 scripts/run_component_precision_ablation.py --run-dir runs/bwal_comp_final_20260715_0522 --group branch --device cuda:0 --num-prompts 20 --max-new-tokens 64
+CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES=6,7 scripts/run_component_precision_ablation.py --run-dir runs/bwal_comp_final_20260715_0522 --group thead --device cuda:0 --num-prompts 20 --max-new-tokens 64
+CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES=6,7 scripts/run_component_precision_ablation.py --run-dir runs/bwal_comp_final_20260715_0522 --group tembed --device cuda:0 --num-prompts 20 --max-new-tokens 64
+CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES=6,7 scripts/run_component_precision_ablation.py --run-dir runs/bwal_comp_final_20260715_0522 --group tbody --device cuda:0 --num-prompts 20 --max-new-tokens 64

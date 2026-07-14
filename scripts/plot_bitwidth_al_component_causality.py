@@ -187,9 +187,54 @@ def fig_quality(tag):
     save(fig, tag, "08_target_quality")
 
 
+def fig_components(comp_dir, tag, stock_al=3.4158):
+    rows = rd_csv(os.path.join(comp_dir, "analysis", "component_al.csv"))
+    if not rows:
+        return
+    MODES = ["w8a16", "w16a8", "w8a8", "w4a16", "w16a4", "w4a4"]
+    fams = ["draft_embed", "draft_head", "draft_ar", "draft_recurrent",
+            "draft_first", "target_embedding", "target_lm_head",
+            "target_body"]
+    have = {(r["family"], r["mode"]): float(r["al_mean"]) for r in rows}
+    fig, ax = plt.subplots(figsize=(11, 4.6))
+    x = np.arange(len(fams))
+    w = 0.13
+    cmap = plt.get_cmap("viridis")
+    for k, m in enumerate(MODES):
+        vals = [have.get((f, m), np.nan) for f in fams]
+        ax.bar(x + (k - 2.5) * w, vals, w, label=m.upper(),
+               color=cmap(k / (len(MODES) - 1)))
+    ax.axhline(stock_al, color="k", lw=0.8, ls="--")
+    ax.text(len(fams) - 0.4, stock_al + 0.03, "stock fp16", fontsize=8)
+    ax.set_xticks(x, fams, rotation=20, ha="right", fontsize=9)
+    ax.set_ylabel("AL (n=20)")
+    ax.set_title("Single-component precision ablations (all else fp16)")
+    ax.set_ylim(0, 4.0)
+    ax.legend(ncol=3, fontsize=8, loc="lower left")
+    save(fig, tag, "09_component_ablations")
+
+    # branch recovery figure
+    order = ["branch_A_fullconcat_W16A4", "branch_B_branchwise_W16A4",
+             "branch_C_eFP16_hA4", "branch_C_eA4_hFP16",
+             "branch_A_fullconcat_W4A4", "branch_B_branchwise_W4A4"]
+    vals = {r["config"]: float(r["al_mean"]) for r in rows
+            if r["group"] == "branch"}
+    got = [(c, vals[c]) for c in order if c in vals]
+    if got:
+        fig, ax = plt.subplots(figsize=(7, 4))
+        ax.bar([c.replace("branch_", "").replace("_", "\n", 1)
+                for c, _ in got], [v for _, v in got], color="#2c6fbb")
+        ax.axhline(stock_al, color="k", lw=0.8, ls="--")
+        ax.set_ylabel("AL (n=20)")
+        ax.set_title("Branchwise vs full-concat activation quantization")
+        plt.setp(ax.get_xticklabels(), fontsize=8)
+        save(fig, tag, "10_branchwise_recovery")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--run-dir", required=True)
+    ap.add_argument("--comp-dir", default=None)
     args = ap.parse_args()
     os.makedirs(FIG, exist_ok=True)
     rd = args.run_dir.rstrip("/")
@@ -209,6 +254,8 @@ def main():
     fig_grader(tag)
     fig_vc(tag)
     fig_quality(tag)
+    if args.comp_dir:
+        fig_components(args.comp_dir, tag)
     print("[plot] DONE", flush=True)
     return 0
 
