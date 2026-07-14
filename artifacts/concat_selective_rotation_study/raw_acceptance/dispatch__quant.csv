@@ -1,0 +1,3 @@
+config,name,variant,nc,cycles,calls_first,calls_recurrent,post_R1_calls,arch
+Q11_new_targetW4A4_draftW4A4_concat,concat_selective_folded,folded,,56,1080,4320,5400,
+Q11_prevB2_targetW4A4_draftW4A4,B2split_B,,,57,1119,4476,,B

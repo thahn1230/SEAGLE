@@ -1,0 +1,35 @@
+{
+  "stop_gate_b_pass": true,
+  "target_swap": {
+    "replaced_linears": 224,
+    "backend": "quarot_w4a4",
+    "weight_bits": 4,
+    "act_bits": 4,
+    "kv_bits": 16,
+    "post_swap_mem_alloc_gib": 4.26357364654541
+  },
+  "kv_precision": "fp16",
+  "configs": [
+    {
+      "config": "REAL_Q10_targetRealW4A4_draftFP16",
+      "mean_acceptance": 3.281,
+      "exact_match_rate": 0.3,
+      "real_dispatch_ok": true,
+      "n_prompts": 20
+    },
+    {
+      "config": "REAL_Q11_targetRealW4A4_draftRealW4A4_concat",
+      "mean_acceptance": 1.0955,
+      "exact_match_rate": 0.25,
+      "real_dispatch_ok": true,
+      "n_prompts": 20
+    },
+    {
+      "config": "FAKE_Q11cmp_targetRealW4A4_draftFakeW4A4_concat",
+      "mean_acceptance": 1.1734,
+      "exact_match_rate": 0.25,
+      "real_dispatch_ok": true,
+      "n_prompts": 20
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+config,name,variant,nc,cycles,calls_first,calls_recurrent,post_R1_calls,arch
+CS_fp16_baseline,concat_selective_folded,folded,,25,412,1648,2060,
+DQ_first_only_W4A4,concat_selective_folded,folded,,54,966,3864,4830,
+DQ_recurrent_only_W4A4,concat_selective_folded,folded,,37,673,2692,3365,
+DQ_both_proj_W4A4,concat_selective_folded,folded,,56,1037,4148,5185,
+DQ_ar_only_W4A4,concat_selective_folded,folded,,24,424,1696,2120,
+Q01_new_draft_full_W4A4,concat_selective_folded,folded,,56,1046,4184,5230,
+Q01_prevB2_draft_full_W4A4,B2split_B,,,56,1032,4128,,B
+DQ_first_only_W4A16,concat_selective_folded,folded,,35,536,2144,2680,
+DQ_recurrent_only_W4A16,concat_selective_folded,folded,,31,519,2076,2595,
+DQ_embed_only_W4A16,concat_selective_folded,folded,,23,410,1640,2050,
