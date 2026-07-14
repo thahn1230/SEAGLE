@@ -256,6 +256,7 @@ def main():
                    naive_q)
             patch.uninstall()
     else:                                    # tbody: 6 fused builds
+        import gc
         for m in MODES:
             tag = m.replace("fake_", "")
             qname = tag  # QUANT_CFGS key format wXaY
@@ -263,7 +264,9 @@ def main():
             ad = UnrotateAdapter(model, stash, dev, torch.float16,
                                  with_gamma=True)
             run_on(model, stash, f"target_body__{tag}", ad, ids_list, naive)
-            del model
+            # ad/stash/ids/naive keep GPU refs alive -> next 7B build OOMs
+            del ad, model, stash, ids_list, naive
+            gc.collect()
             torch.cuda.empty_cache()
 
     logging_utils.write_csv(os.path.join(rd, "shards",
