@@ -40,37 +40,44 @@ Draft D8/D4 = fake W8A8/W4A4 on both pre-R projections + 7 AR decoder linears
 
 ### 1. What are all nine Target × Draft AL values?
 
-PRELIMINARY (pilot 20×64) — FINAL (80×128) pending:
+FINAL (80 prompts × 128 tokens, greedy MT-bench,
+`runs/bwal_final_20260715_0249` → `artifacts/.../final_matrix/`):
 
 | AL | D16 | D8 | D4 |
 |---|---|---|---|
-| **T16** | 3.4158 | 2.0037 | 1.0393 |
-| **T8** | 3.3922 | 3.2425 | 1.2529 |
-| **T4** | 3.0079 | 2.6915 | 1.2140 |
+| **T16** | 3.6276 | 2.1328 | 1.0500 |
+| **T8** | 3.6076 | 3.4156 | 1.2747 |
+| **T4** | 3.2791 | 2.9881 | 1.2443 |
+
+Pilot (20×64) reproduced the same ordering at a lower scale (3.4158 stock;
+128-token generations have longer easy continuations, raising all cells).
 
 ### 2. Is Target degradation monotonic FP16 → W8A8 → W4A4?
 
-PRELIMINARY: at D16, yes but W8A8 is statistically indistinguishable from
-fp16 (Δ = −0.024, 95% CI [−0.096, +0.043], inconclusive/near-equivalent);
-W4A4 costs −0.408 [−0.564, −0.253]. At D8/D4 the "target effect" is **not**
-monotonic in the raw table (T8_D8 > T16_D8), but those columns confound
-target precision with the draft interface basis (see Q5/Q13).
+FINAL: at D16, yes and ordered — W8A8 is statistically indistinguishable
+from fp16 (Δ = −0.020, 95% CI [−0.064, +0.023], inconclusive/near-
+equivalent); W4A4 costs −0.349 [−0.439, −0.257]. At D8/D4 the raw "target
+effect" is **not** monotonic (T8_D8 = 3.42 > T16_D8 = 2.13: +1.28 [+1.22,
++1.35]), but those columns confound target precision with the draft
+interface basis mandated by the spec's architecture contracts (see Q5/Q13).
 
 ### 3. Is Draft degradation monotonic FP16 → W8A8 → W4A4?
 
-PRELIMINARY: yes in every row. Magnitude depends strongly on the row:
-D8 costs −1.412 under T16 (identity/h_t interface) but only −0.150 under T8
-(gamma_R1/a_t interface). D4 collapses AL to 1.03–1.25 in every row.
+FINAL: yes in every row, all significant. Magnitude depends strongly on the
+row: D8 costs −1.495 [−1.568, −1.426] under T16 (identity/h_t interface)
+but only −0.192 [−0.234, −0.150] under T8 and −0.291 [−0.369, −0.215] under
+T4 (gamma_R1/a_t interface). D4 collapses AL to 1.05–1.27 in every row.
 
 ### 4. Which precision axis is more sensitive?
 
-PRELIMINARY: the **draft axis**, by a wide margin at 4 bits (D4 ≈ −2.2 to
-−2.4 vs T4 ≈ −0.4 at fixed other-axis-fp16). W8A8 is near-free on both axes
-when the interface is rotated (T8_D8 = 3.24 vs 3.42 stock).
+FINAL: the **draft axis**, by a wide margin at 4 bits (D4: −2.58 under T16 /
+−2.33 under T8, vs T4 target: −0.349 at D16). W8A8 is near-free on both axes
+when the interface is rotated (T8_D8 = 3.4156 = 94.2% of stock 3.6276).
 
 ### 5. Are Target and Draft effects additive / sub / super-additive?
 
-PRELIMINARY: strongly **non-additive** (max |interaction| = 1.26 at n=20).
+FINAL: strongly **non-additive** (max |interaction| = 1.30 at n=80;
+18/20 contrasts significant).
 Dominant driver: the interface-basis contract — T16_Dq cells feed the
 draft's first projection the *unrotated* h_t (identity mode), while Tq_Dq
 cells feed rotated a_t, so draft activation quant is far more damaging in
@@ -108,10 +115,11 @@ components measured so far" until embed/head ablations land.
 
 ### 13. Is first-Projection extra damage caused by A4?
 
-PRELIMINARY: pilot adds cross-row evidence: identical D8 draft loses 1.41 AL
-when its first projection consumes unrotated h_t (T16 row) vs 0.15 when it
-consumes rotated a_t (T8 row) — consistent with activation-outlier damage at
-the first projection input (H7). Confirmatory W16A4/W4A16 splits PENDING.
+FINAL cross-row evidence: an identical D8 draft loses 1.495 AL when its
+first projection consumes unrotated h_t (T16 row) vs 0.192 when it consumes
+rotated a_t (T8 row) — consistent with activation-outlier damage at the
+first projection input (H7). Confirmatory W16A4/W4A16 splits PENDING
+(component ablations).
 
 ### 14. Does branchwise concat quantization recover AL? — PENDING (branch group)
 
@@ -121,9 +129,9 @@ the first projection input (H7). Confirmatory W16A4/W4A16 splits PENDING.
 
 ### 17. Does W8A8 recover most of the Draft accuracy?
 
-PRELIMINARY: yes **when the interface is rotated**: T8_D8 = 3.2425 (95.6% of
-T8_D16). Under the T16 identity interface it recovers far less (2.0037 =
-58.7% of T16_D16).
+FINAL: yes **when the interface is rotated**: T8_D8 = 3.4156 (94.7% of
+T8_D16 = 3.6076). Under the T16 identity interface it recovers far less
+(2.1328 = 58.8% of T16_D16).
 
 ### 18. Which component should remain FP16/8-bit in a mixed-precision policy? — PENDING (needs Q6–Q14)
 
