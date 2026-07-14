@@ -1,6 +1,7 @@
-70f22d77c6796ca572be26899e7826ae9b762e6d
+9c59d94922cbec9e3ceb08f032ba347405e26677
+9c59d94 Hardening per algebra audit (arch-B-only nc transforms, single-layer precondition, dead assert removed) + fp16-equality nuance in report; verification workflow: PASS
+25bd616 Report corrections per adversarial audits: exact depth-alphas w/ n, tested first-vs-recurrent/first-vs-both contrasts, honest caveat ranges, FP02 decision wording, CPX class arithmetic 19.1%, per-arm real-INT4 citation
 70f22d7 B2 matrix complete + analysis + figures + final report (all effects meaningful decreases; first-proj most fragile; depth signatures separated; CPX mechanism: overlap 0.706->0.692 target-only, 0.032 draft-quant; correlated gain +0.004)
 acf07a2 B2 gates + matrix + analysis pipeline: STOP GATE B PASS (real QuaRot W4A4 both projections), acceptance matrix runner (Q00 3.416, Q10 3.008, Q01 1.268, Q11 1.169, DQ_first 1.41 vs DQ_recurrent 1.97, AR-only 3.23), common-prefix counterfactual, analysis+plot scripts, protocol docs
 09f534c B2 split projection: module+adapter, 10-file test suite (19 green), STOP GATE A PASS (7B fp16: A-explicit=A-folded=B2split=Mgamma=3.7538 exact; 6 negative controls degrade paired)
 f16a4a7 checkpoint: pre-B2-split state of eagle_spinquant_w4a4 (code+docs only; runs/outputs/third_party excluded — third_party pinned: EAGLE v1 4a9cf3a, SpinQuant 8f47aa3)
-?? artifacts/b2_split_study/git_after.txt
