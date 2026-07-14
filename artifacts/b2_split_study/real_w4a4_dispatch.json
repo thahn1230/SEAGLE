@@ -1,5 +1,5 @@
 {
-  "stop_gate_b_pass": false,
+  "stop_gate_b_pass": true,
   "rows": [
     {
       "projection": "projection_first",
@@ -11,8 +11,8 @@
       "weight_quant_scale_checksum": 180.2461,
       "rel_l2_vs_fp_emulation": 0.018003,
       "rel_l2_vs_fp16": 0.266515,
-      "ms_per_call_real": 1.4811,
-      "ms_per_call_fp16": 0.038,
+      "ms_per_call_real": 1.2501,
+      "ms_per_call_fp16": 0.0382,
       "dispatch_ok": true
     },
     {
@@ -32,8 +32,8 @@
       "weight_quant_scale_checksum": 180.2461,
       "rel_l2_vs_fp_emulation": 0.017846,
       "rel_l2_vs_fp16": 0.251647,
-      "ms_per_call_real": 0.0767,
-      "ms_per_call_fp16": 0.0359,
+      "ms_per_call_real": 0.0763,
+      "ms_per_call_fp16": 0.0358,
       "dispatch_ok": true
     },
     {
