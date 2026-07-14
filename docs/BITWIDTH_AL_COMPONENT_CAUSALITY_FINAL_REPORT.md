@@ -123,7 +123,15 @@ first projection input (H7). Confirmatory W16A4/W4A16 splits PENDING
 
 ### 14. Does branchwise concat quantization recover AL? — PENDING (branch group)
 
-### 15. Is gamma folding responsible for first-weight outliers? — PENDING (distribution capture; prior study: e-block dominates absmax)
+### 15. Is gamma folding responsible for first-weight outliers?
+
+ANSWERED (weight-channel capture, `distributions/weight_channel_absmax.npz`):
+**No.** Folding D_γ·R1 *shrinks* the h-block per-channel absmax (identity
+0.262 → gamma_R1 0.061; recurrent [W_e|W_h·R1] 0.037). The e-block dominates
+per-channel absmax in every mode (0.744; e/h absmax ratio 2.8 identity,
+12.2 gamma_R1, 19.9 recurrent) — confirming the prior finding that the
+embedding slice, not gamma folding, sets the concat projection's weight
+dynamic range.
 
 ### 16. Does recurrent error accumulate with depth? — PENDING (accepted-depth histograms by cell exist; per-depth acceptance decay analysis to come)
 
