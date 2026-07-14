@@ -86,42 +86,106 @@ interaction (spec §2.3 mandates these pairings).
 
 ### 6. Which Target components cause AL loss?
 
-PENDING — component ablations (tbody / thead / tembed groups).
-Fixed-tree evidence so far: on identical trees the W4A4 target re-grades
-only 25.9% of rounds differently with mean Δaccept −0.037; live T4_D16 drop
-is −0.408 ⇒ ~90% of the live target effect is **trajectory-driven** (the
-degraded target commits different tokens, moving the prefix distribution),
-not grading-driven.
+ANSWERED (ablations n=20, stock draft, anchor 3.4158): **entirely the
+transformer body.** Target embedding (3.38–3.46 across all six modes) and
+target LM head (3.37–3.45) are free even at W4A4. Body: W8A16/W8A8/W16A8
+free (3.39–3.43); W4A16 −0.31; W16A4 −0.17; W4A4 −0.41 (sub-additive;
+weight-4-bit slightly heavier than act-4-bit). Cross-check: body-W4A4
+(3.0079) equals the pilot matrix T4_D16 cell exactly.
+Mechanism (fixed-tree grader): on identical trees the W4A4 target re-grades
+only 25.9% of rounds differently with mean Δaccept −0.037; the live drop is
+~10× larger ⇒ ~90% of the live target effect is **trajectory-driven** (the
+degraded target commits different tokens, shifting the prefix distribution
+the draft must continue), not grading-driven.
 
 ### 7. Which Draft components cause AL loss?
 
-PENDING — component ablations (draft group: embed / first / recurrent / AR /
-head × {W8A16, W16A8, W8A8, W4A16, W16A4, W4A4}). Prior studies (carried
-context): first-vs-recurrent W4A4 asymmetry is activation-driven (W4A16
-symmetric); e-block dominates fc per-row absmax 100%.
+ANSWERED (ablations n=20, identity-mode adapter under stock target;
+anchor 3.4158). Single-component AL:
+
+| component | W8A16 | W16A8 | W8A8 | W4A16 | W16A4 | W4A4 |
+|---|---|---|---|---|---|---|
+| embed | 3.42 | 3.42 | 3.44 | 3.41 | 3.42 | 3.41 |
+| head | 3.42 | 3.41 | 3.43 | 3.39 | 3.43 | 3.43 |
+| AR decoder | 3.42 | 3.40 | 3.42 | 3.39 | 3.33 | 3.28 |
+| recurrent proj | 3.40 | 3.26 | 3.27 | 2.61 | 2.20 | 1.97 |
+| **first proj** | 3.40 | 2.17 | 2.10 | **1.28** | 1.72 | **1.04** |
+
+Ordering: **first projection ≫ recurrent projection ≫ AR decoder ≈ head ≈
+embed ≈ 0**. `draft_full__w4a4` (1.039) ≈ matrix T16_D4 (1.050) —
+the full-draft collapse is fully explained by the two projections.
 
 ### 8. Why is the Projection Layer more sensitive than the AR decoder?
 
-PENDING (H1–H8 tests). Note: "Projection is the most sensitive among the
-components measured so far" until embed/head ablations land.
+ANSWERED — with embed/head ablations now included, "Projection is the most
+sensitive component" is licensed. Converging evidence:
+(a) **Input dynamic range**: the projection consumes the concat [e|h] whose
+h-slice, in identity mode, is the raw h_t with unsuppressed channel
+outliers; per-token quantization of that input is what W16A8/W16A4 degrade
+(3.40→2.17/1.72 with exact weights). The AR decoder operates after this
+bottleneck on already-projected states and has R2/R4 rotations applied.
+(b) **Weight dynamic range**: the concat weight's per-channel absmax is
+dominated by the e-block (ratio 2.8–19.9×), and the identity-mode h-block
+(0.262) is 4.3× larger than the folded gamma_R1 h-block (0.061) — 4-bit
+weight grids waste range on e-columns, explaining W4A16 first = 1.28.
+(c) **Single point of failure**: every draft state at every tree depth
+passes through the projection once per token; the AR decoder's error is
+partially absorbed by the head's argmax, but projection error compounds
+through the recurrence (first → recurrent → …).
 
-### 9. How much does the Draft embedding contribute?  — PENDING (ablation)
+### 9. How much does the Draft embedding contribute?
 
-### 10. How much does the Draft LM Head contribute?  — PENDING (ablation)
+ANSWERED: nothing measurable — 3.41–3.44 across all six modes (isolated
+copy quantized; target storage untouched, verified by data_ptr audit).
 
-### 11. Does LM-head quantization change the Draft tree without significantly changing hidden features? — PENDING
+### 10. How much does the Draft LM Head contribute?
 
-### 12. Does Projection quantization corrupt the complete recurrent trajectory? — PENDING (depth-resolved accept + hidden-drift capture)
+ANSWERED: nothing measurable — 3.39–3.43 across all six modes, including
+full W4A4 on the isolated scoring head (3.43).
+
+### 11. Does LM-head quantization change the Draft tree without significantly changing hidden features?
+
+ANSWERED (behaviorally): head-only quantization leaves hidden features
+untouched by construction (it is applied only to the isolated scoring
+head), and the resulting AL is statistically at stock for every mode — so
+whatever ranking perturbations it introduces do not alter the accepted
+tree in practice at 7B scale (top-10 candidate margins dominate 4-bit head
+noise).
+
+### 12. Does Projection quantization corrupt the complete recurrent trajectory?
+
+ANSWERED: yes. Quantizing ONLY the first projection (one application per
+cycle) already collapses AL to 1.04–2.17 depending on mode; quantizing only
+the recurrent projection (applied at depths ≥1) costs less at equal mode
+(1.97–3.40). Depth histograms (`analysis/depth_hist.csv`, fig 04) show D4
+cells lose almost all depth-≥1 acceptances — once the first projected state
+is wrong, deeper draft states are unrecoverable, i.e. the error propagates
+through the whole recurrence rather than averaging out.
 
 ### 13. Is first-Projection extra damage caused by A4?
 
-FINAL cross-row evidence: an identical D8 draft loses 1.495 AL when its
-first projection consumes unrotated h_t (T16 row) vs 0.192 when it consumes
-rotated a_t (T8 row) — consistent with activation-outlier damage at the
-first projection input (H7). Confirmatory W16A4/W4A16 splits PENDING
-(component ablations).
+ANSWERED — **A4 is a large cause but NOT the sole one; under the identity
+interface, W4 weights are even more damaging.** First-projection-only
+splits (n=20, identity mode): W16A4 = 1.72 (activation-only damage) but
+W4A16 = 1.28 (weight-only damage) — both catastrophic, weights worse. This
+refines the prior pure-R1-architecture finding ("asymmetry is
+activation-driven; W4A16 symmetric"): the result is **interface-dependent**.
+In identity mode the h-block weights are 4.3× larger (0.262 vs 0.061
+folded), so a 4-bit per-output-channel grid whose scale is set by the
+dominant e-block (absmax 0.744) quantizes the h-block coarsely.
+Cross-row activation evidence stands: an identical D8 draft loses 1.495 AL
+consuming unrotated h_t vs 0.192 consuming rotated a_t (H7), and
+branchwise scales recover A4 to 91% of stock (Q14).
 
-### 14. Does branchwise concat quantization recover AL? — PENDING (branch group)
+### 14. Does branchwise concat quantization recover AL?
+
+ANSWERED: **yes for activations, decisively.** Per-branch activation scales
+[Q_e(e)|Q_h(h)] at A4 on both projections: 1.4589 (full-concat single
+scale) → 3.1089 (branchwise), +1.650 [1.449, 1.872] — 91% of stock.
+At W4A4 it helps but cannot rescue the 4-bit weights: 1.0415 → 1.2104
+(+0.169 [0.135, 0.209]). Branch asymmetry confirmed: quantizing only the
+e-branch at A4 is free (3.422), only the h-branch costs (3.145);
+Δ(e-vs-h) ≈ +0.28 in both the fp16- and A8-other-branch variants.
 
 ### 15. Is gamma folding responsible for first-weight outliers?
 
@@ -133,7 +197,14 @@ per-channel absmax in every mode (0.744; e/h absmax ratio 2.8 identity,
 embedding slice, not gamma folding, sets the concat projection's weight
 dynamic range.
 
-### 16. Does recurrent error accumulate with depth? — PENDING (accepted-depth histograms by cell exist; per-depth acceptance decay analysis to come)
+### 16. Does recurrent error accumulate with depth?
+
+ANSWERED: yes — two lines of evidence. (a) Depth histograms: quantized-draft
+cells concentrate mass at accepted-depth 0 (D4 rows: >85% of cycles accept
+zero draft tokens), while stock spreads to depth 4+. (b) Component split:
+recurrent-only quantization (applied only at depths ≥1) still costs up to
+−1.45 (W4A4), showing depth-≥1 states are corrupted by repeated projection
+passes even when the first projected state is exact.
 
 ### 17. Does W8A8 recover most of the Draft accuracy?
 
@@ -141,7 +212,14 @@ FINAL: yes **when the interface is rotated**: T8_D8 = 3.4156 (94.7% of
 T8_D16 = 3.6076). Under the T16 identity interface it recovers far less
 (2.1328 = 58.8% of T16_D16).
 
-### 18. Which component should remain FP16/8-bit in a mixed-precision policy? — PENDING (needs Q6–Q14)
+### 18. Which component should remain FP16/8-bit in a mixed-precision policy?
+
+ANSWERED: keep the **draft projections (first + recurrent) at ≥8 bits** —
+they are the only components whose quantization below 8 bits collapses AL.
+Everything else tolerates 4 bits: draft embed/head/AR decoder, target
+embed/head, and (at ~0.4 AL cost) the target body. At 8 bits everything is
+safe: the all-8-bit draft costs −0.19 under a rotated interface and the
+W8A8 target is free.
 
 ### 19. When Target AL increases: benign generosity / flattening / degradation / rank flip / path artifact?
 
@@ -190,7 +268,27 @@ Therefore T4-row live AL values carry a path-sensitivity component and are
 labeled accordingly. The fixed-tree grader results are NOT path-confounded
 (0/189 recheck flips); W8A8-row results are effectively clean.
 
-### 25. Final recommended Target/Draft/component precision policy? — PENDING (synthesis after ablations)
+### 25. Final recommended Target/Draft/component precision policy?
+
+RECOMMENDATION (fake-quant AL evidence only; no latency claims):
+
+1. **Target W8A8 (rotated, fused): adopt freely** — AL −0.020 (CI includes
+   0), wikitext CE +0.003, verifier path-clean, fixed-tree grading 98.9%
+   unchanged.
+2. **Target W4A4: acceptable where memory dominates** — costs −0.35 AL
+   (~10% of stock) driven by the body's trajectory shift; embedding/head
+   need no protection. Label results path-sensitive (Q24).
+3. **Draft: quantize everything EXCEPT the projections to 4 bits for
+   free** (embed, scoring head, AR decoder ≤ −0.15). Keep both projections
+   at ≥8 bits; W8A8 projections cost only −0.19 AL when the draft
+   consumes a rotated interface (a_t basis).
+4. **Never feed a quantized draft the unrotated h_t** (identity mode):
+   the same W8A8 draft loses 1.50 vs 0.19 — interface basis is the single
+   largest lever in the whole study.
+5. If A4 activations on the projections are required, use **branchwise
+   [e|h] scales** (recovers to 91% of stock at exact weights); 4-bit
+   projection *weights* remain the hard floor — no measured mitigation
+   rescues W4 projections (best 1.28).
 
 ## Gate log
 
