@@ -97,7 +97,7 @@ def main():
             k_asym=True, v_asym=True, k_groupsize=128, v_groupsize=128,
             k_clip_ratio=1.0, v_clip_ratio=1.0,
             int8_down_proj=False, nsamples=128, percdamp=0.01,
-            act_order=False, seed=0,
+            act_order=False, seed=0, fp32_had=False, k_pre_rope=False,
             capture_layer_io=False, layer_idx=0, load_qmodel_path=None,
             save_qmodel_path=None, export_to_et=False)
         ma = SimpleNamespace(input_model=CHAT, access_token=None)
