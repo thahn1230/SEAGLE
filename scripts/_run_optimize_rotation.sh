@@ -16,7 +16,7 @@ LOGD="$ROOT/artifacts/spinquant_ppl_reproduction_fix/logs"
 mkdir -p "$LOGD" "$OUTD"
 cd "$ROOT/third_party/SpinQuant"
 MASTER_PORT=$((28500 + RANDOM % 1000))
-torchrun --nnodes=1 --nproc_per_node=1 --master_port=$MASTER_PORT optimize_rotation.py \
+torchrun --nnodes=1 --nproc_per_node=${NPROC:-1} --master_port=$MASTER_PORT optimize_rotation.py \
   --input_model "$MODEL" \
   --output_rotation_path "$OUTD" \
   --output_dir "$OUTD/out/" \
@@ -26,7 +26,7 @@ torchrun --nnodes=1 --nproc_per_node=1 --master_port=$MASTER_PORT optimize_rotat
   --bf16 True \
   --log_on_each_node False \
   --per_device_train_batch_size 1 \
-  --gradient_accumulation_steps 8 \
+  --gradient_accumulation_steps ${ACCUM:-8} \
   --logging_steps 1 \
   --learning_rate 1.5 \
   --weight_decay 0. \

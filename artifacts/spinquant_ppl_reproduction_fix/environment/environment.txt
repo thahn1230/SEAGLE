@@ -56,3 +56,8 @@ the pinned venv ran without CUDA_VISIBLE_DEVICES set and created a transient
 CUDA context on a non-permitted GPU (default device). No computation beyond a
 4x8 tensor; no memory retained. All subsequent GPU commands explicitly export
 CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES=6.
+POLICY CHANGE 2026-07-15 ~15:30 (explicit user instruction, verbatim): "0~5번도
+다 사용해서 빠르게 학습 진행해" — GPUs 0-5 authorized for this study's
+training/eval workloads. All were verified idle (nvidia-smi 0 MiB) before use.
+Allocation: GPUs 0-3 chat rotation DDP training (nproc 4 x accum 2 = official
+global batch 8); GPU 4 base seed sweep; GPU 5 chat seed sweep; GPU 6 eval queue.
