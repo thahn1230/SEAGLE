@@ -1,0 +1,9 @@
+model,fp16_ce,config,ce_delta
+base,1.69922,base_rh0_rtn_w4a4kv16,0.37284
+base,1.69922,base_learned_rtn_w4a4kv16,0.12488
+base,1.69922,base_learned_gptq_w4a4kv16,0.22634
+base,1.69922,base_learned_gptq_actorder,0.22265
+base,1.69922,base_learned_gptq_noclip,0.36044
+chat,1.93805,chat_rh0_rtn_w4a4kv16_official,0.42537
+chat,1.93805,chat_rh0_rtn_w4a4kv16_inprocess,0.41574
+chat,1.93805,chat_rh0_rtn_w4a4kv16_OLD_prefix_metric,0.39664

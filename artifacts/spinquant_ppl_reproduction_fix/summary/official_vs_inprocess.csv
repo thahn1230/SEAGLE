@@ -1,0 +1,5 @@
+aspect,result
+transformed_weight_hashes,451/451 identical
+quantizer_config_diffs,0
+ppl_official_contract,"10.6272 (ptq.py) vs 10.5254 (in-process), dCE 0.0096"
+activation_drift,rel-L2 0.025->0.05 by depth; max_abs = A4 grid steps (kernel noise amplification)
