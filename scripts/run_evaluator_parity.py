@@ -121,9 +121,14 @@ def main():
             ce_diff_shared=round(abs(ce_projS - ce_off), 6),
             token_sha=hashlib.sha256(
                 toks.numpy().tobytes()).hexdigest()[:16])
-        del model; torch.cuda.empty_cache()
-    with open(os.path.join(OUT, "evaluator_parity_summary.json"), "w") as f:
-        json.dump(summary, f, indent=2)
+        del fwd, model    # fwd closure retains the model -> OOM on next load
+        torch.cuda.empty_cache()
+        # write incrementally so a later-model crash keeps earlier results
+        sp = os.path.join(OUT, "evaluator_parity_summary.json")
+        merged = json.load(open(sp)) if os.path.exists(sp) else {}
+        merged.update(summary)
+        with open(sp, "w") as f:
+            json.dump(merged, f, indent=2)
     print(json.dumps(summary, indent=2), flush=True)
     print("[parity] DONE", flush=True)
     return 0
