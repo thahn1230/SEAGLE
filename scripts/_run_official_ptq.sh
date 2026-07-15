@@ -6,6 +6,11 @@
 set -euo pipefail
 export CUDA_DEVICE_ORDER=PCI_BUS_ID
 export CUDA_VISIBLE_DEVICES=${CVD_OVERRIDE:-6}
+export NCCL_P2P_DISABLE=1
+export NCCL_IB_DISABLE=1
+# pinned SpinQuant stack (transformers 4.44.2) if built
+VENV=/data/thahn1230/envs/spinquant/bin
+[ -x "$VENV/torchrun" ] && PATH="$VENV:$PATH"
 MODEL="$1"; TAG="$2"; shift 2
 ROOT=/home/thahn1230/eagle_spinquant_w4a4
 LOGD="$ROOT/artifacts/spinquant_ppl_reproduction_fix/logs"

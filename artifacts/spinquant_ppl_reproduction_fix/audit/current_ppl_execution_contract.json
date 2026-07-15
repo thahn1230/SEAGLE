@@ -1,0 +1,49 @@
+{
+  "source_commit": "b44152d",
+  "source_function": "scripts/run_fixed_tree_target_grader.py::wikitext_ce",
+  "checkpoint": "/home/thahn1230/.cache/huggingface/hub/models--meta-llama--Llama-2-7b-chat-hf/snapshots/f5db02db724555f92da89c216ac04704f23d4590",
+  "model_id": "meta-llama/Llama-2-7b-chat-hf",
+  "model_impl": "eagle.model.modeling_llama_kv.KVLlamaForCausalLM (EAGLE-vendored 4.31-era, eager attention)",
+  "dataset": "wikitext-2-raw-v1 split=test via datasets.load_dataset",
+  "text_join": "\\n\\n",
+  "n_tokens_policy": "first 32768 tokens of the concatenated test set (PREFIX SUBSAMPLE, not the full ~288k-token set)",
+  "window_policy": "stride 2048, window 2049 (overlap 1): every token in [1, 32767] predicted exactly once; global per-token mean (denominator 32767)",
+  "boundary": "cross-window boundary token used as context via 1-token overlap; no window-mean reweighting",
+  "use_cache": "model config default (not disabled); no past passed",
+  "dtype": "float16 weights, fp32 loss accumulation",
+  "tf32": {
+    "matmul": false,
+    "cudnn": true
+  },
+  "kv_quant": "fp16 (KV16)",
+  "gpu_deviation": "physical GPU 7 absent; CVD=6",
+  "quant_recipe": {
+    "weights": "per-output-channel symmetric RTN + MSE clip (SpinQuant WeightQuantizer, w_clip)",
+    "acts": "per-token asymmetric, reduction over final dim only",
+    "rotation": "random Hadamard seed 0 (R1 + per-layer R2 folded; R4 online where configured)",
+    "quant_cfg": "{'w_bits': 4, 'a_bits': 4, 'k_bits': 16, 'v_bits': 16}"
+  },
+  "reproduction": {
+    "fp16": {
+      "ce": 1.92539,
+      "ppl": 6.8578,
+      "n_tokens": 32767
+    },
+    "rh0_w4a4": {
+      "ce": 2.33469,
+      "ppl": 10.3263,
+      "n_tokens": 32767
+    }
+  },
+  "original_values": {
+    "fp16": {
+      "ce": 1.92539,
+      "ppl": 6.8578
+    },
+    "rh0_w4a4": {
+      "ce": 2.33469,
+      "ppl": 10.3263
+    },
+    "n_tokens": 32767
+  }
+}

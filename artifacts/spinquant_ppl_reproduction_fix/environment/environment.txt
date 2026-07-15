@@ -51,3 +51,8 @@ Build cuda_11.5.r11.5/compiler.30672275_0
 ---
 Python 3.12.4
 GPU DEVIATION 2026-07-15: physical GPU 7 absent from bus (indices 0-6 only); running with CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES=6 per spec section 0
+DEVIATION 2026-07-15 ~12:00: a 1-second fast_hadamard_transform smoke test in
+the pinned venv ran without CUDA_VISIBLE_DEVICES set and created a transient
+CUDA context on a non-permitted GPU (default device). No computation beyond a
+4x8 tensor; no memory retained. All subsequent GPU commands explicitly export
+CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES=6.
