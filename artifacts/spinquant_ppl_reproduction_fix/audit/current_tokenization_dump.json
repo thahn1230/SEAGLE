@@ -1,0 +1,30 @@
+{
+  "tokenizer_class": "LlamaTokenizerFast",
+  "name_or_path": "/home/thahn1230/.cache/huggingface/hub/models--meta-llama--Llama-2-7b-chat-hf/snapshots/f5db02db724555f92da89c216ac04704f23d4590",
+  "add_bos_token": true,
+  "add_eos_token": false,
+  "bos_id": 1,
+  "eos_id": 2,
+  "total_test_tokens": 341469,
+  "used_tokens": 32768,
+  "first_16_ids": [
+    1,
+    29871,
+    13,
+    13,
+    353,
+    4755,
+    350,
+    5059,
+    357,
+    353,
+    29871,
+    13,
+    13,
+    13,
+    13,
+    13
+  ],
+  "ids_sha": "e2f1dcf463c4149c",
+  "bos_prepended": true
+}

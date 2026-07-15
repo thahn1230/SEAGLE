@@ -1,4 +1,3 @@
-cat > make_bitwidth_al_review_bundle.sh <<'BASH'
 #!/usr/bin/env bash
 set -euo pipefail
 
@@ -419,7 +418,3 @@ echo "tar:  PASS"
 echo
 echo "Upload this file:"
 realpath "$OUT"
-BASH
-
-chmod +x make_bitwidth_al_review_bundle.sh
-./make_bitwidth_al_review_bundle.sh
