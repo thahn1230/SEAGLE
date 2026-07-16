@@ -107,13 +107,19 @@ def main():
     ap.add_argument("--num-prompts", type=int, default=20)
     ap.add_argument("--max-new-tokens", type=int, default=64)
     ap.add_argument("--cells", default=None, help="comma list; default all in group")
+    ap.add_argument("--rotation-kind", default="random_hadamard",
+                    help="R.bin selector: 'random_hadamard' (seed 0) or a "
+                         "named dir under rotations_root, e.g. "
+                         "'learned_chat_w4a4kv16'")
     args = ap.parse_args()
     torch.set_grad_enabled(False)
-    assert os.environ.get("CUDA_VISIBLE_DEVICES") == "6,7"
-    # NOTE 2026-07-15: physical GPU 7 dropped off the bus mid-study (nvidia-smi
-    # shows indices 0-6 only). CVD stays "6,7" per the hard constraint; we run
-    # on the remaining visible device (cuda:0 = physical 6) and never touch
-    # 0-5. Documented in the final report as a hardware deviation.
+    # NOTE 2026-07-15: physical GPU 7 dropped off the bus. Original policy was
+    # CVD="6,7"; on 2026-07-15 the user explicitly authorized GPUs 0-5 as well
+    # (recorded in spinquant_ppl_reproduction_fix/environment/environment.txt),
+    # so any single permitted GPU is now accepted.
+    assert os.environ.get("CUDA_VISIBLE_DEVICES") in \
+        ("6,7", "0", "1", "2", "3", "4", "5", "6"), \
+        os.environ.get("CUDA_VISIBLE_DEVICES")
     assert torch.cuda.device_count() in (1, 2), torch.cuda.device_count()
     if torch.cuda.device_count() == 1:
         print("[gpu] WARNING: physical GPU 7 absent; running on physical GPU 6 only", flush=True)
@@ -136,11 +142,18 @@ def main():
 
     rotation, quant = GROUP_TARGET[args.group]
     print(f"[3x3] target {rotation}/{quant} on {dev} ...", flush=True)
-    model, stash, _ = study.build_study_target(
+    model, stash, r_bin_used = study.build_study_target(
         paths["target_path"], paths["draft_path"], cfg["model"]["target"],
-        rotation, "random_hadamard", quant, 0, device=dev, rotations_root=rr)
+        rotation, args.rotation_kind, quant, 0, device=dev,
+        rotations_root=rr)
+    if r_bin_used is not None:
+        import hashlib
+        _R = torch.load(r_bin_used, map_location="cpu", weights_only=False)
+        _h = hashlib.sha256(_R["R1"].float().numpy().tobytes()).hexdigest()[:12]
+        print(f"[3x3] rotation_kind={args.rotation_kind} r_bin={r_bin_used} "
+              f"R1_sha={_h}", flush=True)
     if args.group == "stock":
-        R = torch.load(study.r_bin_path("random_hadamard", 0,
+        R = torch.load(study.r_bin_path(args.rotation_kind, 0,
                                         paths["target_path"], rr),
                        map_location="cpu", weights_only=False)
         stash["R1"] = R["R1"].clone()
