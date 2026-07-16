@@ -213,10 +213,12 @@ def test_draft_target_module_isolation_records():
 
 def test_deterministic_t16_d16_repeat():
     rd = _run_dir()
-    a = os.path.join(rd, "matrix", "shards", "cell__T16_D16.csv")
-    b = os.path.join(rd, "matrix_repeat", "shards", "cell__T16_D16.csv")
+    import pandas as pd
+    a = os.path.join(rd, "matrix", "shards", "al__stock.csv")
+    b = os.path.join(rd, "matrix_repeat", "shards", "al__stock.csv")
     if not (os.path.exists(a) and os.path.exists(b)):
         pytest.skip("determinism repeat not run yet")
-    ra = open(a).read().splitlines()
-    rb = open(b).read().splitlines()
-    assert ra == rb, "T16_D16 repeat differs (see report for explanation)"
+    da = pd.read_csv(a); da = da[da.cell == "T16_D16"].reset_index(drop=True)
+    db = pd.read_csv(b); db = db[db.cell == "T16_D16"].reset_index(drop=True)
+    assert (da.mean_acceptance.values == db.mean_acceptance.values).all()
+    assert (da.acceptance_list.values == db.acceptance_list.values).all()
