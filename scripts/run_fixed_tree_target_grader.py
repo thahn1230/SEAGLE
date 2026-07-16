@@ -181,11 +181,17 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--device", default="cuda:0")
     ap.add_argument("--num-prompts", type=int, default=12)
+    ap.add_argument("--rotation-kind", default="random_hadamard")
+    ap.add_argument("--out-suffix", default="",
+                    help="artifact subdir suffix, e.g. '_learned'")
     args = ap.parse_args()
     torch.set_grad_enabled(False)
-    assert os.environ.get("CUDA_VISIBLE_DEVICES") == "6,7"
+    assert os.environ.get("CUDA_VISIBLE_DEVICES") in \
+        ("6,7", "0", "1", "2", "3", "4", "5", "6")
     assert torch.cuda.device_count() in (1, 2)
     dev = "cuda:0"
+    global ART
+    ART = ART + args.out_suffix
     os.makedirs(ART, exist_ok=True)
     thr = yaml.safe_load(open(os.path.join(
         PROJECT_ROOT, "configs", "target_grader_thresholds.yaml")))
@@ -203,7 +209,8 @@ def main():
     print("[grader] stage 1: stock target, caching trees ...", flush=True)
     model, stash, _ = study.build_study_target(
         paths["target_path"], paths["draft_path"], cfg["model"]["target"],
-        "none", "random_hadamard", "none", 0, device=dev, rotations_root=rr)
+        "none", args.rotation_kind, "none", 0, device=dev,
+        rotations_root=rr)
     tok = eagle_bridge.get_tokenizer(model)
     study.set_draft_tree(model, tree, dev)
     # EaModel keeps tree buffers on the model for the utils path.
@@ -239,7 +246,7 @@ def main():
         print(f"[grader] stage 2: target {tprec} ...", flush=True)
         model, stash, _ = study.build_study_target(
             paths["target_path"], paths["draft_path"], cfg["model"]["target"],
-            "full", "random_hadamard", quant, 0, device=dev,
+            "full", args.rotation_kind, quant, 0, device=dev,
             rotations_root=rr)
         study.set_draft_tree(model, tree, dev)
         model.tree_buffers = generate_tree_buffers(tree, dev)

@@ -24,13 +24,19 @@ TARGETS = (("fp16", "none", "none"),
 
 def main():
     torch.set_grad_enabled(False)
-    assert os.environ.get("CUDA_VISIBLE_DEVICES") == "6,7"
+    assert os.environ.get("CUDA_VISIBLE_DEVICES") in \
+        ("6,7", "0", "1", "2", "3", "4", "5", "6")
     # NOTE 2026-07-15: physical GPU 7 dropped off the bus mid-study; run on
     # the remaining visible device (cuda:0 = physical 6). GPUs 0-5 untouched.
     assert torch.cuda.device_count() in (1, 2), torch.cuda.device_count()
     if torch.cuda.device_count() == 1:
         print("[vc] WARNING: physical GPU 7 absent; using physical GPU 6", flush=True)
     dev = sys.argv[1] if len(sys.argv) > 1 else "cuda:0"
+    rotation_kind = sys.argv[2] if len(sys.argv) > 2 else "random_hadamard"
+    out_suffix = sys.argv[3] if len(sys.argv) > 3 else ""
+    global ART
+    ART = ART + out_suffix
+    os.makedirs(ART, exist_ok=True)
     cfg = experiment.load_config(None); paths = experiment.resolve_paths(cfg)
     rr = cfg.get("paths", {}).get("rotations_root")
     build_prompt = eagle_bridge.PROMPT_BUILDERS[cfg.get("model", {}).get("chat_template", "llama2")]
@@ -42,7 +48,7 @@ def main():
         print(f"[vc] building {tag} target ...", flush=True)
         model, stash, _ = study.build_study_target(
             paths["target_path"], paths["draft_path"], cfg["model"]["target"],
-            rot, "random_hadamard", q, 0, device=dev, rotations_root=rr)
+            rot, rotation_kind, q, 0, device=dev, rotations_root=rr)
         tok = eagle_bridge.get_tokenizer(model)
         study.set_draft_tree(model, tree, dev)
         seqs = []
