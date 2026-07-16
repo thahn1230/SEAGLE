@@ -113,9 +113,14 @@ def main():
     ap.add_argument("--device", default="cuda:1")
     ap.add_argument("--num-prompts", type=int, default=20)
     ap.add_argument("--max-new-tokens", type=int, default=64)
+    ap.add_argument("--rotation-kind", default="random_hadamard")
+    ap.add_argument("--out-suffix", default="")
     args = ap.parse_args()
+    global ART
+    ART = ART + args.out_suffix
     torch.set_grad_enabled(False)
-    assert os.environ.get("CUDA_VISIBLE_DEVICES") == "6,7"
+    assert os.environ.get("CUDA_VISIBLE_DEVICES") in \
+        ("6,7",) + tuple(str(i) for i in range(7))
     # NOTE 2026-07-15: physical GPU 7 dropped off the bus mid-study (nvidia-smi
     # shows indices 0-6 only). CVD stays "6,7" per the hard constraint; we run
     # on the remaining visible device (cuda:0 = physical 6) and never touch
@@ -143,8 +148,8 @@ def main():
     print("[forensic] building STOCK target ...", flush=True)
     model, stash, _ = study.build_study_target(
         paths["target_path"], paths["draft_path"], cfg["model"]["target"],
-        "none", "random_hadamard", "none", 0, device=dev, rotations_root=rr)
-    R = torch.load(study.r_bin_path("random_hadamard", 0, paths["target_path"], rr),
+        "none", args.rotation_kind, "none", 0, device=dev, rotations_root=rr)
+    R = torch.load(study.r_bin_path(args.rotation_kind, 0, paths["target_path"], rr),
                    map_location="cpu", weights_only=False)
     stash["R1"] = R["R1"].clone()
     stash["gamma_f"] = model.base_model.model.norm.weight.detach().float().cpu().clone()

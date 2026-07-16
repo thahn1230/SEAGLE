@@ -281,7 +281,8 @@ class ConcatSelectiveDraftAdapter(VariantAdapter):
                  quant_first="fp16", quant_recurrent="fp16", quant_ar="fp16",
                  quant_embed="fp16", quant_embed_act="fp16", quant_head="fp16",
                  first_hidden_mode="gamma_R1", branch_act=None,
-                 ar_r2r4=False, trace=True, trace_cap=4000):
+                 embed_scale_alpha=None, ar_r2r4=False, trace=True,
+                 trace_cap=4000):
         super().__init__(ea_model, stash, device, dtype)
         assert variant in ("folded", "explicit")
         assert first_hidden_mode in FIRST_HIDDEN_MODES
@@ -298,6 +299,11 @@ class ConcatSelectiveDraftAdapter(VariantAdapter):
         self.quant_embed_act, self.quant_head = quant_embed_act, quant_head
         self.first_hidden_mode = first_hidden_mode
         self.branch_act = branch_act
+        # P3 exact reparameterization: draft-only E' = alpha*E and
+        # W_e' = W_e/alpha in BOTH projection slices (FP function unchanged)
+        self.embed_scale_alpha = embed_scale_alpha
+        if embed_scale_alpha is not None:
+            assert embed_scale_alpha > 0
         self.ar_r2r4 = ar_r2r4
         self.name = f"concat_selective_{variant}" + (f"_nc-{nc}" if nc else "")
         W = ra.in_fold(stash["lm_head_weight"].cpu().double(),
@@ -352,6 +358,10 @@ class ConcatSelectiveDraftAdapter(VariantAdapter):
         if self.nc == "embedding_rotated":                    # F4 control
             new_sd["embed_tokens.weight"] = ra.in_basis_rows(
                 sd["embed_tokens.weight"], R1c).to(sd["embed_tokens.weight"].dtype)
+        if self.embed_scale_alpha is not None:               # P3: E' = alpha*E
+            new_sd["embed_tokens.weight"] = (
+                new_sd["embed_tokens.weight"].float()
+                * self.embed_scale_alpha).to(new_sd["embed_tokens.weight"].dtype)
         if self.quant_embed != "fp16":                        # embedding ablation
             w_bits, _ea = QUANT_BITS[self.quant_embed]
             assert w_bits < 16, "table-weight quant needs w_bits<16; use quant_embed_act for A-only"
@@ -407,6 +417,11 @@ class ConcatSelectiveDraftAdapter(VariantAdapter):
             qmeta_f = qmeta_r = dict(kernel="explicit fp32 slice ops",
                                      weight_bits=16, act_bits=16)
         else:
+            if self.embed_scale_alpha is not None:            # P3: W_e' = W_e/alpha
+                D = W_first.shape[1] // 2
+                W_first = W_first.clone(); W_rec = W_rec.clone()
+                W_first[:, :D] = W_first[:, :D] / self.embed_scale_alpha
+                W_rec[:, :D] = W_rec[:, :D] / self.embed_scale_alpha
             lin_f = _make_linear(W_first, bias, dev, dtype)
             lin_r = _make_linear(W_rec, bias, dev, dtype)
             pf, qmeta_f = _maybe_quantize(lin_f, self.quant_first,
@@ -418,6 +433,7 @@ class ConcatSelectiveDraftAdapter(VariantAdapter):
             self.split = ConcatSelectiveProjection(pf, pr_, post_r1, self.nc)
         ea.fc = self.split
         self.meta_quant = {"first_hidden_mode": self.first_hidden_mode,
+                           "embed_scale_alpha": self.embed_scale_alpha,
                            "projection_first_preR": qmeta_f,
                            "projection_recurrent_preR": qmeta_r,
                            "draft_lm_head": {"mode": self.quant_head},
@@ -430,7 +446,8 @@ class ConcatSelectiveDraftAdapter(VariantAdapter):
                                                    else "original")}}
 
         # embedding-unchanged assertion (primary architecture only)
-        if self.nc != "embedding_rotated" and self.quant_embed == "fp16":
+        if self.nc != "embedding_rotated" and self.quant_embed == "fp16" \
+                and self.embed_scale_alpha is None:
             orig_sum = float(sd["embed_tokens.weight"].float().abs().sum())
             assert abs(emb_checksum_before - orig_sum) / orig_sum < 1e-3, \
                 "embedding slice was modified — forbidden in primary architecture"

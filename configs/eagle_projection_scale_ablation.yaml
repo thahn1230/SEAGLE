@@ -1,0 +1,31 @@
+# Study C: projection input scale separation + embedding scaling (P0-P3),
+# projection-only context first, then transfer to full-draft W4A4.
+# P1 = shared per-token asymmetric scale over concat([e,h]) (FakeW4A4Linear)
+# P2 = independent per-token scales per slice (BranchwiseActLinear),
+#      identical W4 weight quantization
+# P3 = exact reparameterization e'=alpha*e, W_e'=W_e/alpha, then the SAME
+#      shared-scale quantizer as P1 (alpha from embedding_alpha_sweep,
+#      calibrated on non-MT-bench prompts; 'auto' reads alpha_selected.json)
+study: eagle_projection_scale_ablation
+configs:
+  projection_FP16:
+    kwargs: {}
+  projection_W4A4_shared_scale:
+    kwargs: {quant_first: fake_w4a4, quant_recurrent: fake_w4a4}
+  projection_W4A4_separate_e_h_scales:
+    kwargs: {quant_first: fake_w4a4, quant_recurrent: fake_w4a4}
+    branch_act: [4, 4]
+  projection_W4A4_embedding_scaled_shared_scale:
+    kwargs: {quant_first: fake_w4a4, quant_recurrent: fake_w4a4}
+    embed_scale_alpha: auto
+  full_draft_W4A4_with_baseline_projection:
+    kwargs: {quant_first: fake_w4a4, quant_recurrent: fake_w4a4,
+             quant_ar: fake_w4a4, ar_r2r4: true}
+  full_draft_W4A4_with_separate_scales:
+    kwargs: {quant_first: fake_w4a4, quant_recurrent: fake_w4a4,
+             quant_ar: fake_w4a4, ar_r2r4: true}
+    branch_act: [4, 4]
+  full_draft_W4A4_with_embedding_scaled:
+    kwargs: {quant_first: fake_w4a4, quant_recurrent: fake_w4a4,
+             quant_ar: fake_w4a4, ar_r2r4: true}
+    embed_scale_alpha: auto

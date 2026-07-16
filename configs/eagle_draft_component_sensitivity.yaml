@@ -1,0 +1,28 @@
+# Study B: draft component-wise W4A4 sensitivity (run under target fp16 AND
+# target w4a4 via --target). Draft embedding/LM head are draft-isolated
+# copies (Gate D verified per config). "W4A4 embedding" = W4 table + A4
+# embedding output (token IDs never quantized).
+study: eagle_draft_component_sensitivity
+configs:
+  draft_all_FP16:
+    kwargs: {}
+  draft_embedding_only_W4A4:
+    kwargs: {quant_embed: fake_w4a16, quant_embed_act: fake_w16a4}
+  draft_projection_first_only_W4A4:
+    kwargs: {quant_first: fake_w4a4}
+  draft_projection_recurrent_only_W4A4:
+    kwargs: {quant_recurrent: fake_w4a4}
+  draft_projection_all_W4A4:
+    kwargs: {quant_first: fake_w4a4, quant_recurrent: fake_w4a4}
+  draft_AR_head_only_W4A4:
+    kwargs: {quant_ar: fake_w4a4, ar_r2r4: true}
+  draft_LM_head_only_W4A4:
+    kwargs: {quant_head: fake_w4a4}
+  draft_full_policy_W4A4:
+    kwargs: {quant_first: fake_w4a4, quant_recurrent: fake_w4a4,
+             quant_ar: fake_w4a4, ar_r2r4: true}
+  # diagnostic subcases (not primary results)
+  diag_embedding_weightonly_W4A16:
+    kwargs: {quant_embed: fake_w4a16}
+  diag_embedding_output_only_A4:
+    kwargs: {quant_embed_act: fake_w16a4}

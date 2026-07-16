@@ -1,0 +1,31 @@
+# Study A: the nine mandatory target/draft precision cells (learned chat
+# rotation for every quantized target; W8A8 uses the SAME rotation).
+# Executed by scripts/run_target_draft_3x3_matrix.py
+#   --rotation-kind learned_chat_w4a4kv16 (groups stock/t8/t4).
+# Draft policy (historical, preserved):
+#   draft_proj+AR_W{b}A{b}_embedding_FP16_lmhead_FP16
+study: eagle_learned_rotation_precision_matrix
+rotation_kind: learned_chat_w4a4kv16
+evaluator:
+  prompts: mt_bench_80
+  seed: 0
+  temperature: 0.0
+  max_new_tokens: 128
+  tree: mc_sim_7b_63
+  kv_cache: fp16
+cells:
+  T16_D16: {target_bits: 16, draft_bits: 16, interface: stock}
+  T16_D8:  {target_bits: 16, draft_bits: 8,  interface: identity}
+  T16_D4:  {target_bits: 16, draft_bits: 4,  interface: identity}
+  T8_D16:  {target_bits: 8,  draft_bits: 16, interface: unrotate_A}
+  T8_D8:   {target_bits: 8,  draft_bits: 8,  interface: gamma_R1}
+  T8_D4:   {target_bits: 8,  draft_bits: 4,  interface: gamma_R1}
+  T4_D16:  {target_bits: 4,  draft_bits: 16, interface: unrotate_A}
+  T4_D8:   {target_bits: 4,  draft_bits: 8,  interface: gamma_R1}
+  T4_D4:   {target_bits: 4,  draft_bits: 4,  interface: gamma_R1}
+target_quant:
+  method: official_spinquant_rtn
+  w_clip: true
+  act: per_token_asymmetric
+  gptq: false
+  kv: fp16
