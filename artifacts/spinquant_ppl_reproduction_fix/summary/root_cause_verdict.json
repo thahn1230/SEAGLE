@@ -5,11 +5,11 @@
   "quantified_decomposition": {
     "total_old_ce_delta_official_contract": 0.4158,
     "evaluator_contract_effect_ce": -0.0126,
-    "evaluator_note": "prefix-32k subsample -0.0111 + BOS -0.0012; loss math exact <=1e-4 (GATE B)",
+    "evaluator_note": "prefix-32k subsample -0.0111 + BOS -0.0012 + harness residual ~-0.0003 (torchrun vs in-process ~2e-4, shared-token aggregation ~1e-4); loss math exact <=1e-4 (GATE B)",
     "pipeline_implementation_effect_ce": 0.0096,
     "pipeline_note": "GATE D: 451/451 transformed weights bit-identical to official ptq_model; PPL 10.5254 vs 10.6272",
     "random_seed_effect": "none: seed 0 BELOW the 10-seed chat median (10.63 vs median 11.04, range 10.43-12.95)",
-    "rotation_learned_vs_random_ce": -0.4128,
+    "rotation_learned_vs_random_ce": -0.4228,
     "rotation_note": "chat learned-RTN W4A4KV16 = 6.9629 (+0.0026 vs FP16 6.9452) vs rh0 10.6272 (+0.4254)",
     "rtn_vs_gptq": "not a factor: released-code GPTQ is WORSE than RTN (chat 8.46, base 6.86); paper GPTQ 5.9 not reproducible from released code",
     "base_vs_chat_fragility_ce": 0.052,

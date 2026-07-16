@@ -1,6 +1,7 @@
 # SpinQuant PPL Reproduction & Fix — FINAL REPORT
 
-Status: **COMPLETE** (pending adversarial verification pass) — all phases
+Status: **COMPLETE** — adversarially verified (29-agent audit; 23 flagged
+discrepancies all confirmed and corrected in this revision) — all phases
 executed: contract audit, official reproduction (Gates A–D), 10-seed sweep,
 chat rotation training (100 steps, official recipe, 4-GPU), recipe
 ablations, corrected EAGLE matrix + fixed-tree grader + verifier
@@ -20,15 +21,15 @@ random-Hadamard RTN model is never labeled as the paper pipeline.
 
 | config | PPL | CE | Δ CE vs own FP16 |
 |---|---|---|---|
-| base FP16 | 5.4697 (2× bit-identical) | 1.6990 | — |
-| base rh0-RTN W4A4KV16 | 7.9412 | 2.0721 | +0.3730 |
-| base learned-RTN W4A4KV16 (official artifact) | **6.1972** | 1.8241 | **+0.1250** |
-| base learned-GPTQ W4A4KV16 | 6.8590 | 1.9256 | +0.2265 |
+| base FP16 | 5.4697 (2× bit-identical) | 1.6992 | — |
+| base rh0-RTN W4A4KV16 | 7.9412 | 2.0721 | +0.3728 |
+| base learned-RTN W4A4KV16 (official artifact) | **6.1972** | 1.8241 | **+0.1249** |
+| base learned-GPTQ W4A4KV16 | 6.8590 | 1.9256 | +0.2263 |
 | base learned-GPTQ +act_order | 6.8337 | — | — |
 | base learned-GPTQ no-clip | 7.8433 | — | — |
 | chat FP16 | 6.9452 | 1.9380 | — |
 | chat rh0-RTN W4A4KV16 (official ptq.py) | 10.6272 | 2.3634 | +0.4254 |
-| chat rh0-RTN W4A4KV16 (in-process build) | 10.5254 | 2.3538 | +0.4158 |
+| chat rh0-RTN W4A4KV16 (in-process build) | 10.5254 | 2.3538 | +0.4157 |
 | chat learned-RTN W4A4KV16 | **6.9629** | 1.9406 | **+0.0026** |
 | chat learned-GPTQ W4A4KV16 | 8.4600 | 2.1353 | +0.1973 |
 | chat learned-RTN W8A8KV16 | 6.9491 | 1.9386 | +0.0006 |
@@ -49,12 +50,14 @@ contract gives 10.5254.
 ### 2. Does the custom evaluator match the official SpinQuant evaluator?
 
 YES on the same tokens (loss math exact): with aggregation compared on a
-shared token tensor the CE difference is ≤1.0e-4 (chat 9.0e-5, base
-1.0e-4). The custom evaluator's headline numbers differed from official
+shared token tensor the CE difference is ≤1.0e-4 (chat 9.3e-5, base
+9.8e-5 from the per-window CSVs; the rounded summary-JSON fields read
+9.0e-5 / 1.0e-4). The custom evaluator's headline numbers differed from official
 because of CONTRACT, not math: (a) it scored only the first 32,768 tokens
 of the test set (chat effect −0.0111 CE, base −0.0097), (b) its tokenizer
-prepended BOS (−0.0012). The EAGLE-vendored model implementation is
-logit-equivalent to stock HF (CE Δ 5e-5). Corrected evaluator: the
+prepended BOS (chat −0.0012; base +0.0004 — small and model-specific). The EAGLE-vendored model implementation matches
+stock HF at the aggregate-CE level on the 32k-prefix contract (CE Δ 5e-5,
+separate runs); per-position logits were not compared. Corrected evaluator: the
 official contract (`official_ppl.py`), verified against torchrun ptq.py
 (Δ≈2e-4, dtype-limited). All new target-quality claims use it; old numbers
 are relabeled "32k-prefix metric".
@@ -82,9 +85,9 @@ release-code/version difference. The corrected pipeline therefore uses
 FP16 baselines: base 5.4697 vs chat 6.9452 (CE +0.2389) — the raw
 "10.33 vs 5.9" comparison was invalid on this ground alone. Under
 identical rh0-RTN quantization the chat model degrades slightly more:
-ΔCE +0.4254 (chat) vs +0.3730 (base), i.e. chat-specific extra fragility
+ΔCE +0.4254 (chat) vs +0.3728 (base), i.e. chat-specific extra fragility
 ≈ +0.05 nats under random rotations. With per-model learned rotations the
-ordering inverts on wikitext (chat +0.0026 vs base +0.1250) — but both
+ordering inverts on wikitext (chat +0.0026 vs base +0.1249) — but both
 learned numbers are in-distribution for their rotations (Q12 caveat), so
 the robust statement is: model choice contributes ≈0.24 nats of FP16
 baseline shift plus ≈0.05 nats of random-rotation fragility; it is NOT the
@@ -93,7 +96,7 @@ main cause of the 10.33-vs-5.9 confusion.
 ### 6. How much is caused by random versus learned rotation?
 
 The dominant factor on both models. Base (official artifact): learned
-−0.2480 nats vs random seed 0 (7.9412 → 6.1972). Chat (our training,
+−0.2482 nats vs random seed 0 (7.9412 → 6.1972). Chat (our training,
 official recipe): learned −0.4228 nats (10.6272 → 6.9629) — ~99% of the
 chat delta. Wikitext-in-distribution caveat applies to the absolute size
 (Q12); the direction and dominance are unambiguous.
@@ -111,22 +114,30 @@ YES — GATE D: all 451 transformed (post-fake-quant) weight matrices have
 bit-identical SHA256 between the in-process build and official ptq_model
 on the same checkpoint + R.bin; 0 quantizer-config differences; PPL on the
 official contract 10.5254 vs 10.6272 (ΔCE 0.0096, <1%). Residual per-layer
-activation drift (rel-L2 0.025→0.05 through the stack, max_abs equal to
-quantization grid steps) is fp16 kernel noise between the two Llama
-implementations amplified at A4 bucket boundaries — not a transform error.
+activation drift compounds through the stack: rel-L2 ~0.006 (layer 01) →
+0.05 (layer 16) → ~0.45–0.48 at layers 30–31/final_norm/logits (max_abs up
+to 11.2 at logits; early-layer max_abs values equal A4 grid steps). Given
+bit-identical transformed weights, identical quantizer configs, and the
+<1% same-config PPL agreement, this drift is attributed to fp16 kernel
+noise between the two Llama implementations amplified and compounded at A4
+bucket boundaries — not a transform error — but the terminal magnitude is
+noted rather than dismissed.
 
 ### 9. Are R1, R2 and online Hadamard transformations applied correctly?
 
 YES by construction-equality: bit-identical transformed weights across all
 451 modules (embeddings, Q/K/V/O with R1/R2 folding, MLP, head) prove the
 rotation application (including gamma fusion and head rotation) matches
-official exactly. Online-Hadamard (R4) settings are identical in the
-quantizer-config diff (0 differences).
+official exactly. The quantizer-config diff (0 differences) does not directly
+cover the online-Hadamard (R4) flags (they live on the ActQuantWrapper
+modules, not the dumped quantizer objects); R4 parity is supported
+indirectly by the bit-identical downstream weights and the <1% same-config
+PPL agreement.
 
 ### 10. Is activation clipping/asymmetry faithful to the paper?
 
 The in-process activation quantizers carry identical configs to official
-ptq_model (a_asym=True, per-token, a_clip_ratio=1.0, groupsize −1); the
+ptq_model (a_asym=True, per-token, a_clip_ratio=1.0; groupsize −1 everywhere except the 32 o_proj input quantizers at groupsize 128 = head_dim, i.e. per-token-per-head, identical in both pipelines); the
 official code applies no activation clip search at eval (ratio 1.0), and
 the project matches it. (The paper text's clipping discussion concerns
 weights — w_clip MSE search — which both pipelines apply identically.)
@@ -167,10 +178,13 @@ same learned R1 for the draft transforms, 80×128 greedy MT-bench):
 | T8 | 3.6040 | 3.4113 | 1.2712 |
 | T4 | 3.3394 | 2.9428 | 1.2557 |
 
-Deltas vs the random-Hadamard control are within cross-run noise (stock
-anchor moved +0.015 across runs/GPUs) except T4_D16 (+0.060, a small real
-improvement at most); max |interaction| 1.3006 vs 1.3028; 18/20 contrasts
-significant in both. **A ~3.7-PPL wikitext improvement in the W4A4 target
+Deltas vs the random-Hadamard control are within the study's own noise
+margin (equivalence eps 0.05; for scale, the all-FP16 stock anchor itself
+moved +0.015 across runs/GPUs) except T4_D16 (+0.060, a small real
+improvement at most). T4-row live AL remains path-sensitivity-confounded
+even under the learned target (re-measured: cross-path W4A4 top-1
+agreement 0.9062–1.0 vs fp16 = 1.0). Max |interaction| 1.3006 vs 1.3028;
+18/20 contrasts significant in both. **A ~3.7-PPL wikitext improvement in the W4A4 target
 translated into ≤0.06 AL on MT-bench** — target-side PPL is not predictive
 of EAGLE acceptance (fig 06), because the AL loss is trajectory-driven and
 MT-bench is out-of-distribution for the wikitext-trained rotation.
@@ -196,9 +210,13 @@ signature again; recorded, not celebrated.)
   "random-Hadamard control, seed 0" — GATE D proved that pipeline faithful
   to the official transform for that configuration).
 - The evaluator's CE math (GATE B) and every RELATIVE comparison computed
-  on the same 32k-prefix metric (both ends biased identically).
-- Prior anchors: verifier top-1 path sensitivity, forensics results —
-  untouched by this study.
+  on the same 32k-prefix metric (both ends biased in the same direction —
+  ~−0.01 CE each — though not exactly identically).
+- Prior anchors: forensics results — untouched. Verifier path
+  sensitivity was RE-MEASURED under the learned W4A4 target
+  (verifier_consistency_learned/): still partially path-sensitive
+  (top-1 0.9062–1.0), so the path-confounded label on T4-row live results
+  carries over to the corrected matrix.
 
 ### 17. Which old results must be retracted or relabeled?
 
@@ -234,7 +252,9 @@ evaluation** — staged in-repo and wired via `--rotation-kind`. Rationale:
 - **GATE C** PASS-via-RTN: learned-RTN reproduces paper; released-code
   GPTQ gap documented (6.83–6.86 vs paper 5.9) — not project-caused.
 - **GATE D** PASS: 451/451 weight hashes identical; 0 config diffs;
-  PPL Δ<1% same-config; kernel-noise-only activation drift.
+  PPL Δ<1% same-config; activation drift (compounding to rel-L2 ~0.47 at
+  the last layers) attributed to A4-amplified fp16 kernel noise on the
+  strength of the weight/config/PPL evidence.
 
 ## Execution deviations
 
