@@ -53,9 +53,9 @@ resamples, seed 0.
 | T16_D16 | 3.6276 | 2.6276 | [3.528, 3.728] | — | exact_match 0.925 |
 | T16_D8 | 2.1299 | 1.1299 | [2.080, 2.181] | −1.498 [−1.573, −1.426] | identity interface |
 | T16_D4 | 1.0463 | 0.0463 | [1.040, 1.053] | −2.581 [−2.681, −2.483] | identity interface |
-| T8_D16 | 3.6040 | 2.6040 | [3.498, 3.710] | −0.024 [−0.073, +0.026] | ≈ free |
-| T8_D8 | 3.4113 | 2.4113 | [3.315, 3.509] | −0.216 [−0.273, −0.157] | |
-| T8_D4 | 1.2712 | 0.2712 | [1.258, 1.284] | −2.356 [−2.453, −2.262] | |
+| T8_D16 | 3.6040 | 2.6040 | [3.498, 3.710] | −0.024 [−0.073, +0.026] | ≈ free (AL); path-sensitive† (exact_match 0.575) |
+| T8_D8 | 3.4113 | 2.4113 | [3.315, 3.509] | −0.216 [−0.273, −0.157] | path-sensitive† (exact_match 0.4625) |
+| T8_D4 | 1.2712 | 0.2712 | [1.258, 1.284] | −2.356 [−2.453, −2.262] | path-sensitive† (exact_match 0.4875) |
 | T4_D16 | 3.3394 | 2.3394 | [3.240, 3.439] | −0.288 [−0.374, −0.204] | path-sensitive† |
 | T4_D8 | 2.9428 | 1.9428 | [2.860, 3.028] | −0.685 [−0.766, −0.605] | path-sensitive† |
 | T4_D4 | 1.2557 | 0.2557 | [1.241, 1.272] | −2.372 [−2.469, −2.278] | path-sensitive† |
@@ -64,8 +64,9 @@ resamples, seed 0.
 partially execution-path-sensitive (cross-path top-1 0.906–1.0); its
 naive-vs-EAGLE exact_match ≈ 0 in this study is that phenomenon (both
 outputs are valid greedy trajectories of the same quantized model on
-different execution paths), not an output-preservation bug — T16/T8 rows
-show exact_match 0.90–0.94.
+different execution paths), not an output-preservation bug — T16 rows show exact_match 0.925–0.9375,
+while T8 (W8A8-target) rows show an intermediate degree of the same
+phenomenon (exact_match 0.46–0.58; milder than W4A4's ≈0).
 
 Full per-prompt/per-cycle data: `precision_matrix_per_prompt.csv`,
 `precision_matrix_per_cycle.parquet`; extended §7.1 metrics (acceptance
@@ -117,9 +118,10 @@ Full-draft W4A4 transfer:
 Reconstruction (calibration NMSE, `projection_scale_reconstruction__*.csv`):
 P1 shared alpha=1 NMSE ≫ P2 separate > P3 at chosen α (objective 0.246
 identity / 0.072 gamma_R1); the alpha sweep
-(`embedding_alpha_sweep__*.csv`) shows a wide flat optimum around 2^5–2^6,
-mirroring the measured e-vs-h range ratio (~600× under identity h_t;
-~37× under gamma_R1 a_t; `activation_distribution_stats__*.csv`).
+(`embedding_alpha_sweep__*.csv`) shows a wide flat optimum per mode (within ~8% over 2^5–2^6 under
+identity; within ~4% over 2^4.75–2^5.5 under gamma_R1), mirroring the
+measured h-vs-e absmax ratio (~308× under identity h_t; ~20× under
+gamma_R1 a_t, first path; `activation_distribution_stats__*.csv`).
 
 Why P3 ≫ P2: separate activation scales fix only the input quantization;
 the reparameterization additionally divides the e-block weight columns by
@@ -127,7 +129,7 @@ the reparameterization additionally divides the e-block weight columns by
 (w_e/w_h absmax ratio ~2.8–19.9 → ~α-fold smaller), so the SAME W4 budget
 finally resolves the h-block weights. The draft probe agrees: top-1
 agreement vs the FP16 draft is 0.125 (P1) / 0.25 (P2) / 0.625 (P3),
-KL 0.177 / 0.141 / 0.036 (small-n diagnostic, 16 contexts).
+KL 0.177 / 0.141 / 0.036 (small-n diagnostic, 8 contexts).
 
 ## 14.5 Interpretation (required questions)
 
@@ -143,7 +145,7 @@ KL 0.177 / 0.141 / 0.036 (small-n diagnostic, 16 contexts).
 5. **Does separate slice scaling solve it?** No — partial recovery only
    (1.25/2.08). Activation scales are not the binding constraint at W4.
 6. **Can exact embedding scaling recover most of the benefit with a shared
-   scale?** Yes: 85–97% of the projection-only reference and 82–92% of the
+   scale?** Yes: 85–97% of the projection-only reference and 81–92% of the
    full-draft reference, with CIs excluding the baselines by wide margins.
 7. **Is scalar scaling sufficient under asymmetric quantization?** Yes —
    P3 (one shared scale + one shared zero point after α) beats P2
@@ -151,17 +153,19 @@ KL 0.177 / 0.141 / 0.036 (small-n diagnostic, 16 contexts).
    weight-grid geometry it fixes matters more; independent zero points are
    not necessary once ranges are matched.
 8. **Does the fix survive full-draft W4A4?** Yes: 1.046→2.956 (fp16) and
-   1.256→3.052 (w4a4); the residual gap to the fp16 draft (~0.3-0.7)
-   is the AR-head + recurrent-residual damage, not the projection.
+   1.256→3.052 (w4a4); the residual gap to the fp16 draft (~0.3–0.7)
+   is still predominantly remaining projection damage under target fp16
+   (projection-only P3 already shows −0.56 of the −0.67 full-draft gap);
+   the AR head adds only ~−0.1.
 9. **Recommended deployment configuration**: learned-rotation target
-   (W8A8 free; W4A4 at −0.29 AL with path-sensitivity label) + draft
+   (W8A8 free in AL but partially path-sensitive; W4A4 at −0.29 AL, strongly path-sensitive) + draft
    full-policy W4A4 **with the α-folded projection reparameterization**
    (α per interface mode, zero runtime cost — folded into E' and W');
    embedding and LM head may be quantized freely (≈0 effect). If maximum
    AL is required, keep the draft projections at ≥8 bit (T8_D8 = 3.411).
 
 No "solves" claim is made for P3: it recovers most but not all AL
-(residual −0.56 [CI −0.66, −0.47] vs the fp16-draft reference under
+(residual −0.56 [CI −0.61, −0.50] vs the fp16-draft reference under
 target fp16), with quality diagnostics (probe, exact_match on T16 row)
 supporting that the recovered acceptances are genuine draft-quality
 improvements, not verifier degradation.
@@ -169,8 +173,10 @@ improvements, not verifier degradation.
 ## Stop gates
 
 - **Gate A (provenance)**: PASS — commit 731e2c1 base; learned rotation
-  sha256 recorded; no random-Hadamard artifact loaded (runner logs the
-  resolved R.bin path + R1 hash `ee63bf94ecd5` on every build); GPTQ
+  sha256 recorded; no random-Hadamard artifact loaded (the 3×3 matrix runner logs the
+  resolved R.bin path + R1 hash `ee63bf94ecd5` on its rotated builds; all
+  other rotated builds resolve the same named `learned_chat_w4a4kv16/R.bin`
+  via `r_bin_path`, which raises on a missing named rotation); GPTQ
   disabled; w_clip on; KV FP16.
 - **Gate B (rotated FP16 equivalence)**: PASS — stock vs learned-rotation
   FP16 target: greedy 8/8 identical 64-token continuations, prefill top-1
@@ -201,5 +207,5 @@ per-cycle acceptance lists bit-identical.
   ONE global folded scalar as specified.
 - W4A4-target rows carry the established path-sensitivity label; their
   exact_match-vs-naive ≈ 0 is expected under that label.
-- Draft-agreement probe uses 16 contexts (directional diagnostic only).
+- Draft-agreement probe uses 8 contexts (directional diagnostic only).
 - All results are fake-quant; no real-kernel latency claims.
