@@ -83,13 +83,20 @@ FP16 baselines: base 5.4697 vs chat 6.9452 (CE +0.2389) — the raw
 "10.33 vs 5.9" comparison was invalid on this ground alone. Under
 identical rh0-RTN quantization the chat model degrades slightly more:
 ΔCE +0.4254 (chat) vs +0.3730 (base), i.e. chat-specific extra fragility
-≈ +0.05 nats. Learned-rotation transfer will refine this (PENDING).
+≈ +0.05 nats under random rotations. With per-model learned rotations the
+ordering inverts on wikitext (chat +0.0026 vs base +0.1250) — but both
+learned numbers are in-distribution for their rotations (Q12 caveat), so
+the robust statement is: model choice contributes ≈0.24 nats of FP16
+baseline shift plus ≈0.05 nats of random-rotation fragility; it is NOT the
+main cause of the 10.33-vs-5.9 confusion.
 
 ### 6. How much is caused by random versus learned rotation?
 
-On base (only model with the official learned artifact so far): learned
-−0.2480 nats vs random seed 0 (7.9412 → 6.1972). This is the single
-largest identified factor. Chat-specific number PENDING training.
+The dominant factor on both models. Base (official artifact): learned
+−0.2480 nats vs random seed 0 (7.9412 → 6.1972). Chat (our training,
+official recipe): learned −0.4228 nats (10.6272 → 6.9629) — ~99% of the
+chat delta. Wikitext-in-distribution caveat applies to the absolute size
+(Q12); the direction and dominance are unambiguous.
 
 ### 7. How much is caused by RTN versus GPTQ?
 
