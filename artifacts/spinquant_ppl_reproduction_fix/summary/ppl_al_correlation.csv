@@ -1,0 +1,5 @@
+target,ppl_official,live_al_d16,fixed_tree_mean_delta,fixed_tree_unchanged
+rh0 W8A8,,3.6076,0.0053,0.9894
+learned W8A8,6.9491,3.604,0.0053,0.9947
+rh0 W4A4,10.6272,3.2791,-0.037,0.7407
+learned W4A4,6.9629,3.3394,-0.0265,0.7672

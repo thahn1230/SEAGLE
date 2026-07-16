@@ -1,7 +1,11 @@
 # SpinQuant PPL Reproduction & Fix — FINAL REPORT
 
-Status: **IN PROGRESS** — Gates A–D resolved; chat learned-rotation training
-running (ETA ~03:45); corrected EAGLE matrix pending.
+Status: **COMPLETE** (pending adversarial verification pass) — all phases
+executed: contract audit, official reproduction (Gates A–D), 10-seed sweep,
+chat rotation training (100 steps, official recipe, 4-GPU), recipe
+ablations, corrected EAGLE matrix + fixed-tree grader + verifier
+consistency. §11 layerwise localization SKIPPED by its own precondition
+(the properly-configured learned W4A4 PPL, 6.9629, is not excessive).
 
 Branch `exp/eagle1-spinquant-ppl-reproduction-fix`. Vendored SpinQuant
 8f47aa3 (untouched), EAGLE 4a9cf3a. Official evaluator = torchrun ptq.py
@@ -25,7 +29,9 @@ random-Hadamard RTN model is never labeled as the paper pipeline.
 | chat FP16 | 6.9452 | 1.9380 | — |
 | chat rh0-RTN W4A4KV16 (official ptq.py) | 10.6272 | 2.3634 | +0.4254 |
 | chat rh0-RTN W4A4KV16 (in-process build) | 10.5254 | 2.3538 | +0.4158 |
-| chat learned-RTN / learned-GPTQ | PENDING (training) | | |
+| chat learned-RTN W4A4KV16 | **6.9629** | 1.9406 | **+0.0026** |
+| chat learned-GPTQ W4A4KV16 | 8.4600 | 2.1353 | +0.1973 |
+| chat learned-RTN W8A8KV16 | 6.9491 | 1.9386 | +0.0006 |
 
 Paper anchors (base): FP16 ≈5.5 ✓ reproduced; learned-RTN ≈6.1 ✓ reproduced;
 learned-GPTQ ≈5.9 ✗ not reproduced by the released code (see Q4/Q7).
@@ -125,13 +131,56 @@ NO. 10-seed sweep (official recipe + evaluator): chat 10.43–12.95
 Base 7.63–8.49 (median 7.83), seed 0 = 7.94 (typical).
 Hypothesis C rejected.
 
-### 12. What is the corrected W4A4KV16 PPL for Llama-2-7b-chat-hf? — PENDING (chat learned rotation, ETA 03:45)
+### 12. What is the corrected W4A4KV16 PPL for Llama-2-7b-chat-hf?
 
-### 13. What is the corrected CE delta relative to chat FP16? — PENDING
+**6.9629** (official evaluator; chat-specific learned SpinQuant rotation,
+official 800-sample/100-step recipe reproduced on 4 GPUs with global batch
+8, RTN + w_clip). GPTQ variant: 8.4600 (released-code GPTQ gap, as on
+base). W8A8KV16 control: 6.9491.
+CAVEAT (in-distribution): the rotation is Cayley-optimized on wikitext-2
+TRAIN with W4A4 in the loop, so wikitext PPL is in-distribution for the
+rotation; W4A16 under the same rotation scores BELOW FP16 (6.3034 vs
+6.9452), a QAT-overfit signature. Out-of-distribution behavior is measured
+by the corrected EAGLE matrix (Q14).
 
-### 14. Does correcting the target pipeline change the 3×3 AL matrix? — PENDING (Phase 10 rerun with learned R1/R2)
+### 13. What is the corrected CE delta relative to chat FP16?
 
-### 15. Does it change the "generous versus degraded" conclusion? — PENDING (fixed-tree grader rerun)
+**+0.00255 nats/token** (ln(6.9629/6.9452)), vs +0.4254 for the
+random-Hadamard control — the learned rotation removes ~99% of the
+wikitext CE delta. Same caveat as Q12.
+
+### 14. Does correcting the target pipeline change the 3×3 AL matrix?
+
+**No — statistically unchanged.** Corrected (learned-rotation targets,
+same learned R1 for the draft transforms, 80×128 greedy MT-bench):
+
+| AL | D16 | D8 | D4 |
+|---|---|---|---|
+| T16 | 3.6427 | 2.1493 | 1.0455 |
+| T8 | 3.6040 | 3.4113 | 1.2712 |
+| T4 | 3.3394 | 2.9428 | 1.2557 |
+
+Deltas vs the random-Hadamard control are within cross-run noise (stock
+anchor moved +0.015 across runs/GPUs) except T4_D16 (+0.060, a small real
+improvement at most); max |interaction| 1.3006 vs 1.3028; 18/20 contrasts
+significant in both. **A ~3.7-PPL wikitext improvement in the W4A4 target
+translated into ≤0.06 AL on MT-bench** — target-side PPL is not predictive
+of EAGLE acceptance (fig 06), because the AL loss is trajectory-driven and
+MT-bench is out-of-distribution for the wikitext-trained rotation.
+
+### 15. Does it change the "generous versus degraded" conclusion?
+
+Partially — it REFINES it. Fixed-tree grader with the learned W4A4 target
+(189 rounds, recheck 0/189 flips again): unchanged 76.7% (vs 74.1%), mean
+Δaccept −0.0265 (vs −0.037), and the INCREASE side flips from
+degradation-driven to benign: BENIGN_GENEROSITY 0→11,
+DEGRADATION_INDUCED_GENEROSITY 11→1 (rank-flips 9→6, flattening 2→2).
+Decreases barely move (false rejections 16→15, alignment loss 11→9).
+So with a properly learned rotation, residual AL increases are quality-
+preserving agreement, not degradation artifacts — while the dominant live
+effect remains the trajectory shift. (The learned-W4A4 grader wikitext CE
+is 1.9137, below fp16's 1.9254 on the 32k-prefix metric — the QAT-overfit
+signature again; recorded, not celebrated.)
 
 ### 16. Which old results remain valid?
 
@@ -154,7 +203,21 @@ Hypothesis C rejected.
 - Any prose implying the project ran "SpinQuant (paper)" quantization →
   "random-Hadamard control".
 
-### 18. What target quantization configuration should future EAGLE experiments use? — PENDING final numbers; expected: chat-specific learned SpinQuant R1/R2 + official RTN + w_clip (GPTQ not recommended: release-code gap), KV16, official-contract evaluation.
+### 18. What target quantization configuration should future EAGLE experiments use?
+
+**Chat-specific learned SpinQuant R1/R2 (`learned_chat_w4a4kv16`) + official
+RTN + w_clip + asymmetric per-token activations, KV16, official-contract
+evaluation** — staged in-repo and wired via `--rotation-kind`. Rationale:
+- w_clip is non-negotiable (removing it: PPL 80.2).
+- asymmetric activations beat symmetric (+0.056 CE if dropped).
+- GPTQ NOT recommended: released-code GPTQ underperforms RTN on both
+  models (release-code/paper gap, Q4/Q7).
+- Retrain the rotation per quantization config (the W4A4-trained rotation
+  is co-adapted: W16A4 under it costs +0.19 while full W4A4 costs +0.003).
+- For AL work specifically, expectations must be set by the AL matrix, not
+  PPL: the corrected target changes AL by ≤0.06 (Q14), so the projection-
+  protection and interface-basis policies from the bitwidth-AL study are
+  unchanged.
 
 ## Gate log
 

@@ -1,0 +1,6 @@
+target,evaluator,ppl,ce,ce_delta
+fp16,official,6.9452,1.93805,0.0
+learned_rtn_w8a8kv16,official,6.9491,1.93861,0.00056
+learned_rtn_w4a4kv16,official,6.9629,1.9406,0.00255
+learned_gptq_w4a4kv16,official,8.46,2.13535,0.1973
+rh0_rtn_w4a4kv16_control,official,10.6272,2.36342,0.42537
