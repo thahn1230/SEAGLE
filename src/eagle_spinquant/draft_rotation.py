@@ -151,7 +151,8 @@ class RotatedDraftTrainer(nn.Module):
 
     def _llama_layer_original(self, x, attn_mask):
         d = self.dec
-        pre = d["layers.0.input_layernorm.weight"]
+        # EAGLE-1 removes the draft decoder's input_layernorm (the fc output
+        # feeds attention directly); only post_attention_layernorm exists.
         post = d["layers.0.post_attention_layernorm.weight"]
 
         def rms(v, w):
@@ -168,7 +169,7 @@ class RotatedDraftTrainer(nn.Module):
 
         B, T, D = x.shape
         n_head, hd = 32, D // 32
-        h1 = rms(x, pre)
+        h1 = x                                   # no input_layernorm (EAGLE-1)
         qh = q("self_attn.q_proj", h1).view(B, T, n_head, hd)
         kh = q("self_attn.k_proj", h1).view(B, T, n_head, hd)
         vh = q("self_attn.v_proj", h1).view(B, T, n_head, hd)
