@@ -281,8 +281,8 @@ class ConcatSelectiveDraftAdapter(VariantAdapter):
                  quant_first="fp16", quant_recurrent="fp16", quant_ar="fp16",
                  quant_embed="fp16", quant_embed_act="fp16", quant_head="fp16",
                  first_hidden_mode="gamma_R1", branch_act=None,
-                 embed_scale_alpha=None, ar_r2r4=False, trace=True,
-                 trace_cap=4000):
+                 embed_scale_alpha=None, first_fold_R=None,
+                 ar_r2r4=False, trace=True, trace_cap=4000):
         super().__init__(ea_model, stash, device, dtype)
         assert variant in ("folded", "explicit")
         assert first_hidden_mode in FIRST_HIDDEN_MODES
@@ -304,6 +304,10 @@ class ConcatSelectiveDraftAdapter(VariantAdapter):
         self.embed_scale_alpha = embed_scale_alpha
         if embed_scale_alpha is not None:
             assert embed_scale_alpha > 0
+        # R_D support: when the draft gauge (stash R1) differs from the
+        # target rotation, the FIRST-path hidden fold must keep the TARGET
+        # rotation (the folded T->D bridge). first_fold_R = R_T.
+        self.first_fold_R = first_fold_R
         self.ar_r2r4 = ar_r2r4
         self.name = f"concat_selective_{variant}" + (f"_nc-{nc}" if nc else "")
         W = ra.in_fold(stash["lm_head_weight"].cpu().double(),
@@ -383,6 +387,10 @@ class ConcatSelectiveDraftAdapter(VariantAdapter):
         # ---- projection module
         W_first, W_rec, bias = build_concat_selective_weights(
             sd, R1c, gc, self.nc, first_hidden_mode=self.first_hidden_mode)
+        if self.first_fold_R is not None:
+            W_first, _, _ = build_concat_selective_weights(
+                sd, self.first_fold_R.detach().cpu().double(), gc, self.nc,
+                first_hidden_mode=self.first_hidden_mode)
         self._orig_fc = ea.fc
         dtype = self._orig_fc.weight.dtype
         self._fc_orig_weight = sd["fc.weight"].to(dev, dtype)
