@@ -96,15 +96,17 @@ def main():
     print(f"[cache] target={args.target} texts={len(texts)}", flush=True)
 
     windows = []
+    past = cur_len = None
+    if kv < 16:
+        past, _pd, cur_len = initialize_past_key_values(bm)
+        install_kv4_on_past(past, bits=kv)
     for di, (dom, text) in enumerate(texts):
         ids = build_prompt(tok, text)[:, :640].to(dev)
         if ids.shape[1] < T_WIN + K_DEPTH + 8:
             continue
         if kv < 16:
-            past, _pd, _cl = initialize_past_key_values(bm)
-            install_kv4_on_past(past, bits=kv)
+            cur_len.zero_()                      # reuse the one KV buffer
             out = bm(ids, past_key_values=past, use_cache=True)
-            del past
         else:
             out = bm(ids)
         logits = out.logits[0]                       # (T, V)
