@@ -118,3 +118,63 @@ class HFIncrementalKV4:
                 v = torch.cat([v[:, :, :prev_len, :], q], dim=2)
             out.append((k, v))
         return tuple(out)
+
+
+class DraftKV4Patch:
+    """Draft-side KV4: wraps ea_layer.forward (per-instance) so every
+    use_cache call returns past_key_values whose NEWLY APPENDED slices are
+    fake-quantized in place (append-time semantics; stable_kv then carries
+    quantized values across verification cycles)."""
+
+    def __init__(self, ea_layer, bits=4):
+        self.ea_layer = ea_layer
+        self.bits = bits
+        self.k_stats, self.v_stats = KV4Stats(), KV4Stats()
+        self._orig = None
+
+    def install(self):
+        ea = self.ea_layer
+        self._orig = ea.forward
+        patch = self
+
+        def fwd(*a, **k):
+            past_in = k.get("past_key_values")
+            prev = past_in[0][0].shape[2] if past_in else 0
+            out = patch._orig(*a, **k)
+            if k.get("use_cache") and isinstance(out, tuple) \
+                    and len(out) == 2:
+                h, past = out
+                past = patch._quant_new(past, prev)
+                return h, past
+            return out
+
+        ea.forward = fwd
+        return self
+
+    def _quant_new(self, past, prev):
+        out = []
+        for layer in past:
+            k, v = layer[0], layer[1]
+            if k.shape[2] > prev:
+                nk = k[:, :, prev:, :]
+                q = fake_quant_kv(nk, self.bits)
+                self.k_stats.n_append_calls += 1
+                self.k_stats.n_tokens_quantized += int(nk.shape[2])
+                self.k_stats.sum_sqerr += float(((q - nk).float() ** 2).sum())
+                self.k_stats.sum_sqref += float((nk.float() ** 2).sum())
+                k[:, :, prev:, :] = q
+            if v.shape[2] > prev:
+                nv = v[:, :, prev:, :]
+                q = fake_quant_kv(nv, self.bits)
+                self.v_stats.n_append_calls += 1
+                self.v_stats.n_tokens_quantized += int(nv.shape[2])
+                self.v_stats.sum_sqerr += float(((q - nv).float() ** 2).sum())
+                self.v_stats.sum_sqref += float((nv.float() ** 2).sum())
+                v[:, :, prev:, :] = q
+            out.append((k, v))
+        return tuple(out)
+
+    def uninstall(self):
+        if self._orig is not None:
+            self.ea_layer.forward = self._orig
+            self._orig = None
