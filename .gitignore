@@ -12,3 +12,5 @@ third_party/
 envs/
 *.bin
 *.safetensors
+outputs
+runs

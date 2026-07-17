@@ -24,6 +24,7 @@ from eagle_spinquant.concat_selective_projection import (
 from eagle_spinquant.study import UnrotateAdapter
 from eagle_spinquant.kv4_cache import install_kv4_on_past, DraftKV4Patch
 from eagle.model.kv_cache import initialize_past_key_values
+from eagle_spinquant.long_ea_generate import long_ea_generate
 
 KIND = "learned_chat_w4a4kv16"
 ALPHA_G = 32.0
@@ -109,14 +110,16 @@ def main():
         for L in LENGTHS:
             taus_all = []
             torch.cuda.reset_peak_memory_stats()
+            # KV buffer capacity = max_position_embeddings (4096); leave
+            # room for max_new_tokens + tree transient at the top length.
+            margin = 136 if L >= 4096 else 8
             for i in range(args.n_per_length):
                 s = 1000 + i * 4200
-                ids = all_ids[s:s + L - 8][None].to(dev)
-                if ids.shape[1] < L - 16:
+                ids = all_ids[s:s + L - margin][None].to(dev)
+                if ids.shape[1] < L - margin - 8:
                     continue
-                _, deltas = run_gen(model.ea_generate(
-                    ids, temperature=0.0,
-                    max_steps=args.max_new_tokens + 8,
+                _, deltas = run_gen(long_ea_generate(
+                    model, ids, max_steps=args.max_new_tokens + 8,
                     tree_choices=tree), ids.shape[1], args.max_new_tokens)
                 taus_all += deltas
             rec = dict(config=cname, ctx_len=L,

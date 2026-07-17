@@ -51,10 +51,12 @@ def main():
                     help="checkpoint .pt or 'shared'")
     ap.add_argument("--tag", required=True)
     ap.add_argument("--target", default="t4", choices=list(TARGETS))
-    ap.add_argument("--draft", default="d4p3", choices=["d4p3", "d8"])
+    ap.add_argument("--draft", default="d4p3",
+                    choices=["d4p3", "d8", "d16"])
     ap.add_argument("--datasets", default="mtbench,sharegpt,c4,gsm8k,"
                                           "humaneval")
     ap.add_argument("--n-prompts", type=int, default=20)
+    ap.add_argument("--alpha-override", type=float, default=None)
     ap.add_argument("--max-new-tokens", type=int, default=128)
     ap.add_argument("--run-dir", required=True)
     ap.add_argument("--device", default="cuda:0")
@@ -86,11 +88,21 @@ def main():
         cfg.get("model", {}).get("chat_template", "llama2")]
 
     R_T = stash["R1"].clone()
-    kw = dict(D4P3 if args.draft == "d4p3" else D8)
+    kw = dict(D4P3 if args.draft == "d4p3"
+              else D8 if args.draft == "d8"
+              else dict(ar_r2r4=False))                # d16: no fake quant
     if args.rotation == "shared":
         alpha = 32.0
         if args.draft == "d4p3":
             kw["embed_scale_alpha"] = alpha
+    elif args.rotation == "identity":
+        # DROT_NONE: draft stays in the ORIGINAL basis (R_D = I);
+        # only the first-path fold bridges from the rotated target.
+        stash = dict(stash)
+        stash["R1"] = torch.eye(R_T.shape[0], dtype=R_T.dtype)
+        kw["first_fold_R"] = R_T
+        if args.draft == "d4p3":
+            kw["embed_scale_alpha"] = 45.2548          # identity-mode P3
     else:
         ck = torch.load(args.rotation, map_location="cpu",
                         weights_only=False)
@@ -99,6 +111,8 @@ def main():
         kw["first_fold_R"] = R_T                     # folded T->D bridge
         if args.draft == "d4p3":
             kw["embed_scale_alpha"] = float(ck.get("alpha", 32.0))
+    if args.alpha_override is not None and args.draft == "d4p3":
+        kw["embed_scale_alpha"] = args.alpha_override
     for ds_name in args.datasets.split(","):
         out_csv = os.path.join(
             rd, "shards", f"drot__{args.tag}__{args.target}__{ds_name}.csv")
