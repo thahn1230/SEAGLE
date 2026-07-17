@@ -33,11 +33,19 @@ print("=" * 72)
 print(f"\n 1. Run directory: {RD}")
 print(f" 2. Branch: {sh('git rev-parse --abbrev-ref HEAD')}")
 print(f" 3. Commit: {sh('git rev-parse --short HEAD')}")
-cm = json.load(open(os.path.join(RDA, "checkpoint_manifest.json")))
 print(" 4. Model revisions:")
-for k, v in cm.items():
-    if isinstance(v, str) and len(v) < 120:
-        print(f"      {k}: {v}")
+sys.path.insert(0, os.path.join(ROOT, "src"))
+from eagle_spinquant import experiment
+cfg = experiment.load_config(None)
+paths = experiment.resolve_paths(cfg)
+for k in ("target_path", "draft_path"):
+    p = paths[k]
+    ref = "?"
+    snap = os.path.join(os.path.dirname(os.path.dirname(p)), "refs",
+                        "main")
+    if os.path.isdir(p) and "snapshots" in p:
+        ref = os.path.basename(p.rstrip("/"))
+    print(f"      {k}: {p}  (revision {ref})")
 rot = os.path.join(ROOT, "outputs/rotations/learned_chat_w4a4kv16/R.bin")
 print(f" 5. Target rotation: {os.path.relpath(rot, ROOT)}"
       f"  sha256={sha(rot, 64)}")
@@ -48,8 +56,9 @@ for p in sorted(glob.glob(os.path.join(RDA, "rotations", "*.pt"))):
     sp = p + ".sha256"
     s = open(sp).read().split()[0][:16] if os.path.exists(sp) else sha(p)
     print(f"      {os.path.basename(p)}  sha256={s}")
-print(" 7. Manifest hashes (eval pools):")
-for p in sorted(glob.glob(os.path.join(RDA, "manifests", "*.json"))):
+print(" 7. Manifest hashes (pinned prompt pools):")
+mans = sorted(glob.glob(os.path.join(RDA, "manifests", "*.json")))
+for p in mans:
     print(f"      {os.path.basename(p)}  sha256={sha(p)}")
 print("\n 8. Official target PPL (wikitext-2):")
 print("      fp16 6.9452 | w8a8 6.9491 | w4a4 6.9629 | rh0-rtn 10.6272")
@@ -131,8 +140,9 @@ print("""23. Failed or skipped items:
         (deterministic; acceptance metrics remain internally valid).""")
 print(f"24. Final report: docs/EAGLE_TARGET_LOGIT_DRAFT_ROTATION_"
       f"W4A4KV4_REPORT.md")
-bundle = sorted(glob.glob(os.path.join(
-    ROOT, "eagle_target_logit_draft_rotation_w4a4kv4_*.tar.gz")))
+bundle = sorted(p for p in glob.glob(os.path.join(
+    ROOT, "eagle_target_logit_draft_rotation_w4a4kv4_*.tar.gz"))
+    if "latest" not in p)
 print(f"25. Review bundle: "
       f"{os.path.basename(bundle[-1]) if bundle else 'PENDING'}"
       f"  (+ eagle_target_logit_draft_rotation_w4a4kv4_latest.tar.gz)")
