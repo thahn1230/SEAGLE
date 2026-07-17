@@ -170,7 +170,9 @@ def main():
                 rd, "shards", f"panel__{args.dataset}__{n}.csv"), rows)
             print(f"[panel] {args.dataset}/{n}: micro-AL={mal:.4f} "
                   f"cycles={len(taus)} ({time.time()-t0:.0f}s)", flush=True)
-        del model
+        del ad, model, stash, ids_list, tok
+        import gc
+        gc.collect()
         torch.cuda.empty_cache()
     print(f"[panel] dataset {args.dataset} DONE", flush=True)
     return 0

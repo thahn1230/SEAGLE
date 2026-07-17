@@ -33,3 +33,20 @@ class RestoredInterfaceCSAdapter(ConcatSelectiveDraftAdapter):
         x = x * self.gamma.to(hs.device, torch.float32)
         self.n_restores += 1
         return x.to(hs.dtype)
+
+    def install(self):
+        # ConcatSelectiveDraftAdapter installs its OWN topK_genrate wrapper
+        # that passes hidden_states through untransformed; layer the
+        # restoration ON TOP of it (verified: without this the draft
+        # consumes raw a_t through identity-basis weights and collapses).
+        super().install()
+        inner = self.ea_layer.topK_genrate
+        adapter = self
+
+        def restored(hidden_states, input_ids, head, logits_processor,
+                     *a, **k):
+            return inner(adapter.transform_hidden(hidden_states), input_ids,
+                         head, logits_processor, *a, **k)
+
+        self.ea_layer.topK_genrate = restored
+        return self
