@@ -123,10 +123,11 @@ def main():
             .float().to(dev)
         ti = torch.stack([ws[i]["deploy_topk_i"] for i in idxs]).to(dev)
         hn = torch.stack([ws[i]["h_next"] for i in idxs]).float().to(dev)
-        return tok, a, tv, ti, hn
+        po = int(min(ws[i].get("pos_offset", 0) for i in idxs))
+        return tok, a, tv, ti, hn, po
 
-    def losses(tok, a, tv, ti, hn, fp_tv=None, fp_ti=None):
-        outs = model.unroll(tok, a, K)
+    def losses(tok, a, tv, ti, hn, po, fp_tv=None, fp_ti=None):
+        outs = model.unroll(tok, a, K, pos_offset=po)
         with torch.no_grad():
             refs = ref.unroll(tok, a @ torch.eye(model.D, device=dev), K) \
                 if False else None
@@ -163,7 +164,7 @@ def main():
                 total = total + LAM["fptarget"] * wk[k] * l
         if "self" in obj or "selfrecon" in obj:
             with torch.no_grad():
-                fouts = ref.unroll(tok, a, K)
+                fouts = ref.unroll(tok, a, K, pos_offset=po)
             lam = LAM["selfrecon"] if "selfrecon" in obj else LAM["self"]
             for k, ((lg, hg), (flg, fhg)) in enumerate(zip(outs, fouts)):
                 pF = F.softmax(flg / args.tau, -1)
@@ -179,14 +180,14 @@ def main():
     for step in range(args.steps):
         idxs = torch.randint(0, len(W_tr), (args.batch,), generator=g) \
             .tolist()
-        tok, a, tv, ti, hn = batch(W_tr, idxs)
+        tok, a, tv, ti, hn, po = batch(W_tr, idxs)
         fp_tv = fp_ti = None
         if fp_cache is not None and "fptarget" in obj:
             fp_tv = torch.stack([fp_cache[i]["deploy_topk_v"]
                                  for i in idxs]).float().to(dev)
             fp_ti = torch.stack([fp_cache[i]["deploy_topk_i"]
                                  for i in idxs]).to(dev)
-        total, parts = losses(tok, a, tv, ti, hn, fp_tv, fp_ti)
+        total, parts = losses(tok, a, tv, ti, hn, po, fp_tv, fp_ti)
         opt.zero_grad(set_to_none=True)
         total.backward()
         opt.step()
@@ -200,8 +201,8 @@ def main():
                   f"orth={oerr:.2e} ({time.time()-t0:.0f}s)", flush=True)
     # validation quick metrics
     with torch.no_grad():
-        tok, a, tv, ti, hn = batch(W_va, list(range(len(W_va))))
-        outs = model.unroll(tok, a, K)
+        tok, a, tv, ti, hn, po = batch(W_va, list(range(len(W_va))))
+        outs = model.unroll(tok, a, K, pos_offset=po)
         top1 = [float((lg.argmax(-1) == ti[:, k, 0].long()).float().mean())
                 for k, (lg, _h) in enumerate(outs)]
     import hashlib

@@ -43,12 +43,24 @@ class _RoundSTE(torch.autograd.Function):
         return g
 
 
-def w4_fake_quant_ste(w, bits=4):
-    """Per-output-channel symmetric RTN with fixed clip=1.0 (training proxy
-    for the MSE-clip inference quantizer; the eval path uses the official
-    clip search)."""
+def w4_fake_quant_ste(w, bits=4, n_ratios=6):
+    """Per-output-channel symmetric RTN WITH a vectorized MSE clip search
+    (ratios 0.75..1.0) — matching the official w_clip policy in spirit;
+    no-clip W4 is catastrophically bad (established: PPL 80 on the target).
+    Straight-through gradients."""
     qmax = 2 ** (bits - 1) - 1
-    scale = w.abs().amax(dim=1, keepdim=True).clamp(min=1e-8) / qmax
+    absmax = w.abs().amax(dim=1, keepdim=True).clamp(min=1e-8)
+    ratios = torch.linspace(0.75, 1.0, n_ratios, device=w.device,
+                            dtype=w.dtype)
+    with torch.no_grad():
+        errs = []
+        for r in ratios:
+            sc = absmax * r / qmax
+            q = (w / sc).round().clamp(-qmax - 1, qmax) * sc
+            errs.append(((q - w) ** 2).sum(dim=1))
+        best = torch.stack(errs).argmin(dim=0)            # (out,)
+        scale = absmax.squeeze(1) * ratios[best] / qmax
+        scale = scale.unsqueeze(1)
     return _RoundSTE.apply(w / scale).clamp(-qmax - 1, qmax) * scale
 
 
@@ -135,7 +147,7 @@ class RotatedDraftTrainer(nn.Module):
         y = F.linear(z, W, self.b_fc)
         return y @ self.R_D                              # post-projection R_D
 
-    def _decoder(self, x, attn_mask=None):
+    def _decoder(self, x, attn_mask=None, pos_offset=0):
         """R_D-conjugated single LlamaDecoderLayer, causal, no KV cache
         (training unroll uses full-prefix attention each step). Quantized
         linears with STE."""
@@ -146,10 +158,10 @@ class RotatedDraftTrainer(nn.Module):
         # conjugated weights, an intentional training/eval proxy gap
         # recorded in the report)
         x_orig = x @ Rd.t()                               # to original basis
-        h = self._llama_layer_original(x_orig, attn_mask)
+        h = self._llama_layer_original(x_orig, attn_mask, pos_offset)
         return h @ Rd                                     # back to R_D gauge
 
-    def _llama_layer_original(self, x, attn_mask):
+    def _llama_layer_original(self, x, attn_mask, pos_offset=0):
         d = self.dec
         # EAGLE-1 removes the draft decoder's input_layernorm (the fc output
         # feeds attention directly); only post_attention_layernorm exists.
@@ -173,7 +185,7 @@ class RotatedDraftTrainer(nn.Module):
         qh = q("self_attn.q_proj", h1).view(B, T, n_head, hd)
         kh = q("self_attn.k_proj", h1).view(B, T, n_head, hd)
         vh = q("self_attn.v_proj", h1).view(B, T, n_head, hd)
-        qh, kh = _rope(qh, kh)
+        qh, kh = _rope(qh, kh, pos_offset=pos_offset)
         att = torch.einsum("bqhd,bkhd->bhqk", qh, kh) / hd ** 0.5
         causal = torch.full((T, T), float("-inf"), device=x.device) \
             .triu(1)
@@ -186,7 +198,7 @@ class RotatedDraftTrainer(nn.Module):
         x = x + q("mlp.down_proj", F.silu(g) * u)
         return x
 
-    def unroll(self, tok_ids, a_seq, K):
+    def unroll(self, tok_ids, a_seq, K, pos_offset=0):
         """Teacher-forced depth-K unroll following the EAGLE-1 contract.
 
         tok_ids: (B, T+K) visited token ids — prefix window T plus the K
@@ -209,14 +221,14 @@ class RotatedDraftTrainer(nn.Module):
         h_gauge = None
         for k in range(K):
             if k == 0:
-                h_all = self._decoder(seq)
+                h_all = self._decoder(seq, pos_offset=pos_offset)
                 h_gauge = h_all[:, -1:]
             else:
                 e_k = E[:, T + k:T + k + 1] * alpha
                 z = torch.cat([e_k, h_gauge], dim=-1)
                 y = self._proj(z, Wr)
                 seq = torch.cat([seq, y], dim=1)
-                h_all = self._decoder(seq)
+                h_all = self._decoder(seq, pos_offset=pos_offset)
                 h_gauge = h_all[:, -1:]
             logits = h_gauge.squeeze(1) @ (self.W_lm @ self.R_D).t()
             outs.append((logits, h_gauge))
@@ -234,9 +246,10 @@ class RotatedDraftTrainer(nn.Module):
         self.R_D.data = Q * s
 
 
-def _rope(q, k, base=10000.0):
+def _rope(q, k, base=10000.0, pos_offset=0):
     B, T, H, Dh = q.shape
-    pos = torch.arange(T, device=q.device, dtype=torch.float32)
+    pos = torch.arange(pos_offset, pos_offset + T, device=q.device,
+                       dtype=torch.float32)
     inv = 1.0 / base ** (torch.arange(0, Dh, 2, device=q.device,
                                       dtype=torch.float32) / Dh)
     ang = pos[:, None] * inv[None]

@@ -119,12 +119,15 @@ def main():
         for s in range(2, L - T_WIN - K_DEPTH - 1, step):
             sl = slice(s, s + T_WIN)
             wk = dict(
-                domain=dom,
+                domain=dom, pos_offset=int(s),
                 tok_ids=ids[0, s:s + T_WIN + K_DEPTH + 1].cpu()
                 .to(torch.int32),
                 a_seq=h[sl].cpu().half(),
                 h_next=h[s + T_WIN:s + T_WIN + K_DEPTH].cpu().half())
-            tv, ti = logits[s + T_WIN - 1:s + T_WIN - 1 + K_DEPTH] \
+            # EAGLE draft row (e_{i+1}, h_i) predicts token i+2, aligned
+            # with TARGET logits at position i+1 -> teacher slice starts at
+            # s+T_WIN (verified via the h_next feature-alignment identity)
+            tv, ti = logits[s + T_WIN:s + T_WIN + K_DEPTH] \
                 .topk(TOPK, dim=-1)
             wk["deploy_topk_v"] = tv.cpu().half()
             wk["deploy_topk_i"] = ti.cpu().to(torch.int32)
