@@ -1,0 +1,348 @@
+"""Exact runtime-matched quantized ROTATION forward (study spec section 7).
+
+SCOPE (2026-07-22): quantization-aware rotation learning — every model
+weight is bitwise frozen; the ONLY trainable parameter is R_D / residual A
+(optionally a scalar log-alpha for the EXPLICIT ablation only; the main
+experiments select alpha by calibration sweep). The train_draft_core
+pathway below is OUT OF SCOPE and retained solely for provenance.
+
+ONE differentiable implementation of the deployed D4P3 draft whose forward
+reproduces the runtime `ConcatSelectiveDraftAdapter(variant='folded',
+first_hidden_mode='gamma_R1', quant_*='fake_w4a4', ar_r2r4=True,
+embed_scale_alpha=alpha, first_fold_R=R_T)`; every quantizer is wrapped in a
+straight-through estimator
+
+    out = x + (Q_official(x.detach()) - x).detach()
+
+so the FORWARD equals the official SpinQuant quantizer output exactly while
+the backward is identity.
+
+Weight folds replicate the runtime construction INCLUDING its cast order
+(fp64 fold -> fp16 cast -> fp64 R2 conj -> fp16 -> fp32 R4 FWHT -> fp16;
+P3 alpha divided in fp16 AFTER the cast, exactly like the adapter), so with
+``exact=True`` the quantized weights are BITWISE equal to the runtime's
+(Gate D). ``exact=False`` runs the same code in fp32 for training speed;
+the residual deviation is ~1 quantization LSB on a small fraction of
+elements and is measured/reported by the parity harness.
+
+    W_first_preR = cast16[W_e | W_h ·fp64 D_γ·R_first], e-slice /= α (fp16)
+    W_rec_preR   = cast16[W_e | W_h ·fp64 R_D],         e-slice /= α (fp16)
+    projection: STE-quant(W_preR) fp16 GEMM + bias, then y·R_D fp32 (PostR)
+    q,k        : cast16(W ·fp64 R_D)
+    v          : cast16(R2 ⊗_head cast16(V ·fp64 R_D))
+    o          : cast16((cast16(R_Dᵀ ·fp64 O)) ⊗_head R2ᵀ)
+    gate,up    : cast16((W · diag(γ_l)) ·fp64 R_D)
+    down       : FWHT_input(cast16(R_Dᵀ ·fp64 W)) (fp32 kernel, autograd)
+    head       : cast16(W_lm ·fp64 R_D)             (fp16, never quantized)
+    embedding  : ORIGINAL table · α (P3), fp16, never quantized
+    post_attention_layernorm: weight 1 (γ_l fused into gate/up), eps 1e-6
+    RoPE       : HF rotate_half; attention fp16 QK, fp32 softmax (cnets)
+
+Capacity controls: ``train_draft_core=True`` registers the RAW ORIGINAL
+draft weights (fc e/h split, q/k/v/o/gate/up/down) as Parameters — the
+folds above consume them live, so any trained state remains runtime-
+foldable and exportable as an original-basis state dict.
+
+Draft KV: incremental per-depth chain with cached K/V; optional KV4
+(runtime fake_quant_kv) on appended slices.
+"""
+from __future__ import annotations
+
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+from . import fake_w4a4_draft as fq
+from . import spinquant_bridge as sb
+from .kv4_cache import fake_quant_kv
+
+NH, HD = 32, 128
+RMS_EPS = 1e-6
+
+
+# ------------------------- STE-exact quant wrappers -------------------------
+
+def ste_weight_quant(w, bits=4):
+    with torch.no_grad():
+        qw = fq._weight_fake_quant(w.detach(), bits)
+    return w + (qw - w).detach()
+
+
+class _ActQ:
+    def __init__(self, bits=4):
+        self.q = fq._act_quantizer(bits)
+
+    def __call__(self, x):
+        with torch.no_grad():
+            x2 = x.detach()
+            self.q.find_params(x2)
+            qx = self.q(x2)
+            self.q.free()
+        return x + (qx - x).detach()
+
+
+def ste_kv4(x, bits=4):
+    with torch.no_grad():
+        qx = fake_quant_kv(x.detach(), bits=bits)
+    return x + (qx - x).detach()
+
+
+def rotate_half(x):
+    x1 = x[..., : x.shape[-1] // 2]
+    x2 = x[..., x.shape[-1] // 2:]
+    return torch.cat((-x2, x1), dim=-1)
+
+
+def rope_cos_sin(positions, dim=HD, base=10000.0, device="cpu"):
+    inv = 1.0 / base ** (torch.arange(0, dim, 2, device=device,
+                                      dtype=torch.float32) / dim)
+    ang = positions.float()[:, None] * inv[None]
+    emb = torch.cat([ang, ang], dim=-1)
+    return emb.cos(), emb.sin()
+
+
+class _HadUSTE(torch.autograd.Function):
+    """Input-side exact-Hadamard fold, forward via the runtime kernel,
+    backward via the transpose transform (H orthogonal)."""
+
+    @staticmethod
+    def forward(ctx, W, had_K, K):
+        sb.add_spinquant_to_syspath()
+        from utils import hadamard_utils
+        ctx.had_K, ctx.K = had_K, K
+        with torch.no_grad():
+            return hadamard_utils.matmul_hadU_cuda(W.float(), had_K, K) \
+                .to(W.dtype)
+
+    @staticmethod
+    def backward(ctx, g):
+        sb.add_spinquant_to_syspath()
+        from utils import hadamard_utils
+        gt = hadamard_utils.matmul_hadU_cuda(
+            g.float().contiguous(), ctx.had_K, ctx.K).to(g.dtype)
+        return gt, None, None
+
+
+# ------------------------------- the module ---------------------------------
+
+class ExactQuantizedRotationForward(nn.Module):
+    CORE = ("W_e", "W_h", "Wq", "Wk", "Wv", "Wo", "Wgate", "Wup", "Wdown")
+
+    def __init__(self, sd, R_T, gamma, W_lm, rot, alpha_init=32.0,
+                 train_alpha=False, w_bits=4, a_bits=4, draft_kv_bits=16,
+                 train_draft_core=False, r2_seed=0, device="cuda:0",
+                 first_fold_R=None):
+        super().__init__()
+        self.dev = device
+        self.rot = rot
+        self.w_bits, self.a_bits = w_bits, a_bits
+        self.kv_bits = draft_kv_bits
+        D = sd["fc.weight"].shape[0]
+        self.D = D
+
+        def cbuf(name, t):
+            self.register_buffer(name, t.to(device))
+
+        cbuf("R_T", R_T.float())
+        cbuf("gamma64", gamma.double())
+        cbuf("W_lm16", W_lm.half())
+        cbuf("R_first", (first_fold_R if first_fold_R is not None
+                         else R_T).float())
+        cbuf("E", sd["embed_tokens.weight"].float())
+        cbuf("b_fc", sd["fc.bias"].float())
+        g = torch.Generator().manual_seed(r2_seed)
+        R2 = torch.linalg.qr(torch.randn(HD, HD, generator=g,
+                                         dtype=torch.float64))[0]
+        cbuf("R2_64", R2)
+        cbuf("gl64",
+             sd["layers.0.post_attention_layernorm.weight"].double())
+        sb.add_spinquant_to_syspath()
+        from utils import hadamard_utils
+        had_K, K = hadamard_utils.get_hadK(
+            sd["layers.0.mlp.down_proj.weight"].shape[1])
+        self.had_K = had_K.to(device) if had_K is not None else None
+        self.had_KK = K
+
+        core = dict(W_e=sd["fc.weight"][:, :D], W_h=sd["fc.weight"][:, D:],
+                    Wq=sd["layers.0.self_attn.q_proj.weight"],
+                    Wk=sd["layers.0.self_attn.k_proj.weight"],
+                    Wv=sd["layers.0.self_attn.v_proj.weight"],
+                    Wo=sd["layers.0.self_attn.o_proj.weight"],
+                    Wgate=sd["layers.0.mlp.gate_proj.weight"],
+                    Wup=sd["layers.0.mlp.up_proj.weight"],
+                    Wdown=sd["layers.0.mlp.down_proj.weight"])
+        self.train_draft_core = train_draft_core
+        for name, t in core.items():
+            t = t.float().to(device)          # fp32 master (== fp16 values)
+            if train_draft_core:
+                self.register_parameter(name, nn.Parameter(t.clone()))
+            else:
+                self.register_buffer(name, t)
+        self.log_alpha = nn.Parameter(
+            torch.tensor(float(alpha_init)).log().to(device),
+            requires_grad=train_alpha)
+        self.aq = _ActQ(a_bits) if a_bits < 16 else None
+        self.counters = dict(w_quant=0, a_quant=0, kv_quant=0)
+
+    # ---- differentiable transformed weights, runtime cast order ------------
+    def transformed_weights(self, exact=True):
+        dd = torch.float64 if exact else torch.float32
+        R = self.rot.R().to(self.dev).to(dd)
+        Rf = self.R_first.to(dd)
+        gam = self.gamma64.to(dd)
+        gl = self.gl64.to(dd)
+        R2 = self.R2_64.to(dd)
+        a16 = self.log_alpha.exp().half()
+
+        def c16(x):
+            return x.half()
+
+        M = gam.unsqueeze(1) * Rf
+        Wf = c16(torch.cat([self.W_e.to(dd), self.W_h.to(dd) @ M], dim=1))
+        Wr = c16(torch.cat([self.W_e.to(dd), self.W_h.to(dd) @ R], dim=1))
+        D = self.D
+        Wf = torch.cat([Wf[:, :D] / a16, Wf[:, D:]], dim=1)
+        Wr = torch.cat([Wr[:, :D] / a16, Wr[:, D:]], dim=1)
+
+        q = c16(self.Wq.to(dd) @ R)
+        k = c16(self.Wk.to(dd) @ R)
+        v1 = c16(self.Wv.to(dd) @ R).to(dd)              # cast dance
+        v = c16(torch.einsum("ab,hbc->hac", R2,
+                             v1.reshape(NH, HD, D)).reshape(NH * HD, D))
+        o1 = c16(R.t() @ self.Wo.to(dd)).to(dd)
+        o = c16(torch.einsum("ohc,cb->ohb", o1.reshape(D, NH, HD),
+                             R2.t()).reshape(D, NH * HD))
+        gate = c16((self.Wgate.to(dd) * gl.unsqueeze(0)) @ R)
+        up = c16((self.Wup.to(dd) * gl.unsqueeze(0)) @ R)
+        d1 = c16(R.t() @ self.Wdown.to(dd))
+        down = _HadUSTE.apply(d1, self.had_K, self.had_KK)
+        head = c16(self.W_lm16.to(dd) @ R)
+        return dict(W_first=Wf, W_rec=Wr, q=q, k=k, v=v, o=o, gate=gate,
+                    up=up, down=down, head=head, R=R.float())
+
+    def _qw(self, w):
+        if self.w_bits < 16:
+            self.counters["w_quant"] += 1
+            return ste_weight_quant(w, self.w_bits)
+        return w
+
+    def _qa(self, x):
+        if self.aq is not None:
+            self.counters["a_quant"] += 1
+            return self.aq(x)
+        return x
+
+    def quantized_weights(self, exact=True):
+        tw = self.transformed_weights(exact)
+        out = {k: self._qw(tw[k]) for k in
+               ("W_first", "W_rec", "q", "k", "v", "o", "gate", "up",
+                "down")}
+        out["head"] = tw["head"]
+        return out, tw
+
+    # ---- forward ----------------------------------------------------------
+    def _proj(self, z, Wq16, R):
+        zq = self._qa(z.half())
+        y = F.linear(zq, Wq16, self.b_fc.half())
+        return (y.float() @ R).to(y.dtype)          # PostProjectionR1
+
+    def _attn_mlp(self, x, qw, pos, cache):
+        B, T, D = x.shape
+        h1 = x
+        qh = F.linear(self._qa(h1), qw["q"]).view(B, T, NH, HD) \
+            .transpose(1, 2)
+        kh = F.linear(self._qa(h1), qw["k"]).view(B, T, NH, HD) \
+            .transpose(1, 2)
+        vh = F.linear(self._qa(h1), qw["v"]).view(B, T, NH, HD) \
+            .transpose(1, 2)
+        cos, sin = rope_cos_sin(pos, device=x.device)
+        cos = cos[None, None].to(x.dtype)
+        sin = sin[None, None].to(x.dtype)
+        qh = qh * cos + rotate_half(qh) * sin
+        kh = kh * cos + rotate_half(kh) * sin
+        # deployed KV4 semantics (DraftKV4Patch): the CURRENT step's
+        # attention sees its own K/V unquantized; the cache stores the
+        # QUANTIZED append, which later steps read.
+        if cache.get("k") is not None:
+            k_all = torch.cat([cache["k"], kh], dim=2)
+            v_all = torch.cat([cache["v"], vh], dim=2)
+        else:
+            k_all, v_all = kh, vh
+        if self.kv_bits < 16:
+            self.counters["kv_quant"] += 2
+            kq = ste_kv4(kh, self.kv_bits)
+            vq = ste_kv4(vh, self.kv_bits)
+        else:
+            kq, vq = kh, vh
+        if cache.get("k") is not None:
+            cache["k"] = torch.cat([cache["k"], kq], dim=2)
+            cache["v"] = torch.cat([cache["v"], vq], dim=2)
+        else:
+            cache["k"], cache["v"] = kq, vq
+        Tc = k_all.shape[2]
+        att = (qh @ k_all.transpose(-1, -2)) / HD ** 0.5
+        causal = torch.full((T, Tc), torch.finfo(att.dtype).min,
+                            device=x.device, dtype=att.dtype) \
+            .triu(Tc - T + 1)
+        att = (att + causal).float().softmax(-1).to(x.dtype)
+        o = (att @ v_all).transpose(1, 2).reshape(B, T, D)
+        x = x + F.linear(self._qa(o), qw["o"])
+        h32 = x.float()
+        var = h32.pow(2).mean(-1, keepdim=True)
+        h2 = (h32 * torch.rsqrt(var + RMS_EPS)).to(x.dtype)
+        gt = F.linear(self._qa(h2), qw["gate"])
+        up = F.linear(self._qa(h2), qw["up"])
+        mid = F.silu(gt) * up
+        if self.had_K is not None:
+            sb.add_spinquant_to_syspath()
+            from utils import hadamard_utils
+            ms = mid.shape
+            mid = hadamard_utils.matmul_hadU_cuda(
+                mid.reshape(-1, ms[-1]), self.had_K, self.had_KK) \
+                .reshape(ms)
+        x = x + F.linear(self._qa(mid), qw["down"])
+        return x
+
+    def forward_chain(self, tok_ids, a_seq, K, pos_offset=0,
+                      recur_tokens=None, rollout=None, exact=False):
+        qw, tw = self.quantized_weights(exact)
+        R = tw["R"]
+        a = self.log_alpha.exp()
+        B, T = a_seq.shape[0], a_seq.shape[1]
+        E = self.E[tok_ids] * a
+        z = torch.cat([E[:, 1:T + 1].half(), a_seq.half()], dim=-1)
+        y = self._proj(z, qw["W_first"], R)
+        cache = {}
+        pos = torch.arange(pos_offset, pos_offset + T, device=y.device)
+        h_all = self._attn_mlp(y, qw, pos, cache)
+        h_last = h_all[:, -1:]
+        outs = []
+        for k in range(K):
+            logits = F.linear(h_last.squeeze(1).half(),
+                              qw["head"]).float()
+            if rollout is not None:
+                chosen = rollout(logits).detach()
+            elif recur_tokens is not None and k < recur_tokens.shape[1]:
+                chosen = recur_tokens[:, k]
+            else:
+                chosen = logits.argmax(-1)
+            outs.append((logits, h_last, chosen))
+            if k == K - 1:
+                break
+            e_k = (self.E[chosen] * a).half().unsqueeze(1)
+            z = torch.cat([e_k, h_last.half()], dim=-1)
+            y = self._proj(z, qw["W_rec"], R)
+            pos_k = torch.arange(pos_offset + T + k,
+                                 pos_offset + T + k + 1, device=y.device)
+            h_all = self._attn_mlp(y, qw, pos_k, cache)
+            h_last = h_all[:, -1:]
+        return outs
+
+    def export_original_state(self):
+        """Original-basis draft core weights (runtime-foldable export)."""
+        return {n: getattr(self, n).detach().cpu().half()
+                for n in self.CORE}
+
+
+# scope-correction alias (old name used by armed pipelines)
+ExactQATRotatedDraft = ExactQuantizedRotationForward
