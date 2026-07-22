@@ -66,7 +66,7 @@ def main():
     rows = []
     cands = [("SHARED_RT", None)]
     cands += [(os.path.basename(p)[:-3], p) for p in sorted(glob.glob(
-        os.path.join(args.run_dir, "rotations", "LK_*.pt")))]
+        os.path.join(args.run_dir, "rotations", "LK*.pt")))]
     for tag, ckp in cands:
         if ckp is None:
             R_D, alpha = R_T.clone(), 32.0
