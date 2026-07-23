@@ -99,6 +99,7 @@ def load_eval_prompts(name, n=80, pool="eval"):
     elif name == "humaneval":
         assert pool == "eval", "HumanEval is evaluation-only"
         ds = load_dataset("openai/openai_humaneval", split="test")
+        n = min(n, len(ds))          # "all available problems" (164)
         for idx in range(n):
             rows.append(dict(
                 row_id=ds[idx]["task_id"],
