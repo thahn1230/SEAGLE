@@ -149,13 +149,23 @@ class ExactQuantizedRotationForward(nn.Module):
         cbuf("R_first", (first_fold_R if first_fold_R is not None
                          else R_T).float())
         cbuf("E", sd["embed_tokens.weight"].float())
-        cbuf("b_fc", sd["fc.bias"].float())
         g = torch.Generator().manual_seed(r2_seed)
         R2 = torch.linalg.qr(torch.randn(HD, HD, generator=g,
                                          dtype=torch.float64))[0]
         cbuf("R2_64", R2)
-        cbuf("gl64",
-             sd["layers.0.post_attention_layernorm.weight"].double())
+        # fc.bias and post_attention_layernorm.weight are part of the
+        # ORIGINAL EAGLE trainable set (model.parameters()); register them
+        # as Parameters in QAT mode (folds consume them live either way).
+        if train_draft_core:
+            self.register_parameter(
+                "b_fc", nn.Parameter(sd["fc.bias"].float().to(device)))
+            self.register_parameter("gl64", nn.Parameter(
+                sd["layers.0.post_attention_layernorm.weight"]
+                .double().to(device)))
+        else:
+            cbuf("b_fc", sd["fc.bias"].float())
+            cbuf("gl64",
+                 sd["layers.0.post_attention_layernorm.weight"].double())
         sb.add_spinquant_to_syspath()
         from utils import hadamard_utils
         had_K, K = hadamard_utils.get_hadK(
@@ -246,7 +256,7 @@ class ExactQuantizedRotationForward(nn.Module):
         y = F.linear(zq, Wq16, self.b_fc.half())
         return (y.float() @ R).to(y.dtype)          # PostProjectionR1
 
-    def _attn_mlp(self, x, qw, pos, cache):
+    def _attn_mlp(self, x, qw, pos, cache, attn_bias=None):
         B, T, D = x.shape
         h1 = x
         qh = F.linear(self._qa(h1), qw["q"]).view(B, T, NH, HD) \
@@ -255,7 +265,7 @@ class ExactQuantizedRotationForward(nn.Module):
             .transpose(1, 2)
         vh = F.linear(self._qa(h1), qw["v"]).view(B, T, NH, HD) \
             .transpose(1, 2)
-        cos, sin = rope_cos_sin(pos, device=x.device)
+        cos, sin = rope_cos_sin(pos, dim=HD, device=x.device)
         cos = cos[None, None].to(x.dtype)
         sin = sin[None, None].to(x.dtype)
         qh = qh * cos + rotate_half(qh) * sin
@@ -284,7 +294,10 @@ class ExactQuantizedRotationForward(nn.Module):
         causal = torch.full((T, Tc), torch.finfo(att.dtype).min,
                             device=x.device, dtype=att.dtype) \
             .triu(Tc - T + 1)
-        att = (att + causal).float().softmax(-1).to(x.dtype)
+        att = att + causal
+        if attn_bias is not None:                 # padding mask (training)
+            att = att + attn_bias.to(att.dtype)
+        att = att.float().softmax(-1).to(x.dtype)
         o = (att @ v_all).transpose(1, 2).reshape(B, T, D)
         x = x + F.linear(self._qa(o), qw["o"])
         h32 = x.float()
@@ -338,10 +351,48 @@ class ExactQuantizedRotationForward(nn.Module):
             h_last = h_all[:, -1:]
         return outs
 
+    def forward_train(self, tok_ids, feat_seq, pad_mask=None, exact=False):
+        """Original-EAGLE single-step training pass (all rows first-path,
+        exactly like eagle/train/main.py's causal forward): tok_ids (B,T+1)
+        raw token ids, feat_seq (B,T) interface-input features. Returns
+        h_all (B,T,D) draft hidden in the DEPLOYED basis; logits via
+        `head_logits`. pad_mask (B,T) True=real token."""
+        qw, tw = self.quantized_weights(exact)
+        R = tw["R"]
+        a = self.log_alpha.exp()
+        B, T = feat_seq.shape[0], feat_seq.shape[1]
+        E = self.E[tok_ids] * a
+        z = torch.cat([E[:, 1:T + 1].half(), feat_seq.half()], dim=-1)
+        y = self._proj(z, qw["W_first"], R)
+        pos = torch.arange(0, T, device=y.device)
+        bias = None
+        if pad_mask is not None:
+            bias = torch.zeros(B, 1, 1, T, device=y.device)
+            bias.masked_fill_(~pad_mask[:, None, None, :],
+                              torch.finfo(torch.float16).min / 2)
+        if self.training and torch.is_grad_enabled():
+            # activation checkpointing: numerically identical forward,
+            # recomputed in backward (full-T attention matrices dominate
+            # training memory on 24 GB cards)
+            h_all = torch.utils.checkpoint.checkpoint(
+                lambda yy: self._attn_mlp(yy, qw, pos, {},
+                                          attn_bias=bias),
+                y, use_reentrant=False)
+        else:
+            h_all = self._attn_mlp(y, qw, pos, {}, attn_bias=bias)
+        self._last_head = qw["head"]
+        return h_all
+
+    def head_logits(self, h):
+        return F.linear(h.half(), self._last_head).float()
+
     def export_original_state(self):
         """Original-basis draft core weights (runtime-foldable export)."""
-        return {n: getattr(self, n).detach().cpu().half()
-                for n in self.CORE}
+        out = {n: getattr(self, n).detach().cpu().half()
+               for n in self.CORE}
+        out["b_fc"] = self.b_fc.detach().cpu().half()
+        out["gl"] = self.gl64.detach().cpu().half()
+        return out
 
 
 # scope-correction alias (old name used by armed pipelines)
