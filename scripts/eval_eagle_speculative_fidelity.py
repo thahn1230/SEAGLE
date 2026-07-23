@@ -73,7 +73,10 @@ def main():
 
     def seq_greedy(ids):
         # vendored KV llama needs its managed cache object (validated
-        # pattern from check_verifier_correctness.py)
+        # pattern from check_verifier_correctness.py). Clear any tree
+        # mask left behind by a previous ea_generate call — it corrupts
+        # sequential attention (mask-shape IndexError).
+        model.base_model.model.tree_mask = None
         past, _pd, _cl = initialize_past_key_values(model.base_model)
         cur, out = ids, []
         for _ in range(args.max_new_tokens):
