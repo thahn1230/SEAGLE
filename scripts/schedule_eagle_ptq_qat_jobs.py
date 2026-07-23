@@ -31,14 +31,14 @@ def build_jobs(rd, alpha_fp16, alpha_int4):
     def J(name, cmd, deps=()):
         jobs.append(dict(name=name, cmd=cmd, deps=list(deps)))
 
-    # ---- trainings (9) ----
+    # ---- trainings (9); C6/C8 first (critical path: C6 -> C7b) ----
+    J("train_C6", f"{TC} --arm C6 --seed 0")
+    J("train_C8", f"{TC} --arm C8 --seed 0")
     for s in (0, 1, 2):
         J(f"train_C3_s{s}", f"{T} --arm C3 --seed {s} "
           f"--alpha {alpha_fp16}")
         J(f"train_C7_s{s}", f"{T} --arm C7 --seed {s} "
           f"--alpha {alpha_int4}")
-    J("train_C8", f"{TC} --arm C8 --seed 0")
-    J("train_C6", f"{TC} --arm C6 --seed 0")
     J("train_C7b", f"{T} --arm C7b --seed 0 --alpha {alpha_int4} "
       f"--init-sd {ck}/C6_s0_last.pt", deps=["train_C6"])
 

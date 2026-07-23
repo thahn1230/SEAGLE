@@ -279,10 +279,16 @@ def main():
           else model.base_model.model.norm.weight.detach().float().to(dev))
 
     def teacher(ids, am):
+        # chunk rows so the vendored explicit-attention target never
+        # materializes more than ~4096 rows of full attention at once
         with torch.no_grad():
-            h = model.base_model.model(
-                input_ids=ids.to(dev),
-                attention_mask=am.to(dev)).last_hidden_state.float()
+            B, T = ids.shape
+            c = max(1, 4096 // max(T, 1))
+            hs = [model.base_model.model(
+                input_ids=ids[i:i + c].to(dev),
+                attention_mask=am[i:i + c].to(dev)).last_hidden_state
+                .float() for i in range(0, B, c)]
+            h = torch.cat(hs, dim=0) if len(hs) > 1 else hs[0]
         if args.arm in ("C3", "C8"):        # fp16 teacher: h post-norm
             return h, h @ R1d
         if args.arm == "C6":                # int4 teacher, restored input
@@ -325,11 +331,13 @@ def main():
         vl, correct, c2, c3, tot = 0.0, 0, 0, 0, 0
         nb = 0
         with torch.no_grad():
+            qw_v = core.quantized_weights(exact=False)   # fixed weights
             for ids, lm, am, lens in make_batches(
                     val_rows[:100], list(range(100)), args.bs):
                 x, t = teacher(ids, am)
                 h = core.forward_train(ids.to(dev), x[:, :-1].half(),
-                                       pad_mask=am[:, :-1].to(dev))
+                                       pad_mask=am[:, :-1].to(dev),
+                                       qw=qw_v)
                 sel = (lm[:, :-1] & am[:, :-1]).to(dev).reshape(-1)
                 hf = h.reshape(-1, h.shape[-1])[sel]
                 tf = t[:, 1:].reshape(-1, h.shape[-1])[sel].float()
@@ -350,32 +358,40 @@ def main():
 
     best3, step, seen_tok = -1.0, 0, 0
     core.train()
-    it = make_batches(train_rows, order, args.bs)
+    it = make_batches(train_rows, order, args.accum)   # teacher batch
     while step < args.steps:
         opt.zero_grad(set_to_none=True)
         acc_v = acc_p = 0.0
-        for _ in range(args.accum):
-            try:
-                ids, lm, am, lens = next(it)
-            except StopIteration:
-                order = torch.randperm(len(train_rows),
-                                       generator=g).tolist()
-                it = make_batches(train_rows, order, args.bs)
-                ids, lm, am, lens = next(it)
-            x, t = teacher(ids, am)
-            # original AddUniformNoise: input-only, (rand-.5)*std*512/len
-            for b, L in enumerate(lens):
-                noise = (torch.rand(L, x.shape[-1], device=x.device)
-                         - 0.5) * 0.2 * 512 / L
-                x[b, :L] += noise
-            h = core.forward_train(ids.to(dev), x[:, :-1].half(),
-                                   pad_mask=am[:, :-1].to(dev))
+        try:
+            ids, lm, am, lens = next(it)
+        except StopIteration:
+            order = torch.randperm(len(train_rows), generator=g).tolist()
+            it = make_batches(train_rows, order, args.accum)
+            ids, lm, am, lens = next(it)
+        # ONE teacher forward for the whole accumulation window
+        x, t = teacher(ids, am)
+        # original AddUniformNoise: input-only, (rand-.5)*std*512/len
+        for b, L in enumerate(lens):
+            noise = (torch.rand(L, x.shape[-1], device=x.device)
+                     - 0.5) * 0.2 * 512 / L
+            x[b, :L] += noise
+        # ONE weight fold+quant per optimizer step (weights constant
+        # until opt.step(); the w_clip search dominates otherwise).
+        # Micro-batches accumulate grads on detached leaves; the fold
+        # graph is traversed once at the end (STE-exact, see qw_leaves).
+        leaves, twR = core.qw_leaves(exact=False)
+        qw_pair = (leaves, twR)
+        nmicro = len(lens)
+        for b, L in enumerate(lens):
+            h = core.forward_train(ids[b:b + 1, :L].to(dev),
+                                   x[b:b + 1, :L - 1].half(),
+                                   qw=qw_pair)
             # masked-row selection: mathematically identical to the
             # original mask-weighted sums, avoids (B,T,V) tensors
-            sel = (lm[:, :-1] & am[:, :-1]).to(dev).reshape(-1)
+            sel = lm[b:b + 1, :L - 1].to(dev).reshape(-1)
             nsel = sel.sum() + 1e-5
             hf = h.reshape(-1, h.shape[-1])[sel]
-            tf = t[:, 1:].reshape(-1, h.shape[-1])[sel].float()
+            tf = t[b:b + 1, 1:L].reshape(-1, h.shape[-1])[sel].float()
             v = crit(hf.float(), tf)
             vloss = v.mean(-1).sum() / nsel
             with torch.no_grad():
@@ -383,11 +399,13 @@ def main():
             lp = core.head_logits(hf).log_softmax(-1)
             ploss = -(tp * lp).sum(-1).sum() / nsel
             del tp, lp
-            loss = (1.0 * vloss + 0.1 * ploss) / args.accum
+            loss = (1.0 * vloss + 0.1 * ploss) / nmicro
             loss.backward()
-            acc_v += vloss.item() / args.accum
-            acc_p += ploss.item() / args.accum
-            seen_tok += int(sum(lens))
+            acc_v += vloss.item() / nmicro
+            acc_p += ploss.item() / nmicro
+            seen_tok += int(L)
+        core.fold_backward(leaves)
+        del leaves, qw_pair
         torch.nn.utils.clip_grad_value_(trainable, 0.5)
         opt.step()
         sched.step()

@@ -168,7 +168,9 @@ def main():
                              f"dlogits={d_lg} tok_eq={tok_eq}")
         ad.uninstall()
         results[mode] = dict(weights=wres, chain=cres)
-        del model, eq
+        del model, eq, ad, qw, rt_w, rt, tr, sd0, stash, ea
+        import gc
+        gc.collect()
         torch.cuda.empty_cache()
 
     verdict = "PASS" if not fails else "FAIL"

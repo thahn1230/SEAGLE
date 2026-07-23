@@ -191,6 +191,11 @@ class ExactQuantizedRotationForward(nn.Module):
         self.log_alpha = nn.Parameter(
             torch.tensor(float(alpha_init)).log().to(device),
             requires_grad=train_alpha)
+        # exact python-float alpha for the fixed-alpha (train_alpha=False)
+        # path: the runtime adapter divides the fp16 fold by the FULL-
+        # precision scalar (and scales E in fp32) — an fp16-rounded or
+        # exp(log(.)) round-tripped alpha only matches at powers of two
+        self.alpha_exact = float(alpha_init)
         self.aq = _ActQ(a_bits) if a_bits < 16 else None
         self.counters = dict(w_quant=0, a_quant=0, kv_quant=0)
 
@@ -202,7 +207,6 @@ class ExactQuantizedRotationForward(nn.Module):
         gam = self.gamma64.to(dd)
         gl = self.gl64.to(dd)
         R2 = self.R2_64.to(dd)
-        a16 = self.log_alpha.exp().half()
 
         def c16(x):
             return x.half()
@@ -211,8 +215,28 @@ class ExactQuantizedRotationForward(nn.Module):
         Wf = c16(torch.cat([self.W_e.to(dd), self.W_h.to(dd) @ M], dim=1))
         Wr = c16(torch.cat([self.W_e.to(dd), self.W_h.to(dd) @ R], dim=1))
         D = self.D
-        Wf = torch.cat([Wf[:, :D] / a16, Wf[:, D:]], dim=1)
-        Wr = torch.cat([Wr[:, :D] / a16, Wr[:, D:]], dim=1)
+        if not self.log_alpha.requires_grad:
+            # the runtime adapter divides its fp16 fold by the python-
+            # float alpha ON CPU; CPU evaluates that as an fp32 division
+            # by fp32(alpha) with CPU rounding. exact=True (deployment
+            # parity) runs the division literally on CPU for bitwise
+            # equality; the fp32-scalar GPU replica (identical on all but
+            # rare rounding-boundary elements) serves the training path.
+            a32 = torch.tensor(self.alpha_exact, dtype=torch.float32,
+                               device=Wf.device)
+
+            def div_a(x):
+                if exact:
+                    return (x.detach().cpu().half()
+                            / self.alpha_exact).to(x.device)
+                return (x.float() / a32).half()
+        else:
+            a16 = self.log_alpha.exp().half()
+
+            def div_a(x):
+                return x / a16
+        Wf = torch.cat([div_a(Wf[:, :D]), Wf[:, D:]], dim=1)
+        Wr = torch.cat([div_a(Wr[:, :D]), Wr[:, D:]], dim=1)
 
         q = c16(self.Wq.to(dd) @ R)
         k = c16(self.Wk.to(dd) @ R)
@@ -320,7 +344,8 @@ class ExactQuantizedRotationForward(nn.Module):
                       recur_tokens=None, rollout=None, exact=False):
         qw, tw = self.quantized_weights(exact)
         R = tw["R"]
-        a = self.log_alpha.exp()
+        a = (self.alpha_exact if not self.log_alpha.requires_grad
+             else self.log_alpha.exp())
         B, T = a_seq.shape[0], a_seq.shape[1]
         E = self.E[tok_ids] * a
         z = torch.cat([E[:, 1:T + 1].half(), a_seq.half()], dim=-1)
@@ -351,15 +376,66 @@ class ExactQuantizedRotationForward(nn.Module):
             h_last = h_all[:, -1:]
         return outs
 
-    def forward_train(self, tok_ids, feat_seq, pad_mask=None, exact=False):
+    QSITES = ("W_first", "W_rec", "q", "k", "v", "o", "gate", "up",
+              "down")
+
+    def qw_leaves(self, exact=False):
+        """Detached quantized-weight LEAVES for gradient accumulation.
+        The STE makes the quantizer a gradient identity, so micro-batches
+        can run fwd/bwd against these leaves (accumulating .grad on them)
+        and `fold_backward` then routes the summed gradients through the
+        fold graph to the masters ONCE per optimizer step — bitwise the
+        same forward and mathematically the same gradient as backprop
+        through the full STE graph, without keeping the fold graph alive
+        across micro-batches (memory) or re-running the w_clip search per
+        micro-batch (time)."""
+        with torch.no_grad():
+            tw = self.transformed_weights(exact)
+            out = {}
+            for k in self.QSITES:
+                w = tw[k]
+                if self.w_bits < 16:
+                    self.counters["w_quant"] += 1
+                    w = fq._weight_fake_quant(w, self.w_bits)
+                out[k] = w.requires_grad_(True)
+            out["head"] = tw["head"].requires_grad_(True)
+            R = tw["R"]
+        return out, {"R": R}
+
+    def fold_backward(self, leaves, exact=False):
+        """Backprop accumulated leaf grads through the (rebuilt) fold
+        graph into the trainable masters (STE: quantizer is identity)."""
+        tw = self.transformed_weights(exact)
+        # head excluded: W_lm is a frozen buffer (original EAGLE head is
+        # frozen), so its fold has no grad path — identical to the full
+        # STE backward where the head gradient dead-ends in the buffer.
+        keys = [k for k in self.QSITES
+                if leaves[k].grad is not None and tw[k].requires_grad]
+        if not keys:
+            return
+        torch.autograd.backward(
+            [tw[k] for k in keys],
+            [leaves[k].grad.to(tw[k].dtype) for k in keys])
+
+    def forward_train(self, tok_ids, feat_seq, pad_mask=None, exact=False,
+                     qw=None):
         """Original-EAGLE single-step training pass (all rows first-path,
         exactly like eagle/train/main.py's causal forward): tok_ids (B,T+1)
         raw token ids, feat_seq (B,T) interface-input features. Returns
         h_all (B,T,D) draft hidden in the DEPLOYED basis; logits via
-        `head_logits`. pad_mask (B,T) True=real token."""
-        qw, tw = self.quantized_weights(exact)
+        `head_logits`. pad_mask (B,T) True=real token.
+
+        qw: optional precomputed (qw, tw) from quantized_weights() — the
+        folded/quantized weights are constant within one optimizer step,
+        so gradient accumulation can reuse them (identical math; the
+        official w_clip search dominates step time otherwise)."""
+        if qw is None:
+            qw, tw = self.quantized_weights(exact)
+        else:
+            qw, tw = qw
         R = tw["R"]
-        a = self.log_alpha.exp()
+        a = (self.alpha_exact if not self.log_alpha.requires_grad
+             else self.log_alpha.exp())
         B, T = feat_seq.shape[0], feat_seq.shape[1]
         E = self.E[tok_ids] * a
         z = torch.cat([E[:, 1:T + 1].half(), feat_seq.half()], dim=-1)
