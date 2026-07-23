@@ -91,12 +91,16 @@ def main():
         cfg.get("model", {}).get("chat_template", "llama2")]
     eos = tok.eos_token_id
 
+    from eagle.model.kv_cache import initialize_past_key_values
+
     def seq_greedy(ids):
-        past, cur, out = None, ids, []
+        # vendored KV llama needs its managed cache object (validated
+        # pattern from check_verifier_correctness.py)
+        past, _pd, _cl = initialize_past_key_values(model.base_model)
+        cur, out = ids, []
         for _ in range(args.max_new_tokens):
             res = model.base_model(input_ids=cur, past_key_values=past,
                                    use_cache=True)
-            past = res.past_key_values
             nxt = int(res.logits[:, -1].argmax(-1))
             out.append(nxt)
             if nxt == eos:

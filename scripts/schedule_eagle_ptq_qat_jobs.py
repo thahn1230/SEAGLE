@@ -190,8 +190,9 @@ def main():
         state = json.load(open(state_p))
     for j in jobs:
         j["state"] = state.get(j["name"], {}).get("state", "pending")
-        if j["state"] in ("running", "blocked"):
-            # a restarted scheduler holds no Popen for these; jobs are
+        if j["state"] in ("running", "blocked", "failed"):
+            # a restarted scheduler holds no Popen for running jobs, and
+            # failed jobs may have been fixed since; all jobs are
             # idempotent (evals skip existing shards, trainer skips on
             # final manifest) so re-queue them
             j["state"] = "pending"
