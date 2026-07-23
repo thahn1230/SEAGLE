@@ -174,10 +174,12 @@ def main():
     ap.add_argument("--phase", default="all",
                     choices=["train", "eval", "all"])
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--with-sensitivity", action="store_true")
     ap.add_argument("--poll", type=int, default=60)
     args = ap.parse_args()
     rd = args.run_dir
-    jobs = build_jobs(rd, args.alpha_fp16, args.alpha_int4)
+    jobs = build_jobs(rd, args.alpha_fp16, args.alpha_int4,
+                      with_sensitivity=args.with_sensitivity)
     if args.phase == "train":
         jobs = [j for j in jobs if j["name"].startswith("train_")]
     elif args.phase == "eval":
