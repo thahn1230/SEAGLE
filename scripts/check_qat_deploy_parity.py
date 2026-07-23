@@ -160,8 +160,9 @@ def main():
         for k, ((ry, rh, rlg, rtk, rkv), (tlg, th, ttk)) in \
                 enumerate(zip(rt, tr)):
             d_lg = float((rlg - tlg).abs().max())
+            d_h = float((rh.float() - th.float()).abs().max())
             tok_eq = bool((rtk == ttk).all())
-            cres.append(dict(depth=k, max_dlogits=d_lg,
+            cres.append(dict(depth=k, max_dlogits=d_lg, max_dh=d_h,
                              greedy_tok_equal=tok_eq))
             if d_lg > 5e-2 or not tok_eq:
                 fails.append(f"{mode}: depth {k} chain mismatch "

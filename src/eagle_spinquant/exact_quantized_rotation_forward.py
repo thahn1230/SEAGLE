@@ -65,6 +65,11 @@ RMS_EPS = 1e-6
 def ste_weight_quant(w, bits=4):
     with torch.no_grad():
         qw = fq._weight_fake_quant(w.detach(), bits)
+    if not w.requires_grad:
+        # no-grad path returns the OFFICIAL quantizer output directly:
+        # the STE reconstruction w + (qw - w) re-rounds in fp16 and can
+        # differ from qw by 1 ULP on grid-boundary elements (Gate D)
+        return qw
     return w + (qw - w).detach()
 
 
@@ -78,12 +83,16 @@ class _ActQ:
             self.q.find_params(x2)
             qx = self.q(x2)
             self.q.free()
+        if not x.requires_grad:
+            return qx
         return x + (qx - x).detach()
 
 
 def ste_kv4(x, bits=4):
     with torch.no_grad():
         qx = fake_quant_kv(x.detach(), bits=bits)
+    if not x.requires_grad:
+        return qx
     return x + (qx - x).detach()
 
 
