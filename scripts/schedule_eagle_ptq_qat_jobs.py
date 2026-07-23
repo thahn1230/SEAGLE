@@ -18,7 +18,7 @@ GPUS = [0, 1, 2, 3, 4, 5]
 PY = sys.executable
 
 
-def build_jobs(rd, alpha_fp16, alpha_int4):
+def build_jobs(rd, alpha_fp16, alpha_int4, with_sensitivity=False):
     T = f"{PY} scripts/train_eagle_draft_int4_qat.py --run-dir {rd}"
     TC = f"{PY} scripts/train_eagle_draft_fp16_control.py --run-dir {rd}"
     E = (f"{PY} scripts/eval_eagle_acceptance_length.py --run-dir {rd} "
@@ -117,6 +117,40 @@ def build_jobs(rd, alpha_fp16, alpha_int4):
                     if "qat" in tag else
                     ("train_C8" if "C8" in tag else "train_C6")]
         J(f"xd_{tag}", cmd, deps=deps)
+
+    if with_sensitivity:
+        # (a) best-val checkpoint deployments (labeled sensitivity: the
+        # primary uses the final checkpoint per original EAGLE semantics)
+        best = [("C3_s0", "fp16", "d4p3_deploy", alpha_fp16),
+                ("C3_s1", "fp16", "d4p3_deploy", alpha_fp16),
+                ("C3_s2", "fp16", "d4p3_deploy", alpha_fp16),
+                ("C7_s0", "int4", "d4p3_deploy", alpha_int4),
+                ("C7_s1", "int4", "d4p3_deploy", alpha_int4),
+                ("C7_s2", "int4", "d4p3_deploy", alpha_int4),
+                ("C7b_s0", "int4", "d4p3_deploy", alpha_int4),
+                ("C8_s0", "fp16", "fp16_deploy", None),
+                ("C6_s0", "int4", "fp16_deploy", None)]
+        for t, tgt, dc, al in best:
+            dep = {"C8_s0": "train_C8", "C6_s0": "train_C6",
+                   "C7b_s0": "train_C7b"}.get(t, f"train_{t}")
+            cmd = (f"{E} --target {tgt} --draft-cfg {dc} "
+                   f"--draft-sd {ck}/{t}_best.pt --tag {t}_bestval")
+            if al is not None:
+                cmd += f" --alpha {al}"
+            J(f"evalbest_{t}", cmd, deps=[dep])
+        # (b) fine-tuning-LR sensitivity trainings (NOT primary; probes
+        # whether the faithful from-scratch recipe (lr 3e-5, warmup 2000)
+        # is what degrades a converged init at this budget)
+        J("train_C3lr_s0", f"{T} --arm C3 --seed 0 --alpha {alpha_fp16} "
+          f"--lr 3e-6 --warmup 200 --steps 3000 --tag C3lr_s0")
+        J("train_C7lr_s0", f"{T} --arm C7 --seed 0 --alpha {alpha_int4} "
+          f"--lr 3e-6 --warmup 200 --steps 3000 --tag C7lr_s0")
+        J("eval_C3lr_s0", f"{E} --target fp16 --draft-cfg d4p3_deploy "
+          f"--alpha {alpha_fp16} --draft-sd {ck}/C3lr_s0_last.pt "
+          f"--tag C3lr_s0_qat", deps=["train_C3lr_s0"])
+        J("eval_C7lr_s0", f"{E} --target int4 --draft-cfg d4p3_deploy "
+          f"--alpha {alpha_int4} --draft-sd {ck}/C7lr_s0_last.pt "
+          f"--tag C7lr_s0_qat", deps=["train_C7lr_s0"])
     return jobs
 
 
@@ -154,6 +188,11 @@ def main():
         state = json.load(open(state_p))
     for j in jobs:
         j["state"] = state.get(j["name"], {}).get("state", "pending")
+        if j["state"] in ("running", "blocked"):
+            # a restarted scheduler holds no Popen for these; jobs are
+            # idempotent (evals skip existing shards, trainer skips on
+            # final manifest) so re-queue them
+            j["state"] = "pending"
     if args.dry_run:
         for j in jobs:
             print(f"{j['state']:9s} {j['name']}: {j['cmd']}"

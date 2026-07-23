@@ -199,6 +199,11 @@ def main():
     assert os.environ.get("CUDA_VISIBLE_DEVICES") in \
         tuple(str(i) for i in range(6))
     tag = args.tag or f"{args.arm}_s{args.seed}"
+    done_manifest = os.path.join(args.run_dir, "manifests",
+                                 f"train_{tag}.json")
+    if os.path.exists(done_manifest):
+        print(f"[{tag}] manifest exists, training already complete; skip")
+        return 0
     dev = args.device
     t0 = time.time()
     torch.manual_seed(1000 + args.seed)
