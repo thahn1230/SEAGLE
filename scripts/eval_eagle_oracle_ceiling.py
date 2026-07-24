@@ -65,7 +65,7 @@ def main():
         return 0
     assert args.target and args.run_dir
     assert os.environ.get("CUDA_VISIBLE_DEVICES") in \
-        tuple(str(i) for i in range(6))
+        tuple(str(i) for i in range(8))
 
     import torch
     from eagle_spinquant import eagle_bridge, experiment, logging_utils, \

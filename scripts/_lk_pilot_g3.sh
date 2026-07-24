@@ -1,0 +1,6 @@
+set -uo pipefail
+cd /home/thahn1230/eagle_spinquant_w4a4
+python scripts/train_eagle_lk_rotation.py --run-dir runs/eagle_lk_exactpath_draft_rotation_20260721_151703 --batch 32 --accum 1 --steps 1000 --eval-every 250 --teacher t4kv4 --corpus runs/eagle_lk_exactpath_draft_rotation_20260721_151703/manifests/lkcorpus__pilot_t4kv4_greedy.json --objective tv --rot residual --out runs/eagle_lk_exactpath_draft_rotation_20260721_151703/rotations/LK_ABL_TV.pt
+python scripts/train_eagle_lk_rotation.py --run-dir runs/eagle_lk_exactpath_draft_rotation_20260721_151703 --batch 32 --accum 1 --steps 1000 --eval-every 250 --teacher t4kv4 --corpus runs/eagle_lk_exactpath_draft_rotation_20260721_151703/manifests/lkcorpus__pilot_t4kv4_greedy.json --objective hybrid_fixed --rot residual --out runs/eagle_lk_exactpath_draft_rotation_20260721_151703/rotations/LK_ABL_FIXED05.pt
+python scripts/train_eagle_lk_rotation.py --run-dir runs/eagle_lk_exactpath_draft_rotation_20260721_151703 --batch 32 --accum 1 --steps 1000 --eval-every 250 --teacher t4kv4 --corpus runs/eagle_lk_exactpath_draft_rotation_20260721_151703/manifests/lkcorpus__pilot_t4kv4_greedy.json --objective topk_kl --rot residual --out runs/eagle_lk_exactpath_draft_rotation_20260721_151703/rotations/LK_ABL_TOPK64.pt
+echo "[pilot_g3] DONE"

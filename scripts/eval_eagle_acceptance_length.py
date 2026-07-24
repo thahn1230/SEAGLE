@@ -74,7 +74,7 @@ def main():
     ap.add_argument("--device", default="cuda:0")
     args = ap.parse_args()
     assert os.environ.get("CUDA_VISIBLE_DEVICES") in \
-        tuple(str(i) for i in range(6))
+        tuple(str(i) for i in range(8))
     dev = args.device
     torch.set_grad_enabled(False)
     cfg = experiment.load_config(None)
@@ -113,6 +113,8 @@ def main():
                             weights_only=False)
         if "draft_state_dict" in sd_new:
             sd_new = sd_new["draft_state_dict"]
+        elif "model" in sd_new:
+            sd_new = sd_new["model"]
         ea.load_state_dict(
             {k: v.to(ea.fc.weight.dtype) for k, v in sd_new.items()},
             strict=True)

@@ -195,9 +195,11 @@ def main():
     ap.add_argument("--init-sd", default=None, help="C7b: C6 export .pt")
     ap.add_argument("--device", default="cuda:0")
     ap.add_argument("--tag", default=None)
+    ap.add_argument("--save-ckpt-every", type=int, default=0,
+                    help="also export step-stamped ckpts every N steps")
     args = ap.parse_args()
     assert os.environ.get("CUDA_VISIBLE_DEVICES") in \
-        tuple(str(i) for i in range(6))
+        tuple(str(i) for i in range(8))
     tag = args.tag or f"{args.arm}_s{args.seed}"
     done_manifest = os.path.join(args.run_dir, "manifests",
                                  f"train_{tag}.json")
@@ -237,8 +239,10 @@ def main():
              model.ea_layer.state_dict().items()}
     if args.arm == "C7b":
         assert args.init_sd, "C7b requires --init-sd (C6 export)"
+    if args.init_sd:
         init = torch.load(args.init_sd, map_location="cpu",
-                          weights_only=False)["draft_state_dict"]
+                          weights_only=False)
+        init = init.get("draft_state_dict", init.get("model", init))
         for k in ea_sd:
             if k in init:
                 ea_sd[k] = init[k].to(ea_sd[k].dtype)
@@ -424,6 +428,11 @@ def main():
             logf.flush()
             if step % 250 == 0:
                 print(f"[{tag}] {rec}", flush=True)
+        if args.save_ckpt_every and step % args.save_ckpt_every == 0:
+            export(os.path.join(args.run_dir, "ckpts",
+                                f"{tag}_step{step}.pt"),
+                   dict(arm=args.arm, seed=args.seed, step=step,
+                        alpha=alpha, bits=bits))
         if step % args.val_every == 0 or step == args.steps:
             vrec = validate(step)
             vrec["kind"] = "val"
