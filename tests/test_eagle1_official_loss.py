@@ -78,7 +78,9 @@ def test_coefficients_are_official():
     m = _load_trainer()
     assert m.TC["v_w"] == 1.0 and m.TC["p_w"] == 0.1
     assert m.TC["lr"] == 3e-5 and m.TC["num_warmup_steps"] == 2000
-    assert m.TC["total_steps"] == 800000 and m.TC["bs"] == 4
+    assert m.TC["total_steps"] == 800000
+    # official per-rank batch 4 via the official grad-accum knob
+    assert m.TC["bs"] * m.TC["accum"] == 4
     assert m.TC["noise_std"] == 0.2 and m.TC["max_len"] == 2048
     assert m.TC["b1"] == 0.9 and m.TC["b2"] == 0.95
     assert m.TC["grad_clip"] == 0.5

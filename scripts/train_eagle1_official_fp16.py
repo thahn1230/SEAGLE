@@ -37,7 +37,10 @@ TOK_CACHE = ("/data/thahn1230/datasets/eagle1_official/"
 CFG_JSON = os.path.join(PROJECT_ROOT,
                         "third_party/EAGLE/eagle/train/"
                         "llama_2_chat_7B_config.json")
-TC = dict(lr=3e-5, bs=4, num_epochs=20, num_warmup_steps=2000,
+# bs=2 x grad_accum=2 = the official bs-4 effective per-rank batch via
+# the official --gradient-accumulation-steps knob (24 GB cards cannot
+# hold the bs-4 fp32 attention softmax of the official-size batch)
+TC = dict(lr=3e-5, bs=2, accum=2, num_epochs=20, num_warmup_steps=2000,
           total_steps=800000, p_w=0.1, v_w=1.0, noise_std=0.2,
           max_len=2048, b1=0.9, b2=0.95, grad_clip=0.5)
 
@@ -219,8 +222,9 @@ def main():
         start_step, start_epoch = ck["step"], ck["epoch"]
         log(rank, f"[fp16] resumed step {start_step} ep {start_epoch}")
 
-    log(rank, f"[fp16] world={world} bs/rank={TC['bs']} eff_batch="
-              f"{TC['bs']*world} trainable={n_tr/1e6:.1f}M "
+    log(rank, f"[fp16] world={world} bs/rank={TC['bs']}x{TC['accum']} "
+              f"eff_batch={TC['bs']*TC['accum']*world} "
+              f"trainable={n_tr/1e6:.1f}M "
               f"train={len(train_idx_all)} test={len(test_idx)} "
               f"epochs={args.epochs} emb_sha={frozen_emb_sha} "
               f"head_sha={frozen_head_sha}")
@@ -240,19 +244,26 @@ def main():
         perm = torch.randperm(len(train_idx_all), generator=g).tolist()
         my = perm[rank::world]
         # equalize per-rank step counts (avoids end-of-epoch DDP hang)
+        eff = TC["bs"] * TC["accum"]
         n_common = (min(len(perm[r::world]) for r in range(world))
-                    // TC["bs"]) * TC["bs"]
+                    // eff) * eff
         my = my[:n_common]
         model.train()
-        for s in range(0, len(my) - TC["bs"] + 1, TC["bs"]):
-            idxs = [train_idx_all[j] for j in my[s:s + TC["bs"]]]
-            batch = official_batch(rows, idxs, target, dev, noise_gen)
+        for s in range(0, len(my) - eff + 1, eff):
             opt.zero_grad(set_to_none=True)
-            loss, vloss, ploss, _, _ = compute_loss(model, head, batch,
-                                                    crit)
-            loss.backward()
-            gn = torch.nn.utils.clip_grad_value_(trainable,
-                                                 TC["grad_clip"])
+            acc_v = acc_p = 0.0
+            for a in range(TC["accum"]):
+                lo = s + a * TC["bs"]
+                idxs = [train_idx_all[j] for j in my[lo:lo + TC["bs"]]]
+                batch = official_batch(rows, idxs, target, dev,
+                                       noise_gen)
+                loss, vloss, ploss, _, _ = compute_loss(
+                    model, head, batch, crit)
+                (loss / TC["accum"]).backward()
+                acc_v += float(vloss) / TC["accum"]
+                acc_p += float(ploss) / TC["accum"]
+            vloss, ploss = acc_v, acc_p
+            torch.nn.utils.clip_grad_value_(trainable, TC["grad_clip"])
             opt.step()
             sched.step()
             step += 1
@@ -260,8 +271,8 @@ def main():
                 t_bench = time.time()
             if rank == 0 and step % 25 == 0:
                 rec = dict(step=step, epoch=epoch,
-                           vloss=round(float(vloss), 5),
-                           ploss=round(float(ploss), 5),
+                           vloss=round(vloss, 5),
+                           ploss=round(ploss, 5),
                            lr=sched.get_last_lr()[0],
                            hours=round((time.time() - t0) / 3600, 3))
                 logf.write(json.dumps(rec) + "\n")
