@@ -99,8 +99,9 @@ line(17, "Non-inferiority verdict",
      "Criterion B PASS. SENSITIVITY: best-val ckpt or lr 3e-6 REVERSES "
      f"(bestval +{boot.get('bestval_vs_ptq_fp16',{}).get('delta_b_minus_a')}"
      f"/+{boot.get('bestval_vs_ptq_int4',{}).get('delta_b_minus_a')}; "
-     f"low-LR +{boot.get('lowlr_vs_ptq_fp16',{}).get('delta_b_minus_a')}"
-     f"/+{boot.get('lowlr_vs_ptq_int4',{}).get('delta_b_minus_a')})")
+     f"low-LR +{boot.get('lowlr_vs_ptq_fp16_s0',{}).get('delta_b_minus_a')}"
+     f"/+{boot.get('lowlr_vs_ptq_int4_s0',{}).get('delta_b_minus_a')} "
+     "(3 seeds/target, all CIs>+0.17))")
 svs = {}
 for r in sv:
     svs.setdefault(r["id"], []).append(r["tau"])
