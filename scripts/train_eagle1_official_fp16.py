@@ -37,10 +37,11 @@ TOK_CACHE = ("/data/thahn1230/datasets/eagle1_official/"
 CFG_JSON = os.path.join(PROJECT_ROOT,
                         "third_party/EAGLE/eagle/train/"
                         "llama_2_chat_7B_config.json")
-# bs=2 x grad_accum=2 = the official bs-4 effective per-rank batch via
-# the official --gradient-accumulation-steps knob (24 GB cards cannot
-# hold the bs-4 fp32 attention softmax of the official-size batch)
-TC = dict(lr=3e-5, bs=2, accum=2, num_epochs=20, num_warmup_steps=2000,
+# bs=1 x grad_accum=4 = the official bs-4 effective per-rank batch via
+# the official --gradient-accumulation-steps knob: 24 GB cards cannot
+# hold the official-size batch AND the NCCL communicator buffers
+# (observed: NCCL init 'out of memory' at bs2x2, ~22 GiB peak)
+TC = dict(lr=3e-5, bs=1, accum=4, num_epochs=20, num_warmup_steps=2000,
           total_steps=800000, p_w=0.1, v_w=1.0, noise_std=0.2,
           max_len=2048, b1=0.9, b2=0.95, grad_clip=0.5)
 
