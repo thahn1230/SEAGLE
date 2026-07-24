@@ -323,6 +323,34 @@ def main():
     json.dump(mem, open(os.path.join(T, "model_memory.json"), "w"),
               indent=1)
 
+    # cross-target greedy agreement (INT4 sequential vs FP16 sequential)
+    import csv as _c2
+    seqs = {}
+    for tgt in ("fp16", "int4"):
+        p = os.path.join(rd, "shards",
+                         f"al__ORACLE_{tgt}__{tgt}__mtbench.csv")
+        if os.path.exists(p):
+            seqs[tgt] = {r["prompt_id"]: json.loads(r["seq_tokens"])
+                         for r in _c2.DictReader(open(p))
+                         if "seq_tokens" in r}
+    if len(seqs) == 2:
+        fracs, exact = [], 0
+        for pid in set(seqs["fp16"]) & set(seqs["int4"]):
+            a, b = seqs["fp16"][pid], seqs["int4"][pid]
+            m = min(len(a), len(b))
+            k = 0
+            while k < m and a[k] == b[k]:
+                k += 1
+            fracs.append(k / max(m, 1))
+            exact += int(k == m and len(a) == len(b))
+        tqp = os.path.join(T, "target_quality.json")
+        tq = json.load(open(tqp)) if os.path.exists(tqp) else {}
+        tq["greedy_agreement_vs_fp16"] = dict(
+            n=len(fracs), mean_prefix_agreement=round(
+                float(np.mean(fracs)), 4),
+            exact_match_rate=round(exact / max(len(fracs), 1), 4))
+        json.dump(tq, open(tqp, "w"), indent=1)
+
     print(json.dumps(out, indent=1, default=float))
     print(f"[attain] tables -> {T}")
     return 0

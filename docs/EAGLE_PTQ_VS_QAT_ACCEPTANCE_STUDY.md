@@ -156,12 +156,16 @@ steps): C3_best = 3.133/3.148/3.040 (σ 0.05), C7_best =
 3.282/3.303/3.281 (σ 0.010). Paired deltas vs strict PTQ: **+0.226
 [0.174, 0.275] (FP16), +0.249 [0.187, 0.316] (INT4)** — QAT wins under
 this selection rule; Criteria A/B would *fail* in this variant.
-**Sensitivity S2 — fine-tuning LR** (3e-6, warmup 200, 3000 steps, seed
-0): val improves monotonically (0.705→0.717 FP16; 0.748→0.751 INT4);
-deployment **C3lr = 3.1495 (+0.243 [0.199, 0.289]), C7lr = 3.3065
-(+0.274 [0.211, 0.341])** — the same gain as best-val selection, stably,
-and +0.125 [0.059, 0.195] above the frozen-weight rotation-optimized
-C12.
+**Sensitivity S2 — fine-tuning LR** (3e-6, warmup 200, 3000 steps,
+**3 seeds per target**): val improves monotonically (0.705→0.717 FP16;
+0.748→0.751 INT4); deployment **C3lr = 3.1495/3.1720/3.1681 (mean
+3.1632, σ 0.010; per-seed deltas vs strict PTQ +0.243/+0.265/+0.262, all
+CIs > +0.19)** and **C7lr = 3.3065/3.2691/3.3122 (mean 3.2959, σ 0.019;
+deltas +0.274/+0.236/+0.279, all CIs > +0.17)** — the same gain as
+best-val selection, stable across seeds, and +0.125 [0.057, 0.193]
+above the frozen-weight rotation-optimized C12. Cross-domain (seed 0,
+INT4): C7lr beats C5 on all five datasets (c4 3.305 vs 3.014, gsm8k
+3.746 vs 3.440, humaneval 3.938 vs 3.742, sharegpt 3.403 vs 3.117).
 
 Honest synthesis: *the answer to "is QAT necessary?" is no — and the
 answer to "does simply training the EAGLE draft the normal way work?" is
@@ -214,11 +218,14 @@ the *deployed* target (which this study does throughout).
 Speculative fidelity (§16, Gate L; sequential vs EAGLE-tree under the
 SAME target, 40 prompts, greedy): FP16 exact-match 0.90, mean prefix
 agreement 0.915 — *not* bitwise lossless (execution-shape fp16 rounding
-flips near-ties). INT4: `tables/speculative_fidelity_int4.json`
-(dynamic per-token A4 is execution-shape dependent; reported number in
-the table file; same verifier for all INT4 arms so comparisons are
-internally consistent). No configuration is described as lossless in
-this study.
+flips near-ties). INT4: **exact-match 0.025, mean prefix agreement
+0.155** — the dynamic per-token A4 quantizer sees different activation
+shapes under tree vs sequential execution, so the INT4 target is a
+materially different function in the two modes. The quantized system
+must NOT be called lossless; every INT4 arm in this study uses the same
+tree verifier and quantization contract, so all internal comparisons
+remain like-for-like, and the pre-registered verdicts are unaffected
+(they compare methods under one fixed verifier, per §16).
 
 ## 9. Cost accounting
 
