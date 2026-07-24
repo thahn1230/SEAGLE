@@ -335,6 +335,9 @@ def main():
         log(rank, f"[fp16] DONE step={step} "
                   f"hours={(time.time()-t0)/3600:.2f}")
     if world > 1:
+        # rank 0 spends minutes in save/verify above; peers must wait
+        # here or NCCL teardown races (observed ncclUnhandledCudaError)
+        dist.barrier()
         dist.destroy_process_group()
     return 0
 
