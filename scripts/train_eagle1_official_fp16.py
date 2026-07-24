@@ -107,21 +107,26 @@ def official_batch(rows, idxs, target, dev, noise_gen):
 
 
 def compute_loss(model, head, batch, crit):
+    """Official main.py loss on masked rows only — mathematically
+    identical to the full-tensor form (masked terms are zero in the
+    official sums; verified by test_eagle1_official_loss) but avoids
+    materializing (B,T,V) logits, which OOMs on 24 GB cards."""
     hidden, input_ids, target_h, loss_mask, attn = batch
     with torch.autocast("cuda", dtype=torch.bfloat16):
         predict = model(hidden, input_ids=input_ids,
                         attention_mask=attn)
+        sel = loss_mask.bool().reshape(-1)
+        nsel = loss_mask.sum() + 1e-5
+        pf = predict.reshape(-1, predict.shape[-1])[sel]
+        tf = target_h.reshape(-1, target_h.shape[-1])[sel]
         with torch.no_grad():
-            target_head = head(target_h.half()).float()
-            target_p = torch.softmax(target_head, dim=2)
-        out_head = head(predict.half()).float()
-        out_logp = torch.log_softmax(out_head, dim=2)
-        lm = loss_mask[:, :, None]
-        plogp = target_p * out_logp
-        ploss = -torch.sum(lm * plogp) / (loss_mask.sum() + 1e-5)
-        vloss = crit(predict.float(), target_h)
-        vloss = torch.sum(torch.mean(lm * vloss, 2)) \
-            / (loss_mask.sum() + 1e-5)
+            target_head = head(tf.half()).float()
+            target_p = torch.softmax(target_head, dim=-1)
+        out_head = head(pf.half()).float()
+        out_logp = torch.log_softmax(out_head, dim=-1)
+        ploss = -(target_p * out_logp).sum() / nsel
+        v = crit(pf.float(), tf.float())
+        vloss = v.mean(-1).sum() / nsel
         loss = TC["v_w"] * vloss + TC["p_w"] * ploss
     return loss, vloss.detach(), ploss.detach(), out_head.detach(), \
         target_head
@@ -137,15 +142,14 @@ def validate(model, head, rows, test_idx, target, dev, crit, bs, cap):
         batch = official_batch(rows, test_idx[s:s + bs], target, dev, g)
         loss, vloss, ploss, out_head, target_head = compute_loss(
             model, head, batch, crit)
-        loss_mask = batch[3]
-        sel = loss_mask.bool()
-        pk = out_head[sel].topk(3, dim=-1).indices
-        gt = target_head[sel].argmax(-1)
+        # out_head/target_head are already masked-row (N, V)
+        pk = out_head.topk(3, dim=-1).indices
+        gt = target_head.argmax(-1)
         eq = pk.eq(gt.unsqueeze(-1))
         correct += eq[..., 0].sum().item()
         c2 += eq[..., :2].any(-1).sum().item()
         c3 += eq.any(-1).sum().item()
-        tot += sel.sum().item()
+        tot += out_head.shape[0]
         vl += vloss.item()
         nb += 1
     model.train()
