@@ -102,6 +102,8 @@ D3. **World size.** Official effective batch is undocumented; we pin
     benchmark, recording the choice. LR stays 3e-5 (code does not scale).
 D4. wandb → local jsonl logging. tqdm → periodic prints.
 D5. Hardware: 8×RTX 4090 24 GB (bf16 supported natively).
+D7. GPU 7 released at step 33000 per user request; run resumed from the
+    step-32000 checkpoint on GPUs 0-6 (world 7, effective batch 28).
 
 ## 4. Deliberate experimental extensions (NOT part of the FP16 reproduction)
 
