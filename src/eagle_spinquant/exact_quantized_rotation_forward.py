@@ -427,7 +427,7 @@ class ExactQuantizedRotationForward(nn.Module):
             [leaves[k].grad.to(tw[k].dtype) for k in keys])
 
     def forward_train(self, tok_ids, feat_seq, pad_mask=None, exact=False,
-                     qw=None):
+                     qw=None, proj="first"):
         """Original-EAGLE single-step training pass (all rows first-path,
         exactly like eagle/train/main.py's causal forward): tok_ids (B,T+1)
         raw token ids, feat_seq (B,T) interface-input features. Returns
@@ -448,7 +448,10 @@ class ExactQuantizedRotationForward(nn.Module):
         B, T = feat_seq.shape[0], feat_seq.shape[1]
         E = self.E[tok_ids] * a
         z = torch.cat([E[:, 1:T + 1].half(), feat_seq.half()], dim=-1)
-        y = self._proj(z, qw["W_first"], R)
+        # proj="rec": multi-step rollout rows consume the draft's OWN
+        # hidden through the deployed recurrent fold (no interface fold)
+        y = self._proj(z, qw["W_first" if proj == "first" else "W_rec"],
+                       R)
         pos = torch.arange(0, T, device=y.device)
         bias = None
         if pad_mask is not None:

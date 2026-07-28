@@ -179,17 +179,22 @@ def main():
             continue
         prompts, _ = load_eval_prompts(ds_name, n_prompts, args.pool)
         rows = []
+        import time as _t
         for p in prompts:
             ids = build_prompt(tok, p["text"])[:, :1024].to(dev)
             if ad is not None and hasattr(ad, "set_context"):
                 ad.set_context(p["row_id"])
+            torch.cuda.synchronize()
+            _t0 = _t.time()
             deltas = run_gen(model.ea_generate(
                 ids, temperature=0.0, max_steps=args.max_new_tokens + 8,
                 tree_choices=tree), ids.shape[1], args.max_new_tokens)
+            torch.cuda.synchronize()
             rows.append(dict(tag=args.tag, target=args.target,
                              dataset=ds_name, prompt_id=p["row_id"],
                              acceptance_list=json.dumps(deltas),
-                             n_cycles=len(deltas)))
+                             n_cycles=len(deltas),
+                             gen_seconds=round(_t.time() - _t0, 3)))
         os.makedirs(os.path.dirname(out_csv), exist_ok=True)
         logging_utils.write_csv(out_csv, rows)
         taus = [t for r in rows for t in json.loads(r["acceptance_list"])]
