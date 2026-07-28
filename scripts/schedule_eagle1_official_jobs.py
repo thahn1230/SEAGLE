@@ -21,15 +21,15 @@ ANCHOR = "checkpoints/eagle1_fresh_fp16_anchor/anchor.pt"
 
 
 def rd_alpha(rd, cond):
-    """Shell fragment: read the calibrated alpha for a condition."""
-    return (f"$({PY} -c \"import json;print(json.load(open('"
-            f"{rd}/tables/alpha_calibration.json'))['{cond}']"
-            f"['selected_alpha'])\")")
+    """Shell fragment: read the calibrated alpha for a condition
+    (quote-free helper — inline python -c breaks inside bash -c '...')."""
+    return (f"$({PY} scripts/_get_json.py "
+            f"{rd}/tables/alpha_calibration.json {cond} selected_alpha)")
 
 
 def rd_lr(rd, var):
-    return (f"$({PY} -c \"import json;print(json.load(open('"
-            f"{rd}/tables/lr_pilot.json'))['{var}']['selected_lr'])\")")
+    return (f"$({PY} scripts/_get_json.py "
+            f"{rd}/tables/lr_pilot.json {var} selected_lr)")
 
 
 def build_jobs(rd):
