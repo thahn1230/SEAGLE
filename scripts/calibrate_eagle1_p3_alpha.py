@@ -58,7 +58,11 @@ def stage_stats(args):
     e = emb
 
     def q(t, p):
-        return float(t.abs().flatten().float().quantile(p))
+        x = t.abs().flatten().float()
+        if x.numel() > 4_000_000:      # quantile() size limit
+            g = torch.Generator().manual_seed(0)
+            x = x[torch.randint(0, x.numel(), (4_000_000,), generator=g)]
+        return float(x.quantile(p))
 
     stats = dict(
         hidden=dict(rms=float(h.pow(2).mean().sqrt()),
