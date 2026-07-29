@@ -169,7 +169,7 @@ def main():
                     {k: v.half() for k, v in sd_out.items()},
                     "meta": meta}, path)
 
-    def rollout_loss(ids, lm, am, lens, train=True):
+    def rollout_loss(ids, lm, am, lens, train=True, qw=None):
         x, t = teacher(ids, am)
         total_v = total_p = 0.0
         loss = 0.0
@@ -186,7 +186,7 @@ def main():
             for k in range(args.K):
                 Tk = L - 1 - k
                 tokk = ids[b:b + 1, k:L].to(dev)   # tokens t_{i+k+1} rows
-                h = core.forward_train(tokk, hcur[:, :Tk],
+                h = core.forward_train(tokk, hcur[:, :Tk], qw=qw,
                                        proj="first" if k == 0 else "rec")
                 sel = (lm[b:b + 1, k:L - 1]).to(dev).reshape(-1)
                 nsel = sel.sum() + 1e-5
@@ -215,10 +215,18 @@ def main():
             it = sst.make_batches(train_rows, order, 2)
             ids, lm, am, lens = next(it)
         opt.zero_grad(set_to_none=True)
-        loss, tv, tp_ = rollout_loss(ids, lm, am, lens)
+        # leaf-grad scheme (validated in the single-step trainer):
+        # quantize ONCE per optimizer step; grads accumulate on detached
+        # leaves across depths/convs; fold graph traversed once (STE-
+        # exact). Avoids K x convs fold-graph rebuilds (OOM on 24 GB).
+        leaves, twR = core.qw_leaves(exact=False)
+        loss, tv, tp_ = rollout_loss(ids, lm, am, lens,
+                                     qw=(leaves, twR))
         if not torch.is_tensor(loss):
             continue
         loss.backward()
+        core.fold_backward(leaves)
+        del leaves
         torch.nn.utils.clip_grad_value_(trainable, 0.5)
         opt.step()
         sched.step()
@@ -237,11 +245,12 @@ def main():
         if step % args.val_every == 0 or step == args.steps:
             core.eval()
             with torch.no_grad():
+                vqw = core.quantized_weights(exact=False)
                 vs = []
                 vit = sst.make_batches(val_rows[:60], list(range(60)), 2)
                 for vids, vlm, vam, vlens in vit:
                     _, vv, _ = rollout_loss(vids, vlm, vam, vlens,
-                                            train=False)
+                                            train=False, qw=vqw)
                     vs.append(vv)
             core.train()
             vrec = dict(step=step, kind="val",
