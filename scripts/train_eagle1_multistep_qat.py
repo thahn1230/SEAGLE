@@ -265,6 +265,8 @@ def main():
                     _, vv, _ = rollout_loss(vids, vlm, vam, vlens,
                                             train=False, qw=vqw)
                     vs.append(vv)
+            del vqw                      # free val fold tensors before
+            torch.cuda.empty_cache()     # resuming training (OOM)
             core.train()
             vrec = dict(step=step, kind="val",
                         vloss=round(sum(vs) / max(len(vs), 1), 5))
