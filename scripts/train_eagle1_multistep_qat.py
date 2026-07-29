@@ -170,19 +170,23 @@ def main():
                     "meta": meta}, path)
 
     def rollout_loss(ids, lm, am, lens, train=True, qw=None):
+        """Per-conversation backward (train mode) with leaf-grad
+        accumulation; softCE rows capped at 512/depth via unbiased
+        random subsample (full-vocab logit graphs for K depths x convs
+        do not fit 24 GB otherwise; SmoothL1 keeps all rows)."""
         x, t = teacher(ids, am)
         total_v = total_p = 0.0
-        loss = 0.0
+        did = 0
         for b, L in enumerate(lens):
             if train:
                 noise = (torch.rand(L, D, device=x.device) - 0.5) \
                     * 0.2 * 512 / L
                 x[b, :L] += noise
-        b = 0  # bs=1 micro over the pair
         for b, L in enumerate(lens):
             if L < args.K + 8:
                 continue
             hcur = x[b:b + 1, :L - 1].half()      # depth-0 input (teacher)
+            loss = 0.0
             for k in range(args.K):
                 Tk = L - 1 - k
                 tokk = ids[b:b + 1, k:L].to(dev)   # tokens t_{i+k+1} rows
@@ -193,16 +197,26 @@ def main():
                 hf = h.reshape(-1, D)[sel]
                 tf = t[b:b + 1, k + 1:L].reshape(-1, D)[sel].float()
                 v = crit(hf.float(), tf).mean(-1).sum() / nsel
+                nh = hf.shape[0]
+                if nh > 512:
+                    ridx = torch.randperm(nh, device=hf.device)[:512]
+                    hf_p, tf_p = hf[ridx], tf[ridx]
+                else:
+                    hf_p, tf_p = hf, tf
                 with torch.no_grad():
-                    tp = core.head_logits(tf).softmax(-1)
-                lp = core.head_logits(hf).log_softmax(-1)
-                pl = -(tp * lp).sum(-1).sum() / nsel
+                    tp = core.head_logits(tf_p).softmax(-1)
+                lp = core.head_logits(hf_p).log_softmax(-1)
+                pl = -(tp * lp).sum(-1).sum() / (hf_p.shape[0] + 1e-5)
                 loss = loss + w[k] * (v + 0.1 * pl) / len(lens)
                 total_v += float(v) * w[k] / len(lens)
                 total_p += float(pl) * w[k] / len(lens)
                 hcur = h.detach() if not train else h
                 del tp, lp
-        return loss, total_v, total_p
+            if torch.is_tensor(loss):
+                did += 1
+                if train:
+                    loss.backward()        # frees this conv's graph
+        return did, total_v, total_p
 
     best3, step = -1.0, 0
     core.train()
@@ -220,11 +234,10 @@ def main():
         # leaves across depths/convs; fold graph traversed once (STE-
         # exact). Avoids K x convs fold-graph rebuilds (OOM on 24 GB).
         leaves, twR = core.qw_leaves(exact=False)
-        loss, tv, tp_ = rollout_loss(ids, lm, am, lens,
-                                     qw=(leaves, twR))
-        if not torch.is_tensor(loss):
+        did, tv, tp_ = rollout_loss(ids, lm, am, lens,
+                                    qw=(leaves, twR))
+        if not did:
             continue
-        loss.backward()
         core.fold_backward(leaves)
         del leaves
         torch.nn.utils.clip_grad_value_(trainable, 0.5)
