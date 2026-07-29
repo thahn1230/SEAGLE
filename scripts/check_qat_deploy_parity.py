@@ -101,7 +101,9 @@ def main():
         ea = model.ea_layer
         if args.draft_sd:
             sd_new = torch.load(args.draft_sd, map_location="cpu",
-                                weights_only=False)["draft_state_dict"]
+                                weights_only=False)
+            sd_new = sd_new.get("draft_state_dict",
+                                sd_new.get("model", sd_new))
             ea.load_state_dict({k: v.half() for k, v in sd_new.items()},
                                strict=True)
             ea.to(dev)
