@@ -125,3 +125,30 @@ def test_qat_frozen_parameters_and_no_fp16_fallback_covered():
                             "test_ptq_vs_qat_study.py")).read()
     assert "test_qat_trainable_parameter_list" in src
     assert "test_no_silent_fp16_fallback_quant_counters" in src
+
+
+def test_pathwise_fold_save_load_parity():
+    """ConcatSelectiveProjection with rec_embed_rescale survives a
+    state_dict save/load round trip bitwise on both paths."""
+    import io
+    import torch
+    from eagle_spinquant.concat_selective_projection import (
+        ConcatSelectiveProjection)
+    torch.manual_seed(0)
+    D2 = 64
+    f = torch.nn.Linear(D2, D2 // 2, bias=False).half()
+    r = torch.nn.Linear(D2, D2 // 2, bias=False).half()
+    m = ConcatSelectiveProjection(f, r, torch.nn.Identity(),
+                                  rec_embed_rescale=38.85 / 45.89)
+    buf = io.BytesIO()
+    torch.save(m.state_dict(), buf)
+    buf.seek(0)
+    f2 = torch.nn.Linear(D2, D2 // 2, bias=False).half()
+    r2 = torch.nn.Linear(D2, D2 // 2, bias=False).half()
+    m2 = ConcatSelectiveProjection(f2, r2, torch.nn.Identity(),
+                                   rec_embed_rescale=38.85 / 45.89)
+    m2.load_state_dict(torch.load(buf, weights_only=True))
+    z = torch.randn(3, D2).half()
+    for sel in ("first", "recurrent"):
+        m.select = m2.select = sel
+        assert torch.equal(m(z), m2(z)), sel

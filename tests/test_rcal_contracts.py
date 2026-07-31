@@ -22,6 +22,16 @@ cap = _load("cap", "scripts/capture_eagle_proposal_cycles.py")
 met = _load("met", "scripts/compute_eagle_rcal_metrics.py")
 
 
+def _sanity_records():
+    """Real captured cycle records if a run exists, else None."""
+    import glob
+    hits = sorted(glob.glob(os.path.join(
+        ROOT, "runs", "eagle1_generic_qat*", "cycles", "cyc__*.jsonl")))
+    if not hits:
+        return None
+    return [json.loads(x) for x in open(hits[-1])]
+
+
 def rec(rq, r0, rrc, same=None, div=None):
     if same is None:
         same = (rrc == min(rq, r0))
@@ -97,3 +107,47 @@ def test_bootstrap_paired_delta_sign():
     b = bs.agg(cl_b, sorted(cl_b))
     assert abs((b["AL_q"] - a["AL_q"]) - 1.0) < 1e-12
     assert abs((b["RCAL"] - a["RCAL"]) - 1.0) < 1e-12
+
+
+def test_rcal_same_prefix_and_tree():
+    """Lockstep bookkeeping: within a prompt, each cycle's prefix_len
+    advances by previous R_q + 1 (accepted + root); tree width fixed."""
+    import glob
+    recs = _sanity_records()
+    if recs is None:
+        return
+    by = {}
+    for r in recs:
+        by.setdefault(r["prompt_id"], []).append(r)
+    for rows in by.values():
+        rows = sorted(rows, key=lambda x: x["cycle"])
+        for a, b in zip(rows, rows[1:]):
+            assert b["prefix_len"] == a["prefix_len"] + a["R_q"] + 1
+        widths = {len(r["tree_tokens"]) for r in rows
+                  if "tree_tokens" in r}
+        assert len(widths) <= 1
+
+
+def test_rcal_tree_replay_determinism():
+    """Metric computation is a pure function of the records."""
+    import importlib.util, os
+    spec = importlib.util.spec_from_file_location(
+        "crm", os.path.join(ROOT, "scripts",
+                            "compute_eagle_rcal_metrics.py"))
+    crm = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(crm)
+    recs = _sanity_records()
+    if recs is None:
+        return
+    assert crm.metrics(recs) == crm.metrics(list(recs))
+
+
+def test_rcal_reference_cache_equivalence():
+    """Offline trajectory-reconstruction replay must reproduce the
+    inline lockstep S_0 exactly (when the control has been run)."""
+    import glob, json, os
+    hits = glob.glob(os.path.join(ROOT, "runs", "eagle1_generic_qat*",
+                                  "tables", "replay_equiv_*.json"))
+    for h in hits:
+        d = json.load(open(h))
+        assert d["equivalent"], h
