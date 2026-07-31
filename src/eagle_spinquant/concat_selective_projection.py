@@ -134,12 +134,18 @@ class ConcatSelectiveProjection(nn.Module):
     `select` is armed by the adapter before every draft forward."""
 
     def __init__(self, projection_first_preR, projection_recurrent_preR,
-                 post_projection_R1, nc=None):
+                 post_projection_R1, nc=None, rec_embed_rescale=None):
         super().__init__()
         self.projection_first_preR = projection_first_preR
         self.projection_recurrent_preR = projection_recurrent_preR
         self.post_projection_R1 = post_projection_R1
         self.nc = nc
+        # EP3-P pathwise migration: the shared embedding table carries
+        # m_first; the recurrent path rescales its e-slice activation by
+        # (m_rec / m_first) so its quantizer sees m_rec * e while the
+        # recurrent weight view holds W_e / m_rec (one elementwise mul
+        # on a (1, D) slice per recurrent call)
+        self.rec_embed_rescale = rec_embed_rescale
         self.select = None
         self.calls_first = 0
         self.calls_recurrent = 0
@@ -159,6 +165,10 @@ class ConcatSelectiveProjection(nn.Module):
             y = self.projection_first_preR(z)
         elif self.select == "recurrent":
             self.calls_recurrent += 1
+            if self.rec_embed_rescale is not None:
+                D = z.shape[-1] // 2
+                z = torch.cat([z[..., :D] * self.rec_embed_rescale,
+                               z[..., D:]], -1)
             y = self.projection_recurrent_preR(z)
         else:
             raise RuntimeError("concat-selective dispatch not armed")
@@ -281,7 +291,8 @@ class ConcatSelectiveDraftAdapter(VariantAdapter):
                  quant_first="fp16", quant_recurrent="fp16", quant_ar="fp16",
                  quant_embed="fp16", quant_embed_act="fp16", quant_head="fp16",
                  first_hidden_mode="gamma_R1", branch_act=None,
-                 embed_scale_alpha=None, first_fold_R=None,
+                 embed_scale_alpha=None, embed_scale_alpha_rec=None,
+                 first_fold_R=None,
                  ar_r2r4=False, trace=True, trace_cap=4000):
         super().__init__(ea_model, stash, device, dtype)
         assert variant in ("folded", "explicit")
@@ -302,8 +313,12 @@ class ConcatSelectiveDraftAdapter(VariantAdapter):
         # P3 exact reparameterization: draft-only E' = alpha*E and
         # W_e' = W_e/alpha in BOTH projection slices (FP function unchanged)
         self.embed_scale_alpha = embed_scale_alpha
+        self.embed_scale_alpha_rec = embed_scale_alpha_rec
         if embed_scale_alpha is not None:
             assert embed_scale_alpha > 0
+        if embed_scale_alpha_rec is not None:
+            assert embed_scale_alpha is not None and \
+                embed_scale_alpha_rec > 0
         # R_D support: when the draft gauge (stash R1) differs from the
         # target rotation, the FIRST-path hidden fold must keep the TARGET
         # rotation (the folded T->D bridge). first_fold_R = R_T.
@@ -429,7 +444,10 @@ class ConcatSelectiveDraftAdapter(VariantAdapter):
                 D = W_first.shape[1] // 2
                 W_first = W_first.clone(); W_rec = W_rec.clone()
                 W_first[:, :D] = W_first[:, :D] / self.embed_scale_alpha
-                W_rec[:, :D] = W_rec[:, :D] / self.embed_scale_alpha
+                a_rec = (self.embed_scale_alpha_rec
+                         if self.embed_scale_alpha_rec is not None
+                         else self.embed_scale_alpha)
+                W_rec[:, :D] = W_rec[:, :D] / a_rec
             lin_f = _make_linear(W_first, bias, dev, dtype)
             lin_r = _make_linear(W_rec, bias, dev, dtype)
             pf, qmeta_f = _maybe_quantize(lin_f, self.quant_first,
@@ -438,7 +456,11 @@ class ConcatSelectiveDraftAdapter(VariantAdapter):
             pr_, qmeta_r = _maybe_quantize(lin_r, self.quant_recurrent,
                                            "projection_recurrent_preR", dev,
                                            branch_act=self.branch_act)
-            self.split = ConcatSelectiveProjection(pf, pr_, post_r1, self.nc)
+            rr_scale = (None if self.embed_scale_alpha_rec is None
+                        else float(self.embed_scale_alpha_rec
+                                   / self.embed_scale_alpha))
+            self.split = ConcatSelectiveProjection(
+                pf, pr_, post_r1, self.nc, rec_embed_rescale=rr_scale)
         ea.fc = self.split
         self.meta_quant = {"first_hidden_mode": self.first_hidden_mode,
                            "embed_scale_alpha": self.embed_scale_alpha,
