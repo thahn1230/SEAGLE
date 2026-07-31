@@ -107,11 +107,15 @@ def main():
         st = dict(stash)
         R_T = stash["R1"].clone()
         st["R1"] = ck["R_D"].double()
+        def_alpha = 45.254834 if args.target == "fp16" else 32.0
         ad = ConcatSelectiveDraftAdapter(
             model, st, dev, torch.float16, variant="folded",
             first_hidden_mode=fhm, trace=False, first_fold_R=R_T,
-            embed_scale_alpha=args.alpha, **D4)
-    elif args.draft_cfg == "fp16_deploy" and args.target == "int4":
+            embed_scale_alpha=(args.alpha if args.alpha is not None
+                               else float(ck.get("alpha", def_alpha))),
+            **D4)
+    elif args.draft_cfg in ("stock", "fp16_deploy") \
+            and args.target == "int4":
         from eagle_spinquant.causal_interface import (
             RestoredInterfaceCSAdapter)
         ad = RestoredInterfaceCSAdapter(
