@@ -23,6 +23,7 @@ def main():
     ap.add_argument("--tag", required=True)
     ap.add_argument("--target", required=True, choices=["fp16", "int4"])
     ap.add_argument("--alpha", type=float, required=True)
+    ap.add_argument("--draft-cfg", default="d4p3_deploy")
     ap.add_argument("--run-dir", required=True)
     args = ap.parse_args()
     rd = args.run_dir
@@ -32,7 +33,8 @@ def main():
     ev = [sys.executable,
           os.path.join(ROOT, "scripts", "eval_eagle_acceptance_length.py"),
           "--run-dir", rd, "--target", args.target,
-          "--draft-cfg", "d4p3_deploy", "--alpha", str(args.alpha)]
+          "--draft-cfg", args.draft_cfg, "--alpha",
+          str(args.alpha)]
     results = []
     for ck in cks:
         step = int(re.search(r"_step(\d+)", ck).group(1))

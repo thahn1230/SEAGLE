@@ -65,6 +65,8 @@ def main():
     ap.add_argument("--draft-sd", default=None,
                     help="retrained draft state dict (.pt)")
     ap.add_argument("--alpha", type=float, default=None)
+    ap.add_argument("--alpha-rec", type=float, default=None,
+                    help="EP3-P pathwise recurrent migration factor")
     ap.add_argument("--datasets", default="mtbench")
     ap.add_argument("--pool", default="eval", choices=["eval", "calib"],
                     help="calib = disjoint offset-500 pool (alpha sweeps)")
@@ -160,10 +162,12 @@ def main():
                                else float(ck.get("alpha", def_alpha))),
             **D4)
     elif args.draft_cfg == "d4p3_deploy":
+        kw = dict(embed_scale_alpha=alpha, **D4)
+        if args.alpha_rec is not None:
+            kw["embed_scale_alpha_rec"] = args.alpha_rec
         ad = ConcatSelectiveDraftAdapter(
             model, stash, dev, torch.float16, variant="folded",
-            first_hidden_mode=fhm, trace=False,
-            embed_scale_alpha=alpha, **D4)
+            first_hidden_mode=fhm, trace=False, **kw)
     if ad is not None:
         ad.install()
 
