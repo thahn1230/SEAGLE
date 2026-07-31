@@ -232,7 +232,8 @@ def main():
                     R_RC=r_rc, same_branch=bool(same_branch),
                     div_depth=div_depth, S_q=S_q, S_0=S_0,
                     best_q=int(best_q), best_0=best_0,
-                    corr_q=corr_q, corr_0=corr_0)) + "\n")
+                    corr_q=corr_q, corr_0=corr_0,
+                    tree_tokens=tree_candidates[0].tolist())) + "\n")
                 n_cyc += 1
                 # advance BOTH KVs along the DEPLOYED trajectory
                 sel0 = (ri[best_q, :len_q + 1].to(rdev) + prefix_len)
