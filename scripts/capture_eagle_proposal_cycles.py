@@ -121,8 +121,9 @@ def main():
         ad.install()
 
     # FP16 reference target T0 on the second GPU
-    from transformers import AutoModelForCausalLM
-    ref = AutoModelForCausalLM.from_pretrained(
+    # vendored KV llama: supports tree_mask + managed KV cache
+    from eagle.model.modeling_llama_kv import LlamaForCausalLM as KVLlama
+    ref = KVLlama.from_pretrained(
         paths["target_path"], torch_dtype=torch.float16).to(rdev).eval()
 
     tok = eagle_bridge.get_tokenizer(model)

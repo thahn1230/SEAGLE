@@ -57,8 +57,8 @@ def main():
         paths["target_path"], paths["draft_path"], cfg["model"]["target"],
         rot, KIND, quant, 0, device=dev, rotations_root=rr)
     tq = model.base_model
-    from transformers import AutoModelForCausalLM
-    t0 = AutoModelForCausalLM.from_pretrained(
+    from eagle.model.modeling_llama_kv import LlamaForCausalLM as KVLlama
+    t0 = KVLlama.from_pretrained(
         paths["target_path"], torch_dtype=torch.float16).to(
         "cuda:1").eval()
     tok = eagle_bridge.get_tokenizer(model)
