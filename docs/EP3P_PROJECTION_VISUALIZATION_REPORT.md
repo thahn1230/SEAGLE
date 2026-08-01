@@ -174,3 +174,30 @@ statistics are computed on ungrouped tensors.
 - Tests: 7 `tests/test_ep3p_*.py` (orientation, boundary, migration
   values ×2, hidden-unchanged, FP equivalence, reproducibility)
 - Bundle: `ep3p_projection_visualization_<ts>.tar.gz` + `_latest`
+
+## 10. Addendum: why m has an interior optimum (U-curve mechanism)
+
+`quantized_effect/ucurve_mechanism_{first,recurrent}.png`
+(+ CSV/NPZ in tables/, plot_data/). Measured with the official W4/A4
+quantizers over the full exponent grid m = 4096^beta, beta 0.00-0.70:
+
+- **Weight side (hurts as m grows).** W4 is per-OUTPUT-CHANNEL: one
+  scale per row [W_e/m | W_h]. The row's step is set by whichever half
+  dominates its absmax. As m grows, W_e/m sinks below the half-step and
+  rounds to code 0: the W_e zero-code rate is 14% at m=1, 46% at the
+  chosen m=27.9, 85% at m=64, 100% by m≈220 (panel 2 + the histogram
+  panel 4: the |W_e/m| distribution slides left of the rounding
+  threshold). Beyond the optimum the embedding weight is annihilated —
+  the exact failure the migration was meant to cure, reappearing on
+  the other side.
+- **Activation side (helps, then hurts).** A4 is per-TOKEN: one scale
+  across all 8192 channels. Raising m first lifts m*e out of the
+  quantization floor (A4 e-slice NMSE falls, panel 3), but past
+  m≈28-42 the e-slice starts setting the token's range, coarsening the
+  step under the h-slice: A4 h-NMSE is flat at 0.0189 up to the chosen
+  m, then rises 0.021 -> 0.033 (m=64) -> 0.075 (m=97) -> 0.67 (m=338).
+- The output U-curve (panel 1) is the sum of these two see-saws:
+  e-branch error falls with m, h-branch error rises, the minimum sits
+  where the marginal harms balance (m≈27.9 first / ≈42 recurrent) —
+  NOT where activation RMS would be equalized (m≈78), which is already
+  past the crossing.
