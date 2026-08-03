@@ -297,7 +297,8 @@ class LearnedRotation(torch.nn.Module):
 
     def _learned(self, y):
         if self.param == "cayley":
-            A = self.a - self.a.transpose(1, 2)
+            a = self.a.to(y.device).float()
+            A = a - a.transpose(1, 2)
             eye = torch.eye(self.block, device=y.device,
                             dtype=torch.float32).expand_as(A)
             Q = torch.linalg.solve(eye + A, eye - A).to(y.dtype)
@@ -306,8 +307,8 @@ class LearnedRotation(torch.nn.Module):
             z = torch.einsum("...bi,bij->...bj", z, Q)
             return z.reshape(*y.shape)
         if self.param == "givens":
-            c = torch.cos(self.theta).to(y.dtype)
-            s = torch.sin(self.theta).to(y.dtype)
+            c = torch.cos(self.theta.to(y.device)).to(y.dtype)
+            s = torch.sin(self.theta.to(y.device)).to(y.dtype)
             z = y.reshape(*y.shape[:-1], self.n // 2, 2)
             e, h = z[..., 0], z[..., 1]
             return torch.stack([e * c + h * s, -e * s + h * c],
@@ -315,7 +316,7 @@ class LearnedRotation(torch.nn.Module):
         # householder
         z = y.float()
         for i in range(self.v.shape[0]):
-            v = self.v[i]
+            v = self.v[i].to(y.device)
             v = v / v.norm().clamp_min(1e-8)
             z = z - 2.0 * torch.outer(z.reshape(-1, self.n) @ v,
                                       v).reshape(z.shape)
