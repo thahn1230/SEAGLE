@@ -358,6 +358,7 @@ def build_rotation(spec, n=2 * D, device="cpu"):
         which = spec.get("which", "rot_f")
         sd = ck[which] if ck.get(which) is not None else ck["rot_f"]
         rot.load_state_dict(sd)
+        rot.to(device)
         for p in rot.parameters():
             p.requires_grad_(False)
         return rot

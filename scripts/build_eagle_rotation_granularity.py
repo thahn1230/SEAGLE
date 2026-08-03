@@ -141,7 +141,8 @@ def main():
             dict(family="full", block=8192, seed=7), device=dev),
            0, flops("f", 8192), path, beta)
         for K in (1, 2, 4, 8, 16, 32, 64):
-            lr = LearnedRotation("householder", K=K, device=dev)
+            lr = LearnedRotation("householder", K=K,
+                                 device=dev).to(dev)
             ev(f"G6_householder_K{K}", lr, lr.n_params(),
                flops("hh", K=K), path, beta)
         ev("G7_butterfly", Butterfly(13, dev), 0,

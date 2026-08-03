@@ -7,9 +7,7 @@ RD=$(cat runs/LRGF_RUN_DIR)
 export TMPDIR=/data/thahn1230/tmp CUDA_DEVICE_ORDER=PCI_BUS_ID
 TR="python scripts/train_eagle_learned_rotation.py --run-dir $RD"
 
-until grep -q CMP_AUDIT_DONE2 $RD/logs/component_audit.log 2>/dev/null; do
-  sleep 60
-done
+true
 echo "[rotchain] audit done -> teacher cache"
 [ -f $RD/tensors/teacher_cache.pt ] || \
   CUDA_VISIBLE_DEVICES=1 $TR --mode precompute-teachers --n-rows 256 \

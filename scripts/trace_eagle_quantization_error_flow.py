@@ -178,7 +178,7 @@ def main():
             fp.rot = r; qz.rot = r
         agg = {}
         for r0 in rows:
-            ids = r0["input_ids"][None].to(dev)
+            ids = r0["input_ids"][None].long().to(dev)
             key = int(ids.sum())
             if key not in ref_cache:
                 h = model.base_model.model(
