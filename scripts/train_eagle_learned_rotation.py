@@ -191,7 +191,11 @@ def load_corpus(n_rows, tok):
     qt = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(qt)
     blob = qt.build_tokenized_split(tok)
-    rows = blob["rows"][12400:12400 + n_rows]   # after QAT train(12000)+val(400): disjoint
+    # cache holds exactly train(12000)+val(400); rotation
+    # training reuses the FIRST train rows — excluded from
+    # every eval/calib/valid pool by construction (Gate H),
+    # disjoint from acceptance-validation and MT-Bench
+    rows = blob["rows"][:n_rows]
     return [dict(input_ids=r["input_ids"][:640],
                  loss_mask=r["loss_mask"][:640]) for r in rows]
 
@@ -216,7 +220,7 @@ def precompute(args, rd):
                                eagle_bridge.get_tokenizer(model))
         toks = []
         for r in rows:
-            ids = r["input_ids"][None].to("cuda:0")
+            ids = r["input_ids"][None].long().to("cuda:0")
             lg = model.base_model(input_ids=ids).logits
             toks.append(lg.argmax(-1)[0].cpu())
         out[name] = toks
@@ -337,7 +341,11 @@ def main():
     core.attach(rot_f, rot_r)
     params = list(rot_f.parameters()) + (
         list(rot_r.parameters()) if args.pathwise else [])
-    assert all(not p.requires_grad for p in core.parameters())
+    frozen_ok = all(
+        not prm.requires_grad
+        for nm, prm in core.named_parameters()
+        if not nm.startswith(("rot_f", "rot_r")))
+    assert frozen_ok, "a model weight is trainable"
     opt = torch.optim.Adam(params, lr=args.lr)
     lE, lA, lR, lN = [float(x) for x in args.lambdas.split(",")]
     rows = cache["rows"][: args.n_rows]
@@ -350,7 +358,7 @@ def main():
     os.makedirs(os.path.join(rd, "rotations"), exist_ok=True)
     for step in range(args.steps):
         i = step % len(rows)
-        ids = rows[i]["input_ids"][None].to(dev)
+        ids = rows[i]["input_ids"][None].long().to(dev)
         with torch.no_grad():
             h = model.base_model.model(
                 input_ids=ids).last_hidden_state.float()
