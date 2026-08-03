@@ -7,7 +7,7 @@ RD=$(cat runs/LRGF_RUN_DIR)
 export TMPDIR=/data/thahn1230/tmp CUDA_DEVICE_ORDER=PCI_BUS_ID
 TR="python scripts/train_eagle_learned_rotation.py --run-dir $RD"
 
-until grep -q CMP_AUDIT_DONE $RD/logs/component_audit.log 2>/dev/null; do
+until grep -q CMP_AUDIT_DONE2 $RD/logs/component_audit.log 2>/dev/null; do
   sleep 60
 done
 echo "[rotchain] audit done -> teacher cache"
@@ -24,7 +24,7 @@ echo "[rotchain] smoke ok -> training grid"
 # variants for the flagship objective; 3 seeds for finalists later
 i=0
 launch() {
-  G=$((1 + i % 7)); i=$((i+1))   # GPU 0 excluded
+  G=$((i % 8)); i=$((i+1))
   setsid env CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES=$G \
     nohup $TR $@ > $RD/logs/rot_$(echo "$@" | tr -s ' /' '_').log 2>&1 &
 }

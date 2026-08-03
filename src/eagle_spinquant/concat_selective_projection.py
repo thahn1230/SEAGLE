@@ -547,6 +547,18 @@ class ConcatSelectiveDraftAdapter(VariantAdapter):
             if want("down_proj"):
                 rep(mlp, "down_proj", "ar.down_proj",
                     online=bool(self._ar_meta.get("r4_applied")))
+            elif self._ar_meta.get("r4_applied"):
+                # down_proj RESTORED to fp16 but its weight carries the
+                # folded R4: keep the online Hadamard, disable quant
+                lin = getattr(mlp, "down_proj").to(dev)
+                self._replaced_ar.append((mlp, "down_proj", lin))
+                m = fq.FakeW4A4Linear(
+                    lin.weight, getattr(lin, "bias", None),
+                    "ar.down_proj_fp16_onlinehad", online_had=True,
+                    had_K=had_K, K=self._ar_meta.get("K"),
+                    quant_weight=False, quant_act=False,
+                    w_bits=16, a_bits=16).to(dev)
+                setattr(mlp, "down_proj", m)
 
         # ---- dispatch (same proven pattern as B2)
         adapter = self

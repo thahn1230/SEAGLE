@@ -191,7 +191,7 @@ def load_corpus(n_rows, tok):
     qt = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(qt)
     blob = qt.build_tokenized_split(tok)
-    rows = blob["rows"][20000:20000 + n_rows]
+    rows = blob["rows"][12400:12400 + n_rows]   # after QAT train(12000)+val(400): disjoint
     return [dict(input_ids=r["input_ids"][:640],
                  loss_mask=r["loss_mask"][:640]) for r in rows]
 

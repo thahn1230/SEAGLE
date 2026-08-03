@@ -141,7 +141,7 @@ def main():
                 "--run-dir", rd, "--target", "int4", "--draft-cfg",
                 "d4p3_deploy", "--tag", f"CMP_{name}",
                 "--datasets", "mtbench", "--pool", "eval"] + extra))
-        sched(jobs, list(range(1, 8)),   # GPU 0 excluded (shared box)
+        sched(jobs, list(range(8)),
               os.path.join(rd, "logs"))
         return 0
     # table
@@ -152,7 +152,7 @@ def main():
         if os.path.exists(p):
             data[name] = prompt_taus(p)
     tau = {n: round(sum(v[0] for v in d.values())
-                    / max(sum(v[1] for v in d.values()), 1) + 1, 4)
+                    / max(sum(v[1] for v in d.values()), 1), 4)
            for n, d in data.items()}
     out = dict(tau=tau, paired={})
     for n in data:
