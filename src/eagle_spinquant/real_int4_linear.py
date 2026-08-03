@@ -37,7 +37,10 @@ _QCACHE = {"key": None, "qa": None, "sa": None}
 
 
 def _act_quant_cached(x2):
-    key = (x2.data_ptr(), x2.shape, x2._version)
+    # inference-mode tensors have no version counter; the
+    # (python-id, data_ptr, shape) triple identifies the same
+    # live tensor within one forward (qkv / gate-up reuse)
+    key = (id(x2), x2.data_ptr(), x2.shape)
     if _QCACHE["key"] == key:
         return _QCACHE["qa"], _QCACHE["sa"]
     sa = (x2.abs().amax(dim=1, keepdim=True)
@@ -57,14 +60,18 @@ class RealInt4Linear(torch.nn.Module):
         w = lin.weight if lin is not None else weight
         b = (lin.bias if lin is not None else bias)
         assert w.shape[1] % 64 == 0, w.shape
+        self.in_features = int(w.shape[1])
+        self.out_features = int(w.shape[0])
         packed, scale = pack_weight_int4(w)
         self.register_buffer("w4", packed)
         self.register_buffer("sw", scale)
         self.register_buffer(
             "bias_fp16",
             b.detach().half().cuda() if b is not None else None)
-        self.in_features = w.shape[1]
-        self.out_features = w.shape[0]
+        # free the fp16 source LAST (prevents transient 2x memory
+        # during whole-model swap; shape/bias captured above)
+        if lin is not None:
+            lin.weight.data = torch.empty(0)
         self.name = name
 
     @property
@@ -95,7 +102,9 @@ def swap_llama_linears_int4(model, layer_attr_paths=None,
     for mod_name, mod in model.named_modules():
         for attr in names:
             child = getattr(mod, attr, None)
-            if isinstance(child, torch.nn.Linear):
+            if isinstance(child, torch.nn.Linear) \
+                    and child.weight.ndim == 2 \
+                    and child.weight.numel() > 0:
                 setattr(mod, attr, RealInt4Linear(
                     child, name=f"{mod_name}.{attr}"))
                 n += 1

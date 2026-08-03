@@ -81,7 +81,7 @@ def run_config(name, quant_target, quant_draft, prompts, mx=128):
         cfg.get("model", {}).get("chat_template", "llama2")]
     pt = PhaseTimer()
     pt.wrap(model.ea_layer, "topK_genrate", "draft")
-    pt.wrap(model.base_model, "forward", "verify")
+    pt.wrap(model.base_model.model, "forward", "verify")
     stats = dict(tokens=0, cycles=0, wall=0.0)
     for p in prompts:
         ids = build_prompt(tok, p["text"])[:, :512].to("cuda:0")
@@ -116,7 +116,11 @@ def run_config(name, quant_target, quant_draft, prompts, mx=128):
                                         / max(stats["cycles"], 1), 2),
                verify_ms_per_cycle=round(1000 * pt.t["verify"]
                                          / max(stats["cycles"], 1),
-                                         2))
+                                         2),
+               other_ms_per_cycle=round(
+                   1000 * (stats["wall"] - pt.t["draft"]
+                           - pt.t["verify"])
+                   / max(stats["cycles"], 1), 2))
     del model
     torch.cuda.empty_cache()
     print(f"[e2e] {name}: {res['ms_per_token']} ms/tok, tau "
@@ -154,7 +158,13 @@ def main():
             r["tau_validated_ref"] = VALIDATED_TAU[r["config"]]
             r["projected_tok_per_s"] = round(
                 r["cycles_per_s"] * r["tau_validated_ref"], 2)
-        json.dump(out, open(path, "w"), indent=1)
+        old = (json.load(open(path))
+               if os.path.exists(path) else [])
+        merged = {r["config"]: r for r in old}
+        for r in out:
+            merged[r["config"]] = r
+        json.dump(list(merged.values()), open(path, "w"),
+                  indent=1)
     print(json.dumps(out, indent=1))
     return 0
 
