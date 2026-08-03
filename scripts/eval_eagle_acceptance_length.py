@@ -71,6 +71,10 @@ def main():
     ap.add_argument("--quant-ar", default=None)
     ap.add_argument("--quant-embed", default=None)
     ap.add_argument("--quant-head", default=None)
+    ap.add_argument("--ar-r2r4", default="on", choices=["on", "off"],
+                    help="off: r1-basis AR conversion (needed when a "
+                         "mask excludes down_proj: R4 online Hadamard "
+                         "would be orphaned)")
     ap.add_argument("--ar-mask", default=None,
                     help="csv of AR linears to quantize (subset of "
                          "q_proj,k_proj,v_proj,o_proj,gate_proj,"
@@ -194,6 +198,8 @@ def main():
         if args.ar_mask is not None:
             kw["ar_quant_mask"] = [x for x in args.ar_mask.split(",")
                                    if x]
+        if args.ar_r2r4 == "off":
+            kw["ar_r2r4"] = False
         ad = ConcatSelectiveDraftAdapter(
             model, stash, dev, torch.float16, variant="folded",
             first_hidden_mode=fhm, trace=False, **kw)

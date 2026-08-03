@@ -40,6 +40,9 @@ def arms():
                          "--quant-ar", "fp16"]
     a["A4_proj_naive"] = one + ["--quant-ar", "fp16"]
     a["A5_proj_ep3p"] = ep3p + ["--quant-ar", "fp16"]
+    # masks that EXCLUDE down_proj must disable the R2/R4 fold
+    # (folded R4 with no online Hadamard on a plain-Linear down
+    # breaks the FP function)
     for nm, mask in (("A6_q", "q_proj"), ("A7_k", "k_proj"),
                      ("A8_v", "v_proj"), ("A9_o", "o_proj"),
                      ("A10_qkv", "q_proj,k_proj,v_proj"),
@@ -48,8 +51,10 @@ def arms():
                      ("A14_down", "down_proj"),
                      ("A15_gateup", "gate_proj,up_proj"),
                      ("A16_mlp", "gate_proj,up_proj,down_proj")):
+        r2r4 = ([] if "down_proj" in mask
+                else ["--ar-r2r4", "off"])
         a[nm] = (["--quant-first", "fp16", "--quant-recurrent",
-                  "fp16"] + one + ["--ar-mask", mask])
+                  "fp16"] + one + ["--ar-mask", mask] + r2r4)
     a["A17_ar"] = (["--quant-first", "fp16", "--quant-recurrent",
                     "fp16"] + one)
     a["A18_ep3p_ar"] = ep3p                              # proj EP3P+AR
@@ -70,9 +75,11 @@ def arms():
     for nm, drop in (("B8_gate", "gate_proj"), ("B9_up", "up_proj"),
                      ("B10_down", "down_proj")):
         keep = ",".join(x for x in ALL_AR if x != drop)
-        a[nm] = ep3p + ["--ar-mask", keep]
+        r2r4 = [] if "down_proj" in keep.split(",") else             ["--ar-r2r4", "off"]
+        a[nm] = ep3p + ["--ar-mask", keep] + r2r4
     a["B11_mlp_fp"] = ep3p + ["--ar-mask",
-                              "q_proj,k_proj,v_proj,o_proj"]
+                              "q_proj,k_proj,v_proj,o_proj",
+                              "--ar-r2r4", "off"]
     a["B12_ar_fp"] = ep3p + ["--quant-ar", "fp16"]
     return a
 
