@@ -65,6 +65,10 @@ def main():
     ap.add_argument("--draft-sd", default=None,
                     help="retrained draft state dict (.pt)")
     ap.add_argument("--alpha", type=float, default=None)
+    ap.add_argument("--proj-rot-first", default=None,
+                    help="R-EP3-P rotation spec JSON (first path)")
+    ap.add_argument("--proj-rot-rec", default=None,
+                    help="R-EP3-P rotation spec JSON (recurrent path)")
     ap.add_argument("--alpha-rec", type=float, default=None,
                     help="EP3-P pathwise recurrent migration factor")
     ap.add_argument("--datasets", default="mtbench")
@@ -165,6 +169,10 @@ def main():
         kw = dict(embed_scale_alpha=alpha, **D4)
         if args.alpha_rec is not None:
             kw["embed_scale_alpha_rec"] = args.alpha_rec
+        if args.proj_rot_first:
+            kw["proj_rot_first"] = json.loads(args.proj_rot_first)
+        if args.proj_rot_rec:
+            kw["proj_rot_rec"] = json.loads(args.proj_rot_rec)
         ad = ConcatSelectiveDraftAdapter(
             model, stash, dev, torch.float16, variant="folded",
             first_hidden_mode=fhm, trace=False, **kw)

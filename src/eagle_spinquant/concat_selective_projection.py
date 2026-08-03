@@ -134,7 +134,8 @@ class ConcatSelectiveProjection(nn.Module):
     `select` is armed by the adapter before every draft forward."""
 
     def __init__(self, projection_first_preR, projection_recurrent_preR,
-                 post_projection_R1, nc=None, rec_embed_rescale=None):
+                 post_projection_R1, nc=None, rec_embed_rescale=None,
+                 rot_first=None, rot_rec=None):
         super().__init__()
         self.projection_first_preR = projection_first_preR
         self.projection_recurrent_preR = projection_recurrent_preR
@@ -146,6 +147,10 @@ class ConcatSelectiveProjection(nn.Module):
         # recurrent weight view holds W_e / m_rec (one elementwise mul
         # on a (1, D) slice per recurrent call)
         self.rec_embed_rescale = rec_embed_rescale
+        # R-EP3-P input preconditioners (StructuredRotation or None);
+        # applied to the fully-assembled (and EP3-P-scaled) input
+        self.rot_first = rot_first
+        self.rot_rec = rot_rec
         self.select = None
         self.calls_first = 0
         self.calls_recurrent = 0
@@ -162,6 +167,8 @@ class ConcatSelectiveProjection(nn.Module):
                 R = self.post_projection_R1.R1_f32
                 z = torch.cat([(z[..., :D].float() @ R).to(z.dtype),
                                (z[..., D:].float() @ R).to(z.dtype)], -1)
+            if self.rot_first is not None:
+                z = self.rot_first.apply(z)
             y = self.projection_first_preR(z)
         elif self.select == "recurrent":
             self.calls_recurrent += 1
@@ -169,6 +176,8 @@ class ConcatSelectiveProjection(nn.Module):
                 D = z.shape[-1] // 2
                 z = torch.cat([z[..., :D] * self.rec_embed_rescale,
                                z[..., D:]], -1)
+            if self.rot_rec is not None:
+                z = self.rot_rec.apply(z)
             y = self.projection_recurrent_preR(z)
         else:
             raise RuntimeError("concat-selective dispatch not armed")
@@ -293,6 +302,7 @@ class ConcatSelectiveDraftAdapter(VariantAdapter):
                  first_hidden_mode="gamma_R1", branch_act=None,
                  embed_scale_alpha=None, embed_scale_alpha_rec=None,
                  first_fold_R=None,
+                 proj_rot_first=None, proj_rot_rec=None,
                  ar_r2r4=False, trace=True, trace_cap=4000):
         super().__init__(ea_model, stash, device, dtype)
         assert variant in ("folded", "explicit")
@@ -319,6 +329,12 @@ class ConcatSelectiveDraftAdapter(VariantAdapter):
         if embed_scale_alpha_rec is not None:
             assert embed_scale_alpha is not None and \
                 embed_scale_alpha_rec > 0
+        # R-EP3-P: projection-local structured orthogonal rotation specs
+        # (dict for StructuredRotation), applied to the assembled
+        # projection input AFTER the EP3-P scaling (SR order); the
+        # matching W_pt (S^-1) Q fold happens at install time.
+        self.proj_rot_first = proj_rot_first
+        self.proj_rot_rec = proj_rot_rec
         # R_D support: when the draft gauge (stash R1) differs from the
         # target rotation, the FIRST-path hidden fold must keep the TARGET
         # rotation (the folded T->D bridge). first_fold_R = R_T.
@@ -448,6 +464,17 @@ class ConcatSelectiveDraftAdapter(VariantAdapter):
                          if self.embed_scale_alpha_rec is not None
                          else self.embed_scale_alpha)
                 W_rec[:, :D] = W_rec[:, :D] / a_rec
+            self._rot_f = self._rot_r = None
+            if self.proj_rot_first or self.proj_rot_rec:
+                from .projection_rotation import StructuredRotation
+                if self.proj_rot_first:
+                    self._rot_f = StructuredRotation(
+                        self.proj_rot_first, n=W_first.shape[1])
+                    W_first = self._rot_f.apply(W_first.clone())
+                if self.proj_rot_rec:
+                    self._rot_r = StructuredRotation(
+                        self.proj_rot_rec, n=W_rec.shape[1])
+                    W_rec = self._rot_r.apply(W_rec.clone())
             lin_f = _make_linear(W_first, bias, dev, dtype)
             lin_r = _make_linear(W_rec, bias, dev, dtype)
             pf, qmeta_f = _maybe_quantize(lin_f, self.quant_first,
@@ -460,7 +487,8 @@ class ConcatSelectiveDraftAdapter(VariantAdapter):
                         else float(self.embed_scale_alpha_rec
                                    / self.embed_scale_alpha))
             self.split = ConcatSelectiveProjection(
-                pf, pr_, post_r1, self.nc, rec_embed_rescale=rr_scale)
+                pf, pr_, post_r1, self.nc, rec_embed_rescale=rr_scale,
+                rot_first=self._rot_f, rot_rec=self._rot_r)
         ea.fc = self.split
         self.meta_quant = {"first_hidden_mode": self.first_hidden_mode,
                            "embed_scale_alpha": self.embed_scale_alpha,
