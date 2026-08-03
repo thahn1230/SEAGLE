@@ -100,7 +100,9 @@ def main():
                     "--draft-cfg", "d4p3_deploy", "--tag", tag,
                     "--datasets", "c4:20", "--pool", "calib"]
                     + extra, 1))
-        sched(jobs, list(range(8)), os.path.join(rd, "logs"))
+        gpus = [int(x) for x in os.environ.get(
+            "LRGF_GPUS", "0,1,2,3,4,5,6,7").split(",")]
+        sched(jobs, gpus, os.path.join(rd, "logs"))
         res = {}
         for p in glob.glob(os.path.join(
                 rd, "shards", "al__LR*__int4__c4__calib.csv")):
@@ -145,7 +147,9 @@ def main():
             "--proj-rot-rec",
             json.dumps(dict(family="cross", block=8192, seed=12,
                             interleave_chunk=1))])
-        sched(jobs, list(range(8)), os.path.join(rd, "logs"))
+        gpus = [int(x) for x in os.environ.get(
+            "LRGF_GPUS", "0,1,2,3,4,5,6,7").split(",")]
+        sched(jobs, gpus, os.path.join(rd, "logs"))
         subprocess.run([PY, "scripts/compute_eagle_rcal_metrics.py",
                         "--run-dir", rd], cwd=ROOT)
         return 0
