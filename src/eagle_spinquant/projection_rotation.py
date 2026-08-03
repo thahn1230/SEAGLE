@@ -258,3 +258,107 @@ def build_rotation(spec, n=2 * D, device="cpu"):
     if spec.get("learned_ckpt"):
         return DeployedLearnedRotation(spec, n=n, device=device)
     return StructuredRotation(spec, n=n, device=device)
+
+
+class LearnedRotation(torch.nn.Module):
+    """Orthogonal-by-construction learned rotation on the 2D concat.
+    param:
+      cayley      blockwise Cayley over interleaved layout
+      givens      one angle per interleaved (e_i, h_i) pair (block 2)
+      householder K reflections over the full 8192 vector
+    An optional FIXED structured cross rotation (spec dict) composes
+    first: Q = Q_fixed Q_learned.
+    """
+
+    def __init__(self, param="cayley", block=32, K=8, fixed_spec=None,
+                 n=2 * D, seed=0, device="cuda:0"):
+        super().__init__()
+        self.param, self.block, self.n = param, block, n
+        torch.manual_seed(seed)
+        self.fixed = (StructuredRotation(fixed_spec, n=n,
+                                         device=device)
+                      if fixed_spec else None)
+        self.perm = interleave_perm(n).to(device)
+        self.inv_perm = torch.argsort(self.perm)
+        if param == "cayley":
+            nb = n // block
+            self.a = torch.nn.Parameter(
+                torch.zeros(nb, block, block))
+        elif param == "givens":
+            self.theta = torch.nn.Parameter(torch.zeros(n // 2))
+        elif param == "householder":
+            self.v = torch.nn.Parameter(
+                torch.randn(K, n) * 0.02)
+        else:
+            raise ValueError(param)
+
+    def n_params(self):
+        return sum(p.numel() for p in self.parameters())
+
+    def _learned(self, y):
+        if self.param == "cayley":
+            A = self.a - self.a.transpose(1, 2)
+            eye = torch.eye(self.block, device=y.device,
+                            dtype=torch.float32).expand_as(A)
+            Q = torch.linalg.solve(eye + A, eye - A).to(y.dtype)
+            z = y.reshape(*y.shape[:-1], self.n // self.block,
+                          self.block)
+            z = torch.einsum("...bi,bij->...bj", z, Q)
+            return z.reshape(*y.shape)
+        if self.param == "givens":
+            c = torch.cos(self.theta).to(y.dtype)
+            s = torch.sin(self.theta).to(y.dtype)
+            z = y.reshape(*y.shape[:-1], self.n // 2, 2)
+            e, h = z[..., 0], z[..., 1]
+            return torch.stack([e * c + h * s, -e * s + h * c],
+                               dim=-1).reshape(*y.shape)
+        # householder
+        z = y.float()
+        for i in range(self.v.shape[0]):
+            v = self.v[i]
+            v = v / v.norm().clamp_min(1e-8)
+            z = z - 2.0 * torch.outer(z.reshape(-1, self.n) @ v,
+                                      v).reshape(z.shape)
+        return z.to(y.dtype)
+
+    def apply(self, x):
+        y = x
+        if self.fixed is not None:
+            y = self.fixed.apply(y)
+        y = y[..., self.perm.to(y.device)]
+        y = self._learned(y)
+        return y[..., self.inv_perm.to(y.device)]
+
+    def orth_error(self):
+        with torch.no_grad():
+            eye = torch.eye(min(self.n, 512), self.n,
+                            device=self.perm.device)
+            q = self.apply(eye.float())
+            g = q @ q.t()
+            return float((g - torch.eye(q.shape[0],
+                                        device=q.device)).norm()
+                         / math.sqrt(q.shape[0]))
+
+
+
+def build_rotation(spec, n=2 * D, device="cpu"):
+    """Factory: structured spec dict, or {'learned_ckpt': path,
+    'which': 'rot_f'|'rot_r'} for a trained LearnedRotation."""
+    if spec and "learned_ckpt" in spec:
+        ck = torch.load(spec["learned_ckpt"], map_location="cpu",
+                        weights_only=False)
+        cfg = ck["cfg"]
+        rot = LearnedRotation(cfg["param"], cfg["block"],
+                              cfg.get("hh_k", 8),
+                              (dict(family="cross", block=8192,
+                                    seed=cfg["seed"],
+                                    interleave_chunk=1)
+                               if cfg.get("fixed_init") else None),
+                              n=n, seed=cfg["seed"], device=device)
+        which = spec.get("which", "rot_f")
+        sd = ck[which] if ck.get(which) is not None else ck["rot_f"]
+        rot.load_state_dict(sd)
+        for p in rot.parameters():
+            p.requires_grad_(False)
+        return rot
+    return StructuredRotation(spec, n=n, device=device)
