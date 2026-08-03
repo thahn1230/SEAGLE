@@ -1,0 +1,6 @@
+[ 25%] Building CUDA object CMakeFiles/w4a4_sm89.dir/w4a4_sm89.cu.o
+[ 50%] Linking CUDA static library libw4a4_sm89.a
+[ 50%] Built target w4a4_sm89
+[ 75%] Building CUDA object CMakeFiles/w4a4_benchmark.dir/benchmark.cu.o
+[100%] Linking CUDA executable w4a4_benchmark
+[100%] Built target w4a4_benchmark

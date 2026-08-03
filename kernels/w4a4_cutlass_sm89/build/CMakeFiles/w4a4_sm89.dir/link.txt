@@ -1,0 +1,2 @@
+/usr/bin/ar qc libw4a4_sm89.a CMakeFiles/w4a4_sm89.dir/w4a4_sm89.cu.o
+/usr/bin/ranlib libw4a4_sm89.a

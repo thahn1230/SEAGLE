@@ -1,0 +1,1 @@
+/usr/bin/g++ CMakeFiles/w4a4_benchmark.dir/benchmark.cu.o -o w4a4_benchmark  libw4a4_sm89.a -lcudadevrt -lcudart_static -lrt -lpthread -ldl  -L"/usr/local/cuda-12.8/targets/x86_64-linux/lib/stubs" -L"/usr/local/cuda-12.8/targets/x86_64-linux/lib"
