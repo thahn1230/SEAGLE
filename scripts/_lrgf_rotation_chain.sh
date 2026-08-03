@@ -12,10 +12,10 @@ until grep -q CMP_AUDIT_DONE $RD/logs/component_audit.log 2>/dev/null; do
 done
 echo "[rotchain] audit done -> teacher cache"
 [ -f $RD/tensors/teacher_cache.pt ] || \
-  CUDA_VISIBLE_DEVICES=0 $TR --mode precompute-teachers --n-rows 256 \
+  CUDA_VISIBLE_DEVICES=1 $TR --mode precompute-teachers --n-rows 256 \
     > $RD/logs/teacher_cache.log 2>&1
 echo "[rotchain] cache ready -> smoke"
-CUDA_VISIBLE_DEVICES=0 $TR --objective eagle --param givens \
+CUDA_VISIBLE_DEVICES=1 $TR --objective eagle --param givens \
   --steps 10 --tag SMOKE --ckpt-every 0 \
   > $RD/logs/rot_smoke.log 2>&1 || { echo ROT_SMOKE_FAIL; exit 1; }
 echo "[rotchain] smoke ok -> training grid"
@@ -24,7 +24,7 @@ echo "[rotchain] smoke ok -> training grid"
 # variants for the flagship objective; 3 seeds for finalists later
 i=0
 launch() {
-  G=$((i % 8)); i=$((i+1))
+  G=$((1 + i % 7)); i=$((i+1))   # GPU 0 excluded
   setsid env CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES=$G \
     nohup $TR $@ > $RD/logs/rot_$(echo "$@" | tr -s ' /' '_').log 2>&1 &
 }

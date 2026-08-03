@@ -141,7 +141,8 @@ def main():
                 "--run-dir", rd, "--target", "int4", "--draft-cfg",
                 "d4p3_deploy", "--tag", f"CMP_{name}",
                 "--datasets", "mtbench", "--pool", "eval"] + extra))
-        sched(jobs, list(range(8)), os.path.join(rd, "logs"))
+        sched(jobs, list(range(1, 8)),   # GPU 0 excluded (shared box)
+              os.path.join(rd, "logs"))
         return 0
     # table
     data = {}
