@@ -29,19 +29,19 @@ RMS_EPS = 1e-5
 
 
 class TracedCore(ExactQuantizedRotationForward):
-    rot = None
+    proj_rot = None   # class default; instance shim self.rot untouched
 
     def _maybe_rot(self, z):
-        if self.rot is not None:
-            return self.rot.apply(z.float()).to(z.dtype)
+        if self.proj_rot is not None:
+            return self.proj_rot.apply(z.float()).to(z.dtype)
         return z
 
     def traced_forward(self, tok_ids, feat_seq, K=4):
         qw, tw = self.quantized_weights(False)
-        if self.rot is not None:
+        if self.proj_rot is not None:
             tw = dict(tw)
             for kk in ("W_first", "W_rec"):
-                tw[kk] = self.rot.apply(tw[kk].float()).to(tw[kk].dtype)
+                tw[kk] = self.proj_rot.apply(tw[kk].float()).to(tw[kk].dtype)
                 qw[kk] = self._qw(tw[kk])
         R = tw["R"]
         a = self.alpha_exact
@@ -175,7 +175,7 @@ def main():
         qz = build(mc["alpha"], mc.get("sd"), bits=4)
         if mc.get("rot"):
             r = StructuredRotation(mc["rot"], device=dev)
-            fp.rot = r; qz.rot = r
+            fp.proj_rot = r; qz.proj_rot = r
         agg = {}
         for r0 in rows:
             ids = r0["input_ids"][None].long().to(dev)

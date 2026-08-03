@@ -22,6 +22,7 @@ an input preconditioner of the feature-fusion projection applied after
 the validated projection input has been assembled.
 """
 import hashlib
+import math
 
 import torch
 
