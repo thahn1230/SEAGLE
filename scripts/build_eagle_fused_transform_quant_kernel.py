@@ -84,12 +84,15 @@ def _fused_a4(EPTR, HPTR, SGN, THETA, QOUT, SOUT, MOUT,
         h = h * 0.70710678
     mx = tl.maximum(tl.max(e, axis=0), tl.max(h, axis=0))
     mn = tl.minimum(tl.min(e, axis=0), tl.min(h, axis=0))
+    mx = tl.maximum(mx, 0.0)          # official: ranges include 0
+    mn = tl.minimum(mn, 0.0)
     s4 = (mx - mn) / 15.0
     s4 = tl.where(s4 < 1e-12, 1e-12, s4)
+    zp = tl.extra.cuda.libdevice.rint(-mn / s4)
     qe = tl.minimum(tl.maximum(
-        tl.extra.cuda.libdevice.rint((e - mn) / s4), 0.0), 15.0)
+        tl.extra.cuda.libdevice.rint(e / s4) + zp, 0.0), 15.0)
     qh = tl.minimum(tl.maximum(
-        tl.extra.cuda.libdevice.rint((h - mn) / s4), 0.0), 15.0)
+        tl.extra.cuda.libdevice.rint(h / s4) + zp, 0.0), 15.0)
     tl.store(QOUT + row * 8192 + offs, qe.to(tl.int8))
     tl.store(QOUT + row * 8192 + 4096 + offs, qh.to(tl.int8))
     tl.store(SOUT + row, s4)
@@ -111,15 +114,15 @@ def fused(e, h, m_scale=1.0, rot=0, theta=None, sign=None):
 
 
 def ref_codes(x):
-    from eagle_spinquant import fake_w4a4_draft as fq
-    aq = fq._act_quantizer(4)
-    aq.find_params(x.half())
-    deq = aq(x.half()).float()
-    aq.free()
-    mn = deq.min(dim=-1, keepdim=True).values
-    mx = deq.max(dim=-1, keepdim=True).values
-    s = (mx - mn).clamp_min(1e-12) / 15.0
-    return torch.round((deq - mn) / s).to(torch.int8), deq
+    """Official per-token asym formula applied directly (matches
+    SpinQuant ActQuantizer semantics: 0-inclusive range, scale=
+    (mx-mn)/15, zp=round(-mn/scale), q=clamp(round(x/scale)+zp))."""
+    mx = x.max(dim=-1, keepdim=True).values.clamp_min(0)
+    mn = x.min(dim=-1, keepdim=True).values.clamp_max(0)
+    s = ((mx - mn) / 15.0).clamp_min(1e-12)
+    zp = torch.round(-mn / s)
+    q = torch.clamp(torch.round(x / s) + zp, 0, 15)
+    return q.to(torch.int8), q * s - zp * s
 
 
 def main():
