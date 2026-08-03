@@ -65,6 +65,16 @@ def main():
     ap.add_argument("--draft-sd", default=None,
                     help="retrained draft state dict (.pt)")
     ap.add_argument("--alpha", type=float, default=None)
+    ap.add_argument("--quant-first", default=None,
+                    help="override projection-first quant (fp16|fake_w4a4)")
+    ap.add_argument("--quant-recurrent", default=None)
+    ap.add_argument("--quant-ar", default=None)
+    ap.add_argument("--quant-embed", default=None)
+    ap.add_argument("--quant-head", default=None)
+    ap.add_argument("--ar-mask", default=None,
+                    help="csv of AR linears to quantize (subset of "
+                         "q_proj,k_proj,v_proj,o_proj,gate_proj,"
+                         "up_proj,down_proj)")
     ap.add_argument("--proj-rot-first", default=None,
                     help="R-EP3-P rotation spec JSON (first path)")
     ap.add_argument("--proj-rot-rec", default=None,
@@ -173,6 +183,17 @@ def main():
             kw["proj_rot_first"] = json.loads(args.proj_rot_first)
         if args.proj_rot_rec:
             kw["proj_rot_rec"] = json.loads(args.proj_rot_rec)
+        for a, k in (("quant_first", "quant_first"),
+                     ("quant_recurrent", "quant_recurrent"),
+                     ("quant_ar", "quant_ar"),
+                     ("quant_embed", "quant_embed"),
+                     ("quant_head", "quant_head")):
+            v = getattr(args, a)
+            if v is not None:
+                kw[k] = v
+        if args.ar_mask is not None:
+            kw["ar_quant_mask"] = [x for x in args.ar_mask.split(",")
+                                   if x]
         ad = ConcatSelectiveDraftAdapter(
             model, stash, dev, torch.float16, variant="folded",
             first_hidden_mode=fhm, trace=False, **kw)

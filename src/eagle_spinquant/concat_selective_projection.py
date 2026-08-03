@@ -303,6 +303,7 @@ class ConcatSelectiveDraftAdapter(VariantAdapter):
                  embed_scale_alpha=None, embed_scale_alpha_rec=None,
                  first_fold_R=None,
                  proj_rot_first=None, proj_rot_rec=None,
+                 ar_quant_mask=None,
                  ar_r2r4=False, trace=True, trace_cap=4000):
         super().__init__(ea_model, stash, device, dtype)
         assert variant in ("folded", "explicit")
@@ -335,6 +336,11 @@ class ConcatSelectiveDraftAdapter(VariantAdapter):
         # matching W_pt (S^-1) Q fold happens at install time.
         self.proj_rot_first = proj_rot_first
         self.proj_rot_rec = proj_rot_rec
+        # component-bottleneck study: quantize only the AR linears named
+        # here (q_proj/k_proj/v_proj/o_proj/gate_proj/up_proj/down_proj);
+        # None = all (validated default)
+        self.ar_quant_mask = (set(ar_quant_mask)
+                              if ar_quant_mask is not None else None)
         # R_D support: when the draft gauge (stash R1) differs from the
         # target rotation, the FIRST-path hidden fold must keep the TARGET
         # rotation (the folded T->D bridge). first_fold_R = R_T.
@@ -528,12 +534,19 @@ class ConcatSelectiveDraftAdapter(VariantAdapter):
                     w_bits=w_bits, a_bits=a_bits).to(dev)
                 setattr(parent, attr, m)
             attn, mlp = ea.layers[0].self_attn, ea.layers[0].mlp
+
+            def want(pn):
+                return (self.ar_quant_mask is None
+                        or pn in self.ar_quant_mask)
             for pn in ("q_proj", "k_proj", "v_proj", "o_proj"):
-                rep(attn, pn, f"ar.{pn}")
+                if want(pn):
+                    rep(attn, pn, f"ar.{pn}")
             for pn in ("gate_proj", "up_proj"):
-                rep(mlp, pn, f"ar.{pn}")
-            rep(mlp, "down_proj", "ar.down_proj",
-                online=bool(self._ar_meta.get("r4_applied")))
+                if want(pn):
+                    rep(mlp, pn, f"ar.{pn}")
+            if want("down_proj"):
+                rep(mlp, "down_proj", "ar.down_proj",
+                    online=bool(self._ar_meta.get("r4_applied")))
 
         # ---- dispatch (same proven pattern as B2)
         adapter = self
