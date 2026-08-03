@@ -60,7 +60,7 @@ def main():
        "A5==B12 and FULL==A18 consistency PASS")
     it(6, "Original largest bottleneck",
        "the fusion projection (prior studies: NPTQ 1.25 -> EP3-P "
-       "3.05; quantize-proj-naive A4 arm 2.2755 vs FPDRAFT 3.2678)")
+       "3.05; quantize-proj-naive A4 arm 1.2755 vs FPDRAFT 3.2678)")
     b12 = ca["paired"]["B12_ar_fp_gain_vs_FULL"]
     it(7, "Post-EP3-P largest residual bottleneck",
        f"AR decoder: restore gain +{b12['delta']} {b12['ci']} SIG; "

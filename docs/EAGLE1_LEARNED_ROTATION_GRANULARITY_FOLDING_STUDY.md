@@ -7,8 +7,10 @@ throughout the second half of the run.
 
 ## 0. Headline answers
 
-- **Q-A**: Projection was the right first intervention (its naive
-  quantization alone costs −0.99 tau; EP3-P recovers it to −0.067),
+- **Q-A**: Projection was the right first intervention (naive
+  quantization of the projections ALONE collapses tau 3.268 → 1.276,
+  by far the largest single sensitivity; EP3-P recovers it to 3.201,
+  −0.067 from the FP16-draft ceiling),
   and after EP3-P the bottleneck **moves to the AR decoder**:
   restoring it to FP16 gains **+0.128 [+0.067, +0.190] SIG**; MLP
   +0.075 SIG; **restoring the first projection gains +0.00** — EP3-P
@@ -36,11 +38,13 @@ throughout the second half of the run.
 ## 1. Q-A — component audit (33 valid arms, MT-Bench 80, T1)
 
 Quantize-one (from FP16 draft, tau; FPDRAFT ceiling 3.2678):
-embedding 3.306*, head 3.259, first-proj naive 2.371, rec-proj naive
-2.996, both naive 2.276, **both EP3-P 3.201**, Q 3.127, K 3.132,
-V 3.127, O 3.137, QKV 3.126, QKVO 3.133, gate 3.135, up 3.130,
-down 3.209, gate+up 3.134, MLP 3.165, full AR 3.106, EP3-P+AR (=FULL
-deploy) 3.0728. (*embed arm exceeds ceiling within noise.)
+embedding 3.306*, head 3.259, **first-proj naive 1.371**, rec-proj
+naive 1.996, **both projections naive 1.276**, **both EP3-P 3.201**,
+Q 3.288, K 3.272, V 3.262, O 3.231, QKV 3.266, QKVO 3.222,
+gate 3.286, up 3.313, down 3.209, gate+up 3.240, MLP 3.165, full AR
+3.106, EP3-P+AR (= FULL deploy) 3.0728. (*embed arm exceeds the
+ceiling within noise.) The projection dominates every other single
+component by an order of magnitude — Conclusion A is unambiguous.
 
 Restore-one oracle (from FULL 3.0728, paired bootstrap):
 
