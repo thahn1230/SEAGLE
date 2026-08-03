@@ -477,12 +477,16 @@ class ConcatSelectiveDraftAdapter(VariantAdapter):
                     self._rot_f = build_rotation(
                         self.proj_rot_first, n=W_first.shape[1],
                         device=dev)
-                    W_first = self._rot_f.apply(W_first.clone())
+                    W_first = self._rot_f.apply(
+                        W_first.clone().float().to(dev)) \
+                        .double().cpu()
                 if self.proj_rot_rec:
                     self._rot_r = build_rotation(
                         self.proj_rot_rec, n=W_rec.shape[1],
                         device=dev)
-                    W_rec = self._rot_r.apply(W_rec.clone())
+                    W_rec = self._rot_r.apply(
+                        W_rec.clone().float().to(dev)) \
+                        .double().cpu()
             lin_f = _make_linear(W_first, bias, dev, dtype)
             lin_r = _make_linear(W_rec, bias, dev, dtype)
             pf, qmeta_f = _maybe_quantize(lin_f, self.quant_first,
