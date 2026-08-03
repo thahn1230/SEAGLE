@@ -472,13 +472,13 @@ class ConcatSelectiveDraftAdapter(VariantAdapter):
                 W_rec[:, :D] = W_rec[:, :D] / a_rec
             self._rot_f = self._rot_r = None
             if self.proj_rot_first or self.proj_rot_rec:
-                from .projection_rotation import StructuredRotation
+                from .projection_rotation import build_rotation
                 if self.proj_rot_first:
-                    self._rot_f = StructuredRotation(
+                    self._rot_f = build_rotation(
                         self.proj_rot_first, n=W_first.shape[1])
                     W_first = self._rot_f.apply(W_first.clone())
                 if self.proj_rot_rec:
-                    self._rot_r = StructuredRotation(
+                    self._rot_r = build_rotation(
                         self.proj_rot_rec, n=W_rec.shape[1])
                     W_rec = self._rot_r.apply(W_rec.clone())
             lin_f = _make_linear(W_first, bias, dev, dtype)

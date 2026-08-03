@@ -183,3 +183,78 @@ def transform_xw(X, W_pt, m_val, rot, order="SR", bias=None):
         Xt = rot.apply(X) * s
         Wt = rot.apply(W_pt) / s
     return Xt, Wt
+
+
+class DeployedLearnedRotation:
+    """Deployment-side reconstruction of a trained LearnedRotation
+    checkpoint (no dense 8192^2 matrix; params stay in their compact
+    parameterization). spec: {"learned_ckpt": path, "which": "rot_f"|
+    "rot_r"}."""
+
+    def __init__(self, spec, n=2 * D, device="cpu"):
+        self.spec = dict(spec)
+        self.n = n
+        ck = torch.load(spec["learned_ckpt"], map_location="cpu",
+                        weights_only=False)
+        cfg = ck["cfg"]
+        sd = ck[spec.get("which", "rot_f")] or ck["rot_f"]
+        self.param = cfg["param"]
+        self.block = int(cfg.get("block", 32))
+        self.perm = interleave_perm(n)
+        self.inv_perm = torch.argsort(self.perm)
+        self.fixed = (StructuredRotation(
+            dict(family="cross", block=8192, seed=12,
+                 interleave_chunk=1), n=n)
+            if cfg.get("fixed_init") else None)
+        if self.param == "cayley":
+            a = sd["a"].float()
+            A = a - a.transpose(1, 2)
+            eye = torch.eye(self.block).expand_as(A)
+            self.Q = torch.linalg.solve(eye + A, eye - A)
+        elif self.param == "givens":
+            self.theta = sd["theta"].float()
+        elif self.param == "householder":
+            self.v = sd["v"].float()
+        else:
+            raise ValueError(self.param)
+
+    def apply(self, x):
+        y = x
+        if self.fixed is not None:
+            y = self.fixed.apply(y)
+        y = y[..., self.perm.to(y.device)]
+        if self.param == "cayley":
+            Q = self.Q.to(y.device).to(
+                torch.float32 if y.dtype != torch.float64
+                else torch.float64)
+            z = y.reshape(*y.shape[:-1], self.n // self.block,
+                          self.block)
+            z = torch.einsum("...bi,bij->...bj",
+                             z.to(Q.dtype), Q).to(y.dtype)
+            y = z.reshape(*y.shape)
+        elif self.param == "givens":
+            c = torch.cos(self.theta).to(y.device).to(y.dtype)
+            s = torch.sin(self.theta).to(y.device).to(y.dtype)
+            z = y.reshape(*y.shape[:-1], self.n // 2, 2)
+            e, h = z[..., 0], z[..., 1]
+            y = torch.stack([e * c + h * s, -e * s + h * c],
+                            dim=-1).reshape(*y.shape)
+        else:
+            z = y.float()
+            for i in range(self.v.shape[0]):
+                v = self.v[i].to(y.device)
+                v = v / v.norm().clamp_min(1e-8)
+                z = z - 2.0 * torch.outer(
+                    z.reshape(-1, self.n) @ v, v).reshape(z.shape)
+            y = z.to(y.dtype)
+        return y[..., self.inv_perm.to(y.device)]
+
+    def meta(self):
+        return dict(self.spec, param=self.param, block=self.block)
+
+
+def build_rotation(spec, n=2 * D, device="cpu"):
+    """Factory: fixed structured spec dict OR learned ckpt spec."""
+    if spec.get("learned_ckpt"):
+        return DeployedLearnedRotation(spec, n=n, device=device)
+    return StructuredRotation(spec, n=n, device=device)
