@@ -39,4 +39,16 @@ cudaError_t dequant_s32_to_fp16(const int32_t* c32,
                                 int M, int N,
                                 cudaStream_t stream);
 
+// FUSED: GEMM + per-row/per-col scale + bias + fp16 store in ONE
+// kernel (no int32 intermediate, no separate dequant launch).
+Status gemm_s4s4_fp16_fused(const uint8_t* a4_packed,
+                            const uint8_t* w4_packed,
+                            const float* activation_scales,
+                            const float* weight_scales,
+                            const __half* bias,   // nullable
+                            __half* output,
+                            int M, int N, int K,
+                            void* workspace, size_t workspace_bytes,
+                            cudaStream_t stream);
+
 }  // namespace w4a4_sm89

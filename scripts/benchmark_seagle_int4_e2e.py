@@ -83,6 +83,7 @@ def run_config(name, quant_target, quant_draft, prompts, mx=128):
     pt.wrap(model.ea_layer, "topK_genrate", "draft")
     pt.wrap(model.base_model.model, "forward", "verify")
     stats = dict(tokens=0, cycles=0, wall=0.0)
+    tok_hash = []
     for p in prompts:
         ids = build_prompt(tok, p["text"])[:, :512].to("cuda:0")
         L0 = ids.shape[1]
@@ -101,7 +102,13 @@ def run_config(name, quant_target, quant_draft, prompts, mx=128):
         torch.cuda.synchronize()
         stats["wall"] += time.time() - t0
         stats["tokens"] += prev - L0
+        tok_hash.append(hash(tuple(out[0, L0:prev].tolist())))
+    import hashlib as _h
     res = dict(config=name, n_int4_target=n_t, n_int4_draft=n_d,
+               token_hash=_h.sha1(str(tok_hash).encode())
+               .hexdigest()[:16],
+               peak_alloc_gib=round(
+                   torch.cuda.max_memory_allocated() / 2**30, 2),
                tokens=stats["tokens"], cycles=stats["cycles"],
                wall_s=round(stats["wall"], 2),
                ms_per_token=round(1000 * stats["wall"]
@@ -139,6 +146,8 @@ def main():
     args = ap.parse_args()
     rd = args.run_dir
     prompts, _ = load_eval_prompts("mtbench", args.n_prompts, "eval")
+    import os as _os
+    _os.environ.setdefault("SEAGLE_INT4_EPILOGUE", "fused")
     grid = dict(T16D16=(False, False), T4D16=(True, False),
                 T4D4=(True, True), T16D4=(False, True))
     out = []

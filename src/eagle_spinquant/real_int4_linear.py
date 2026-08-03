@@ -1,57 +1,57 @@
-"""Real INT4 (s4 x s4 -> s32 Tensor Core) linear for SEAGLE E2E
-latency. Backend: the QuaRot CUDA extension (CUTLASS m16n8k64 IMMA,
-verified exact against CPU integer dot by the standalone
-kernels/w4a4_cutlass_sm89 package: PASS + 850 TOPS @M=512 on 4090).
+"""Real INT4 (s4 x s4 -> s32 Tensor Core) linear for SEAGLE E2E.
 
-Pipeline per forward (guide contract):
-  fp16 x [M,K] -> per-row sym A4 (scale = absmax/7) -> packed s4
-  -> s4s4s32 GEMM vs offline-packed per-out-channel W4
-  -> int32 * s_a[m] * s_w[n] (+bias fp16) -> fp16
-
-Constraints: K % 64 == 0 (all SEAGLE shapes qualify: 4096/8192/11008).
-Rows are processed as M = prod(batch dims); no padding needed (kernel
-handles arbitrary M; Tensor-Core row utilization drops below M=16 —
-that is part of what this study measures).
+Backends (SEAGLE_INT4_EPILOGUE env, default "fused"):
+  fused   : quant -> single CUTLASS kernel (GEMM + s_a[m]*s_w[n]
+            + bias + fp16 store via epilogue visitor). No [M,N] int32
+            intermediate, no separate dequant launch. BITWISE equal
+            to unfused (verified all shapes, bias/no-bias).
+  unfused : quant -> s4s4s32 GEMM -> separate dequant kernel
+            (A/B reference path).
+Both use the self-contained seagle_int4_ext (w4a4_cutlass_sm89),
+IMMA-verified; per-row dynamic A4 (absmax/7, clamp +-7, fp32 scales),
+per-output-channel W4.
 """
+import os
 import sys
 
 import torch
 
-sys.path.insert(0, "/data/thahn1230/quarot")
-from quarot import _CUDA  # noqa: E402
+sys.path.insert(0, os.path.join(
+    os.path.dirname(os.path.dirname(os.path.dirname(
+        os.path.abspath(__file__)))), "kernels", "w4a4_cutlass_sm89"))
+os.environ.setdefault("CUDA_HOME", "/usr/local/cuda-12.8")
+from build_torch_ext import ext as _EXT  # noqa: E402
+
+_BACKEND = os.environ.get("SEAGLE_INT4_EPILOGUE", "fused")
+assert _BACKEND in ("fused", "unfused"), _BACKEND
 
 
 @torch.no_grad()
 def pack_weight_int4(weight: torch.Tensor):
-    """weight fp16/fp32 [N, K] -> (packed uint8 [N, K/2], scales
-    fp16 [N,1]) — per-output-channel symmetric RTN (guide contract)."""
-    w = weight.detach().float().cuda()
-    scale = w.abs().amax(dim=1, keepdim=True).clamp_min(1e-8) / 7.0
-    packed = _CUDA.sym_quant(w.half(), scale.half())
-    return packed, scale.half()
+    """fp16/fp32 [N, K] -> (packed uint8 [N, K/2], fp32 scales [N])
+    per-output-channel symmetric (absmax/7, clamp +-7)."""
+    w = weight.detach().half().cuda().contiguous()
+    return _EXT.quantize(w)
 
 
-# same-input activation-quant cache: q_proj/k_proj/v_proj (and
-# gate/up) consume the SAME tensor within one forward — quantize once.
+# same-input activation-quant cache: q/k/v (and gate/up) consume the
+# SAME tensor within one forward — quantize once per live tensor.
 _QCACHE = {"key": None, "qa": None, "sa": None}
 
 
 def _act_quant_cached(x2):
-    # inference-mode tensors have no version counter; the
-    # (python-id, data_ptr, shape) triple identifies the same
-    # live tensor within one forward (qkv / gate-up reuse)
     key = (id(x2), x2.data_ptr(), x2.shape)
     if _QCACHE["key"] == key:
         return _QCACHE["qa"], _QCACHE["sa"]
-    sa = (x2.abs().amax(dim=1, keepdim=True)
-          .clamp_min(1e-6).half() / 7.0)
-    qa = _CUDA.sym_quant(x2, sa)
+    qa, sa = _EXT.quantize(x2)
     _QCACHE.update(key=key, qa=qa, sa=sa)
     return qa, sa
 
 
 class RealInt4Linear(torch.nn.Module):
-    """Drop-in replacement for nn.Linear with real INT4 compute."""
+    """Drop-in nn.Linear replacement with real INT4 compute."""
+
+    backend = _BACKEND
 
     def __init__(self, lin: torch.nn.Linear | None = None,
                  weight: torch.Tensor = None,
@@ -59,7 +59,7 @@ class RealInt4Linear(torch.nn.Module):
         super().__init__()
         w = lin.weight if lin is not None else weight
         b = (lin.bias if lin is not None else bias)
-        assert w.shape[1] % 64 == 0, w.shape
+        assert w.ndim == 2 and w.shape[1] % 64 == 0, w.shape
         self.in_features = int(w.shape[1])
         self.out_features = int(w.shape[0])
         packed, scale = pack_weight_int4(w)
@@ -67,10 +67,9 @@ class RealInt4Linear(torch.nn.Module):
         self.register_buffer("sw", scale)
         self.register_buffer(
             "bias_fp16",
-            b.detach().half().cuda() if b is not None else None)
-        # free the fp16 source LAST (prevents transient 2x memory
-        # during whole-model swap; shape/bias captured above)
-        if lin is not None:
+            b.detach().half().cuda().contiguous()
+            if b is not None else None)
+        if lin is not None:               # free fp16 source LAST
             lin.weight.data = torch.empty(0)
         self.name = name
 
@@ -80,12 +79,16 @@ class RealInt4Linear(torch.nn.Module):
 
     def forward(self, x):
         shp = x.shape
-        x2 = x.reshape(-1, self.in_features).half().contiguous()
+        x2 = x.reshape(-1, self.in_features)
+        if x2.dtype != torch.float16 or not x2.is_contiguous():
+            x2 = x2.half().contiguous()
         qa, sa = _act_quant_cached(x2)
-        c32 = _CUDA.matmul(qa, self.w4)
-        y = _CUDA.sym_dequant(c32, sa, self.sw, 32)
-        if self.bias_fp16 is not None:
-            y = y + self.bias_fp16
+        if self.backend == "fused":
+            y = _EXT.gemm_fused(qa, self.w4, sa, self.sw,
+                                self.bias_fp16)
+        else:
+            y = _EXT.gemm_unfused(qa, self.w4, sa, self.sw,
+                                  self.bias_fp16)
         return y.reshape(*shp[:-1], self.out_features)
 
 
@@ -93,9 +96,7 @@ class RealInt4Linear(torch.nn.Module):
 def swap_llama_linears_int4(model, layer_attr_paths=None,
                             verbose=False):
     """Replace q/k/v/o/gate/up/down of every decoder layer with
-    RealInt4Linear (embed/norm/head stay fp16 per the study
-    contract). Works on the vendored EAGLE KV llama and the draft
-    cnets layer alike."""
+    RealInt4Linear (embed/norm/head stay fp16)."""
     n = 0
     names = ("q_proj", "k_proj", "v_proj", "o_proj",
              "gate_proj", "up_proj", "down_proj")
