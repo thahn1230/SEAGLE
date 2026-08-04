@@ -140,7 +140,7 @@ class ExactQuantizedRotationForward(nn.Module):
     def __init__(self, sd, R_T, gamma, W_lm, rot, alpha_init=32.0,
                  train_alpha=False, w_bits=4, a_bits=4, draft_kv_bits=16,
                  train_draft_core=False, r2_seed=0, device="cuda:0",
-                 first_fold_R=None):
+                 first_fold_R=None, alpha_rec_init=None):
         super().__init__()
         self.dev = device
         self.rot = rot
@@ -205,6 +205,17 @@ class ExactQuantizedRotationForward(nn.Module):
         # precision scalar (and scales E in fp32) — an fp16-rounded or
         # exp(log(.)) round-tripped alpha only matches at powers of two
         self.alpha_exact = float(alpha_init)
+        # EP3-P pathwise migration (m = D^beta): alpha_rec_init != None
+        # switches the fold to the CURRENT deploy-adapter semantics —
+        # e-slice divided in the fold dtype BEFORE the fp16 cast
+        # (concat_selective_projection.py:465-472 divides the fp64 fold),
+        # W_rec e-slice divided by alpha_rec, and the recurrent input's
+        # e-slice rescaled by (alpha_rec/alpha_first) at runtime
+        # (rec_embed_rescale). Incompatible with train_alpha.
+        self.alpha_rec_exact = (float(alpha_rec_init)
+                                if alpha_rec_init is not None else None)
+        if self.alpha_rec_exact is not None:
+            assert not train_alpha, "EP3-P pathwise alpha is fixed-only"
         self.aq = _ActQ(a_bits) if a_bits < 16 else None
         self.counters = dict(w_quant=0, a_quant=0, kv_quant=0)
 
@@ -221,9 +232,37 @@ class ExactQuantizedRotationForward(nn.Module):
             return x.half()
 
         M = gam.unsqueeze(1) * Rf
+        D = self.D
+        if self.alpha_rec_exact is not None:
+            # EP3-P pathwise fold, deploy-adapter order: the e-slice is
+            # divided in the fold dtype BEFORE the fp16 cast (the runtime
+            # divides its fp64 fold, then _make_linear casts), with
+            # independent alpha_first / alpha_rec per path
+            Wf_ = torch.cat([self.W_e.to(dd), self.W_h.to(dd) @ M], dim=1)
+            Wr_ = torch.cat([self.W_e.to(dd), self.W_h.to(dd) @ R], dim=1)
+            Wf = c16(torch.cat([Wf_[:, :D] / self.alpha_exact,
+                                Wf_[:, D:]], dim=1))
+            Wr = c16(torch.cat([Wr_[:, :D] / self.alpha_rec_exact,
+                                Wr_[:, D:]], dim=1))
+            q = c16(self.Wq.to(dd) @ R)
+            k = c16(self.Wk.to(dd) @ R)
+            v1 = c16(self.Wv.to(dd) @ R).to(dd)
+            v = c16(torch.einsum("ab,hbc->hac", R2,
+                                 v1.reshape(NH, HD, D)).reshape(NH * HD,
+                                                                D))
+            o1 = c16(R.t() @ self.Wo.to(dd)).to(dd)
+            o = c16(torch.einsum("ohc,cb->ohb", o1.reshape(D, NH, HD),
+                                 R2.t()).reshape(D, NH * HD))
+            gate = c16((self.Wgate.to(dd) * gl.unsqueeze(0)) @ R)
+            up = c16((self.Wup.to(dd) * gl.unsqueeze(0)) @ R)
+            d1 = c16(R.t() @ self.Wdown.to(dd))
+            down = _HadUSTE.apply(d1, self.had_K, self.had_KK)
+            head = c16(self.W_lm16.to(dd) @ R)
+            return dict(W_first=Wf, W_rec=Wr, q=q, k=k, v=v, o=o,
+                        gate=gate, up=up, down=down, head=head,
+                        R=R.float())
         Wf = c16(torch.cat([self.W_e.to(dd), self.W_h.to(dd) @ M], dim=1))
         Wr = c16(torch.cat([self.W_e.to(dd), self.W_h.to(dd) @ R], dim=1))
-        D = self.D
         if not self.log_alpha.requires_grad:
             # the runtime adapter divides its fp16 fold by the python-
             # float alpha ON CPU; CPU evaluates that as an fp32 division
@@ -355,6 +394,10 @@ class ExactQuantizedRotationForward(nn.Module):
         R = tw["R"]
         a = (self.alpha_exact if not self.log_alpha.requires_grad
              else self.log_alpha.exp())
+        # EP3-P: recurrent input e-slice rescale (runtime
+        # rec_embed_rescale = alpha_rec/alpha_first, fp16 activation mul)
+        rr = (None if self.alpha_rec_exact is None
+              else float(self.alpha_rec_exact / self.alpha_exact))
         B, T = a_seq.shape[0], a_seq.shape[1]
         E = self.E[tok_ids] * a
         z = torch.cat([E[:, 1:T + 1].half(), a_seq.half()], dim=-1)
@@ -377,6 +420,8 @@ class ExactQuantizedRotationForward(nn.Module):
             if k == K - 1:
                 break
             e_k = (self.E[chosen] * a).half().unsqueeze(1)
+            if rr is not None:
+                e_k = e_k * rr
             z = torch.cat([e_k, h_last.half()], dim=-1)
             y = self._proj(z, qw["W_rec"], R)
             pos_k = torch.arange(pos_offset + T + k,
@@ -447,7 +492,11 @@ class ExactQuantizedRotationForward(nn.Module):
              else self.log_alpha.exp())
         B, T = feat_seq.shape[0], feat_seq.shape[1]
         E = self.E[tok_ids] * a
-        z = torch.cat([E[:, 1:T + 1].half(), feat_seq.half()], dim=-1)
+        e_part = E[:, 1:T + 1].half()
+        if proj != "first" and self.alpha_rec_exact is not None:
+            e_part = e_part * float(self.alpha_rec_exact
+                                    / self.alpha_exact)
+        z = torch.cat([e_part, feat_seq.half()], dim=-1)
         # proj="rec": multi-step rollout rows consume the draft's OWN
         # hidden through the deployed recurrent fold (no interface fold)
         y = self._proj(z, qw["W_first" if proj == "first" else "W_rec"],

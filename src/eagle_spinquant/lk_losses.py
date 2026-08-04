@@ -99,6 +99,22 @@ def expected_tau_loss(alphas, eps=EPS):
     return -((et / (K + 1)).clamp_min(eps)).log()
 
 
+def teacher_token_logp(zD, tok):
+    """log q(teacher token) for one depth: zD (..., V), tok (...,).
+    The LRGF-validated ACC surrogate consumes these along a chain."""
+    return torch.log_softmax(zD.float(), dim=-1) \
+        .gather(-1, tok.long().unsqueeze(-1)).squeeze(-1)
+
+
+def prefix_survival(logps):
+    """Soft prefix survival (LRGF ACC surrogate): logps (..., K) log-probs
+    of the teacher-forced greedy token per depth. Returns
+    sum_{k=1..K} prod_{j<=k} q_j, shape (...,) — the expected accepted
+    length under greedy verification, soft version. Clamp at 0 keeps each
+    prefix probability <= 1."""
+    return torch.exp(torch.cumsum(logps, dim=-1).clamp(max=0.0)).sum(-1)
+
+
 def greedy_ce(zT, zD):
     """Auxiliary: -log q(argmax p), shape (...,)."""
     y = zT.detach().argmax(-1)

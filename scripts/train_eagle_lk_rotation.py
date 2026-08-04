@@ -98,7 +98,7 @@ def main():
     ap.add_argument("--radius", type=float, default=None)
     ap.add_argument("--objective", default="hybrid",
                     choices=["kl", "tv", "neglog", "hybrid", "hybrid_fixed",
-                             "exptau", "topk_kl"])
+                             "exptau", "topk_kl", "accsurv"])
     ap.add_argument("--eta", type=float, default=3.0)
     ap.add_argument("--aux-greedy", type=float, default=0.0)
     ap.add_argument("--gamma-depth", type=float, default=0.8)
@@ -111,6 +111,10 @@ def main():
     ap.add_argument("--warmup", type=int, default=100)
     ap.add_argument("--clip", type=float, default=0.5)
     ap.add_argument("--alpha-init", type=float, default=32.0)
+    ap.add_argument("--alpha-rec-init", type=float, default=None,
+                    help="EP3-P pathwise m_rec; enables the deploy-"
+                         "adapter EP3-P fold (e-slice divided pre-cast, "
+                         "recurrent e-slice rescale)")
     ap.add_argument("--train-alpha", action="store_true")
     ap.add_argument("--train-draft-core", action="store_true")
     ap.add_argument("--kv-bits", type=int, default=4)
@@ -123,7 +127,7 @@ def main():
     ap.add_argument("--eval-every", type=int, default=200)
     args = ap.parse_args()
     assert os.environ.get("CUDA_VISIBLE_DEVICES") in \
-        tuple(str(i) for i in range(6))
+        tuple(str(i) for i in range(8))
     dev = args.device
     torch.manual_seed(args.seed)
 
@@ -174,7 +178,7 @@ def main():
         sd, R_T, gamma, W_lm, rot, alpha_init=args.alpha_init,
         train_alpha=args.train_alpha, w_bits=4, a_bits=4,
         draft_kv_bits=args.kv_bits, train_draft_core=args.train_draft_core,
-        device=dev, first_fold_R=R_T)
+        device=dev, first_fold_R=R_T, alpha_rec_init=args.alpha_rec_init)
 
     windows, man = load_corpus(args.corpus, args.run_dir)
     n_val = max(len(windows) // 10, 16)
@@ -240,8 +244,17 @@ def main():
                               for w in ws]).to(dev)
         total = 0.0
         alphas = []
+        logps = []                          # accsurv per-depth log q(t_k)
         for k, (lg, _h, _c) in enumerate(outs):
             zTk, zDk = zT[:, k], lg
+            if args.objective == "accsurv":
+                # LRGF-validated ACC surrogate: soft prefix survival of
+                # the teacher-forced greedy tokens (loss applied after
+                # the depth loop; no per-depth weighting — the survival
+                # product couples depths already)
+                logps.append(L.teacher_token_logp(zDk, teach[:, k]))
+                alphas.append(L.overlap_alpha(zTk, zDk))
+                continue
             if args.objective == "kl":
                 lk = L.kl_full(zTk, zDk)
             elif args.objective == "tv":
@@ -267,6 +280,9 @@ def main():
         a_stack = torch.stack(alphas, dim=-1)       # (B, K)
         if args.objective == "exptau":
             total = total + L.expected_tau_loss(a_stack).mean()
+        elif args.objective == "accsurv":
+            total = total - L.prefix_survival(
+                torch.stack(logps, dim=-1)).mean()
         return total, a_stack.detach()
 
     best_val = None
@@ -322,7 +338,10 @@ def main():
     geo = rotation_geometry(rot.R().detach().cpu(), R_T) \
         if rot.trainable else rotation_geometry(R_T, R_T)
     save = dict(R_D=rot.R().detach().cpu(),
-                alpha=float(model.log_alpha.exp()),
+                alpha=(model.alpha_exact
+                       if not args.train_alpha
+                       else float(model.log_alpha.exp())),
+                alpha_rec=model.alpha_rec_exact,
                 meta=dict(vars(args), corpus_n=len(windows),
                           geometry=geo, best_val=best_val,
                           divergence_rates=div.rates(),

@@ -59,7 +59,7 @@ def main():
     ap.add_argument("--target", required=True, choices=["fp16", "int4"])
     ap.add_argument("--draft-cfg", required=True,
                     choices=["stock", "d4p3", "naive_w4a4", "p2", "rot",
-                             "fp16_deploy", "d4p3_deploy"])
+                             "fp16_deploy", "d4p3_deploy", "rot_ep3p"])
     ap.add_argument("--tag", required=True)
     ap.add_argument("--ckpt", default=None, help="rotation ckpt (rot)")
     ap.add_argument("--draft-sd", default=None,
@@ -179,6 +179,25 @@ def main():
             embed_scale_alpha=(args.alpha if args.alpha is not None
                                else float(ck.get("alpha", def_alpha))),
             **D4)
+    elif args.draft_cfg == "rot_ep3p":
+        # R_D draft gauge + EP3-P pathwise scales: stash R1 <- R_D,
+        # T->D bridge pinned at R_T (first_fold_R), alpha/alpha_rec from
+        # CLI (fallback: checkpoint)
+        ck = torch.load(args.ckpt, map_location="cpu", weights_only=False)
+        st = dict(stash)
+        R_T = stash["R1"].clone()
+        st["R1"] = ck["R_D"].double()
+        a_rec = (args.alpha_rec if args.alpha_rec is not None
+                 else ck.get("alpha_rec"))
+        kw = dict(embed_scale_alpha=(args.alpha if args.alpha is not None
+                                     else float(ck.get("alpha",
+                                                       def_alpha))),
+                  **D4)
+        if a_rec is not None:
+            kw["embed_scale_alpha_rec"] = float(a_rec)
+        ad = ConcatSelectiveDraftAdapter(
+            model, st, dev, torch.float16, variant="folded",
+            first_hidden_mode=fhm, trace=False, first_fold_R=R_T, **kw)
     elif args.draft_cfg == "d4p3_deploy":
         kw = dict(embed_scale_alpha=alpha, **D4)
         if args.alpha_rec is not None:

@@ -43,7 +43,7 @@ def main():
     ap.add_argument("--target", required=True, choices=["fp16", "int4"])
     ap.add_argument("--draft-cfg", required=True,
                     choices=["stock", "naive_w4a4", "d4p3", "d4p3_deploy",
-                             "rot", "fp16_deploy"])
+                             "rot", "fp16_deploy", "rot_ep3p"])
     ap.add_argument("--alpha", type=float, default=None)
     ap.add_argument("--proj-rot-first", default=None,
                     help="R-EP3-P rotation spec JSON (first path)")
@@ -122,6 +122,24 @@ def main():
             embed_scale_alpha=(args.alpha if args.alpha is not None
                                else float(ck.get("alpha", def_alpha))),
             **D4)
+    elif args.draft_cfg == "rot_ep3p":
+        # R_D gauge + EP3-P pathwise scales (T->D bridge pinned at R_T)
+        ck = torch.load(args.ckpt, map_location="cpu",
+                        weights_only=False)
+        st = dict(stash)
+        R_T = stash["R1"].clone()
+        st["R1"] = ck["R_D"].double()
+        a_rec = (args.alpha_rec if args.alpha_rec is not None
+                 else ck.get("alpha_rec"))
+        kw = dict(embed_scale_alpha=(args.alpha
+                                     if args.alpha is not None
+                                     else float(ck.get("alpha", 32.0))),
+                  **D4)
+        if a_rec is not None:
+            kw["embed_scale_alpha_rec"] = float(a_rec)
+        ad = ConcatSelectiveDraftAdapter(
+            model, st, dev, torch.float16, variant="folded",
+            first_hidden_mode=fhm, trace=False, first_fold_R=R_T, **kw)
     elif args.draft_cfg in ("stock", "fp16_deploy") \
             and args.target == "int4":
         from eagle_spinquant.causal_interface import (
