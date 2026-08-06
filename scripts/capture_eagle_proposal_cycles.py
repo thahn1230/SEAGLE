@@ -40,7 +40,8 @@ def lcp(a, b):
 @torch.no_grad()
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--target", required=True, choices=["fp16", "int4"])
+    ap.add_argument("--target", required=True,
+                    choices=["fp16", "int4", "w8a8"])
     ap.add_argument("--draft-cfg", required=True,
                     choices=["stock", "naive_w4a4", "d4p3", "d4p3_deploy",
                              "rot", "fp16_deploy", "rot_ep3p"])
@@ -69,6 +70,7 @@ def main():
 
     # deployed system (Tq + method draft) on dev
     rot, quant = (("none", "none") if args.target == "fp16"
+                  else ("full", "w8a8") if args.target == "w8a8"
                   else ("full", "w4a4"))
     model, stash, _ = study.build_study_target(
         paths["target_path"], paths["draft_path"], cfg["model"]["target"],
@@ -141,7 +143,7 @@ def main():
             model, st, dev, torch.float16, variant="folded",
             first_hidden_mode=fhm, trace=False, first_fold_R=R_T, **kw)
     elif args.draft_cfg in ("stock", "fp16_deploy") \
-            and args.target == "int4":
+            and args.target != "fp16":
         from eagle_spinquant.causal_interface import (
             RestoredInterfaceCSAdapter)
         ad = RestoredInterfaceCSAdapter(

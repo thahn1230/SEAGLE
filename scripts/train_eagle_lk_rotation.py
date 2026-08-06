@@ -35,7 +35,8 @@ from eagle_spinquant.kv4_cache import install_kv4_on_past
 from eagle.model.kv_cache import initialize_past_key_values
 
 KIND = "learned_chat_w4a4kv16"
-TARGETS = {"t8": ("full", "w8a8", 16), "t4": ("full", "w4a4", 16),
+TARGETS = {"t16": ("none", "none", 16),
+           "t8": ("full", "w8a8", 16), "t4": ("full", "w4a4", 16),
            "t4kv4": ("full", "w4a4", 4)}
 
 
@@ -118,6 +119,11 @@ def main():
     ap.add_argument("--train-alpha", action="store_true")
     ap.add_argument("--train-draft-core", action="store_true")
     ap.add_argument("--kv-bits", type=int, default=4)
+    ap.add_argument("--first-mode", default="gamma_R1",
+                    choices=["gamma_R1", "identity"],
+                    help="identity: fp16-target interface (draft "
+                         "consumes h_t; W_first=[W_e|W_h], no gamma, "
+                         "no R_T bridge fold)")
     ap.add_argument("--onpolicy", default="tf",
                     choices=["tf", "curriculum", "fifty", "onpolicy"])
     ap.add_argument("--rollout", default="greedy",
@@ -174,11 +180,17 @@ def main():
         rot = ResidualRotation(R_T, trust=args.trust, radius=args.radius)
     rot = rot.to(dev)
 
+    if args.first_mode == "identity":
+        gamma_eff = torch.ones_like(gamma)
+        first_fold = torch.eye(R_T.shape[0])
+    else:
+        gamma_eff, first_fold = gamma, R_T
     model = ExactQATRotatedDraft(
-        sd, R_T, gamma, W_lm, rot, alpha_init=args.alpha_init,
+        sd, R_T, gamma_eff, W_lm, rot, alpha_init=args.alpha_init,
         train_alpha=args.train_alpha, w_bits=4, a_bits=4,
         draft_kv_bits=args.kv_bits, train_draft_core=args.train_draft_core,
-        device=dev, first_fold_R=R_T, alpha_rec_init=args.alpha_rec_init)
+        device=dev, first_fold_R=first_fold,
+        alpha_rec_init=args.alpha_rec_init)
 
     windows, man = load_corpus(args.corpus, args.run_dir)
     n_val = max(len(windows) // 10, 16)

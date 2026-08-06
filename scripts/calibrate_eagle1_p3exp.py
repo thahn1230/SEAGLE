@@ -81,6 +81,7 @@ def stage_capture(args):
     paths = experiment.resolve_paths(cfg)
     rr = cfg.get("paths", {}).get("rotations_root")
     rot, quant = (("none", "none") if args.target == "fp16"
+                  else ("full", "w8a8") if args.target == "w8a8"
                   else ("full", "w4a4"))
     model, stash, _ = study.build_study_target(
         paths["target_path"], paths["draft_path"], cfg["model"]["target"],
@@ -204,7 +205,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--stage", required=True,
                     choices=["capture", "search"])
-    ap.add_argument("--target", required=True, choices=["fp16", "int4"])
+    ap.add_argument("--target", required=True,
+                    choices=["fp16", "int4", "w8a8"])
     ap.add_argument("--anchor")
     ap.add_argument("--alpha", type=float, default=None,
                     help="deployed capture alpha (legacy calibrated)")

@@ -109,7 +109,7 @@ def main():
     ap.add_argument("--shard-size", type=int, default=500)
     args = ap.parse_args()
     assert os.environ.get("CUDA_VISIBLE_DEVICES") in \
-        tuple(str(i) for i in range(6))
+        tuple(str(i) for i in range(8))
     dev = args.device
     torch.set_grad_enabled(False)
     cfg = experiment.load_config(None)

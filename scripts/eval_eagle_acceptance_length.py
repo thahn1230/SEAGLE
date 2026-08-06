@@ -56,7 +56,8 @@ def run_gen(gen, ilen, mx):
 @torch.no_grad()
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--target", required=True, choices=["fp16", "int4"])
+    ap.add_argument("--target", required=True,
+                    choices=["fp16", "int4", "w8a8"])
     ap.add_argument("--draft-cfg", required=True,
                     choices=["stock", "d4p3", "naive_w4a4", "p2", "rot",
                              "fp16_deploy", "d4p3_deploy", "rot_ep3p"])
@@ -102,6 +103,8 @@ def main():
     rr = cfg.get("paths", {}).get("rotations_root")
     if args.target == "fp16":
         rot, quant = "none", "none"
+    elif args.target == "w8a8":
+        rot, quant = "full", "w8a8"
     else:
         rot, quant = "full", "w4a4"
     model, stash, _ = study.build_study_target(
@@ -148,7 +151,7 @@ def main():
 
     ad = None
     if args.draft_cfg in ("stock", "fp16_deploy"):
-        if args.target == "int4":
+        if args.target != "fp16":
             from eagle_spinquant.causal_interface import (
                 RestoredInterfaceCSAdapter)
             ad = RestoredInterfaceCSAdapter(

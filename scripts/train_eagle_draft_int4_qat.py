@@ -192,6 +192,16 @@ def main():
     ap.add_argument("--warmup", type=int, default=2000)
     ap.add_argument("--val-every", type=int, default=500)
     ap.add_argument("--alpha", type=float, default=None)
+    ap.add_argument("--alpha-rec", type=float, default=None,
+                    help="EP3-P pathwise m_rec (enables the deploy "
+                         "EP3-P fold in the exact core)")
+    ap.add_argument("--teacher-quant", default=None,
+                    choices=["none", "w8a8", "w4a4"],
+                    help="override teacher target quant (rot=full "
+                         "unless none); default derives from --arm")
+    ap.add_argument("--rd-ckpt", default=None,
+                    help="draft-aware R_D checkpoint: draft folds use "
+                         "R_D, T->D bridge pinned at R_T (B8 arms)")
     ap.add_argument("--init-sd", default=None, help="C7b: C6 export .pt")
     ap.add_argument("--device", default="cuda:0")
     ap.add_argument("--tag", default=None)
@@ -221,6 +231,9 @@ def main():
     paths = experiment.resolve_paths(cfg)
     rr = cfg.get("paths", {}).get("rotations_root")
     rot, tq = (("full", "w4a4") if int4_teacher else ("none", "none"))
+    if args.teacher_quant is not None:
+        rot, tq = (("none", "none") if args.teacher_quant == "none"
+                   else ("full", args.teacher_quant))
     model, stash, _ = study.build_study_target(
         paths["target_path"], paths["draft_path"], cfg["model"]["target"],
         rot, KIND, tq, 0, device=dev, rotations_root=rr)
@@ -258,7 +271,11 @@ def main():
                        map_location="cpu", weights_only=False)
         R1 = R["R1"].float()
     W_lm = stash["lm_head_weight"].float()
-    rot_shim = _FixedRot(R1.to(dev))
+    R_D = None
+    if args.rd_ckpt:
+        R_D = torch.load(args.rd_ckpt, map_location="cpu",
+                         weights_only=False)["R_D"].float()
+    rot_shim = _FixedRot((R_D if R_D is not None else R1).to(dev))
     if rotated_basis:
         gamma = stash["gamma_f"].float()
         first_fold = R1
@@ -270,7 +287,8 @@ def main():
         ea_sd, R1, gamma, W_lm, rot_shim, alpha_init=alpha,
         train_alpha=False, w_bits=bits, a_bits=bits, draft_kv_bits=16,
         train_draft_core=True, r2_seed=0, device=dev,
-        first_fold_R=first_fold).to(dev)
+        first_fold_R=first_fold,
+        alpha_rec_init=args.alpha_rec).to(dev)
     core.log_alpha.requires_grad_(False)
     trainable = [p for p in core.parameters() if p.requires_grad]
     n_tr = sum(p.numel() for p in trainable)
@@ -284,6 +302,7 @@ def main():
     #   t = regression target = (h-basis feature) @ R1  — the draft's
     #       internal hidden basis in every mode (see note above)
     R1d = R1.to(dev).float()
+    RDd = R_D.to(dev).float() if R_D is not None else None
     gd = (stash["gamma_f"].float().to(dev) if "gamma_f" in stash
           else model.base_model.model.norm.weight.detach().float().to(dev))
 
@@ -299,12 +318,14 @@ def main():
                 .float() for i in range(0, B, c)]
             h = torch.cat(hs, dim=0) if len(hs) > 1 else hs[0]
         if args.arm in ("C3", "C8"):        # fp16 teacher: h post-norm
-            return h, h @ R1d
+            return h, h @ (RDd if RDd is not None else R1d)
         if args.arm == "C6":                # int4 teacher, restored input
             r = (h @ R1d.t()) * gd          # (a R^T)*gamma
             return r, r @ R1d
         # C7/C7b: rotated interface input a; h-basis = (a R^T)*gamma
-        return h, ((h @ R1d.t()) * gd) @ R1d
+        # rotated back into the DRAFT's internal basis (R_D when set)
+        Rint = RDd if RDd is not None else R1d
+        return h, ((h @ R1d.t()) * gd) @ Rint
 
     opt = torch.optim.AdamW(trainable, lr=args.lr, betas=(0.9, 0.95))
     from transformers import get_linear_schedule_with_warmup
