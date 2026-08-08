@@ -1,0 +1,616 @@
+08-07 18:42:33 SCHEDULER-START
+08-07 18:43:16 START gateC gpus=[0]
+08-07 18:43:16 START wc_stats gpus=[5]
+08-07 18:43:16 START S16_fc__mtbench gpus=[6]
+08-07 18:43:16 START S16_q_proj__mtbench gpus=[7]
+08-07 18:44:57 DONE wc_stats
+08-07 18:45:39 START S16_k_proj__mtbench gpus=[5]
+08-07 18:46:40 DONE gateC
+08-07 18:47:21 DONE S16_q_proj__mtbench
+08-07 18:47:22 START mp3_cal_orig gpus=[0]
+08-07 18:48:03 START S16_v_proj__mtbench gpus=[7]
+08-07 18:48:44 DONE mp3_cal_orig
+08-07 18:49:25 DONE S16_fc__mtbench
+08-07 18:49:26 START S16_o_proj__mtbench gpus=[0]
+08-07 18:50:07 DONE S16_k_proj__mtbench
+08-07 18:50:07 START S16_gate_proj__mtbench gpus=[6]
+08-07 18:50:49 START S16_up_proj__mtbench gpus=[5]
+08-07 18:52:51 DONE S16_v_proj__mtbench
+08-07 18:53:12 DONE S16_o_proj__mtbench
+08-07 18:53:33 START mp3_cal_rotH gpus=[7]
+08-07 18:53:53 DONE S16_gate_proj__mtbench
+08-07 18:53:54 START S16_down_proj__mtbench gpus=[0]
+08-07 18:54:34 DONE S16_up_proj__mtbench
+08-07 18:54:35 START S16_fc_p2__mtbench gpus=[6]
+08-07 18:54:55 DONE mp3_cal_rotH
+08-07 18:54:56 SKIP-ARTIFACT mp3_cal_rot
+08-07 18:55:17 START S16_full__mtbench gpus=[5]
+08-07 18:55:37 START GJ_capture gpus=[7]
+08-07 18:56:59 DONE GJ_capture
+08-07 18:57:40 START GJ_replay gpus=[7]
+08-07 18:58:00 DONE S16_down_proj__mtbench
+08-07 18:58:41 DONE S16_fc_p2__mtbench
+08-07 18:58:42 START ctx_kv_stats gpus=[0]
+08-07 18:59:02 DONE GJ_replay
+08-07 18:59:02 DONE ctx_kv_stats
+08-07 18:59:24 START IF_T16D4_rotH__mtbench gpus=[6]
+08-07 18:59:44 START S16_fc_rotH__mtbench gpus=[0]
+08-07 18:59:44 START S16_fc_mp3__mtbench gpus=[7]
+08-07 19:04:10 DONE S16_fc_rotH__mtbench
+08-07 19:04:52 DONE S16_fc_mp3__mtbench
+08-07 19:04:52 START G_T16D8__mtbench gpus=[0]
+08-07 19:05:33 START G_T16D4__mtbench gpus=[7]
+08-07 19:09:18 DONE S16_full__mtbench
+08-07 19:10:00 START G_T16D8__gsm8k gpus=[5]
+08-07 19:19:12 DONE G_T16D8__mtbench
+08-07 19:19:33 DONE G_T16D8__gsm8k
+08-07 19:19:54 START G_T16D4__gsm8k gpus=[0]
+08-07 19:20:15 START G_T16D8__humaneval gpus=[5]
+08-07 19:25:01 DONE IF_T16D4_rotH__mtbench
+08-07 19:25:43 START G_T16D4__humaneval gpus=[6]
+08-07 19:30:50 DONE G_T16D8__humaneval
+08-07 19:31:32 START G_T16D8__sharegpt gpus=[5]
+08-07 19:40:24 DONE G_T16D8__sharegpt
+08-07 19:41:05 START G_T16D4__sharegpt gpus=[5]
+08-07 19:43:49 DONE G_T16D4__mtbench
+08-07 19:44:31 START A0_T16D16__sharegpt gpus=[7]
+08-07 19:46:13 DONE G_T16D4__gsm8k
+08-07 19:46:55 START G_T16D4_mp3__mtbench gpus=[0]
+08-07 19:49:38 DONE A0_T16D16__sharegpt
+08-07 19:50:20 START A0_T16D16__math500 gpus=[7]
+08-07 19:55:47 DONE A0_T16D16__math500
+08-07 19:58:32 DONE G_T16D4__humaneval
+08-07 20:03:42 DONE G_T16D4__sharegpt
+08-07 20:15:29 DONE G_T16D4_mp3__mtbench
+08-07 22:17:15 START gateB_lrn gpus=[0]
+08-07 22:18:58 START S16_fc_rotH_p2__mtbench gpus=[1]
+08-07 22:18:58 START S16_fc_rotH_mp3__mtbench gpus=[2]
+08-07 22:18:58 START S16_fc_rotH_p2_mp3__mtbench gpus=[3]
+08-07 22:18:58 START G_T16D4_p2__mtbench gpus=[4]
+08-07 22:18:58 START IF_T16D4_rotH_p2__mtbench gpus=[5]
+08-07 22:23:21 DONE S16_fc_rotH_mp3__mtbench
+08-07 22:23:42 DONE S16_fc_rotH_p2__mtbench
+08-07 22:23:42 DONE S16_fc_rotH_p2_mp3__mtbench
+08-07 22:25:46 START rt_fp16 gpus=[1]
+08-07 22:25:46 START rt_T16D4rot gpus=[2]
+08-07 22:26:26 DONE rt_fp16
+08-07 22:26:47 DONE gateB_lrn
+08-07 22:26:47 START A1_TR__mtbench gpus=[3]
+08-07 22:26:47 START A2_TR__mtbench gpus=[6]
+08-07 22:26:47 START A1_T8__mtbench gpus=[7]
+08-07 22:27:08 START A2_T8__mtbench gpus=[1]
+08-07 22:27:28 START A1_T4__mtbench gpus=[0]
+08-07 22:27:48 DONE rt_T16D4rot
+08-07 22:28:28 START A2_T4__mtbench gpus=[2]
+08-07 22:40:28 DONE A2_TR__mtbench
+08-07 22:41:08 START G_T8D16__mtbench gpus=[6]
+08-07 22:43:08 DONE G_T16D4_p2__mtbench
+08-07 22:43:49 START G_T8D16__gsm8k gpus=[4]
+08-07 22:48:29 DONE IF_T16D4_rotH_p2__mtbench
+08-07 22:49:09 START G_T8D16__humaneval gpus=[5]
+08-07 23:00:09 DONE A2_T4__mtbench
+08-07 23:00:50 START G_T8D16__sharegpt gpus=[2]
+08-07 23:02:30 DONE A1_TR__mtbench
+08-07 23:03:10 START G_T4D16__mtbench gpus=[3]
+08-07 23:06:50 DONE A2_T8__mtbench
+08-07 23:07:30 START G_T4D16__gsm8k gpus=[1]
+08-07 23:09:10 DONE G_T8D16__gsm8k
+08-07 23:09:51 START G_T4D16__humaneval gpus=[4]
+08-07 23:16:31 DONE G_T8D16__humaneval
+08-07 23:17:11 START G_T4D16__sharegpt gpus=[5]
+08-07 23:19:11 DONE G_T8D16__mtbench
+08-07 23:19:51 START A3_TR__mtbench gpus=[6]
+08-07 23:26:12 DONE G_T8D16__sharegpt
+08-07 23:26:52 START G_T4D4_mp3__mtbench gpus=[2]
+08-07 23:28:32 DONE G_T4D16__humaneval
+08-07 23:29:12 START G_T4D4_mp3_p2__mtbench gpus=[4]
+08-07 23:30:52 DONE G_T4D16__gsm8k
+08-07 23:31:12 DONE A3_TR__mtbench
+08-07 23:31:33 START G_T4D4_p2__mtbench gpus=[1]
+08-07 23:31:53 START G_T8D4_p2__mtbench gpus=[6]
+08-07 23:33:33 DONE G_T4D16__mtbench
+08-07 23:34:13 START G_T8D8__mtbench gpus=[3]
+08-07 23:38:13 DONE G_T4D16__sharegpt
+08-07 23:38:54 START G_T8D4__mtbench gpus=[5]
+08-08 00:12:34 DONE A1_T4__mtbench
+08-08 00:13:14 START G_T8D8__gsm8k gpus=[0]
+08-08 00:16:14 DONE G_T8D8__mtbench
+08-08 00:16:55 START G_T8D4__gsm8k gpus=[3]
+08-08 00:27:15 DONE G_T4D4_mp3__mtbench
+08-08 00:27:55 START G_T8D8__humaneval gpus=[2]
+08-08 00:29:15 DONE G_T4D4_p2__mtbench
+08-08 00:29:56 START G_T8D4__humaneval gpus=[1]
+08-08 00:30:56 DONE G_T4D4_mp3_p2__mtbench
+08-08 00:31:36 START G_T8D8__sharegpt gpus=[4]
+08-08 00:38:36 DONE A1_T8__mtbench
+08-08 00:39:16 START G_T8D4__sharegpt gpus=[7]
+08-08 00:41:56 DONE G_T8D4_p2__mtbench
+08-08 00:42:37 START G_T4D8__mtbench gpus=[6]
+08-08 00:42:57 DONE G_T8D8__gsm8k
+08-08 00:43:37 START G_T4D4__mtbench gpus=[0]
+08-08 00:47:57 DONE G_T8D4__mtbench
+08-08 00:48:38 START G_T4D8__gsm8k gpus=[5]
+08-08 01:00:58 DONE G_T8D8__humaneval
+08-08 01:01:38 DONE G_T8D8__sharegpt
+08-08 01:01:38 START G_T4D4__gsm8k gpus=[2]
+08-08 01:02:18 START G_T4D8__humaneval gpus=[4]
+08-08 01:03:18 DONE G_T8D4__gsm8k
+08-08 01:03:59 START G_T4D4__humaneval gpus=[3]
+08-08 01:15:59 DONE G_T4D8__gsm8k
+08-08 01:16:39 START G_T4D8__sharegpt gpus=[5]
+08-08 01:17:59 DONE G_T4D8__mtbench
+08-08 01:18:39 START G_T4D4__sharegpt gpus=[6]
+08-08 01:23:39 DONE G_T8D4__humaneval
+08-08 01:24:20 DONE G_T4D8__humaneval
+08-08 01:24:20 START RCcap gpus=[1]
+08-08 01:25:00 START RC0__mtbench gpus=[4]
+08-08 01:26:20 DONE G_T8D4__sharegpt
+08-08 01:27:00 START rcal_G_T4D16 gpus=[7]
+08-08 01:32:40 DONE rcal_G_T4D16
+08-08 01:33:21 START rcal_G_T4D8 gpus=[7]
+08-08 01:36:01 DONE RCcap
+08-08 01:36:41 START train_rc_L0 gpus=[1]
+08-08 01:38:01 DONE G_T4D4__humaneval
+08-08 01:38:42 START rcal_G_T8D16 gpus=[3]
+08-08 01:39:22 DONE rcal_G_T4D8
+08-08 01:40:02 START rcal_G_T8D4 gpus=[7]
+08-08 01:41:22 DONE G_T4D8__sharegpt
+08-08 01:42:02 START rt_T4folded gpus=[5]
+08-08 01:42:42 DONE G_T4D4__gsm8k
+08-08 01:43:23 START rt_T4D4p2 gpus=[2]
+08-08 01:45:03 DONE G_T4D4__mtbench
+08-08 01:45:03 DONE train_rc_L0
+08-08 01:45:44 START RC2__mtbench gpus=[0]
+08-08 01:45:44 START rcal_G_T4D4 gpus=[1]
+08-08 01:46:04 DONE rcal_G_T8D16
+08-08 01:47:24 DONE rt_T4folded
+08-08 01:50:26 DONE rt_T4D4p2
+08-08 01:52:08 DONE rcal_G_T8D4
+08-08 01:55:32 DONE rcal_G_T4D4
+08-08 02:00:00 DONE G_T4D4__sharegpt
+08-08 02:25:10 DONE RC0__mtbench
+08-08 02:30:01 DONE RC2__mtbench
+08-08 02:30:02 QUEUE-DRAINED (idle, waiting for appends)
+08-08 02:31:23 QUEUE-DRAINED (idle, waiting for appends)
+08-08 02:32:44 QUEUE-DRAINED (idle, waiting for appends)
+08-08 02:34:05 QUEUE-DRAINED (idle, waiting for appends)
+08-08 02:35:26 QUEUE-DRAINED (idle, waiting for appends)
+08-08 02:36:47 QUEUE-DRAINED (idle, waiting for appends)
+08-08 02:38:07 QUEUE-DRAINED (idle, waiting for appends)
+08-08 02:39:28 QUEUE-DRAINED (idle, waiting for appends)
+08-08 02:40:49 QUEUE-DRAINED (idle, waiting for appends)
+08-08 02:42:10 QUEUE-DRAINED (idle, waiting for appends)
+08-08 02:43:31 QUEUE-DRAINED (idle, waiting for appends)
+08-08 02:44:52 QUEUE-DRAINED (idle, waiting for appends)
+08-08 02:46:12 QUEUE-DRAINED (idle, waiting for appends)
+08-08 02:47:33 QUEUE-DRAINED (idle, waiting for appends)
+08-08 02:48:54 QUEUE-DRAINED (idle, waiting for appends)
+08-08 02:50:15 QUEUE-DRAINED (idle, waiting for appends)
+08-08 02:51:35 QUEUE-DRAINED (idle, waiting for appends)
+08-08 02:52:56 QUEUE-DRAINED (idle, waiting for appends)
+08-08 02:54:17 QUEUE-DRAINED (idle, waiting for appends)
+08-08 02:55:38 QUEUE-DRAINED (idle, waiting for appends)
+08-08 02:56:59 QUEUE-DRAINED (idle, waiting for appends)
+08-08 02:58:20 QUEUE-DRAINED (idle, waiting for appends)
+08-08 02:59:40 QUEUE-DRAINED (idle, waiting for appends)
+08-08 03:01:01 QUEUE-DRAINED (idle, waiting for appends)
+08-08 03:02:22 QUEUE-DRAINED (idle, waiting for appends)
+08-08 03:03:43 QUEUE-DRAINED (idle, waiting for appends)
+08-08 03:05:04 QUEUE-DRAINED (idle, waiting for appends)
+08-08 03:06:25 QUEUE-DRAINED (idle, waiting for appends)
+08-08 03:07:46 QUEUE-DRAINED (idle, waiting for appends)
+08-08 03:09:07 QUEUE-DRAINED (idle, waiting for appends)
+08-08 03:10:28 QUEUE-DRAINED (idle, waiting for appends)
+08-08 03:11:49 QUEUE-DRAINED (idle, waiting for appends)
+08-08 03:13:10 QUEUE-DRAINED (idle, waiting for appends)
+08-08 03:14:30 QUEUE-DRAINED (idle, waiting for appends)
+08-08 03:15:51 QUEUE-DRAINED (idle, waiting for appends)
+08-08 03:17:12 QUEUE-DRAINED (idle, waiting for appends)
+08-08 03:18:33 QUEUE-DRAINED (idle, waiting for appends)
+08-08 03:19:54 QUEUE-DRAINED (idle, waiting for appends)
+08-08 03:21:15 QUEUE-DRAINED (idle, waiting for appends)
+08-08 03:22:36 QUEUE-DRAINED (idle, waiting for appends)
+08-08 03:23:57 QUEUE-DRAINED (idle, waiting for appends)
+08-08 03:25:18 QUEUE-DRAINED (idle, waiting for appends)
+08-08 03:26:39 QUEUE-DRAINED (idle, waiting for appends)
+08-08 03:28:00 QUEUE-DRAINED (idle, waiting for appends)
+08-08 03:29:21 QUEUE-DRAINED (idle, waiting for appends)
+08-08 03:30:41 QUEUE-DRAINED (idle, waiting for appends)
+08-08 03:32:02 QUEUE-DRAINED (idle, waiting for appends)
+08-08 03:33:23 QUEUE-DRAINED (idle, waiting for appends)
+08-08 03:34:44 QUEUE-DRAINED (idle, waiting for appends)
+08-08 03:36:05 QUEUE-DRAINED (idle, waiting for appends)
+08-08 03:37:26 QUEUE-DRAINED (idle, waiting for appends)
+08-08 03:38:47 QUEUE-DRAINED (idle, waiting for appends)
+08-08 03:40:07 QUEUE-DRAINED (idle, waiting for appends)
+08-08 03:41:28 QUEUE-DRAINED (idle, waiting for appends)
+08-08 03:42:49 QUEUE-DRAINED (idle, waiting for appends)
+08-08 03:44:10 QUEUE-DRAINED (idle, waiting for appends)
+08-08 03:45:31 QUEUE-DRAINED (idle, waiting for appends)
+08-08 03:46:52 QUEUE-DRAINED (idle, waiting for appends)
+08-08 03:48:12 QUEUE-DRAINED (idle, waiting for appends)
+08-08 03:49:33 QUEUE-DRAINED (idle, waiting for appends)
+08-08 03:50:54 QUEUE-DRAINED (idle, waiting for appends)
+08-08 03:52:15 QUEUE-DRAINED (idle, waiting for appends)
+08-08 03:53:35 QUEUE-DRAINED (idle, waiting for appends)
+08-08 03:54:56 QUEUE-DRAINED (idle, waiting for appends)
+08-08 03:56:17 QUEUE-DRAINED (idle, waiting for appends)
+08-08 03:57:38 QUEUE-DRAINED (idle, waiting for appends)
+08-08 03:58:59 QUEUE-DRAINED (idle, waiting for appends)
+08-08 04:00:20 QUEUE-DRAINED (idle, waiting for appends)
+08-08 04:01:41 QUEUE-DRAINED (idle, waiting for appends)
+08-08 04:03:02 QUEUE-DRAINED (idle, waiting for appends)
+08-08 04:04:22 QUEUE-DRAINED (idle, waiting for appends)
+08-08 04:05:43 QUEUE-DRAINED (idle, waiting for appends)
+08-08 04:07:04 QUEUE-DRAINED (idle, waiting for appends)
+08-08 04:08:25 QUEUE-DRAINED (idle, waiting for appends)
+08-08 04:09:46 QUEUE-DRAINED (idle, waiting for appends)
+08-08 04:11:07 QUEUE-DRAINED (idle, waiting for appends)
+08-08 04:12:28 QUEUE-DRAINED (idle, waiting for appends)
+08-08 04:13:49 QUEUE-DRAINED (idle, waiting for appends)
+08-08 04:15:09 QUEUE-DRAINED (idle, waiting for appends)
+08-08 04:16:30 QUEUE-DRAINED (idle, waiting for appends)
+08-08 04:17:51 QUEUE-DRAINED (idle, waiting for appends)
+08-08 04:19:12 QUEUE-DRAINED (idle, waiting for appends)
+08-08 04:20:33 QUEUE-DRAINED (idle, waiting for appends)
+08-08 04:21:53 QUEUE-DRAINED (idle, waiting for appends)
+08-08 04:23:14 QUEUE-DRAINED (idle, waiting for appends)
+08-08 04:24:35 QUEUE-DRAINED (idle, waiting for appends)
+08-08 04:25:56 QUEUE-DRAINED (idle, waiting for appends)
+08-08 04:27:17 QUEUE-DRAINED (idle, waiting for appends)
+08-08 04:28:38 QUEUE-DRAINED (idle, waiting for appends)
+08-08 04:29:59 QUEUE-DRAINED (idle, waiting for appends)
+08-08 04:31:19 QUEUE-DRAINED (idle, waiting for appends)
+08-08 04:32:40 QUEUE-DRAINED (idle, waiting for appends)
+08-08 04:34:01 QUEUE-DRAINED (idle, waiting for appends)
+08-08 04:35:22 QUEUE-DRAINED (idle, waiting for appends)
+08-08 04:36:43 QUEUE-DRAINED (idle, waiting for appends)
+08-08 04:38:04 QUEUE-DRAINED (idle, waiting for appends)
+08-08 04:39:25 QUEUE-DRAINED (idle, waiting for appends)
+08-08 04:40:46 QUEUE-DRAINED (idle, waiting for appends)
+08-08 04:42:07 QUEUE-DRAINED (idle, waiting for appends)
+08-08 04:43:28 QUEUE-DRAINED (idle, waiting for appends)
+08-08 04:44:49 QUEUE-DRAINED (idle, waiting for appends)
+08-08 04:46:10 QUEUE-DRAINED (idle, waiting for appends)
+08-08 04:47:31 QUEUE-DRAINED (idle, waiting for appends)
+08-08 04:48:51 QUEUE-DRAINED (idle, waiting for appends)
+08-08 04:50:12 QUEUE-DRAINED (idle, waiting for appends)
+08-08 04:51:33 QUEUE-DRAINED (idle, waiting for appends)
+08-08 04:52:54 QUEUE-DRAINED (idle, waiting for appends)
+08-08 04:54:15 QUEUE-DRAINED (idle, waiting for appends)
+08-08 04:55:36 QUEUE-DRAINED (idle, waiting for appends)
+08-08 04:56:57 QUEUE-DRAINED (idle, waiting for appends)
+08-08 04:58:18 QUEUE-DRAINED (idle, waiting for appends)
+08-08 04:59:39 QUEUE-DRAINED (idle, waiting for appends)
+08-08 05:01:00 QUEUE-DRAINED (idle, waiting for appends)
+08-08 05:02:21 QUEUE-DRAINED (idle, waiting for appends)
+08-08 05:03:42 QUEUE-DRAINED (idle, waiting for appends)
+08-08 05:05:03 QUEUE-DRAINED (idle, waiting for appends)
+08-08 05:06:23 QUEUE-DRAINED (idle, waiting for appends)
+08-08 05:07:44 QUEUE-DRAINED (idle, waiting for appends)
+08-08 05:09:05 QUEUE-DRAINED (idle, waiting for appends)
+08-08 05:10:26 QUEUE-DRAINED (idle, waiting for appends)
+08-08 05:11:47 QUEUE-DRAINED (idle, waiting for appends)
+08-08 05:13:07 QUEUE-DRAINED (idle, waiting for appends)
+08-08 05:14:28 QUEUE-DRAINED (idle, waiting for appends)
+08-08 05:15:49 QUEUE-DRAINED (idle, waiting for appends)
+08-08 05:17:10 QUEUE-DRAINED (idle, waiting for appends)
+08-08 05:18:31 QUEUE-DRAINED (idle, waiting for appends)
+08-08 05:19:52 QUEUE-DRAINED (idle, waiting for appends)
+08-08 05:21:13 QUEUE-DRAINED (idle, waiting for appends)
+08-08 05:22:34 QUEUE-DRAINED (idle, waiting for appends)
+08-08 05:23:55 QUEUE-DRAINED (idle, waiting for appends)
+08-08 05:25:16 QUEUE-DRAINED (idle, waiting for appends)
+08-08 05:26:37 QUEUE-DRAINED (idle, waiting for appends)
+08-08 05:27:58 QUEUE-DRAINED (idle, waiting for appends)
+08-08 05:29:19 QUEUE-DRAINED (idle, waiting for appends)
+08-08 05:30:39 QUEUE-DRAINED (idle, waiting for appends)
+08-08 05:32:00 QUEUE-DRAINED (idle, waiting for appends)
+08-08 05:33:21 QUEUE-DRAINED (idle, waiting for appends)
+08-08 05:34:42 QUEUE-DRAINED (idle, waiting for appends)
+08-08 05:36:03 QUEUE-DRAINED (idle, waiting for appends)
+08-08 05:37:24 QUEUE-DRAINED (idle, waiting for appends)
+08-08 05:38:45 QUEUE-DRAINED (idle, waiting for appends)
+08-08 05:40:06 QUEUE-DRAINED (idle, waiting for appends)
+08-08 05:41:27 QUEUE-DRAINED (idle, waiting for appends)
+08-08 05:42:48 QUEUE-DRAINED (idle, waiting for appends)
+08-08 05:44:09 QUEUE-DRAINED (idle, waiting for appends)
+08-08 05:45:30 QUEUE-DRAINED (idle, waiting for appends)
+08-08 05:46:51 QUEUE-DRAINED (idle, waiting for appends)
+08-08 05:48:11 QUEUE-DRAINED (idle, waiting for appends)
+08-08 05:49:32 QUEUE-DRAINED (idle, waiting for appends)
+08-08 05:50:53 QUEUE-DRAINED (idle, waiting for appends)
+08-08 05:52:14 QUEUE-DRAINED (idle, waiting for appends)
+08-08 05:53:35 QUEUE-DRAINED (idle, waiting for appends)
+08-08 05:54:56 QUEUE-DRAINED (idle, waiting for appends)
+08-08 05:56:17 QUEUE-DRAINED (idle, waiting for appends)
+08-08 05:57:38 QUEUE-DRAINED (idle, waiting for appends)
+08-08 05:58:59 QUEUE-DRAINED (idle, waiting for appends)
+08-08 06:00:20 QUEUE-DRAINED (idle, waiting for appends)
+08-08 06:01:41 QUEUE-DRAINED (idle, waiting for appends)
+08-08 06:03:02 QUEUE-DRAINED (idle, waiting for appends)
+08-08 06:04:23 QUEUE-DRAINED (idle, waiting for appends)
+08-08 06:05:44 QUEUE-DRAINED (idle, waiting for appends)
+08-08 06:07:05 QUEUE-DRAINED (idle, waiting for appends)
+08-08 06:08:25 QUEUE-DRAINED (idle, waiting for appends)
+08-08 06:09:46 QUEUE-DRAINED (idle, waiting for appends)
+08-08 06:11:07 QUEUE-DRAINED (idle, waiting for appends)
+08-08 06:12:28 QUEUE-DRAINED (idle, waiting for appends)
+08-08 06:13:49 QUEUE-DRAINED (idle, waiting for appends)
+08-08 06:15:10 QUEUE-DRAINED (idle, waiting for appends)
+08-08 06:16:31 QUEUE-DRAINED (idle, waiting for appends)
+08-08 06:17:52 QUEUE-DRAINED (idle, waiting for appends)
+08-08 06:19:13 QUEUE-DRAINED (idle, waiting for appends)
+08-08 06:20:34 QUEUE-DRAINED (idle, waiting for appends)
+08-08 06:21:55 QUEUE-DRAINED (idle, waiting for appends)
+08-08 06:23:16 QUEUE-DRAINED (idle, waiting for appends)
+08-08 06:24:37 QUEUE-DRAINED (idle, waiting for appends)
+08-08 06:25:58 QUEUE-DRAINED (idle, waiting for appends)
+08-08 06:27:19 QUEUE-DRAINED (idle, waiting for appends)
+08-08 06:28:40 QUEUE-DRAINED (idle, waiting for appends)
+08-08 06:30:00 QUEUE-DRAINED (idle, waiting for appends)
+08-08 06:31:21 QUEUE-DRAINED (idle, waiting for appends)
+08-08 06:32:42 QUEUE-DRAINED (idle, waiting for appends)
+08-08 06:34:03 QUEUE-DRAINED (idle, waiting for appends)
+08-08 06:35:24 QUEUE-DRAINED (idle, waiting for appends)
+08-08 06:36:45 QUEUE-DRAINED (idle, waiting for appends)
+08-08 06:38:06 QUEUE-DRAINED (idle, waiting for appends)
+08-08 06:39:27 QUEUE-DRAINED (idle, waiting for appends)
+08-08 06:40:48 QUEUE-DRAINED (idle, waiting for appends)
+08-08 06:42:09 QUEUE-DRAINED (idle, waiting for appends)
+08-08 06:43:30 QUEUE-DRAINED (idle, waiting for appends)
+08-08 06:44:51 QUEUE-DRAINED (idle, waiting for appends)
+08-08 06:46:12 QUEUE-DRAINED (idle, waiting for appends)
+08-08 06:47:33 QUEUE-DRAINED (idle, waiting for appends)
+08-08 06:48:53 QUEUE-DRAINED (idle, waiting for appends)
+08-08 06:50:14 QUEUE-DRAINED (idle, waiting for appends)
+08-08 06:51:35 QUEUE-DRAINED (idle, waiting for appends)
+08-08 06:52:56 QUEUE-DRAINED (idle, waiting for appends)
+08-08 06:54:17 QUEUE-DRAINED (idle, waiting for appends)
+08-08 06:55:38 QUEUE-DRAINED (idle, waiting for appends)
+08-08 06:56:59 QUEUE-DRAINED (idle, waiting for appends)
+08-08 06:58:20 QUEUE-DRAINED (idle, waiting for appends)
+08-08 06:59:41 QUEUE-DRAINED (idle, waiting for appends)
+08-08 07:01:02 QUEUE-DRAINED (idle, waiting for appends)
+08-08 07:02:23 QUEUE-DRAINED (idle, waiting for appends)
+08-08 07:03:44 QUEUE-DRAINED (idle, waiting for appends)
+08-08 07:05:05 QUEUE-DRAINED (idle, waiting for appends)
+08-08 07:06:26 QUEUE-DRAINED (idle, waiting for appends)
+08-08 07:07:46 QUEUE-DRAINED (idle, waiting for appends)
+08-08 07:09:07 QUEUE-DRAINED (idle, waiting for appends)
+08-08 07:10:28 QUEUE-DRAINED (idle, waiting for appends)
+08-08 07:11:49 QUEUE-DRAINED (idle, waiting for appends)
+08-08 07:13:10 QUEUE-DRAINED (idle, waiting for appends)
+08-08 07:14:31 QUEUE-DRAINED (idle, waiting for appends)
+08-08 07:15:52 QUEUE-DRAINED (idle, waiting for appends)
+08-08 07:17:13 QUEUE-DRAINED (idle, waiting for appends)
+08-08 07:18:34 QUEUE-DRAINED (idle, waiting for appends)
+08-08 07:19:55 QUEUE-DRAINED (idle, waiting for appends)
+08-08 07:21:16 QUEUE-DRAINED (idle, waiting for appends)
+08-08 07:22:37 QUEUE-DRAINED (idle, waiting for appends)
+08-08 07:23:57 QUEUE-DRAINED (idle, waiting for appends)
+08-08 07:25:18 QUEUE-DRAINED (idle, waiting for appends)
+08-08 07:26:39 QUEUE-DRAINED (idle, waiting for appends)
+08-08 07:28:00 QUEUE-DRAINED (idle, waiting for appends)
+08-08 07:29:21 QUEUE-DRAINED (idle, waiting for appends)
+08-08 07:30:42 QUEUE-DRAINED (idle, waiting for appends)
+08-08 07:32:03 QUEUE-DRAINED (idle, waiting for appends)
+08-08 07:33:24 QUEUE-DRAINED (idle, waiting for appends)
+08-08 07:34:45 QUEUE-DRAINED (idle, waiting for appends)
+08-08 07:36:06 QUEUE-DRAINED (idle, waiting for appends)
+08-08 07:37:27 QUEUE-DRAINED (idle, waiting for appends)
+08-08 07:38:48 QUEUE-DRAINED (idle, waiting for appends)
+08-08 07:40:08 QUEUE-DRAINED (idle, waiting for appends)
+08-08 07:41:29 QUEUE-DRAINED (idle, waiting for appends)
+08-08 07:42:50 QUEUE-DRAINED (idle, waiting for appends)
+08-08 07:44:11 QUEUE-DRAINED (idle, waiting for appends)
+08-08 07:45:32 QUEUE-DRAINED (idle, waiting for appends)
+08-08 07:46:53 QUEUE-DRAINED (idle, waiting for appends)
+08-08 07:48:14 QUEUE-DRAINED (idle, waiting for appends)
+08-08 07:49:35 QUEUE-DRAINED (idle, waiting for appends)
+08-08 07:50:56 QUEUE-DRAINED (idle, waiting for appends)
+08-08 07:52:17 QUEUE-DRAINED (idle, waiting for appends)
+08-08 07:53:38 QUEUE-DRAINED (idle, waiting for appends)
+08-08 07:54:59 QUEUE-DRAINED (idle, waiting for appends)
+08-08 07:56:19 QUEUE-DRAINED (idle, waiting for appends)
+08-08 07:57:40 QUEUE-DRAINED (idle, waiting for appends)
+08-08 07:59:01 QUEUE-DRAINED (idle, waiting for appends)
+08-08 08:00:22 QUEUE-DRAINED (idle, waiting for appends)
+08-08 08:01:43 QUEUE-DRAINED (idle, waiting for appends)
+08-08 08:03:04 QUEUE-DRAINED (idle, waiting for appends)
+08-08 08:04:25 QUEUE-DRAINED (idle, waiting for appends)
+08-08 08:05:46 QUEUE-DRAINED (idle, waiting for appends)
+08-08 08:07:07 QUEUE-DRAINED (idle, waiting for appends)
+08-08 08:08:28 QUEUE-DRAINED (idle, waiting for appends)
+08-08 08:09:49 QUEUE-DRAINED (idle, waiting for appends)
+08-08 08:11:10 QUEUE-DRAINED (idle, waiting for appends)
+08-08 08:12:31 QUEUE-DRAINED (idle, waiting for appends)
+08-08 08:13:52 QUEUE-DRAINED (idle, waiting for appends)
+08-08 08:15:13 QUEUE-DRAINED (idle, waiting for appends)
+08-08 08:16:34 QUEUE-DRAINED (idle, waiting for appends)
+08-08 08:17:55 QUEUE-DRAINED (idle, waiting for appends)
+08-08 08:19:16 QUEUE-DRAINED (idle, waiting for appends)
+08-08 08:20:37 QUEUE-DRAINED (idle, waiting for appends)
+08-08 08:21:58 QUEUE-DRAINED (idle, waiting for appends)
+08-08 08:23:19 QUEUE-DRAINED (idle, waiting for appends)
+08-08 08:24:40 QUEUE-DRAINED (idle, waiting for appends)
+08-08 08:26:01 QUEUE-DRAINED (idle, waiting for appends)
+08-08 08:27:21 QUEUE-DRAINED (idle, waiting for appends)
+08-08 08:28:42 QUEUE-DRAINED (idle, waiting for appends)
+08-08 08:30:03 QUEUE-DRAINED (idle, waiting for appends)
+08-08 08:31:24 QUEUE-DRAINED (idle, waiting for appends)
+08-08 08:32:45 QUEUE-DRAINED (idle, waiting for appends)
+08-08 08:34:06 QUEUE-DRAINED (idle, waiting for appends)
+08-08 08:35:27 QUEUE-DRAINED (idle, waiting for appends)
+08-08 08:36:48 QUEUE-DRAINED (idle, waiting for appends)
+08-08 08:38:10 QUEUE-DRAINED (idle, waiting for appends)
+08-08 08:39:31 QUEUE-DRAINED (idle, waiting for appends)
+08-08 08:40:51 QUEUE-DRAINED (idle, waiting for appends)
+08-08 08:42:12 QUEUE-DRAINED (idle, waiting for appends)
+08-08 08:43:34 QUEUE-DRAINED (idle, waiting for appends)
+08-08 08:44:54 QUEUE-DRAINED (idle, waiting for appends)
+08-08 08:46:15 QUEUE-DRAINED (idle, waiting for appends)
+08-08 08:47:36 QUEUE-DRAINED (idle, waiting for appends)
+08-08 08:48:57 QUEUE-DRAINED (idle, waiting for appends)
+08-08 08:50:18 QUEUE-DRAINED (idle, waiting for appends)
+08-08 08:51:39 QUEUE-DRAINED (idle, waiting for appends)
+08-08 08:53:00 QUEUE-DRAINED (idle, waiting for appends)
+08-08 08:54:21 QUEUE-DRAINED (idle, waiting for appends)
+08-08 08:55:42 QUEUE-DRAINED (idle, waiting for appends)
+08-08 08:57:03 QUEUE-DRAINED (idle, waiting for appends)
+08-08 08:58:24 QUEUE-DRAINED (idle, waiting for appends)
+08-08 08:59:45 QUEUE-DRAINED (idle, waiting for appends)
+08-08 09:01:06 QUEUE-DRAINED (idle, waiting for appends)
+08-08 09:02:27 QUEUE-DRAINED (idle, waiting for appends)
+08-08 09:03:48 QUEUE-DRAINED (idle, waiting for appends)
+08-08 09:05:09 QUEUE-DRAINED (idle, waiting for appends)
+08-08 09:06:30 QUEUE-DRAINED (idle, waiting for appends)
+08-08 09:07:51 QUEUE-DRAINED (idle, waiting for appends)
+08-08 09:09:12 QUEUE-DRAINED (idle, waiting for appends)
+08-08 09:10:33 QUEUE-DRAINED (idle, waiting for appends)
+08-08 09:11:54 QUEUE-DRAINED (idle, waiting for appends)
+08-08 09:13:15 QUEUE-DRAINED (idle, waiting for appends)
+08-08 09:14:36 QUEUE-DRAINED (idle, waiting for appends)
+08-08 09:15:57 QUEUE-DRAINED (idle, waiting for appends)
+08-08 09:17:18 QUEUE-DRAINED (idle, waiting for appends)
+08-08 09:18:39 QUEUE-DRAINED (idle, waiting for appends)
+08-08 09:19:59 QUEUE-DRAINED (idle, waiting for appends)
+08-08 09:21:20 QUEUE-DRAINED (idle, waiting for appends)
+08-08 09:22:41 QUEUE-DRAINED (idle, waiting for appends)
+08-08 09:24:02 QUEUE-DRAINED (idle, waiting for appends)
+08-08 09:25:23 QUEUE-DRAINED (idle, waiting for appends)
+08-08 09:26:44 QUEUE-DRAINED (idle, waiting for appends)
+08-08 09:28:05 QUEUE-DRAINED (idle, waiting for appends)
+08-08 09:29:27 QUEUE-DRAINED (idle, waiting for appends)
+08-08 09:30:48 QUEUE-DRAINED (idle, waiting for appends)
+08-08 09:32:08 QUEUE-DRAINED (idle, waiting for appends)
+08-08 09:33:30 QUEUE-DRAINED (idle, waiting for appends)
+08-08 09:34:51 QUEUE-DRAINED (idle, waiting for appends)
+08-08 09:36:11 QUEUE-DRAINED (idle, waiting for appends)
+08-08 09:37:32 QUEUE-DRAINED (idle, waiting for appends)
+08-08 09:38:53 QUEUE-DRAINED (idle, waiting for appends)
+08-08 09:40:14 QUEUE-DRAINED (idle, waiting for appends)
+08-08 09:41:35 QUEUE-DRAINED (idle, waiting for appends)
+08-08 09:42:56 QUEUE-DRAINED (idle, waiting for appends)
+08-08 09:44:17 QUEUE-DRAINED (idle, waiting for appends)
+08-08 09:45:38 QUEUE-DRAINED (idle, waiting for appends)
+08-08 09:46:59 QUEUE-DRAINED (idle, waiting for appends)
+08-08 09:48:20 QUEUE-DRAINED (idle, waiting for appends)
+08-08 09:49:41 QUEUE-DRAINED (idle, waiting for appends)
+08-08 09:51:02 QUEUE-DRAINED (idle, waiting for appends)
+08-08 09:52:23 QUEUE-DRAINED (idle, waiting for appends)
+08-08 09:53:44 QUEUE-DRAINED (idle, waiting for appends)
+08-08 09:55:05 QUEUE-DRAINED (idle, waiting for appends)
+08-08 09:56:26 QUEUE-DRAINED (idle, waiting for appends)
+08-08 09:57:47 QUEUE-DRAINED (idle, waiting for appends)
+08-08 09:59:08 QUEUE-DRAINED (idle, waiting for appends)
+08-08 10:00:29 QUEUE-DRAINED (idle, waiting for appends)
+08-08 10:01:50 QUEUE-DRAINED (idle, waiting for appends)
+08-08 10:03:11 QUEUE-DRAINED (idle, waiting for appends)
+08-08 10:04:32 QUEUE-DRAINED (idle, waiting for appends)
+08-08 10:05:52 QUEUE-DRAINED (idle, waiting for appends)
+08-08 10:07:13 QUEUE-DRAINED (idle, waiting for appends)
+08-08 10:08:34 QUEUE-DRAINED (idle, waiting for appends)
+08-08 10:09:55 QUEUE-DRAINED (idle, waiting for appends)
+08-08 10:11:16 START RC1__mtbench gpus=[0]
+08-08 10:11:16 START RC2__gsm8k gpus=[1]
+08-08 10:11:16 START RC2__humaneval gpus=[2]
+08-08 10:11:16 START RC2__sharegpt gpus=[3]
+08-08 10:11:16 START RC2c__mtbench gpus=[4]
+08-08 10:11:16 START RC2xT8__mtbench gpus=[5]
+08-08 10:11:16 START RC0__gsm8k gpus=[6]
+08-08 10:11:16 START RC0__humaneval gpus=[7]
+08-08 10:40:16 DONE RC2__humaneval
+08-08 10:40:56 START RC0__sharegpt gpus=[2]
+08-08 10:42:36 DONE RC2__sharegpt
+08-08 10:43:17 START B8_T16D16__mtbench gpus=[3]
+08-08 10:46:57 DONE RC2__gsm8k
+08-08 10:47:37 START B8_T4RC2__mtbench gpus=[1]
+08-08 10:48:57 DONE RC0__humaneval
+08-08 10:49:37 START G_T16D4_p2__gsm8k gpus=[7]
+08-08 10:51:37 DONE B8_T16D16__mtbench
+08-08 10:52:18 START G_T16D4_p2__humaneval gpus=[3]
+08-08 10:56:38 DONE RC0__gsm8k
+08-08 10:57:18 DONE RC2c__mtbench
+08-08 10:57:18 START rcal_RC2c gpus=[6]
+08-08 10:57:38 DONE RC1__mtbench
+08-08 10:57:59 START G_T16D4_p2__sharegpt gpus=[4]
+08-08 11:04:21 DONE rcal_RC2c
+08-08 11:05:01 DONE G_T16D4_p2__gsm8k
+08-08 11:05:22 DONE RC2xT8__mtbench
+08-08 11:10:08 DONE G_T16D4_p2__humaneval
+08-08 11:12:32 DONE G_T16D4_p2__sharegpt
+08-08 11:24:35 DONE RC0__sharegpt
+08-08 11:30:06 DONE B8_T4RC2__mtbench
+08-08 11:30:07 QUEUE-DRAINED (idle, waiting for appends)
+08-08 11:31:28 QUEUE-DRAINED (idle, waiting for appends)
+08-08 11:32:48 QUEUE-DRAINED (idle, waiting for appends)
+08-08 11:34:09 QUEUE-DRAINED (idle, waiting for appends)
+08-08 11:35:30 QUEUE-DRAINED (idle, waiting for appends)
+08-08 11:36:51 QUEUE-DRAINED (idle, waiting for appends)
+08-08 11:38:12 QUEUE-DRAINED (idle, waiting for appends)
+08-08 11:39:32 QUEUE-DRAINED (idle, waiting for appends)
+08-08 11:40:53 QUEUE-DRAINED (idle, waiting for appends)
+08-08 11:42:14 QUEUE-DRAINED (idle, waiting for appends)
+08-08 11:43:35 QUEUE-DRAINED (idle, waiting for appends)
+08-08 11:44:56 QUEUE-DRAINED (idle, waiting for appends)
+08-08 11:46:17 QUEUE-DRAINED (idle, waiting for appends)
+08-08 11:47:37 QUEUE-DRAINED (idle, waiting for appends)
+08-08 11:48:58 QUEUE-DRAINED (idle, waiting for appends)
+08-08 11:50:19 QUEUE-DRAINED (idle, waiting for appends)
+08-08 11:51:40 QUEUE-DRAINED (idle, waiting for appends)
+08-08 11:53:01 QUEUE-DRAINED (idle, waiting for appends)
+08-08 11:54:22 QUEUE-DRAINED (idle, waiting for appends)
+08-08 11:55:42 QUEUE-DRAINED (idle, waiting for appends)
+08-08 11:57:03 QUEUE-DRAINED (idle, waiting for appends)
+08-08 11:58:24 QUEUE-DRAINED (idle, waiting for appends)
+08-08 11:59:45 QUEUE-DRAINED (idle, waiting for appends)
+08-08 12:01:06 QUEUE-DRAINED (idle, waiting for appends)
+08-08 12:02:27 QUEUE-DRAINED (idle, waiting for appends)
+08-08 12:03:48 QUEUE-DRAINED (idle, waiting for appends)
+08-08 12:05:09 QUEUE-DRAINED (idle, waiting for appends)
+08-08 12:06:30 QUEUE-DRAINED (idle, waiting for appends)
+08-08 12:07:51 QUEUE-DRAINED (idle, waiting for appends)
+08-08 12:09:12 QUEUE-DRAINED (idle, waiting for appends)
+08-08 12:10:33 QUEUE-DRAINED (idle, waiting for appends)
+08-08 12:11:54 QUEUE-DRAINED (idle, waiting for appends)
+08-08 12:13:14 QUEUE-DRAINED (idle, waiting for appends)
+08-08 12:14:35 QUEUE-DRAINED (idle, waiting for appends)
+08-08 12:15:56 QUEUE-DRAINED (idle, waiting for appends)
+08-08 12:17:17 QUEUE-DRAINED (idle, waiting for appends)
+08-08 12:18:38 QUEUE-DRAINED (idle, waiting for appends)
+08-08 12:19:59 START RC1__gsm8k gpus=[0]
+08-08 12:19:59 START RC1__humaneval gpus=[1]
+08-08 12:19:59 START RC1__sharegpt gpus=[2]
+08-08 12:19:59 START G_T8D4_p2__gsm8k gpus=[3]
+08-08 12:19:59 START RC2xT8__gsm8k gpus=[4]
+08-08 12:19:59 START G_T8D4_p2__humaneval gpus=[5]
+08-08 12:19:59 START RC2xT8__humaneval gpus=[6]
+08-08 12:19:59 START G_T8D4_p2__sharegpt gpus=[7]
+08-08 12:48:19 DONE RC1__humaneval
+08-08 12:49:00 START RC2xT8__sharegpt gpus=[1]
+08-08 12:50:20 DONE RC1__sharegpt
+08-08 12:51:00 START RC1xT8__mtbench gpus=[2]
+08-08 12:54:20 DONE RC1__gsm8k
+08-08 12:54:40 DONE RC2xT8__gsm8k
+08-08 12:55:01 START RC1xT8__gsm8k gpus=[0]
+08-08 12:55:21 START RC1xT8__humaneval gpus=[4]
+08-08 12:59:41 DONE RC2xT8__humaneval
+08-08 13:00:21 START RC1xT8__sharegpt gpus=[6]
+08-08 13:08:01 DONE G_T8D4_p2__gsm8k
+08-08 13:10:22 DONE G_T8D4_p2__sharegpt
+08-08 13:15:05 DONE G_T8D4_p2__humaneval
+08-08 13:23:34 DONE RC2xT8__sharegpt
+08-08 13:30:03 DONE RC1xT8__gsm8k
+08-08 13:34:10 DONE RC1xT8__humaneval
+08-08 13:35:33 DONE RC1xT8__sharegpt
+08-08 13:42:28 DONE RC1xT8__mtbench
+08-08 13:42:29 QUEUE-DRAINED (idle, waiting for appends)
+08-08 13:43:50 QUEUE-DRAINED (idle, waiting for appends)
+08-08 13:45:11 QUEUE-DRAINED (idle, waiting for appends)
+08-08 13:46:32 QUEUE-DRAINED (idle, waiting for appends)
+08-08 13:47:53 QUEUE-DRAINED (idle, waiting for appends)
+08-08 13:49:14 QUEUE-DRAINED (idle, waiting for appends)
+08-08 13:50:35 QUEUE-DRAINED (idle, waiting for appends)
+08-08 13:51:56 QUEUE-DRAINED (idle, waiting for appends)
+08-08 13:53:17 QUEUE-DRAINED (idle, waiting for appends)
