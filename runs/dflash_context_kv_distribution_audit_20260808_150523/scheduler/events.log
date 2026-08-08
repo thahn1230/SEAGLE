@@ -1,0 +1,89 @@
+08-08 15:05:36 SCHEDULER-START
+08-08 15:12:57 START C0traj__mtbench gpus=[0]
+08-08 15:12:57 START C0traj__gsm8k gpus=[1]
+08-08 15:12:57 START C0traj__sharegpt gpus=[2]
+08-08 15:12:57 START C0traj__humaneval gpus=[3]
+08-08 15:14:19 DONE C0traj__gsm8k
+08-08 15:14:39 DONE C0traj__humaneval
+08-08 15:15:00 DONE C0traj__sharegpt
+08-08 15:16:02 DONE C0traj__mtbench
+08-08 15:16:03 QUEUE-DRAINED (idle, waiting for appends)
+08-08 15:17:24 QUEUE-DRAINED (idle, waiting for appends)
+08-08 15:18:45 QUEUE-DRAINED (idle, waiting for appends)
+08-08 15:20:06 QUEUE-DRAINED (idle, waiting for appends)
+08-08 15:21:27 QUEUE-DRAINED (idle, waiting for appends)
+08-08 15:22:48 START cap_C0__mtbench gpus=[0]
+08-08 15:22:48 START cap_C0__gsm8k gpus=[1]
+08-08 15:22:48 START cap_C0__sharegpt gpus=[2]
+08-08 15:22:48 START cap_C0__humaneval gpus=[3]
+08-08 15:22:48 START cap_C1__mtbench gpus=[5]
+08-08 15:22:48 START cap_C1__gsm8k gpus=[6]
+08-08 15:22:48 START cap_C1__sharegpt gpus=[7]
+08-08 15:23:28 START cap_C1__humaneval gpus=[4]
+08-08 17:02:29 FAIL cap_C0__mtbench rc=-15 -> RETRY
+08-08 17:02:29 FAIL cap_C0__gsm8k rc=-15 -> RETRY
+08-08 17:02:29 FAIL cap_C0__sharegpt rc=-15 -> RETRY
+08-08 17:02:29 FAIL cap_C0__humaneval rc=-15 -> RETRY
+08-08 17:02:29 FAIL cap_C1__mtbench rc=-15 -> RETRY
+08-08 17:02:29 FAIL cap_C1__gsm8k rc=-15 -> RETRY
+08-08 17:02:29 FAIL cap_C1__sharegpt rc=-15 -> RETRY
+08-08 17:02:29 FAIL cap_C1__humaneval rc=-15 -> RETRY
+08-08 17:03:12 START cap_C0__mtbench gpus=[0]
+08-08 17:03:12 START cap_C0__gsm8k gpus=[1]
+08-08 17:03:12 START cap_C0__sharegpt gpus=[2]
+08-08 17:03:12 START cap_C0__humaneval gpus=[3]
+08-08 17:03:12 START cap_C1__mtbench gpus=[4]
+08-08 17:03:12 START cap_C1__gsm8k gpus=[5]
+08-08 17:03:12 START cap_C1__sharegpt gpus=[6]
+08-08 17:03:12 START cap_C1__humaneval gpus=[7]
+08-08 17:12:32 DONE cap_C0__gsm8k
+08-08 17:13:12 DONE cap_C0__sharegpt
+08-08 17:13:12 START cap_C2__mtbench gpus=[1]
+08-08 17:13:52 DONE cap_C0__humaneval
+08-08 17:13:53 START cap_C2__gsm8k gpus=[2]
+08-08 17:14:33 START cap_C2__sharegpt gpus=[3]
+08-08 17:15:13 DONE cap_C0__mtbench
+08-08 17:15:33 DONE cap_C1__gsm8k
+08-08 17:15:53 DONE cap_C1__sharegpt
+08-08 17:15:53 START cap_C2__humaneval gpus=[0]
+08-08 17:16:13 DONE cap_C1__humaneval
+08-08 17:16:14 START cap_C3__mtbench gpus=[5]
+08-08 17:16:34 START cap_C3__gsm8k gpus=[6]
+08-08 17:16:54 START cap_C3__sharegpt gpus=[7]
+08-08 17:18:54 DONE cap_C1__mtbench
+08-08 17:19:34 START cap_C3__humaneval gpus=[4]
+08-08 17:28:14 DONE cap_C2__gsm8k
+08-08 17:28:55 DONE cap_C3__gsm8k
+08-08 17:28:55 START cap_C4__mtbench gpus=[2]
+08-08 17:29:15 DONE cap_C2__sharegpt
+08-08 17:29:35 START cap_C4__gsm8k gpus=[6]
+08-08 17:29:55 START cap_C4__sharegpt gpus=[3]
+08-08 17:30:15 DONE cap_C3__sharegpt
+08-08 17:30:36 DONE cap_C2__mtbench
+08-08 17:30:56 DONE cap_C2__humaneval
+08-08 17:30:56 START cap_C4__humaneval gpus=[7]
+08-08 17:31:16 START weights gpus=[1]
+08-08 17:31:36 FAIL weights rc=1 -> RETRY
+08-08 17:31:37 START weights gpus=[0]
+08-08 17:31:57 DONE cap_C3__humaneval
+08-08 17:31:57 FAIL weights rc=1 -> GAVE-UP (see /home/thahn1230/dflash_workspace/dflash/runs/dflash_context_kv_distribution_audit_20260808_150523/logs/sched_weights.log)
+08-08 17:32:17 DONE cap_C3__mtbench
+08-08 17:32:17 START awdecomp gpus=[1]
+08-08 17:32:37 START attention gpus=[0]
+08-08 17:32:57 DONE awdecomp
+08-08 17:33:59 START weights_v2 gpus=[1]
+08-08 17:37:41 DONE attention
+08-08 17:38:42 DONE weights_v2
+08-08 17:39:23 DONE cap_C4__gsm8k
+08-08 17:40:24 DONE cap_C4__sharegpt
+08-08 17:41:26 DONE cap_C4__humaneval
+08-08 17:41:47 DONE cap_C4__mtbench
+08-08 17:41:48 START plots gpus=[]
+08-08 17:41:48 START summary gpus=[]
+08-08 17:42:08 DONE summary
+08-08 17:50:29 DONE plots
+08-08 17:50:30 QUEUE-DRAINED (idle, waiting for appends)
+08-08 17:51:51 QUEUE-DRAINED (idle, waiting for appends)
+08-08 17:53:12 QUEUE-DRAINED (idle, waiting for appends)
+08-08 17:54:33 QUEUE-DRAINED (idle, waiting for appends)
+08-08 17:55:54 QUEUE-DRAINED (idle, waiting for appends)

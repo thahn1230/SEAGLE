@@ -1,0 +1,11 @@
+{
+ "configs": {
+  "C0": "fp16/fp16/stock",
+  "C1": "rot/folded/fp16",
+  "C2": "rot/folded/W4A4+P2 RC-off",
+  "C3": "C2+R_C=R_T",
+  "C4": "C2+learned R_C"
+ },
+ "act_quant": "per-token asym 4bit (SpinQuant ActQuantizer / act_fake_ste)",
+ "weight_quant": "per-ch sym mseclip (base) / RTN (ctx views)"
+}

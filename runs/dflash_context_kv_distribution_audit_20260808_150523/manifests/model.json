@@ -1,0 +1,7 @@
+{
+ "target": "meta-llama/Llama-3.1-8B-Instruct@0e9e39f2",
+ "draft": "z-lab/LLaMA3.1-8B-Instruct-DFlash-UltraChat@d3af30d",
+ "R_T": "llama31_w16a4kv16/R.bin sha 99ed53f2",
+ "R_C_reuse": "RC1_reuseRT.pt sha 1697a349",
+ "R_C_learned": "RC_L0.pt sha 8443b3f8"
+}

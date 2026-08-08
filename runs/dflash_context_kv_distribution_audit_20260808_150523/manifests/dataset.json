@@ -1,0 +1,12 @@
+{
+ "datasets": [
+  "mtbench40",
+  "gsm8k40",
+  "sharegpt40",
+  "humaneval40"
+ ],
+ "trajectory": "C0 greedy, teacher-forced replay into C1-C4",
+ "max_cycles_per_turn": 6,
+ "seed": 0,
+ "reservoir_cap": 20000
+}

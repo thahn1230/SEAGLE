@@ -1,0 +1,33 @@
+DKVA — DFlash context-K/V distribution audit FINAL (2026-08-08)
+Run: runs/dflash_context_kv_distribution_audit_20260808_150523
+Gate §30: missing = 0, mismatch = 0. 29 jobs, paired teacher-forced replay
+(C0 trajectory) through C0/C1/C2/C3/C4. Report:
+docs/DFLASH_CONTEXT_KV_DISTRIBUTION_AUDIT.md
+
+MECHANISM (raw tensor evidence):
+1) H_t (fused context) is the pathology: absmax 26.5 / RMS 0.94,
+   kurtosis 66, top-0.1% channels hold 20.8% of energy; Z_t pre-norm is
+   wilder still (absmax 1552, kurt 714). Per-token asym A4 collapses to an
+   ~1.5-bit effective codebook: zero-code 80.8%, entropy 1.46/4 bits,
+   NMSE 0.405. Draft-side inputs are benign by comparison (absmax ~20,
+   kurt ~24). K/V weights are clean (kurt 3.5) — activation-borne problem.
+2) R_C := R_T Gaussianizes H_t: absmax -79%, kurtosis 66->3.06,
+   channel-energy concentration 20.8%->0.26% (gini .335->.158),
+   scale median -80%, zero-code 80.8%->18.8%, entropy 1.46->3.18 bits,
+   A4 NMSE 0.405->0.019 (-95.3%).
+3) Decomposition: ~96% of the K/V-output gain is ACTIVATION rotation
+   (A-only 0.079->0.0033, 24x); weight-view fold mildly positive
+   (W4 NMSE 0.029->0.025, absmax 1.21->0.73); quantizer-policy control
+   (RTN vs MSEclip) negligible — no confound.
+4) Independent per-token qparams per branch (H0 dead); ctx is harder due
+   to within-token range (H1). ctx error uniform across layers (single
+   shared H_t, no per-layer norm), draft error layer-idiosyncratic;
+   V ~2.3x more sensitive than K; K partially re-normalized by k_norm.
+5) Deployed K/V output NMSE: K 0.09-0.10 -> 0.006-0.009, V 0.20-0.29 ->
+   0.019-0.031. At the BF16 attention boundary: score NMSE 0.054->0.011,
+   softmax KL 0.246->0.070, top-1 attended agreement 60.1%->82.0%.
+   Error is fully formed BEFORE attention (bf16 in all arms).
+Figures: FIG-1..8, DFLASH_WC_WEIGHT_3D_*, DFLASH_CTX_VS_DRAFT_ACT_3D_l0..4,
+representative tokens (pre-registered median/p99/worst rule), histograms/
+ECDF/CCDF, channel curves, qparam histograms. All raw summaries in CSV,
+sampled tensors in NPZ with metadata, checksums manifest complete.

@@ -1,0 +1,13 @@
+metric,Ht,Ht_RC,relative_change
+absmax,26.515922,5.690347,-0.7854
+abs_p99_9,5.977924,3.274766,-0.4522
+absmax_over_rms,26.897139,5.771617,-0.7854
+kurtosis,66.217169,3.062974,-0.9537
+A4_scale_median,2.333906,0.475854,-0.7961
+A4_zero_int_code_ratio,0.807675,0.187617,-0.7677
+A4_exact_zero_dequant_ratio,0.807675,0.187617,-0.7677
+A4_code_entropy_bits,1.464623,3.181064,1.1719
+A4_nmse_mean,0.405494,0.019033,-0.9531
+K_ctx_AW_NMSE_mean,0.09513,0.007727,-0.9188
+V_ctx_AW_NMSE_mean,0.229263,0.023381,-0.898
+attention_score_NMSE_mean,0.054061,0.010935,-0.7977

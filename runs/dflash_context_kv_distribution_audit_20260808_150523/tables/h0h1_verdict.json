@@ -1,0 +1,11 @@
+{
+ "qparams_shared": false,
+ "note": "per-token qparams computed independently per call site (H0 rejected by construction + measurement)",
+ "ctx_over_draft_ratio": {
+  "l0_K_ctx_over_draft_AW": 2.5510858554494216,
+  "l1_K_ctx_over_draft_AW": 0.4479536004282077,
+  "l2_K_ctx_over_draft_AW": 2.4612978272767587,
+  "l3_K_ctx_over_draft_AW": 0.89718325997994,
+  "l4_K_ctx_over_draft_AW": 1.1396332035552397
+ }
+}
