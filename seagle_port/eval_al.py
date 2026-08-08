@@ -81,6 +81,9 @@ def main():
     ap.add_argument("--mp3-scales", default=None,
                     help="comma list of 5 branch scales m_i (weight side "
                          "folded, activation side via ctx_transform)")
+    ap.add_argument("--ablate-branch", type=int, default=None,
+                    help="zero source branch i (0..4) in the ctx feature "
+                         "(3H/5H proxy ablation)")
     ap.add_argument("--rc-ckpt", default=None,
                     help="R_C checkpoint; wraps draft in RCDraft (ctx-view "
                          "quantized K/V + context rotation)")
@@ -112,8 +115,9 @@ def main():
     if args.mp3_scales:
         mp3 = [float(x) for x in args.mp3_scales.split(",")]
         assert len(mp3) == 5
-    ctx_transform = interfaces.make_ctx_transform(args.interface, R1=R1,
-                                                  mp3_scales=mp3)
+    ctx_transform = interfaces.make_ctx_transform(
+        args.interface, R1=R1, mp3_scales=mp3,
+        ablate_branch=args.ablate_branch)
     embed_fn = head_fn = None
     if rotated:
         embed_fn, head_fn = interfaces.make_embed_head_restore(target, R1)

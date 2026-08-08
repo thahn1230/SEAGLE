@@ -1,0 +1,59 @@
+08-08 19:28:50 SCHEDULER-START
+08-08 19:29:33 START train_rc_L1 gpus=[0]
+08-08 19:29:33 START ABL0_T16__mtbench gpus=[1]
+08-08 19:29:33 START ABL0_RC1__mtbench gpus=[2]
+08-08 19:29:33 START ABL1_T16__mtbench gpus=[3]
+08-08 19:29:33 START ABL1_RC1__mtbench gpus=[4]
+08-08 19:29:33 START ABL2_T16__mtbench gpus=[5]
+08-08 19:29:33 START ABL2_RC1__mtbench gpus=[6]
+08-08 19:29:33 START ABL3_T16__mtbench gpus=[7]
+08-08 19:33:33 FAIL ABL0_RC1__mtbench rc=1 -> RETRY
+08-08 19:33:33 FAIL ABL1_RC1__mtbench rc=1 -> RETRY
+08-08 19:33:33 FAIL ABL2_RC1__mtbench rc=1 -> RETRY
+08-08 19:34:15 START ABL0_RC1__mtbench gpus=[2]
+08-08 19:34:15 START ABL1_RC1__mtbench gpus=[4]
+08-08 19:34:15 START ABL2_RC1__mtbench gpus=[6]
+08-08 19:37:55 FAIL ABL0_RC1__mtbench rc=1 -> GAVE-UP (see /home/thahn1230/dflash_workspace/dflash/runs/dflash_openitems_20260808_191739/logs/sched_ABL0_RC1__mtbench.log)
+08-08 19:37:55 FAIL ABL2_RC1__mtbench rc=1 -> GAVE-UP (see /home/thahn1230/dflash_workspace/dflash/runs/dflash_openitems_20260808_191739/logs/sched_ABL2_RC1__mtbench.log)
+08-08 19:38:15 FAIL ABL1_RC1__mtbench rc=1 -> GAVE-UP (see /home/thahn1230/dflash_workspace/dflash/runs/dflash_openitems_20260808_191739/logs/sched_ABL1_RC1__mtbench.log)
+08-08 19:38:35 DONE ABL0_T16__mtbench
+08-08 19:38:35 DONE ABL1_T16__mtbench
+08-08 19:38:36 START ABL3_RC1__mtbench gpus=[2]
+08-08 19:38:36 START ABL4_T16__mtbench gpus=[6]
+08-08 19:38:56 DONE train_rc_L1
+08-08 19:38:56 DONE ABL3_T16__mtbench
+08-08 19:38:56 START RC2L1__mtbench gpus=[4]
+08-08 19:39:17 START ABL4_RC1__mtbench gpus=[1]
+08-08 19:39:17 START RC1c__mtbench gpus=[3]
+08-08 19:39:37 DONE ABL2_T16__mtbench
+08-08 19:39:37 START ABL0_RC1__mtbench_r gpus=[0]
+08-08 19:39:37 START ABL1_RC1__mtbench_r gpus=[7]
+08-08 19:40:17 START ABL2_RC1__mtbench_r gpus=[5]
+08-08 19:50:17 DONE ABL4_T16__mtbench
+08-08 19:50:58 START RC1c__gsm8k gpus=[6]
+08-08 20:24:18 DONE RC1c__gsm8k
+08-08 20:24:38 DONE RC2L1__mtbench
+08-08 20:24:38 DONE RC1c__mtbench
+08-08 20:24:59 START RC1c__humaneval gpus=[6]
+08-08 20:25:19 START RC1c__sharegpt gpus=[3]
+08-08 20:25:19 START rcal_RC1c__mtbench gpus=[4]
+08-08 20:25:59 DONE ABL0_RC1__mtbench_r
+08-08 20:25:59 DONE ABL1_RC1__mtbench_r
+08-08 20:26:40 START rcal_RC1c__gsm8k gpus=[0]
+08-08 20:26:40 START B16_T16D16__mtbench gpus=[7]
+08-08 20:31:40 DONE ABL3_RC1__mtbench
+08-08 20:32:00 DONE rcal_RC1c__gsm8k
+08-08 20:32:20 DONE rcal_RC1c__mtbench
+08-08 20:32:20 START B16_RC1__mtbench gpus=[2]
+08-08 20:34:21 DONE ABL2_RC1__mtbench_r
+08-08 20:35:02 DONE B16_T16D16__mtbench
+08-08 20:35:23 DONE ABL4_RC1__mtbench
+08-08 20:50:51 DONE RC1c__humaneval
+08-08 20:50:52 START rcal_RC1c__humaneval gpus=[0]
+08-08 20:54:37 DONE RC1c__sharegpt
+08-08 20:54:38 START rcal_RC1c__sharegpt gpus=[1]
+08-08 20:54:58 DONE rcal_RC1c__humaneval
+08-08 20:59:07 DONE rcal_RC1c__sharegpt
+08-08 21:13:43 DONE B16_RC1__mtbench
+08-08 21:13:44 QUEUE-DRAINED (idle, waiting for appends)
+08-08 21:15:05 QUEUE-DRAINED (idle, waiting for appends)

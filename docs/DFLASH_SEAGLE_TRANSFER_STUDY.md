@@ -324,3 +324,52 @@ interface *basis* right — transfers intact. The specific EAGLE mechanisms do
 not: scale migration is marginal here, and DFlash contributes a new
 interface (persistent context K/V) whose remedy (R_C := R_T, ctx views) is
 DFlash-specific and training-free. [확보]
+
+## Appendix A — open items closed (2026-08-08 evening,
+runs/dflash_openitems_20260808_191739, 22 jobs)
+
+**A.1 L1 objective (previously unrun).** A context rotation trained with
+the adaptive CE+TV hybrid (L1, 300 steps, same calib cycles) reaches
+mtbench 3.062 — *below* R_T reuse (3.098, Δ −0.036, p=0.002) and below the
+L0-trained rotation (3.072). Triple null: neither L0 nor L1 training beats
+reusing the target's own R1 at the context interface. The training-free
+recommendation stands. [확보]
+
+**A.2 Source-ablation proxy for the 3H/5H question (previously 미확인 at
+the AL level).** Zeroing one source branch at eval (mtbench, Δτ vs its own
+baseline):
+
+| source (layer) | FP16 T16 (base 3.862) | W4A4+RC1 T4 (base 3.098) |
+|---|---:|---:|
+| H_1  | −0.049 | −0.144 |
+| H_8  | −0.051 | −0.026 |
+| H_15 | −0.430 | −0.540 |
+| H_22 | −0.270 | −0.525 |
+| H_29 | −0.839 | −0.652 |
+
+Deep sources dominate in FP16 (H_29 −0.84); under quantization the
+mid-deep sources (H_15/H_22) become relatively *more* critical, and no
+source is close to free except H_8. Nothing here suggests fewer sources
+would quantize better — consistent with 5H ≥ 3H persisting under W4A4,
+though a true retrained-3H comparison remains future work. [확보 as proxy]
+
+**A.3 RCAL for the recommended recipe on all four datasets (previously
+T4×mtbench only).** RC1 (R_T reuse), proposal-only:
+
+| ds | AL_q | AL_0 | RCAL | AFS |
+|---|---:|---:|---:|---:|
+| mtbench | 2.098 | 2.010 | 1.876 | 0.913 |
+| gsm8k | 2.092 | 2.001 | 1.867 | 0.912 |
+| humaneval | 2.400 | 2.327 | 2.188 | 0.926 |
+| sharegpt | 2.077 | 1.991 | 1.853 | 0.911 |
+
+AFS 0.91-0.93 uniformly; SAL ≈ 10.6 % of AL_q on every dataset; no
+deceptive-AL behaviour anywhere. [확보]
+
+**A.4 Block-size B=16 inference (B=10-trained checkpoint).** T16 fp16:
+3.860 vs 3.862 (flat; accepted fraction drops 0.386→0.241). RC1: 2.933 vs
+3.098 (−0.165, p=0.08 n.s.). B=10 remains the operating point; the
+training/inference block mismatch caveat applies. [확보]
+
+**A.5 Determinism check.** Re-running RC1 with cycle recording reproduces
+all four dataset taus to 4 decimals (3.0983/3.0919/3.4003/3.0770). [확보]

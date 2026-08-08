@@ -14,7 +14,8 @@ import copy
 import torch
 
 
-def make_ctx_transform(mode, R1=None, m=5, D=4096, mp3_scales=None):
+def make_ctx_transform(mode, R1=None, m=5, D=4096, mp3_scales=None,
+                       ablate_branch=None):
     """Returns callable([B,S,m*D]) or None.
     mode: 'stock'|'naive'|'folded' -> None (no runtime ctx transform)
           'explicit'               -> per-branch @ R1^T (undo target rotation)
@@ -28,7 +29,8 @@ def make_ctx_transform(mode, R1=None, m=5, D=4096, mp3_scales=None):
     if mp3_scales is not None:
         scales = torch.as_tensor(mp3_scales, dtype=torch.float32)
 
-    if mode in ("stock", "naive", "folded") and scales is None:
+    if mode in ("stock", "naive", "folded") and scales is None \
+            and ablate_branch is None:
         return None
 
     R1f = R1.to(torch.float32).contiguous() if R1 is not None else None
@@ -42,6 +44,8 @@ def make_ctx_transform(mode, R1=None, m=5, D=4096, mp3_scales=None):
             x = x @ R1f.to(H.device)
         if scales is not None:
             x = x * scales.to(H.device).view(1, 1, m, 1)
+        if ablate_branch is not None:
+            x[:, :, ablate_branch, :] = 0
         return x.reshape(B, S, MD).to(H.dtype)
 
     return _t
