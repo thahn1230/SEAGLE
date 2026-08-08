@@ -1,0 +1,44 @@
+DFST — SEAGLE → DFlash transfer study FINAL OUTPUT (2026-08-08)
+Run: runs/dflash_seagle_transfer_20260807_180238  (114 scheduler jobs, 0 failures)
+Reports: docs/DFLASH_SEAGLE_TRANSFER_STUDY.md (+_KO.md)
+
+VERDICT (RQ7): SEAGLE generalizes as a PRINCIPLE (interface-aware
+quantization for target-hidden-conditioned speculative decoding), not as a
+recipe. DFlash needed different remedies than EAGLE.
+
+1) RQ1 — target R1 breaks the DFlash interface: naive tau 1.000 (all
+   targets) vs explicit/folded 3.73-3.81; fold lossless (A2==A3 n.s.);
+   rotation itself free (A0 vs A2_TR n.s.).
+2) RQ2 — W_c is the dominant bottleneck (fc-only W4A4: 1.94 vs others
+   3.0-3.5) but the cause is OUTLIERS (absmax/rms ~280x, A4 zero-code
+   94.6%), NOT EAGLE-style branch imbalance (RMS ratio 1.11x).
+3) RQ3 — fc fixes (T16): rot 3.38 > P2 3.21 > MP3 2.36 > naive 1.94;
+   rot+P2 3.49; MP3 addition n.s. Static scale migration is the weakest
+   transfer; dynamic P2 is free and strong; basis rotation dominates.
+4) Grid (4-ds mean): D8 draft near-free at ALL targets (4.12-4.16 — unlike
+   EAGLE); W8A8 target -0.06; W4A4 target -0.34; quantized drafts much
+   stronger under rotated targets (interface effect reproduces).
+5) RQ4/5/6 — R_D != R_T provably non-zero-overhead (shared embed/head;
+   RD2 views 1.96 GiB). Second bottleneck = persistent ctx K/V (NMSE up to
+   10x draft branch; scalar migration useless, s_opt~1). Context-only
+   rotation R_C with folded ctx views (+84 MiB), 4-ds: RC0 2.239 ->
+   RC2 3.143 (learned) / **RC1 3.167 (reuse target R1, NO training)** —
+   tied on every dataset (Holm n.s.), 57.2% of the fp16-draft gap closed.
+   Transfers to a W8A8 target: 2.439 -> 3.514 (+1.01..+1.22 SIG per
+   dataset), closing 63% of that row's gap.
+6) RCAL — ranking preserved, AFS 0.92-0.93, no deceptive AL; ~85% of R_C
+   gain reference-consistent.
+7) Runtime — fake-quant timings only (no real-kernel claims); interface
+   transforms sub-ms; folding audit: R1/MP3-weight/R_C = F0, MP3-act F2,
+   embed/head restore F1, R_D boundaries NF (proof).
+
+RECOMMENDED DEPLOYMENT: T8+D8 if 8-bit ok (4-ds 4.12, free). W4A4-linears draft:
+folded W_c + P2 + R_C:=R_T reuse (RC1) — training-free, +84 MiB ctx K/V
+views, F0. Measured 4-ds tau 3.167 @ W4A4 target, 3.514 @ W8A8 target
+(vs 2.239 / 2.439 without the context rotation).
+
+Stats: paired cluster bootstrap 3000, Holm over 122 comparisons (75
+rejected). Gates A/B/C/D/E/F/G/H/I/J/K all PASS.
+Limitations: 3H/5H needs unreleased training recipe (deletion proxy only);
+R_D not trained; L1/L2 objectives unrun; per-position KL/TV, real INT4
+kernels, absolute target-quality metrics unmeasured.

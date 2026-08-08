@@ -1,0 +1,8 @@
+dflash HEAD: 94e4abc5e0c31b67bc1a9d30f1cc34ece28a8756
+dflash branch: exp/dflash-spinquant-seagle-transfer
+seagle repo: /home/thahn1230/eagle_spinquant_w4a4 @ 0f6966a2ae65f9bbe90f2d1ce7e2592cbecf36f7
+draft ckpt: z-lab/LLaMA3.1-8B-Instruct-DFlash-UltraChat @ d3af30def9601abdd10810aba220d692f0e803f0
+target ckpt: meta-llama/Llama-3.1-8B-Instruct
+python: venv /home/thahn1230/dflash_workspace/venv (system-site torch 2.6.0+cu124, transformers 4.57.3)
+gpus: 8x RTX4090 24GB
+580.173.02

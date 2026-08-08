@@ -1,0 +1,61 @@
+{
+  "convention": "F0 = folded offline now; F1 = mathematically foldable, current impl explicit; F2 = runtime arithmetic necessary but fusable; NF = cannot be eliminated under current sharing constraints",
+  "items": {
+    "1_per_source_R1_into_Wc": {
+      "class": "F0",
+      "evidence": "interfaces.fold_wc folds W_i @ R1 per block; Gate C fp64 relerr < 1e-10; A3 == A2 tau (3.807 vs 3.809)",
+      "extra_cost": "none at runtime; one-time 5x [4096x4096]x[4096x4096] fp64 GEMM offline"
+    },
+    "2_mp3_weight_side": {
+      "class": "F0",
+      "evidence": "fold_wc divides W_i by m_i; Gate C mp3_fp64_relerr < 1e-10",
+      "extra_cost": "none"
+    },
+    "3_mp3_activation_branch_scale": {
+      "class": "F2",
+      "evidence": "H_i are target-internal residual values; pre-folding m_i into target weights would change the target function (sec 13 of spec). Runtime: 5 branch scalar multiplies on [tokens,4096] fused into the gather+concat+quant prologue",
+      "extra_flops_per_cycle": "tokens x 20480 mul",
+      "measured": "inside ctx_transform; sub-ms at decode sizes"
+    },
+    "4_context_rotation_R_C": {
+      "class": "F0_views_or_F2_runtime",
+      "evidence": "R_C^T folds into ctx-specific K/V weight views (W_k R_C, W_v R_C per layer). Views cost 2 x 5 x [1024x4096] bf16 = 84 MiB. Without views: one [tokens,4096]x[4096x4096] GEMM per accepted batch (F2)",
+      "extra_weight_memory_bytes": 88080384
+    },
+    "5_draft_residual_R_D": {
+      "class": "NF_boundaries",
+      "evidence": "RD3 proof (ROTATION_BOUNDARY_ANALYSIS.md sec 2): shared embed/head pin the boundary basis; two boundary transforms irreducible. RD1 = 2 runtime GEMMs/block; RD2 = 1.96 GiB draft-only embed+head views (tie_word_embeddings=false)",
+      "extra_weight_memory_bytes_rd2": 2101346304
+    },
+    "6_shared_embedding_boundary": {
+      "class": "F1",
+      "evidence": "rotated-target arms restore noise embedding via explicit fp32 @R1^T (interfaces.make_embed_head_restore); mathematically absorbable into a draft-only ORIGINAL embedding view (the pre-rotation rows) at +0.98 GiB, or keep explicit at ~0.03-0.16 ms/block measured",
+      "measured_ms_per_block": [0.03, 0.16]
+    },
+    "7_shared_lm_head_boundary": {
+      "class": "F1",
+      "evidence": "draft logits head restore h @ R1 before rotated lm_head; absorbable into a draft-only original-head view (+0.98 GiB) or explicit (head_restore 1.24 vs plain lm_head 1.14 ms => ~0.1 ms delta)",
+      "measured_ms_delta_per_block": 0.1
+    },
+    "8_ctx_specific_KV_views": {
+      "class": "F0_when_materialized",
+      "evidence": "required by ANY draft-side rebasing incl. RD0 (analysis sec 3) because k_proj/v_proj serve two differently-normalized branches; 84 MiB bf16",
+      "extra_weight_memory_bytes": 88080384
+    },
+    "9_spinquant_R4_online_hadamard": {
+      "class": "F2",
+      "evidence": "target down_proj input Hadamard (had28 x 512 for intermediate 14336) runs online in every rotated-target arm, weight side folded by rotate_mlp_output; same status as SEAGLE R4",
+      "extra_cost": "one Hadamard transform per down_proj call in the 32-layer target"
+    },
+    "10_target_hidden_extraction": {
+      "class": "F2_inherent",
+      "evidence": "output_hidden_states materialization + concat of 5 layers; DFlash-native (exists in FP16 baseline too), measured extract_concat 0.024-0.030 ms/call",
+      "measured_ms_per_call": 0.03
+    },
+    "11_interface_only_rotation_at_T16": {
+      "class": "F2",
+      "evidence": "IF_T16D4_rotH arm: fc folded (F0) but H_cat must be rotated at runtime because the FP16 target is NOT rotated; per-branch [tokens,4096]x[4096x4096] fp32 GEMM (ctx_transform mean 7.1 ms incl. prefill-size call; decode-size calls sub-ms). A block-diagonal fused kernel or Hadamard-structured R would cut this",
+      "measured_ms_mean_per_call": 7.1
+    }
+  }
+}

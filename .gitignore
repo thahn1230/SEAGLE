@@ -1,3 +1,11 @@
 __pycache__/
 cache/
 *.egg-info/
+venv/
+cache/
+__pycache__/
+*.pyc
+runs/*/tables/*.pt
+runs/*/cycles/
+runs/*/rotations/
+dl_*.log

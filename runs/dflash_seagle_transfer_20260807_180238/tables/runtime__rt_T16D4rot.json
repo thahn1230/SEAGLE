@@ -1,0 +1,61 @@
+{
+ "arm": "rt_T16D4rot",
+ "config": {
+  "arm": "rt_T16D4rot",
+  "target_mode": "fp16",
+  "interface": "rotate",
+  "rbin": "/home/thahn1230/dflash_workspace/outputs/rotations/llama31_hadamard/R.bin",
+  "draft_mode": "w4a4",
+  "fc_p2": true,
+  "mp3_scales": null,
+  "n_prompts": 10,
+  "max_new_tokens": 512
+ },
+ "ms_per_token_e2e": {
+  "mean": 33.67631191180212,
+  "median": 28.643772482407464,
+  "p95": 53.255180378339325
+ },
+ "prefill": {
+  "mean_ms": 27.156991720199585,
+  "median_ms": 23.08403205871582,
+  "p95_ms": 43.830731391906724,
+  "n": 8
+ },
+ "extract_concat": {
+  "mean_ms": 0.027382520388747597,
+  "median_ms": 0.025599999353289604,
+  "p95_ms": 0.04326399974524975,
+  "n": 1276
+ },
+ "ctx_transform": {
+  "mean_ms": 7.115280203311047,
+  "median_ms": 5.986815929412842,
+  "p95_ms": 15.798527717590332,
+  "n": 1276
+ },
+ "embed_restore": {
+  "mean_ms": 0.04878879480551611,
+  "median_ms": 0.03788800165057182,
+  "p95_ms": 0.0655359998345375,
+  "n": 1268
+ },
+ "draft_forward": {
+  "mean_ms": 29.57740846266882,
+  "median_ms": 25.154560089111328,
+  "p95_ms": 68.42465515136718,
+  "n": 1268
+ },
+ "head_restore": {
+  "mean_ms": 1.1520814826059793,
+  "median_ms": 1.1427839994430542,
+  "p95_ms": 1.1622400283813477,
+  "n": 1268
+ },
+ "target_verify": {
+  "mean_ms": 24.11735545949605,
+  "median_ms": 22.040064811706543,
+  "p95_ms": 41.197312736511215,
+  "n": 1268
+ }
+}

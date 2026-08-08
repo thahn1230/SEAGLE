@@ -1,0 +1,17 @@
+== DFST provenance 2026-08-08T11:38:58+09:00
+dflash HEAD: 94e4abc5e0c31b67bc1a9d30f1cc34ece28a8756 branch: exp/dflash-spinquant-seagle-transfer
+seagle: 0f6966a2ae65f9bbe90f2d1ce7e2592cbecf36f7
+draft snapshot: d3af30def9601abdd10810aba220d692f0e803f0
+Fetching 1 files:   0%|          | 0/1 [00:00<?, ?it/s]Fetching 1 files: 100%|██████████| 1/1 [00:00<00:00, 6326.25it/s]
+target snapshot: /home/thahn1230/.cache/huggingface/hub/models--meta-llama--Llama-3.1-8B-Instruct/snapshots/0e9e39f249a16976918f6564b8830bc894c89659
+99ed53f2dd3bb7178a878b78aaab2f3b008734398cfa49e0c9b52ffb8e41be35  /home/thahn1230/dflash_workspace/outputs/rotations/llama31_w16a4kv16/R.bin
+f317a25b387e3c48ba86a413458322dae8257d14a80bb9a30d2ee8644979fede  /home/thahn1230/dflash_workspace/outputs/rotations/llama31_hadamard/R.bin
+8443b3f82b9423a0066777821baa0bfbd42baddc43582359a5636c427e79c8cf  runs/dflash_seagle_transfer_20260807_180238/rotations/RC_L0.pt
+1697a349957de4f3891ff280e96c3396869708406e1871fb22f5f8c7d11af9a3  runs/dflash_seagle_transfer_20260807_180238/rotations/RC1_reuseRT.pt
+336b69732ac12d673acced832db91a5a0e56c5f7b32544a96db803e9c5b79b23  cache/gsm8k.jsonl
+8ab292c14203c9846aee2f4d2f132dc781ea04291eab2f2f1412744a13e1d39a  cache/humaneval.jsonl
+4f530d9d3126dca41c12a96e78ec0dd460b7202052ba86101c4da159cea33aac  cache/math500.jsonl
+bc5ef9521ba0b139fdeb78a52fe5815a0b3c0f6ff5bc03366452fc2f8f50dbe1  cache/mt-bench.jsonl
+f512d03675cdd51d39268df29d232f0c5c4692751a77adcc09e5128878f4968b  cache/sharegpt.jsonl
+torch 2.6.0+cu124 transformers 4.57.3
+NVIDIA GeForce RTX 4090

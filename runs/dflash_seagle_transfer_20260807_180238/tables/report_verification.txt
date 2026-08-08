@@ -1,0 +1,46 @@
+OK   A0 mtbench 3.862
+OK   A0 gsm8k 4.213
+OK   A0 humaneval 4.892
+OK   A1_TR collapse 1.000
+OK   A2_TR 3.809
+OK   A3_TR 3.807
+OK   grid T16D8 4.161
+OK   grid T8D8 4.123
+OK   grid T4D16 3.862
+OK   grid T4D4 2.246
+OK   grid T16D4 1.464
+OK   grid T16D4_p2 2.577
+OK   RC2 4ds 3.143
+OK   RC0 4ds 2.239
+OK   fc-only 1.941
+OK   fc rot+P2 3.491
+OK   PPL fp16 6.667
+OK   PPL rot 6.665
+OK   B2 relerr <= 0.023
+OK   GateC fp64 < 1e-10
+OK   GateC MP3 < 1e-10
+OK   Holm n=122
+OK   Holm rejected=75
+OK   A1vA2_TR +2.808
+OK   A2vA3 n.s.
+OK   A0vA2 n.s.
+OK   RC0vRC2 mt +0.978
+OK   RC1vRC2 n.s.
+OK   RC2xT8 +1.028
+OK   fc naive->P2 +1.270
+OK   fc naive->rot +1.440
+OK   fc rot+P2+MP3 n.s.
+OK   T4 folded vs P2 n.s.
+OK   T16 naive->P2 +1.012
+OK   RC2 gap recovery 55.7% (actual 55.7%)
+OK   RC1 gap recovery 57.2% (actual 57.2%)
+OK   RC1 4ds 3.167
+OK   RC1xT8 4ds 3.514
+OK   RC2xT8 4ds 3.514
+OK   G_T8D4_p2 4ds 2.439
+OK   T8 gap recovery 63% (actual 63%)
+OK   RC1vRC2 n.s. all 4 ds
+OK   RC0vRC1 SIG all 4 ds
+OK   T8 RC1 transfer SIG all 4 ds
+
+MISMATCHES: 0 []
