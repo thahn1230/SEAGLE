@@ -117,6 +117,71 @@ class ResidualRotation(nn.Module):
         return float((R.t() @ R - I).norm())
 
 
+class ResidualR2Rotation(nn.Module):
+    """Draft-aware attention V/O rotation: R2_D = R2_B @ C(B), B = W - W^T.
+
+    GS/R2 study (2026-08): granularity matches the deployed baseline exactly
+    — ONE [128, 128] matrix shared across all 32 heads of the single draft
+    decoder layer (the baseline R2_B is the deterministic seed-0 Haar-QR
+    draw of fake_w4a4_draft.baseline_r2()). R2_B is held in fp64, the dtype
+    the runtime folds with (build_spinquant_w4a4_draft_state conjugates
+    fp64 v/o with the fp64 R2). C(B) is computed in fp32 — the same
+    convention as ResidualRotation for R1_D — and the product is formed in
+    the caller-requested dtype, so B=0 gives C(B)=I exactly and
+    R(torch.float64) reproduces R2_B bitwise (A2 at init == A0).
+    """
+    trainable = True
+    PENALTY = dict(none=0.0, weak=1e-3, medium=1e-2)
+
+    def __init__(self, R2_B, trust="none", radius=None):
+        super().__init__()
+        d = R2_B.shape[0]
+        assert R2_B.shape == (d, d)
+        self.register_buffer("R2_B64", R2_B.double())
+        self.W = nn.Parameter(torch.zeros(d, d))
+        assert trust in ("none", "weak", "medium", "hard")
+        if trust == "hard":
+            assert radius is not None and radius > 0
+        self.trust = trust
+        self.radius = radius
+
+    def A(self):
+        return self.W - self.W.t()
+
+    def C(self):
+        """Cayley factor in fp32 (parameter dtype), like ResidualRotation."""
+        return cayley(self.A())
+
+    def R(self, dtype=torch.float32):
+        return self.R2_B64.to(dtype) @ self.C().to(dtype)
+
+    def R64(self):
+        return self.R(torch.float64)
+
+    def penalty(self):
+        lam = self.PENALTY.get(self.trust, 0.0)
+        if lam == 0.0:
+            return torch.zeros((), device=self.W.device)
+        return lam * self.A().pow(2).sum()
+
+    @torch.no_grad()
+    def post_step(self):
+        if self.trust == "hard":
+            a_norm = float(self.A().norm())
+            if a_norm > self.radius:
+                self.W.data *= self.radius / a_norm
+
+    def orth_error(self):
+        R = self.R64()
+        I = torch.eye(R.shape[0], device=R.device, dtype=R.dtype)
+        return float((R.t() @ R - I).norm())
+
+    def generator_frob_norm(self):
+        """||B||_F of the skew generator (the matched-norm quantity for the
+        random-R2 control; 'matched generator Frobenius norm' claim only)."""
+        return float(self.A().norm())
+
+
 @torch.no_grad()
 def rotation_geometry(R_D, R_T):
     """Geometry report for one rotation (spec sections 8.3 / 17)."""

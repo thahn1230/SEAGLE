@@ -304,7 +304,8 @@ class ConcatSelectiveDraftAdapter(VariantAdapter):
                  first_fold_R=None,
                  proj_rot_first=None, proj_rot_rec=None,
                  ar_quant_mask=None,
-                 ar_r2r4=False, trace=True, trace_cap=4000):
+                 ar_r2r4=False, ar_r2_override=None,
+                 trace=True, trace_cap=4000):
         super().__init__(ea_model, stash, device, dtype)
         assert variant in ("folded", "explicit")
         assert first_hidden_mode in FIRST_HIDDEN_MODES
@@ -346,6 +347,11 @@ class ConcatSelectiveDraftAdapter(VariantAdapter):
         # rotation (the folded T->D bridge). first_fold_R = R_T.
         self.first_fold_R = first_fold_R
         self.ar_r2r4 = ar_r2r4
+        # GS/R2 study: learned draft-aware R2_D (fp64 [128,128]) folded into
+        # v/o in place of the baseline seed-0 R2_B; None = baseline
+        self.ar_r2_override = ar_r2_override
+        if ar_r2_override is not None:
+            assert ar_r2r4, "ar_r2_override requires ar_r2r4=True"
         self.name = f"concat_selective_{variant}" + (f"_nc-{nc}" if nc else "")
         W = ra.in_fold(stash["lm_head_weight"].cpu().double(),
                        self.R1.cpu().double())               # W_lm·R1
@@ -386,7 +392,8 @@ class ConcatSelectiveDraftAdapter(VariantAdapter):
         # ---- decoder: R1-conjugated (reuse validated conversion); embedding
         # and fc stay ORIGINAL in the loaded state (fc module replaced below)
         if self.quant_ar != "fp16" and self.ar_r2r4:
-            conv, meta = fq.build_spinquant_w4a4_draft_state(sd, R1c, gc)
+            conv, meta = fq.build_spinquant_w4a4_draft_state(
+                sd, R1c, gc, R2_override=self.ar_r2_override)
             self._ar_meta = meta
         else:
             conv, _extra = ra.convert_draft_state(sd, R1c, gc, mode="r1")
@@ -509,7 +516,9 @@ class ConcatSelectiveDraftAdapter(VariantAdapter):
                            "draft_lm_head": {"mode": self.quant_head},
                            "embedding_act": {"mode": self.quant_embed_act},
                            "post_projection_R1": {"kernel": "dense fp32 GEMM"},
-                           "ar_head": {"mode": self.quant_ar, "r2r4": self.ar_r2r4},
+                           "ar_head": {"mode": self.quant_ar, "r2r4": self.ar_r2r4,
+                                       "r2_source": self._ar_meta.get("r2_source"),
+                                       "r2_sha": self._ar_meta.get("r2_sha")},
                            "embedding": {"mode": self.quant_embed,
                                          "basis": ("rotated(NC)" if
                                                    self.nc == "embedding_rotated"

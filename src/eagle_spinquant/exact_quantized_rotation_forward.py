@@ -140,10 +140,14 @@ class ExactQuantizedRotationForward(nn.Module):
     def __init__(self, sd, R_T, gamma, W_lm, rot, alpha_init=32.0,
                  train_alpha=False, w_bits=4, a_bits=4, draft_kv_bits=16,
                  train_draft_core=False, r2_seed=0, device="cuda:0",
-                 first_fold_R=None, alpha_rec_init=None):
+                 first_fold_R=None, alpha_rec_init=None, r2_rot=None):
         super().__init__()
         self.dev = device
         self.rot = rot
+        # GS/R2 study: optional learnable draft R2 (ResidualR2Rotation,
+        # R2_D = R2_B @ C(B)). None = frozen baseline R2_B (buffer below),
+        # bitwise-identical to the pre-study behavior.
+        self.r2_rot = r2_rot
         self.w_bits, self.a_bits = w_bits, a_bits
         self.kv_bits = draft_kv_bits
         D = sd["fc.weight"].shape[0]
@@ -158,10 +162,7 @@ class ExactQuantizedRotationForward(nn.Module):
         cbuf("R_first", (first_fold_R if first_fold_R is not None
                          else R_T).float())
         cbuf("E", sd["embed_tokens.weight"].float())
-        g = torch.Generator().manual_seed(r2_seed)
-        R2 = torch.linalg.qr(torch.randn(HD, HD, generator=g,
-                                         dtype=torch.float64))[0]
-        cbuf("R2_64", R2)
+        cbuf("R2_64", fq.baseline_r2(r2_seed))
         # fc.bias and post_attention_layernorm.weight are part of the
         # ORIGINAL EAGLE trainable set (model.parameters()); register them
         # as Parameters in QAT mode (folds consume them live either way).
@@ -226,7 +227,11 @@ class ExactQuantizedRotationForward(nn.Module):
         Rf = self.R_first.to(dd)
         gam = self.gamma64.to(dd)
         gl = self.gl64.to(dd)
-        R2 = self.R2_64.to(dd)
+        # learnable R2_D when r2_rot is set (product formed in dd so that
+        # B=0 reproduces the fp64 baseline bitwise in exact mode);
+        # otherwise the frozen baseline R2_B buffer
+        R2 = (self.r2_rot.R(dd).to(self.dev) if self.r2_rot is not None
+              else self.R2_64.to(dd))
 
         def c16(x):
             return x.half()
@@ -372,6 +377,12 @@ class ExactQuantizedRotationForward(nn.Module):
         att = att.float().softmax(-1).to(x.dtype)
         o = (att @ v_all).transpose(1, 2).reshape(B, T, D)
         x = x + F.linear(self._qa(o), qw["o"])
+        if getattr(self, "debug_capture", None) is not None:
+            # Gate R2-A instrumentation: post-o_proj residual (the
+            # attention-block OUTPUT, gauge-invariant under a correct
+            # V/O R2 basis change; the pre-o_proj activation is basis-
+            # dependent by design)
+            self.debug_capture.append(x.detach().float().cpu())
         h32 = x.float()
         var = h32.pow(2).mean(-1, keepdim=True)
         h2 = (h32 * torch.rsqrt(var + RMS_EPS)).to(x.dtype)

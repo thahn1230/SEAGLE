@@ -115,14 +115,35 @@ class FakeW4A4Linear(nn.Module):
         return y.reshape(*shp, self.out_features)
 
 
-def build_spinquant_w4a4_draft_state(sd, R1, gamma, r2_seed=0):
+def baseline_r2(r2_seed=0):
+    """The deployed baseline draft R2 (R2_B): deterministic seed-0 Haar-random
+    orthogonal 128x128 from QR of a Gaussian, fp64. Single source of truth for
+    runtime fold, trainer replica, and the R2_D residual parameterization.
+    NOTE (audit 2026-08-10): this is a Haar-QR orthogonal, NOT a Hadamard —
+    an old comment here mislabeled it; the TARGET's random R2s are Hadamard."""
+    g = torch.Generator().manual_seed(r2_seed)
+    return torch.linalg.qr(torch.randn(HD, HD, generator=g,
+                                       dtype=torch.float64))[0]
+
+
+def build_spinquant_w4a4_draft_state(sd, R1, gamma, r2_seed=0,
+                                     R2_override=None):
     """R1-conjugate (pure-R1) + R2 (V/O per-head) + R4 (MLP-down Hadamard fold).
-    Returns (state_dict, meta) where meta has r2/r4 flags + had_K/K for R4."""
+    Returns (state_dict, meta) where meta has r2/r4 flags + had_K/K for R4.
+    R2_override: fp64 [128,128] orthogonal (e.g. a learned R2_D) folded in
+    place of the baseline seed-0 Haar-QR R2_B; None = baseline behavior."""
     conv = pr.build_pure_r1_draft_state(sd, R1, gamma)          # R1 conjugation
     p = "layers.0."
-    # R2: conjugate v_proj/o_proj (weights) by a random Hadamard-128 R2
-    g = torch.Generator().manual_seed(r2_seed)
-    R2 = torch.linalg.qr(torch.randn(HD, HD, generator=g, dtype=torch.float64))[0]
+    # R2: conjugate v_proj/o_proj (weights) by the shared 128x128 R2
+    if R2_override is not None:
+        R2 = R2_override.detach().cpu().double()
+        assert R2.shape == (HD, HD)
+        r2_source = "override"
+    else:
+        R2 = baseline_r2(r2_seed)
+        r2_source = f"seed{r2_seed}_haar_qr"
+    import hashlib as _hl
+    r2_sha = _hl.sha256(R2.numpy().tobytes()).hexdigest()[:16]
     v = conv[p + "self_attn.v_proj.weight"].double()
     o = conv[p + "self_attn.o_proj.weight"].double()
     v2, o2 = spd.conjugate_v_o(v, o, R2)
@@ -136,7 +157,8 @@ def build_spinquant_w4a4_draft_state(sd, R1, gamma, r2_seed=0):
     hadamard_utils.apply_exact_had_to_linear(lin, had_dim=-1, output=False)
     conv[p + "mlp.down_proj.weight"] = lin.weight.data
     had_K, K = hadamard_utils.get_hadK(INTER)
-    return conv, dict(r2_applied=True, r4_applied=True, had_K=had_K, K=K)
+    return conv, dict(r2_applied=True, r4_applied=True, had_K=had_K, K=K,
+                      r2_source=r2_source, r2_sha=r2_sha)
 
 
 REQUIRED = ["fc", "layers.0.self_attn.q_proj", "layers.0.self_attn.k_proj",
