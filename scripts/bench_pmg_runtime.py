@@ -118,6 +118,9 @@ def main():
         kw = dict(embed_scale_alpha=args.alpha, **D4)
         if args.alpha_rec is not None:
             kw["embed_scale_alpha_rec"] = args.alpha_rec
+        r2o = ck.get("R2_D")   # GS/R2 study: learned draft-aware R2_D
+        if r2o is not None:
+            kw["ar_r2_override"] = r2o.double()
         ad = ConcatSelectiveDraftAdapter(
             model, st, dev, torch.float16, variant="folded",
             first_hidden_mode=fhm, trace=False, first_fold_R=R_T,

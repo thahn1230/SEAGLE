@@ -35,3 +35,7 @@ kernels/**/build/
 
 # Vendored upstream (cloned separately)
 third_party/
+outputs/
+runs/
+results/
+third_party/

@@ -24,9 +24,11 @@ sys.path.insert(0, os.path.join(PROJECT_ROOT, "third_party", "EAGLE"))
 
 import torch
 from eagle_spinquant import experiment, study, lk_losses as L
+from eagle_spinquant import fake_w4a4_draft as fq
 from eagle_spinquant.exact_qat_rotated_draft import ExactQATRotatedDraft
 from eagle_spinquant.residual_rotation import (SharedRotation, FullRotation,
                                                ResidualRotation,
+                                               ResidualR2Rotation,
                                                rotation_geometry)
 from eagle_spinquant.onpolicy_draft_rollout import (
     curriculum_p_onpolicy, greedy_rollout, stochastic_rollout,
@@ -97,6 +99,26 @@ def main():
     ap.add_argument("--trust", default="none",
                     choices=["none", "weak", "medium", "hard"])
     ap.add_argument("--radius", type=float, default=None)
+    # GS/R2 study (2026-08): draft attention V/O R2 basis
+    ap.add_argument("--r2-mode", default="frozen",
+                    choices=["frozen", "residual"],
+                    help="frozen: deployed baseline R2_B (seed-0 Haar-QR, "
+                         "legacy behavior); residual: learnable "
+                         "R2_D = R2_B C(B), B skew, one [128,128] shared "
+                         "across heads (baseline granularity)")
+    ap.add_argument("--r2-trust", default="none",
+                    choices=["none", "weak", "medium", "hard"])
+    ap.add_argument("--r2-radius", type=float, default=None)
+    ap.add_argument("--r2-lr", type=float, default=None,
+                    help="LR for the R2 generator; default = --lr")
+    ap.add_argument("--save-best-val", action="store_true",
+                    help="save the TRUE best-validation rotation as --out "
+                         "(final-step rotation goes to <out>.final.pt); "
+                         "default keeps the legacy final-step save")
+    ap.add_argument("--val-metric", default="loss",
+                    choices=["loss", "exptau"],
+                    help="best-val selection metric: held-out objective "
+                         "loss (lower better) or expected tau (higher)")
     ap.add_argument("--objective", default="hybrid",
                     choices=["kl", "tv", "neglog", "hybrid", "hybrid_fixed",
                              "exptau", "topk_kl", "accsurv"])
@@ -132,6 +154,10 @@ def main():
     ap.add_argument("--device", default="cuda:0")
     ap.add_argument("--eval-every", type=int, default=200)
     args = ap.parse_args()
+    assert not (args.save_best_val and
+                (args.train_draft_core or args.train_alpha)), \
+        "--save-best-val snapshots rotations only; trained core weights " \
+        "or alpha would pair best-step rotations with final-step values"
     assert os.environ.get("CUDA_VISIBLE_DEVICES") in \
         tuple(str(i) for i in range(8))
     dev = args.device
@@ -180,6 +206,13 @@ def main():
         rot = ResidualRotation(R_T, trust=args.trust, radius=args.radius)
     rot = rot.to(dev)
 
+    r2_rot = None
+    if args.r2_mode == "residual":
+        # R2_B = the deployed baseline (same deterministic seed-0 draw the
+        # runtime folds); B=0 init makes R2_D == R2_B bitwise at step 0
+        r2_rot = ResidualR2Rotation(fq.baseline_r2(0), trust=args.r2_trust,
+                                    radius=args.r2_radius).to(dev)
+
     if args.first_mode == "identity":
         gamma_eff = torch.ones_like(gamma)
         first_fold = torch.eye(R_T.shape[0])
@@ -190,7 +223,7 @@ def main():
         train_alpha=args.train_alpha, w_bits=4, a_bits=4,
         draft_kv_bits=args.kv_bits, train_draft_core=args.train_draft_core,
         device=dev, first_fold_R=first_fold,
-        alpha_rec_init=args.alpha_rec_init)
+        alpha_rec_init=args.alpha_rec_init, r2_rot=r2_rot)
 
     windows, man = load_corpus(args.corpus, args.run_dir)
     n_val = max(len(windows) // 10, 16)
@@ -204,13 +237,58 @@ def main():
     if rot.trainable:
         groups.append(dict(params=[p for p in rot.parameters()],
                            lr=args.lr))
+    if r2_rot is not None:
+        groups.append(dict(params=[p for p in r2_rot.parameters()],
+                           lr=(args.r2_lr if args.r2_lr is not None
+                               else args.lr)))
     if args.train_alpha:
         groups.append(dict(params=[model.log_alpha], lr=args.lr))
     if args.train_draft_core:
-        core = [getattr(model, n) for n in model.CORE]
+        # b_fc/gl64 are part of the original EAGLE trainable set (see
+        # exact_quantized_rotation_forward) — include them so the param
+        # audit's trainable list matches what the optimizer steps
+        core = [getattr(model, n) for n in model.CORE] + \
+            [model.b_fc, model.gl64]
         groups.append(dict(params=core, lr=args.core_lr))
     assert groups, "nothing trainable"
     opt = torch.optim.AdamW(groups, betas=(0.9, 0.95), weight_decay=0.0)
+
+    # ---- parameter audit (study section 8): prove that ONLY rotation
+    # generators (and explicitly opted-in alpha/core) receive gradients,
+    # and that every model weight is a frozen buffer
+    def _weight_hashes():
+        hs = {}
+        for n in list(model.CORE) + ["E", "W_lm16", "b_fc"]:
+            t = getattr(model, n)
+            hs[n] = hashlib.sha256(
+                t.detach().cpu().numpy().tobytes()).hexdigest()[:16]
+        return hs
+
+    freeze_before = _weight_hashes()
+    audit_rows = [dict(param=n, shape=list(p.shape),
+                       requires_grad=bool(p.requires_grad))
+                  for n, p in model.named_parameters()]
+    trainable_names = sorted(r["param"] for r in audit_rows
+                             if r["requires_grad"])
+    allowed = {"rot.W", "rot.R_D", "r2_rot.W"}
+    if args.train_alpha:
+        allowed.add("log_alpha")
+    if args.train_draft_core:
+        allowed |= set(model.CORE) | {"b_fc", "gl64"}
+    unexpected = set(trainable_names) - allowed
+    assert not unexpected, f"param audit: unexpected trainable {unexpected}"
+    opt_param_ids = {id(p) for gp in groups for p in gp["params"]}
+    audit = dict(trainable=trainable_names,
+                 optimizer_param_count=len(opt_param_ids),
+                 all_params=audit_rows,
+                 weight_hashes_before=freeze_before)
+    audit_path = os.path.join(
+        args.run_dir, "gradchecks",
+        f"param_audit__{os.path.basename(args.out)}.json")
+    os.makedirs(os.path.dirname(audit_path), exist_ok=True)
+    json.dump(audit, open(audit_path, "w"), indent=1)
+    print(f"[lk] param audit: trainable={trainable_names} "
+          f"-> {audit_path}", flush=True)
 
     def lr_scale(step):
         if step < args.warmup:
@@ -298,6 +376,7 @@ def main():
         return total, a_stack.detach()
 
     best_val = None
+    best_state = None
     for step in range(args.steps):
         opt.zero_grad(set_to_none=True)
         p_on = curriculum_p_onpolicy(step, args.steps, args.onpolicy)
@@ -310,6 +389,8 @@ def main():
             acc_alpha.append(aw)
             (lw / args.accum).backward()
         pen = rot.penalty()
+        if r2_rot is not None:
+            pen = pen + r2_rot.penalty()
         if float(pen) != 0.0:
             pen.backward()
         torch.nn.utils.clip_grad_norm_(
@@ -317,9 +398,14 @@ def main():
         opt.step()
         sched.step()
         rot.post_step()
+        if r2_rot is not None:
+            r2_rot.post_step()
         if hasattr(rot, "orth_error"):
             oe = rot.orth_error()
             assert oe < 1e-3, f"Gate G: orth {oe}"
+        if r2_rot is not None:
+            oe2 = r2_rot.orth_error()
+            assert oe2 < 1e-3, f"Gate R2-D: orth {oe2}"
         if step % 20 == 0 or step == args.steps - 1:
             am = torch.cat(acc_alpha).mean(0)
             log.append(dict(step=step,
@@ -333,39 +419,126 @@ def main():
                   f"({time.time()-t0:.0f}s)", flush=True)
         if (step + 1) % args.eval_every == 0 or step == args.steps - 1:
             with torch.no_grad():
-                va = []
+                va, vls = [], []
                 for i0 in range(0, min(len(W_va), 64), 16):
-                    _lw, aw = batch_loss(W_va[i0:i0 + 16], False)
+                    lw_, aw = batch_loss(W_va[i0:i0 + 16], False)
                     va.append(aw)
+                    vls.append(float(lw_))
                 vam = torch.cat(va).mean(0)
             et = float(L.expected_tau(torch.cat(va)).mean())
+            vloss = sum(vls) / max(len(vls), 1)
+            r2_oe = (r2_rot.orth_error() if r2_rot is not None else None)
+            r2_gen = (r2_rot.generator_frob_norm()
+                      if r2_rot is not None else None)
             print(f"[lk] VAL step {step}: alpha_by_depth="
                   f"{[round(float(x),4) for x in vam]} "
-                  f"expected_tau={et:.4f}", flush=True)
+                  f"expected_tau={et:.4f} val_loss={vloss:.5f}"
+                  + (f" r2_orth={r2_oe:.2e} r2_genB={r2_gen:.4f}"
+                     if r2_rot is not None else ""), flush=True)
             log.append(dict(step=step, val_alpha=[float(x) for x in vam],
-                            val_expected_tau=et))
-            if best_val is None or et > best_val[0]:
-                best_val = (et, step)
+                            val_expected_tau=et, val_loss=vloss,
+                            r2_orth_error=r2_oe,
+                            r2_generator_frob=r2_gen))
+            metric = vloss if args.val_metric == "loss" else et
+            cand_ok = not math.isnan(metric)
+            incumbent_nan = (best_val is not None
+                             and math.isnan(best_val["metric"]))
+            better = cand_ok and (best_val is None or incumbent_nan or
+                                  (metric < best_val["metric"]
+                                   if args.val_metric == "loss"
+                                   else metric > best_val["metric"]))
+            if not cand_ok:
+                print(f"[lk] WARN: val metric NaN at step {step} — "
+                      f"skipped for best-val selection", flush=True)
+            if better:
+                best_val = dict(metric=metric, step=step,
+                                val_loss=vloss, val_expected_tau=et)
+                best_state = dict(
+                    step=step,
+                    R_D=rot.R().detach().cpu(),
+                    rot_W=(rot.W.detach().cpu()
+                           if hasattr(rot, "W") else None),
+                    R2_D=(r2_rot.R64().detach().cpu()
+                          if r2_rot is not None else None),
+                    R2_W=(r2_rot.W.detach().cpu()
+                          if r2_rot is not None else None))
 
-    geo = rotation_geometry(rot.R().detach().cpu(), R_T) \
-        if rot.trainable else rotation_geometry(R_T, R_T)
-    save = dict(R_D=rot.R().detach().cpu(),
-                alpha=(model.alpha_exact
-                       if not args.train_alpha
-                       else float(model.log_alpha.exp())),
-                alpha_rec=model.alpha_rec_exact,
-                meta=dict(vars(args), corpus_n=len(windows),
-                          geometry=geo, best_val=best_val,
-                          divergence_rates=div.rates(),
-                          counters=model.counters),
-                log=log)
-    if args.train_draft_core:
-        save["core_weights"] = model.export_original_state()
-    torch.save(save, args.out)
+    # ---- weight-freeze proof: model weights bit-identical before/after ----
+    freeze_after = _weight_hashes()
+    if not args.train_draft_core:
+        assert freeze_after == freeze_before, \
+            f"weight freeze violated: {freeze_before} -> {freeze_after}"
+
+    # ---- checkpoint selection: TRUE best-val vs legacy final-step ---------
+    final_state = dict(
+        step=args.steps - 1,
+        R_D=rot.R().detach().cpu(),
+        rot_W=(rot.W.detach().cpu() if hasattr(rot, "W") else None),
+        R2_D=(r2_rot.R64().detach().cpu() if r2_rot is not None else None),
+        R2_W=(r2_rot.W.detach().cpu() if r2_rot is not None else None))
+    use_best = bool(args.save_best_val and best_state is not None)
+    sel = best_state if use_best else final_state
+    ckpt_policy = dict(policy=("best_val" if use_best else "final_step"),
+                       metric=args.val_metric, selected_step=sel["step"],
+                       best_val=best_val)
+
+    # The 4096x4096 geodesic (complex eigvals) dominates post-training
+    # wall clock, so snapshot what the save needs from the model, drop
+    # the model, and release the card BEFORE computing it — otherwise a
+    # finished job holds a GPU for tens of minutes of pure CPU work.
+    save_alpha = (model.alpha_exact if not args.train_alpha
+                  else float(model.log_alpha.exp()))
+    save_alpha_rec = model.alpha_rec_exact
+    save_counters = dict(model.counters)
+    save_core = (model.export_original_state()
+                 if args.train_draft_core else None)
+    del model
+    torch.cuda.empty_cache()
+    _geo_cache = {}
+
+    def _mk_save(state):
+        key = hashlib.sha256(
+            state["R_D"].numpy().tobytes()).hexdigest()
+        if key not in _geo_cache:
+            _geo_cache[key] = rotation_geometry(state["R_D"], R_T)
+        geo = _geo_cache[key]
+        r2_geo = None
+        if state["R2_D"] is not None:
+            r2_geo = rotation_geometry(state["R2_D"].float(),
+                                       r2_rot.R2_B64.cpu().float())
+            B = state["R2_W"] - state["R2_W"].t()
+            r2_geo["generator_frob_norm"] = float(B.norm())
+        sv = dict(R_D=state["R_D"],
+                  alpha=save_alpha,
+                  alpha_rec=save_alpha_rec,
+                  meta=dict(vars(args), corpus_n=len(windows),
+                            corpus_manifest_sha=hashlib.sha256(
+                                open(args.corpus, "rb").read())
+                            .hexdigest()[:16],
+                            geometry=geo, r2_geometry=r2_geo,
+                            best_val=best_val,
+                            checkpoint_policy=dict(ckpt_policy,
+                                                   saved_step=state["step"]),
+                            weight_freeze=dict(before=freeze_before,
+                                               after=freeze_after),
+                            divergence_rates=div.rates(),
+                            counters=save_counters),
+                  log=log)
+        if state["R2_D"] is not None:
+            sv["R2_D"] = state["R2_D"]          # fp64, runtime fold input
+            sv["R2_W"] = state["R2_W"]          # generator (for controls)
+        if save_core is not None:
+            sv["core_weights"] = save_core
+        return sv
+
+    torch.save(_mk_save(sel), args.out)
     sha = hashlib.sha256(open(args.out, "rb").read()).hexdigest()
     open(args.out + ".sha256", "w").write(sha + "\n")
+    if use_best and sel["step"] != final_state["step"]:
+        torch.save(_mk_save(final_state), args.out + ".final.pt")
     print(f"[lk] saved {args.out} sha={sha[:16]} "
-          f"best_val_exptau={best_val}", flush=True)
+          f"policy={ckpt_policy['policy']} step={sel['step']} "
+          f"best_val={best_val}", flush=True)
     return 0
 
 

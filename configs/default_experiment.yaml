@@ -17,9 +17,10 @@ paths:
   eagle_repo: third_party/EAGLE
   spinquant_repo: third_party/SpinQuant
   rotation_checkpoint: outputs/rotations/R.bin   # produced by scripts/10_optimize_rotation.py
-  # M-1: resolved from local HF cache 2026-07-02 (weights confirmed present).
-  target_weights_local: /home/thahn1230/.cache/huggingface/hub/models--meta-llama--Llama-2-7b-chat-hf/snapshots/f5db02db724555f92da89c216ac04704f23d4590
-  draft_weights_local: /home/thahn1230/.cache/huggingface/hub/models--yuhuili--EAGLE-llama2-chat-7B/snapshots/44e37ec383348306fe9b1dfe7c79e145c96db3d0
+  # M-1: resolved from local HF cache 2026-08-10 on host gpusystem (HF_HOME=/data/thahn1230/hf_cache),
+  # same pinned revisions as the original 2026-07-02 resolution.
+  target_weights_local: /data/thahn1230/hf_cache/hub/models--meta-llama--Llama-2-7b-chat-hf/snapshots/f5db02db724555f92da89c216ac04704f23d4590
+  draft_weights_local: /data/thahn1230/hf_cache/hub/models--yuhuili--EAGLE-llama2-chat-7B/snapshots/44e37ec383348306fe9b1dfe7c79e145c96db3d0
 
 rotation:
   # scripts/10_optimize_rotation.sh semantics; w_bits=16 because PTQ uses GPTQ

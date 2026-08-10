@@ -176,11 +176,19 @@ def main():
         st = dict(stash)
         R_T = stash["R1"].clone()
         st["R1"] = ck["R_D"].double()
+        # GS/R2 study: learned draft-aware R2_D (fp64) from the checkpoint
+        # replaces the baseline seed-0 R2_B in the v/o fold
+        r2o = ck.get("R2_D")
+        if r2o is not None:
+            print(f"[al] rot arm uses learned R2_D from ckpt "
+                  f"(sha {__import__('hashlib').sha256(r2o.double().numpy().tobytes()).hexdigest()[:16]})",
+                  flush=True)
         ad = ConcatSelectiveDraftAdapter(
             model, st, dev, torch.float16, variant="folded",
             first_hidden_mode=fhm, trace=False, first_fold_R=R_T,
             embed_scale_alpha=(args.alpha if args.alpha is not None
                                else float(ck.get("alpha", def_alpha))),
+            ar_r2_override=(r2o.double() if r2o is not None else None),
             **D4)
     elif args.draft_cfg == "rot_ep3p":
         # R_D draft gauge + EP3-P pathwise scales: stash R1 <- R_D,
@@ -198,6 +206,9 @@ def main():
                   **D4)
         if a_rec is not None:
             kw["embed_scale_alpha_rec"] = float(a_rec)
+        r2o = ck.get("R2_D")
+        if r2o is not None:
+            kw["ar_r2_override"] = r2o.double()
         ad = ConcatSelectiveDraftAdapter(
             model, st, dev, torch.float16, variant="folded",
             first_hidden_mode=fhm, trace=False, first_fold_R=R_T, **kw)
