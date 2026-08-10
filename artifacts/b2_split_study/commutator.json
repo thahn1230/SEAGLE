@@ -1,7 +1,0 @@
-{
-  "fro_norm": 10.50983358059337,
-  "spectral_norm": 1.777425324013078,
-  "fro_ratio": 0.09248924515141617,
-  "gamma_order_rel_l2": 0.09431182636415507,
-  "source": "real_R1+real_gamma"
-}

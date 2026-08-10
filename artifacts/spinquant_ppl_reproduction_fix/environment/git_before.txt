@@ -1,9 +1,0 @@
- M giveGPT.sh
-?? artifacts/spinquant_ppl_reproduction_fix/
-?? make_bitwidth_al_review_bundle.sh
----
-exp/eagle1-spinquant-ppl-reproduction-fix
-b44152d93257713fc04b654cf2efc5e88c1fc6c6
----
-EAGLE: 4a9cf3a1f6cd4a294e6d30a4e7c77cba246d7ca5
-SpinQuant: 8f47aa3f00e8662caf1a484153920a07e5281c3a

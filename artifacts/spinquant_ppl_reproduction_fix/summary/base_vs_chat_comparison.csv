@@ -1,5 +1,0 @@
-metric,base,chat,note
-fp16_ppl,5.4697,6.9452,chat intrinsically higher on wikitext
-rh0_rtn_w4a4_ce_delta,0.373,0.4254,chat ~+0.05 extra fragility
-seed_sweep_median_w4a4_ppl,7.826,11.043,"10 seeds, official recipe"
-learned_rtn_ce_delta,0.125,PENDING,chat rotation training

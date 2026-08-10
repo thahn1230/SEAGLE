@@ -1,0 +1,35 @@
+POST-CLEANUP VERIFICATION — 2026-08-04, HEAD d6fa209
+
+[1] git tracked-file state unchanged (only pre-existing modifications remain):
+ M giveGPT.sh
+ M kernels/w4a4_cutlass_sm89/build/CMakeCache.txt
+ M kernels/w4a4_cutlass_sm89/build/CMakeFiles/Makefile.cmake
+ M kernels/w4a4_cutlass_sm89/build/CMakeFiles/Makefile2
+ M kernels/w4a4_cutlass_sm89/build/CMakeFiles/TargetDirectories.txt
+ M kernels/w4a4_cutlass_sm89/build/CMakeFiles/progress.marks
+ M kernels/w4a4_cutlass_sm89/build/CMakeFiles/w4a4_benchmark.dir/benchmark.cu.o
+ M kernels/w4a4_cutlass_sm89/build/CMakeFiles/w4a4_benchmark.dir/compiler_depend.make
+ M kernels/w4a4_cutlass_sm89/build/CMakeFiles/w4a4_sm89.dir/DependInfo.cmake
+ M kernels/w4a4_cutlass_sm89/build/CMakeFiles/w4a4_sm89.dir/build.make
+ M kernels/w4a4_cutlass_sm89/build/CMakeFiles/w4a4_sm89.dir/cmake_clean.cmake
+ M kernels/w4a4_cutlass_sm89/build/CMakeFiles/w4a4_sm89.dir/compiler_depend.make
+ M kernels/w4a4_cutlass_sm89/build/CMakeFiles/w4a4_sm89.dir/link.txt
+ M kernels/w4a4_cutlass_sm89/build/CMakeFiles/w4a4_sm89.dir/progress.make
+ M kernels/w4a4_cutlass_sm89/build/CMakeFiles/w4a4_sm89.dir/w4a4_sm89.cu.o
+ M kernels/w4a4_cutlass_sm89/build/Makefile
+ M kernels/w4a4_cutlass_sm89/build/libw4a4_sm89.a
+ M kernels/w4a4_cutlass_sm89/build/w4a4_benchmark
+ M kernels/w4a4_cutlass_sm89/build_cfg.log
+
+[2] bundle integrity:
+  - sha256sum -c eagle1_learned_rotation_granularity_folding_20260803_133218.tar.gz.sha256 : OK
+  - symlinked _latest tars readable (tar -tzf): rep3p OK, ep3pviz OK
+  - all 16 _latest names resolve to canonical timestamped bundles
+
+[3] code sanity (GPU 7, CUDA_VISIBLE_DEVICES=7):
+  - imports OK: eagle_bridge, experiment, study, projection_rotation, concat_selective_projection, real_int4_linear
+  - seagle_int4_ext loaded from JIT cache; gemm_fused == gemm_unfused BITWISE on M=26,K=4096,N=128 with bias: True
+  - StructuredRotation(cross,b8192) norm-preservation err 7.6e-06 (fp32 roundoff)
+  - scripts/train_eagle_learned_rotation.py --help OK (next-phase entry point)
+
+[4] deletions limited to 133 untracked cache files (list in session scratchpad cache_deleted.txt); 104 git-tracked cache files preserved.

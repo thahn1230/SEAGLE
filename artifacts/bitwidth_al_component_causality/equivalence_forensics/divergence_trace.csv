@@ -1,6 +1,0 @@
-prompt_id,first_divergent_cycle,level,delta_inf,boundary_margin,margin_smaller_than_2delta
-88,19,2,20.21289,0.25,True
-88,19,3,14.68262,0.17969,True
-88,19,4,13.19092,0.07031,True
-89,15,3,0.01562,0.0,True
-94,17,0,0.01953,0.00391,True

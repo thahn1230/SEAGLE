@@ -1,0 +1,65 @@
+On branch exp/seagle-real-int4-fused-epilogue
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   giveGPT.sh
+	modified:   kernels/w4a4_cutlass_sm89/build/CMakeCache.txt
+	modified:   kernels/w4a4_cutlass_sm89/build/CMakeFiles/Makefile.cmake
+	modified:   kernels/w4a4_cutlass_sm89/build/CMakeFiles/Makefile2
+	modified:   kernels/w4a4_cutlass_sm89/build/CMakeFiles/TargetDirectories.txt
+	modified:   kernels/w4a4_cutlass_sm89/build/CMakeFiles/progress.marks
+	modified:   kernels/w4a4_cutlass_sm89/build/CMakeFiles/w4a4_benchmark.dir/benchmark.cu.o
+	modified:   kernels/w4a4_cutlass_sm89/build/CMakeFiles/w4a4_benchmark.dir/compiler_depend.make
+	modified:   kernels/w4a4_cutlass_sm89/build/CMakeFiles/w4a4_sm89.dir/DependInfo.cmake
+	modified:   kernels/w4a4_cutlass_sm89/build/CMakeFiles/w4a4_sm89.dir/build.make
+	modified:   kernels/w4a4_cutlass_sm89/build/CMakeFiles/w4a4_sm89.dir/cmake_clean.cmake
+	modified:   kernels/w4a4_cutlass_sm89/build/CMakeFiles/w4a4_sm89.dir/compiler_depend.make
+	modified:   kernels/w4a4_cutlass_sm89/build/CMakeFiles/w4a4_sm89.dir/link.txt
+	modified:   kernels/w4a4_cutlass_sm89/build/CMakeFiles/w4a4_sm89.dir/progress.make
+	modified:   kernels/w4a4_cutlass_sm89/build/CMakeFiles/w4a4_sm89.dir/w4a4_sm89.cu.o
+	modified:   kernels/w4a4_cutlass_sm89/build/Makefile
+	modified:   kernels/w4a4_cutlass_sm89/build/libw4a4_sm89.a
+	modified:   kernels/w4a4_cutlass_sm89/build/w4a4_benchmark
+	modified:   kernels/w4a4_cutlass_sm89/build_cfg.log
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	checkpoints/
+	docs/cleanup_20260804/
+	eagle1_generic_qat_pathwise_p3exp_rcal_20260731_154652.tar.gz.sha256
+	eagle1_learned_rotation_granularity_folding_20260803_133218.tar.gz.sha256
+	eagle1_official_fromscratch_review_20260731_140122.tar.gz.sha256
+	eagle1_rotated_ep3p_projection_20260803_103956.tar.gz.sha256
+	ep3p_projection_visualization_20260801_104655.tar.gz.sha256
+	kernels/w4a4_cutlass_sm89/build/CMakeFiles/w4a4_benchmark.dir/compiler_depend.internal
+	kernels/w4a4_cutlass_sm89/build/CMakeFiles/w4a4_benchmark_fused.dir/
+	kernels/w4a4_cutlass_sm89/build/CMakeFiles/w4a4_sm89.dir/compiler_depend.internal
+	kernels/w4a4_cutlass_sm89/build/CMakeFiles/w4a4_sm89.dir/w4a4_fused.cu.o
+	kernels/w4a4_cutlass_sm89/build/CMakeFiles/w4a4_sm89.dir/w4a4_fused.cu.o.d
+	kernels/w4a4_cutlass_sm89/build/w4a4_benchmark_fused
+	kernels/w4a4_cutlass_sm89/build_fused.log
+	pack_tldr_kv4_review_bundle.sh
+	seagle_int4_tensorcore_e2e_20260803.tar.gz.sha256
+
+no changes added to commit (use "git add" and/or "git commit -a")
+d6fa209 measured case for draft quantization: memory, M-sweep incl unfused, Amdahl ceiling — with honest counter-evidence section
+11a3f64 fused INT4 epilogue: CUTLASS visitor (row/col scale + bias -> fp16) in-kernel; bitwise-equal to unfused on 14 shapes; c32 intermediate eliminated (byte-exact); token-identical E2E, T16D4 -44% ms/token; self-contained torch ext with SEAGLE_INT4_EPILOGUE switch
+077b0f1 SEAGLE real-INT4 E2E study: IMMA-verified CUTLASS s4s4s32 (850 TOPS), RealInt4Linear full-model swap (-70% memory), 4-config E2E with phase split; unfused quant/dequant identified as the remaining latency gap (fusable per LRGF F2)
+8b74819 real INT4 Tensor Core path: w4a4_cutlass_sm89 package (exact-check PASS, IMMA verified, 850 TOPS @M512), RealInt4Linear with same-input quant cache, SEAGLE E2E benchmark harness
+e8bab9e LRGF finalized: corrected quantize-one taus, FIXEDR mtbench 3.0881, 48-item output, bundle
+da05986 restore device-correct rotation fold in adapter (lost in edit churn)
+6c3df60 LRGF study: main report, 48-item output, 15-test battery, trace shadowing fix; acceptance-aware learned rotation beats EP3-P (val CIs exclude 0, mtbench AL SIG)
+863e610 LRGF figure suite (15 conventional + 4 3D with heatmap/NPZ companions)
+d87eb8a fix deployed learned-rotation device placement (params to input device before Cayley/Givens/Householder ops)
+d5c1307 device-placement fixes for learned-rotation deployment; short-token cast in tracer; recovery chain
+f8da7e5 scheduler GPU pool via LRGF_GPUS env
+02e5f79 folding benchmark rollup + learned-rotation mechanism/selection analysis
+d0b0b5e granularity sweep G0-G7 driver
+508db67 learned-rotation deployment: build_rotation factory (learned ckpt specs via evaluator JSON), heldout+RCAL driver, post-train chain
+833da7a foldability audit doc (F0-F3 with executable proofs) + kernel zero-point fix to official asym semantics (code parity 0.99999; fused 25-40x vs explicit)
+e1b0d2b foldability audit (executable proofs PASS) + doc; error-flow tracer; fused-kernel scaffold; frozen-assert fix
+50f5571 component audit fixes: remove tau double +1; disable R2/R4 fold when a mask orphans the down_proj online Hadamard; foldability audit + Triton fused A4 kernels
+b92b6a7 fix restored-down_proj online R4 Hadamard (masked arms), corpus offset, table +1; all 8 GPUs
+36e33e9 learned-rotation deployment factory (compact ckpt reconstruction, no dense matrices), error-flow tracer, eval wrapper
+32f0099 exclude GPU 0 from all LRGF schedulers (shared with another user)
+d6fa20977049bfce83302cbeb5c7f322dbe48a84

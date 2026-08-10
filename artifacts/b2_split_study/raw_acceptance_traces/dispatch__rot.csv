@@ -1,9 +1,0 @@
-config,name,arch,nc,cycles,calls_first,calls_recurrent
-FP02_B2split_draftFP16,B2split_B,B,,25,412,1648
-DQ_first_only_W4A4,B2split_B,B,,59,943,3772
-DQ_recurrent_only_W4A4,B2split_B,B,,35,671,2684
-DQ_both_proj_W4A4,B2split_B,B,,59,1027,4108
-DQ_ar_only_W4A4,B2split_B,B,,23,433,1732
-Q01_targetFP16rot_draftW4A4_full,B2split_B,B,,56,1032,4128
-DQ_first_only_W4A16,B2split_B,B,,38,529,2116
-DQ_recurrent_only_W4A16,B2split_B,B,,29,508,2032

@@ -1,3 +1,0 @@
-config,name,arch,nc,cycles,calls_first,calls_recurrent
-Q10s_targetW4A4_draftFP16_B2split,B2split_B,B,,28,474,1896
-Q11_targetW4A4_draftW4A4_B2split,B2split_B,B,,57,1119,4476

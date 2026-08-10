@@ -1,413 +1,283 @@
-#!/usr/bin/env bash
-set -euo pipefail
+cd "$(git rev-parse --show-toplevel)" || exit 1
 
-# Usage:
-#   bash pack_lras_review_bundle.sh
-#
-# Optional:
-#   INCLUDE_ROTATION=1 bash pack_lras_review_bundle.sh
-#
-# The raw rotation checkpoint is excluded by default.
-# Set INCLUDE_ROTATION=1 when it must be included.
-
-ROOT="${1:-$(git rev-parse --show-toplevel)}"
-ROOT="$(cd "${ROOT}" && pwd)"
-
-RUN_REL="runs/eagle_learned_rotation_al_sensitivity_20260716_192113"
-REPORT_REL="docs/EAGLE_LEARNED_ROTATION_AL_AND_COMPONENT_SENSITIVITY_REPORT.md"
-ROTATION_REL="outputs/rotations/learned_chat_w4a4kv16/R.bin"
-
-EXPECTED_BRANCH="exp/eagle1-learned-rotation-al-sensitivity"
-EXPECTED_COMMIT="fc02575"
-EXPECTED_ROTATION_SHA256="4b7e91d2a7531bb8ccde55d35299d3bde38b0f849ebcca951c9320e42a48fa6e"
-
-TARGET_MODEL="meta-llama/Llama-2-7b-chat-hf"
-TARGET_REVISION="f5db02db724555f92da89c216ac04704f23d4590"
-DRAFT_MODEL="yuhuili/EAGLE-llama2-chat-7B"
-DRAFT_REVISION="44e37ec383348306fe9b1dfe7c79e145c96db3d0"
-
-STAMP="$(date +%Y%m%d_%H%M%S)"
-OUT="${ROOT}/eagle_lras_interpretation_bundle_${STAMP}.tar.gz"
-LATEST="${ROOT}/eagle_lras_interpretation_bundle_latest.tar.gz"
-
+RUN="runs/eagle1_target_draft_precision_method_grid_20260805_184316"
+COMMIT="0f6966a"
+OUT="eagle1_pmg_review_20260807.tar.gz"
 STAGE="$(mktemp -d)"
-trap 'rm -rf "${STAGE}"' EXIT
 
 mkdir -p \
-    "${STAGE}/experiment_files" \
-    "${STAGE}/source_at_commit" \
-    "${STAGE}/git_metadata" \
-    "${STAGE}/environment" \
-    "${STAGE}/rotation_metadata"
+  "$STAGE/repo_metadata" \
+  "$STAGE/reports" \
+  "$STAGE/run"
 
-cd "${ROOT}"
+echo "=== Building PMG compact review bundle ==="
+echo "RUN    = $RUN"
+echo "COMMIT = $COMMIT"
+echo "OUT    = $OUT"
+echo
 
-if ! git cat-file -e "${EXPECTED_COMMIT}^{commit}" 2>/dev/null; then
-    echo "ERROR: commit ${EXPECTED_COMMIT} is not available in this repository." >&2
-    exit 1
-fi
+# ============================================================
+# 1. Git provenance
+# ============================================================
 
-FULL_COMMIT="$(git rev-parse "${EXPECTED_COMMIT}^{commit}")"
-CURRENT_BRANCH="$(git branch --show-current || true)"
-RUN_ABS="${ROOT}/${RUN_REL}"
-REPORT_ABS="${ROOT}/${REPORT_REL}"
-ROTATION_ABS="${ROOT}/${ROTATION_REL}"
+git rev-parse HEAD \
+  > "$STAGE/repo_metadata/HEAD.txt"
 
-if [[ ! -d "${RUN_ABS}" ]]; then
-    echo "ERROR: run directory not found: ${RUN_ABS}" >&2
-    exit 1
-fi
+git branch --show-current \
+  > "$STAGE/repo_metadata/BRANCH.txt"
 
-copy_file_preserving_path() {
-    local src="$1"
-    local destination_root="$2"
-    local rel
+git status --short \
+  > "$STAGE/repo_metadata/GIT_STATUS.txt"
 
-    [[ -f "${src}" ]] || return 0
-
-    if [[ "${src}" == "${ROOT}/"* ]]; then
-        rel="${src#${ROOT}/}"
-    else
-        rel="$(basename "${src}")"
-    fi
-
-    mkdir -p "${destination_root}/$(dirname "${rel}")"
-    cp -a "${src}" "${destination_root}/${rel}"
-}
-
-cat > "${STAGE}/BUNDLE_OVERVIEW.txt" <<EOF
-EAGLE Learned-Rotation AL Sensitivity Study
-===========================================
-
-Run directory:
-  ${RUN_REL}
-
-Expected branch:
-  ${EXPECTED_BRANCH}
-
-Study commit:
-  ${FULL_COMMIT}
-
-Current worktree branch when packed:
-  ${CURRENT_BRANCH}
-
-Target:
-  ${TARGET_MODEL}
-  revision ${TARGET_REVISION}
-
-Draft:
-  ${DRAFT_MODEL}
-  revision ${DRAFT_REVISION}
-
-Learned rotation:
-  ${ROTATION_REL}
-  expected SHA256 ${EXPECTED_ROTATION_SHA256}
-
-Evaluation:
-  MT-Bench 80 prompts
-  fixed prompt order
-  seed 0
-  greedy decoding
-  128 new tokens
-
-Acceptance metric:
-  tau = accepted draft tokens + 1 verification bonus
-  AL = mean(tau)
-
-Primary results to inspect:
-  1. Target/Draft FP16-W8A8-W4A4 3x3 AL matrix
-  2. Draft component-wise W4A4 sensitivity
-  3. Projection first-only versus recurrent-only sensitivity
-  4. Shared-scale versus separate-scale projection
-  5. Embedding-scaled shared-scale projection
-  6. Alpha calibration
-  7. Top-1 agreement and reconstruction NMSE
-  8. Execution-path exact-match diagnostics
-  9. Stop-gate and regression-test outputs
-
-Raw model checkpoints are intentionally excluded.
-Raw rotation checkpoint included: ${INCLUDE_ROTATION:-0}
-EOF
-
-# ---------------------------------------------------------------------------
-# 1. Final report
-# ---------------------------------------------------------------------------
-
-copy_file_preserving_path "${REPORT_ABS}" "${STAGE}/experiment_files"
-
-# Include other closely related reports when present.
-for f in \
-    "${ROOT}/docs/SPINQUANT_PPL_REPRODUCTION_AND_FIX_REPORT.md" \
-    "${ROOT}/docs/HANDOFF_TO_EXECUTOR.md"
-do
-    copy_file_preserving_path "${f}" "${STAGE}/experiment_files"
-done
-
-# ---------------------------------------------------------------------------
-# 2. Run outputs
-#
-# Include text results, tables, logs, configurations and plots.
-# Large model/checkpoint files and existing archives are excluded.
-# ---------------------------------------------------------------------------
-
-while IFS= read -r -d '' f; do
-    copy_file_preserving_path "${f}" "${STAGE}/experiment_files"
-done < <(
-    find "${RUN_ABS}" -type f -size -64M \
-        \( \
-            -iname '*.json'  -o \
-            -iname '*.jsonl' -o \
-            -iname '*.csv'   -o \
-            -iname '*.tsv'   -o \
-            -iname '*.yaml'  -o \
-            -iname '*.yml'   -o \
-            -iname '*.toml'  -o \
-            -iname '*.md'    -o \
-            -iname '*.txt'   -o \
-            -iname '*.log'   -o \
-            -iname '*.out'   -o \
-            -iname '*.err'   -o \
-            -iname '*.png'   -o \
-            -iname '*.svg'   -o \
-            -iname '*.pdf' \
-        \) \
-        -print0
-)
-
-# Include small numeric artifacts only when their names indicate that they
-# contain analysis outputs rather than model weights.
-while IFS= read -r -d '' f; do
-    base="$(basename "${f}")"
-
-    if [[ "${base}" =~ (accept|matrix|metric|summary|component|projection|embedding|alpha|calibr|nmse|top1|exact|gate|test|scale|sensitivity) ]]; then
-        copy_file_preserving_path "${f}" "${STAGE}/experiment_files"
-    fi
-done < <(
-    find "${RUN_ABS}" -type f -size -32M \
-        \( \
-            -iname '*.npy' -o \
-            -iname '*.npz' -o \
-            -iname '*.pt'  -o \
-            -iname '*.pth' -o \
-            -iname '*.pkl' \
-        \) \
-        -print0
-)
-
-# ---------------------------------------------------------------------------
-# 3. Git provenance and code changes
-# ---------------------------------------------------------------------------
-
-{
-    echo "expected_branch=${EXPECTED_BRANCH}"
-    echo "current_branch=${CURRENT_BRANCH}"
-    echo "expected_short_commit=${EXPECTED_COMMIT}"
-    echo "resolved_commit=${FULL_COMMIT}"
-    echo
-    git status --short --branch
-} > "${STAGE}/git_metadata/status.txt"
-
-git remote -v \
-    > "${STAGE}/git_metadata/remotes.txt" 2>&1 || true
-
-git submodule status --recursive \
-    > "${STAGE}/git_metadata/submodules.txt" 2>&1 || true
+git log --oneline --decorate -30 \
+  > "$STAGE/repo_metadata/GIT_LOG_30.txt"
 
 git show \
-    --no-ext-diff \
-    --format=fuller \
-    --summary \
-    --stat \
-    "${FULL_COMMIT}" \
-    > "${STAGE}/git_metadata/commit_show.txt"
+  --format=fuller \
+  --stat \
+  --summary \
+  "$COMMIT" \
+  > "$STAGE/repo_metadata/COMMIT_SUMMARY.txt"
 
-BASE_COMMIT=""
+git diff-tree \
+  --no-commit-id \
+  --name-status \
+  -r "$COMMIT" \
+  > "$STAGE/repo_metadata/COMMIT_FILES.txt"
 
-for ref in origin/main origin/master main master; do
-    if git rev-parse --verify "${ref}^{commit}" >/dev/null 2>&1; then
-        BASE_COMMIT="$(git merge-base "${FULL_COMMIT}" "${ref}")"
-        echo "base_reference=${ref}" \
-            > "${STAGE}/git_metadata/base_commit.txt"
-        break
-    fi
+git diff "${COMMIT}^" "$COMMIT" -- \
+  > "$STAGE/repo_metadata/COMMIT.patch"
+
+
+# ============================================================
+# 2. 해당 commit에서 변경된 코드 파일 실제 복사
+# ============================================================
+
+git diff-tree \
+  --no-commit-id \
+  --name-only \
+  -r "$COMMIT" |
+while IFS= read -r f; do
+    [ -f "$f" ] || continue
+    mkdir -p "$STAGE/source/$(dirname "$f")"
+    cp "$f" "$STAGE/source/$f"
 done
 
-if [[ -z "${BASE_COMMIT}" ]]; then
-    BASE_COMMIT="$(git rev-parse "${FULL_COMMIT}^")"
-    echo "base_reference=first_parent" \
-        > "${STAGE}/git_metadata/base_commit.txt"
-fi
 
-echo "base_commit=${BASE_COMMIT}" \
-    >> "${STAGE}/git_metadata/base_commit.txt"
+# ============================================================
+# 3. 최종 보고서
+# ============================================================
 
-git diff \
-    --stat \
-    "${BASE_COMMIT}" "${FULL_COMMIT}" \
-    > "${STAGE}/git_metadata/branch_diff_stat.txt"
+find docs -maxdepth 4 -type f \( \
+    -iname '*TARGET*DRAFT*PRECISION*METHOD*GRID*.md' -o \
+    -iname '*precision*method*grid*.md' -o \
+    -iname '*PMG*.md' \
+\) -print0 2>/dev/null |
+while IFS= read -r -d '' f; do
+    mkdir -p "$STAGE/reports/$(dirname "$f")"
+    cp "$f" "$STAGE/reports/$f"
+done
 
-git diff \
-    --name-status \
-    "${BASE_COMMIT}" "${FULL_COMMIT}" \
-    > "${STAGE}/git_metadata/changed_files.txt"
 
-git diff \
-    --no-ext-diff \
-    --unified=40 \
-    "${BASE_COMMIT}" "${FULL_COMMIT}" \
-    -- \
-    '*.py' '*.sh' '*.md' '*.json' '*.yaml' '*.yml' '*.toml' \
-    '*.cpp' '*.cc' '*.c' '*.cu' '*.h' '*.hpp' \
-    > "${STAGE}/git_metadata/source_changes.patch"
+# ============================================================
+# 4. Run directory의 모든 "텍스트 기반" 연구 결과
+#
+# 포함:
+# - CSV / TSV
+# - JSON / JSONL
+# - YAML
+# - Markdown
+# - TXT / LOG
+# - checksums
+#
+# 제외:
+# - 모델 checkpoint
+# - rotation matrix 자체
+# - numpy binary
+# - profiler binary
+# ============================================================
 
-# Copy relevant changed source files exactly as stored in the study commit.
-while IFS= read -r file; do
-    [[ -n "${file}" ]] || continue
+find "$RUN" -type f \( \
+    -name '*.csv' -o \
+    -name '*.tsv' -o \
+    -name '*.json' -o \
+    -name '*.jsonl' -o \
+    -name '*.yaml' -o \
+    -name '*.yml' -o \
+    -name '*.toml' -o \
+    -name '*.md' -o \
+    -name '*.txt' -o \
+    -name '*.log' -o \
+    -name '*.sha256' \
+\) \
+! -iname '*nsys*' \
+! -iname '*trace*' \
+! -iname '*chrome*' \
+-print0 |
+while IFS= read -r -d '' f; do
+    rel="${f#$RUN/}"
+    mkdir -p "$STAGE/run/$(dirname "$rel")"
+    cp "$f" "$STAGE/run/$rel"
+done
 
-    case "${file}" in
-        *.py|*.sh|*.md|*.json|*.yaml|*.yml|*.toml|*.txt|\
-        *.cpp|*.cc|*.c|*.cu|*.h|*.hpp)
-            ;;
-        *)
-            continue
-            ;;
-    esac
 
-    if git cat-file -e "${FULL_COMMIT}:${file}" 2>/dev/null; then
-        size="$(git cat-file -s "${FULL_COMMIT}:${file}")"
+# ============================================================
+# 5. 특히 중요한 PMG 테이블/selection을 빠짐없이 재확인
+# ============================================================
 
-        if (( size <= 8 * 1024 * 1024 )); then
-            mkdir -p "${STAGE}/source_at_commit/$(dirname "${file}")"
-            git show "${FULL_COMMIT}:${file}" \
-                > "${STAGE}/source_at_commit/${file}"
-        fi
-    fi
-done < <(
-    git diff --diff-filter=ACMR --name-only \
-        "${BASE_COMMIT}" "${FULL_COMMIT}"
-)
-
-# Include common experiment entry points/configurations even if unchanged.
-for rel in \
-    pyproject.toml \
-    requirements.txt \
-    environment.yml \
-    setup.py \
-    setup.cfg
+for pattern in \
+    'qat_selection*' \
+    '*runtime*' \
+    '*folding*' \
+    '*calibration*' \
+    '*target_quality*' \
+    '*holm*' \
+    '*bootstrap*' \
+    '*precision*grid*' \
+    '*method*grid*' \
+    '*rcal*' \
+    '*cycles*' \
+    '*final*summary*' \
+    'FINAL_OUTPUT*'
 do
-    if git cat-file -e "${FULL_COMMIT}:${rel}" 2>/dev/null; then
-        mkdir -p "${STAGE}/source_at_commit/$(dirname "${rel}")"
-        git show "${FULL_COMMIT}:${rel}" \
-            > "${STAGE}/source_at_commit/${rel}"
+    find "$RUN" -type f -iname "$pattern" -print0 2>/dev/null |
+    while IFS= read -r -d '' f; do
+        rel="${f#$RUN/}"
+        mkdir -p "$STAGE/run/$(dirname "$rel")"
+        cp -n "$f" "$STAGE/run/$rel" 2>/dev/null || true
+    done
+done
+
+
+# ============================================================
+# 6. Selected checkpoint / rotation 파일의 "경로 + 크기 + checksum"
+#    실제 .pt 파일은 복사하지 않음
+# ============================================================
+
+{
+    echo -e "size_bytes\tsha256\tpath"
+
+    find "$RUN" -type f \( \
+        -name '*.pt' -o \
+        -name '*.pth' -o \
+        -name '*.ckpt' -o \
+        -name '*.safetensors' -o \
+        -name '*.bin' -o \
+        -name '*.npy' -o \
+        -name '*.npz' \
+    \) -print0 |
+    while IFS= read -r -d '' f; do
+        size="$(stat -c '%s' "$f")"
+        sha="$(sha256sum "$f" | awk '{print $1}')"
+        printf "%s\t%s\t%s\n" "$size" "$sha" "$f"
+    done
+} > "$STAGE/repo_metadata/LARGE_ARTIFACT_MANIFEST.tsv"
+
+
+# ============================================================
+# 7. Selected R_D 3종의 provenance만 별도 추출
+# ============================================================
+
+{
+    echo "Expected selected R_D artifacts:"
+    echo "  RD_T16_HYB_s2v2"
+    echo "  RD_T8_HYB_s2"
+    echo "  RD_HYB_s2"
+    echo
+} > "$STAGE/repo_metadata/RD_SELECTED.txt"
+
+find "$RUN" -type f \( \
+    -iname '*RD_T16_HYB_s2v2*' -o \
+    -iname '*RD_T8_HYB_s2*' -o \
+    -iname '*RD_HYB_s2*' \
+\) -print0 |
+while IFS= read -r -d '' f; do
+
+    # 작은 metadata 파일만 실제 bundle에 포함
+    size="$(stat -c '%s' "$f")"
+
+    if [ "$size" -lt $((5*1024*1024)) ]; then
+        rel="${f#$RUN/}"
+        mkdir -p "$STAGE/run/$(dirname "$rel")"
+        cp -n "$f" "$STAGE/run/$rel" 2>/dev/null || true
+    fi
+
+    sha256sum "$f" \
+      >> "$STAGE/repo_metadata/RD_SELECTED_CHECKSUMS.sha256"
+done
+
+
+# ============================================================
+# 8. 기존 최종 168MB bundle provenance
+# ============================================================
+
+for f in \
+    eagle1_target_draft_precision_method_grid_20260805.tar.gz \
+    eagle1_target_draft_precision_method_grid_20260805.tar.gz.sha256
+do
+    if [ -e "$f" ]; then
+        ls -lh "$f" \
+          >> "$STAGE/repo_metadata/ORIGINAL_BUNDLE_INFO.txt"
+
+        if [ -f "$f" ]; then
+            sha256sum "$f" \
+              >> "$STAGE/repo_metadata/ORIGINAL_BUNDLE_CHECKSUM.txt"
+        fi
     fi
 done
 
-# ---------------------------------------------------------------------------
-# 4. Rotation provenance
-# ---------------------------------------------------------------------------
 
-if [[ -f "${ROTATION_ABS}" ]]; then
-    ACTUAL_ROTATION_SHA256="$(
-        sha256sum "${ROTATION_ABS}" | awk '{print $1}'
-    )"
+# ============================================================
+# 9. Run tree 및 파일 크기 정보
+# ============================================================
 
-    {
-        echo "path=${ROTATION_REL}"
-        echo "expected_sha256=${EXPECTED_ROTATION_SHA256}"
-        echo "actual_sha256=${ACTUAL_ROTATION_SHA256}"
+find "$RUN" -type f \
+  -printf '%s\t%p\n' |
+sort -nr \
+  > "$STAGE/repo_metadata/RUN_FILES_BY_SIZE.tsv"
 
-        if [[ "${ACTUAL_ROTATION_SHA256}" == "${EXPECTED_ROTATION_SHA256}" ]]; then
-            echo "sha256_check=PASS"
-        else
-            echo "sha256_check=FAIL"
-        fi
+find "$RUN" -maxdepth 4 -print \
+  > "$STAGE/repo_metadata/RUN_TREE.txt"
 
-        echo
-        stat "${ROTATION_ABS}"
-    } > "${STAGE}/rotation_metadata/rotation_checkpoint.txt"
+du -sh "$RUN" \
+  > "$STAGE/repo_metadata/RUN_DISK_USAGE.txt"
 
-    if [[ "${INCLUDE_ROTATION:-0}" == "1" ]]; then
-        copy_file_preserving_path \
-            "${ROTATION_ABS}" \
-            "${STAGE}/experiment_files"
-    fi
-else
-    {
-        echo "path=${ROTATION_REL}"
-        echo "expected_sha256=${EXPECTED_ROTATION_SHA256}"
-        echo "status=MISSING"
-    } > "${STAGE}/rotation_metadata/rotation_checkpoint.txt"
-fi
 
-# ---------------------------------------------------------------------------
-# 5. Current environment snapshot
-# ---------------------------------------------------------------------------
-
-{
-    date --iso-8601=seconds
-    uname -a
-} > "${STAGE}/environment/system.txt" 2>&1 || true
-
-{
-    python --version
-    python - <<'PY'
-import platform
-import sys
-
-print("executable:", sys.executable)
-print("python:", sys.version)
-print("platform:", platform.platform())
-
-try:
-    import torch
-    print("torch:", torch.__version__)
-    print("torch_cuda:", torch.version.cuda)
-    print("cuda_available:", torch.cuda.is_available())
-    print("cuda_device_count:", torch.cuda.device_count())
-except Exception as exc:
-    print("torch_error:", repr(exc))
-
-try:
-    import transformers
-    print("transformers:", transformers.__version__)
-except Exception as exc:
-    print("transformers_error:", repr(exc))
-PY
-} > "${STAGE}/environment/python_runtime.txt" 2>&1 || true
-
-python -m pip freeze \
-    > "${STAGE}/environment/pip_freeze.txt" 2>&1 || true
-
-nvidia-smi -L \
-    > "${STAGE}/environment/nvidia_smi_list.txt" 2>&1 || true
-
-nvidia-smi \
-    --query-gpu=index,name,uuid,driver_version,memory.total \
-    --format=csv,noheader \
-    > "${STAGE}/environment/nvidia_gpu_inventory.csv" 2>&1 || true
-
-# ---------------------------------------------------------------------------
-# 6. Bundle manifest and compression
-# ---------------------------------------------------------------------------
+# ============================================================
+# 10. Compact bundle 내부 manifest
+# ============================================================
 
 (
-    cd "${STAGE}"
-    find . -type f ! -name SHA256SUMS -print0 \
-        | sort -z \
-        | xargs -0 sha256sum \
-        > SHA256SUMS
+    cd "$STAGE" || exit 1
+
+    find . -type f \
+      -printf '%s\t%p\n' |
+    sort -n \
+      > repo_metadata/COMPACT_FILE_MANIFEST.tsv
+
+    find . -type f \
+      ! -path './repo_metadata/INTERNAL_CHECKSUMS.sha256' \
+      -print0 |
+    sort -z |
+    xargs -0 sha256sum \
+      > repo_metadata/INTERNAL_CHECKSUMS.sha256
 )
 
-tar -C "${STAGE}" -czf "${OUT}" .
 
-ln -sfn "$(basename "${OUT}")" "${LATEST}"
+# ============================================================
+# 11. 압축
+# ============================================================
+
+tar -C "$STAGE" -czf "$OUT" .
+
+sha256sum "$OUT" | tee "${OUT}.sha256"
 
 echo
-echo "Created:"
-echo "  ${OUT}"
+echo "=== Result ==="
+ls -lh "$OUT" "${OUT}.sha256"
+
 echo
-echo "Latest symlink:"
-echo "  ${LATEST}"
-echo
-echo "Size:"
-du -h "${OUT}"
+echo "Top-level contents:"
+tar -tzf "$OUT" | head -80
+
+rm -rf "$STAGE"

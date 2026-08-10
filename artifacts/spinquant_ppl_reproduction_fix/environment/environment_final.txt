@@ -1,6 +1,0 @@
-date: 2026-07-16T18:00:00+09:00
-Python 3.12.4
-torch 2.6.0+cu124 | tf 4.51.3
-pinned venv: transformers 4.44.2 (/data/thahn1230/envs/spinquant)
-repo: d7741a01812d7d4b20742952b34425cf15907f50 on exp/eagle1-spinquant-ppl-reproduction-fix
-SpinQuant: 8f47aa3 | EAGLE: 4a9cf3a

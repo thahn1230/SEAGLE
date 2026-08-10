@@ -1,4 +1,0 @@
-target,wikitext_ce,wikitext_ppl,n_tokens
-fp16,1.92539,6.8578,32767
-W8A8,1.92799,6.8757,32767
-W4A4,2.33469,10.3263,32767

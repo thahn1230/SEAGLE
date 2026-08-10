@@ -1,5 +1,0 @@
-f16a4a7fdfc8ad515284709973819030fe7d6411
-?? artifacts/
-?? giveGPT.sh
-?? tail_unfused_overhead_review_bundle_20260707_215625/
-(fresh repo: no prior uncommitted changes to preserve — project was never under git)
