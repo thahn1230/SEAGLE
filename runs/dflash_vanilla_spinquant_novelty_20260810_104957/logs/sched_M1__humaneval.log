@@ -1,0 +1,19 @@
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 78.33it/s]
+[quant] 36 QLinear, all_w_changed=True
+[M1_rtn] 10/164 cycle-tau=1.6330
+[M1_rtn] 20/164 cycle-tau=1.5781
+[M1_rtn] 30/164 cycle-tau=1.6119
+[M1_rtn] 40/164 cycle-tau=1.6429
+[M1_rtn] 50/164 cycle-tau=1.6789
+[M1_rtn] 60/164 cycle-tau=1.6841
+[M1_rtn] 70/164 cycle-tau=1.6829
+[M1_rtn] 80/164 cycle-tau=1.6858
+[M1_rtn] 90/164 cycle-tau=1.6729
+[M1_rtn] 100/164 cycle-tau=1.6668
+[M1_rtn] 110/164 cycle-tau=1.6611
+[M1_rtn] 120/164 cycle-tau=1.6554
+[M1_rtn] 130/164 cycle-tau=1.6433
+[M1_rtn] 140/164 cycle-tau=1.6345
+[M1_rtn] 150/164 cycle-tau=1.6429
+[M1_rtn] 160/164 cycle-tau=1.6436
+[M1_rtn] DONE humaneval cycle-pooled tau = 1.6435 over 98632 cycles

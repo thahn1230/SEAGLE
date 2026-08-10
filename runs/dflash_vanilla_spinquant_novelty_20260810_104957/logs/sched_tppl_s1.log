@@ -1,0 +1,99 @@
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 133.84it/s]
+Token indices sequence length is longer than the specified maximum sequence length for this model (289077 > 131072). Running this sequence through the model will result in indexing errors
+{'arm': 'T-PPL0_fp16', 'seed': 's1', 'mode': 'fp16', 'rbin': '', 'wikitext2_ppl': 7.4368, 'fp_equiv': 'ref'}
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 134.69it/s]
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/thahn1230/dflash_workspace/dflash/seagle_port/vsq_target_ppl.py", line 109, in <module>
+    main()
+  File "/home/thahn1230/anaconda3/lib/python3.12/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/thahn1230/dflash_workspace/dflash/seagle_port/vsq_target_ppl.py", line 62, in main
+    m = sq.build_target(MODEL, mode, rbin_path=rbin, device=dev)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/thahn1230/dflash_workspace/dflash/seagle_port/spinquant_target.py", line 112, in build_target
+    model = load_target(model_id, dtype=dtype, device=device, attn=attn)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/thahn1230/dflash_workspace/dflash/seagle_port/spinquant_target.py", line 46, in load_target
+    return m.to(device).eval()
+           ^^^^^^^^^^^^
+  File "/home/thahn1230/dflash_workspace/venv/lib/python3.12/site-packages/transformers/modeling_utils.py", line 4343, in to
+    return super().to(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/thahn1230/anaconda3/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1343, in to
+    return self._apply(convert)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/home/thahn1230/anaconda3/lib/python3.12/site-packages/torch/nn/modules/module.py", line 903, in _apply
+    module._apply(fn)
+  File "/home/thahn1230/anaconda3/lib/python3.12/site-packages/torch/nn/modules/module.py", line 903, in _apply
+    module._apply(fn)
+  File "/home/thahn1230/anaconda3/lib/python3.12/site-packages/torch/nn/modules/module.py", line 903, in _apply
+    module._apply(fn)
+  [Previous line repeated 2 more times]
+  File "/home/thahn1230/anaconda3/lib/python3.12/site-packages/torch/nn/modules/module.py", line 930, in _apply
+    param_applied = fn(param)
+                    ^^^^^^^^^
+  File "/home/thahn1230/anaconda3/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1329, in convert
+    return t.to(
+           ^^^^^
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 112.00 MiB. GPU 0 has a total capacity of 23.52 GiB of which 26.62 MiB is free. Including non-PyTorch memory, this process has 23.48 GiB memory in use. Of the allocated memory 23.00 GiB is allocated by PyTorch, and 27.03 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 104.01it/s]
+Token indices sequence length is longer than the specified maximum sequence length for this model (289077 > 131072). Running this sequence through the model will result in indexing errors
+{'arm': 'T-PPL0_fp16', 'seed': 's1', 'mode': 'fp16', 'rbin': '', 'wikitext2_ppl': 7.4368, 'fp_equiv': 'ref'}
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 94.78it/s]
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/thahn1230/dflash_workspace/dflash/seagle_port/vsq_target_ppl.py", line 109, in <module>
+    main()
+  File "/home/thahn1230/anaconda3/lib/python3.12/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/thahn1230/dflash_workspace/dflash/seagle_port/vsq_target_ppl.py", line 62, in main
+    m = sq.build_target(MODEL, mode, rbin_path=rbin, device=dev)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/thahn1230/dflash_workspace/dflash/seagle_port/spinquant_target.py", line 112, in build_target
+    model = load_target(model_id, dtype=dtype, device=device, attn=attn)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/thahn1230/dflash_workspace/dflash/seagle_port/spinquant_target.py", line 46, in load_target
+    return m.to(device).eval()
+           ^^^^^^^^^^^^
+  File "/home/thahn1230/dflash_workspace/venv/lib/python3.12/site-packages/transformers/modeling_utils.py", line 4343, in to
+    return super().to(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/thahn1230/anaconda3/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1343, in to
+    return self._apply(convert)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/home/thahn1230/anaconda3/lib/python3.12/site-packages/torch/nn/modules/module.py", line 903, in _apply
+    module._apply(fn)
+  File "/home/thahn1230/anaconda3/lib/python3.12/site-packages/torch/nn/modules/module.py", line 903, in _apply
+    module._apply(fn)
+  File "/home/thahn1230/anaconda3/lib/python3.12/site-packages/torch/nn/modules/module.py", line 903, in _apply
+    module._apply(fn)
+  [Previous line repeated 2 more times]
+  File "/home/thahn1230/anaconda3/lib/python3.12/site-packages/torch/nn/modules/module.py", line 930, in _apply
+    param_applied = fn(param)
+                    ^^^^^^^^^
+  File "/home/thahn1230/anaconda3/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1329, in convert
+    return t.to(
+           ^^^^^
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 112.00 MiB. GPU 0 has a total capacity of 23.52 GiB of which 26.62 MiB is free. Including non-PyTorch memory, this process has 23.48 GiB memory in use. Of the allocated memory 23.00 GiB is allocated by PyTorch, and 27.03 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 105.73it/s]
+Token indices sequence length is longer than the specified maximum sequence length for this model (289077 > 131072). Running this sequence through the model will result in indexing errors
+{'arm': 'T-PPL0_fp16', 'seed': 's1', 'mode': 'fp16', 'rbin': '', 'wikitext2_ppl': 7.4368, 'fp_equiv': 'ref'}
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 132.65it/s]
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/thahn1230/dflash_workspace/dflash/seagle_port/vsq_target_ppl.py", line 132, in <module>
+    main()
+  File "/home/thahn1230/anaconda3/lib/python3.12/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/thahn1230/dflash_workspace/dflash/seagle_port/vsq_target_ppl.py", line 56, in main
+    subprocess.run([_sys.executable, "-m",
+  File "/home/thahn1230/anaconda3/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['/home/thahn1230/dflash_workspace/dflash/../venv/bin/python', '-m', 'seagle_port.vsq_target_ppl', '--rbin', '/home/thahn1230/dflash_workspace/outputs/rotations/llama31_w4a4kv16_s1/R.bin', '--seed-tag', 's1', '--run-dir', '/home/thahn1230/dflash_workspace/dflash/runs/dflash_vanilla_spinquant_novelty_20260810_104957', '--windows', '16', '--device', 'cuda:0', '--arm', 'T-PPL1_rtn_norot']' died with <Signals.SIGTERM: 15>.

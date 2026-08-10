@@ -1,0 +1,11 @@
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 85.74it/s]
+[quant] 36 QLinear, all_w_changed=True
+[M1_rtn] 10/80 cycle-tau=1.8526
+[M1_rtn] 20/80 cycle-tau=1.8857
+[M1_rtn] 30/80 cycle-tau=1.8537
+[M1_rtn] 40/80 cycle-tau=1.8322
+[M1_rtn] 50/80 cycle-tau=1.8403
+[M1_rtn] 60/80 cycle-tau=1.8599
+[M1_rtn] 70/80 cycle-tau=1.8410
+[M1_rtn] 80/80 cycle-tau=1.8740
+[M1_rtn] DONE mtbench cycle-pooled tau = 1.8740 over 62979 cycles

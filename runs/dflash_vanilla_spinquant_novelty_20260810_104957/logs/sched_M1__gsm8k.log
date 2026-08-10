@@ -1,0 +1,23 @@
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 87.42it/s]
+[quant] 36 QLinear, all_w_changed=True
+[M1_rtn] 10/200 cycle-tau=1.8457
+[M1_rtn] 20/200 cycle-tau=1.7675
+[M1_rtn] 30/200 cycle-tau=1.6983
+[M1_rtn] 40/200 cycle-tau=1.7346
+[M1_rtn] 50/200 cycle-tau=1.7243
+[M1_rtn] 60/200 cycle-tau=1.7572
+[M1_rtn] 70/200 cycle-tau=1.7356
+[M1_rtn] 80/200 cycle-tau=1.7223
+[M1_rtn] 90/200 cycle-tau=1.6932
+[M1_rtn] 100/200 cycle-tau=1.6775
+[M1_rtn] 110/200 cycle-tau=1.6804
+[M1_rtn] 120/200 cycle-tau=1.6671
+[M1_rtn] 130/200 cycle-tau=1.6746
+[M1_rtn] 140/200 cycle-tau=1.6751
+[M1_rtn] 150/200 cycle-tau=1.6765
+[M1_rtn] 160/200 cycle-tau=1.6891
+[M1_rtn] 170/200 cycle-tau=1.6920
+[M1_rtn] 180/200 cycle-tau=1.6829
+[M1_rtn] 190/200 cycle-tau=1.6719
+[M1_rtn] 200/200 cycle-tau=1.6681
+[M1_rtn] DONE gsm8k cycle-pooled tau = 1.6681 over 83780 cycles

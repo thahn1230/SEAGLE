@@ -60,7 +60,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--tag", required=True)
     ap.add_argument("--target-mode", required=True,
-                    choices=["fp16", "rot_fp16", "w8a8", "w4a4"])
+                    choices=["fp16", "rot_fp16", "w8a8", "w4a4",
+                             "w4a4_norot"])
     ap.add_argument("--interface", default="stock",
                     choices=["stock", "naive", "explicit", "folded",
                              "rotate"])
@@ -91,6 +92,22 @@ def main():
                     help="RCDraft with R_C=I (RC0 protocol baseline)")
     ap.add_argument("--draft-transform", default=None,
                     help="module:callable applied to draft after load")
+    ap.add_argument("--vsq-draft", default=None,
+                    help="RotQuantDraft ckpt (.pt; uses .best) for VSQ "
+                         "arms; 'identity' for R=I; 'rt' forces "
+                         "R1_D := R1_T, R2_D = I (G1 shared-basis)")
+    ap.add_argument("--vsq-raw", action="store_true",
+                    help="VSQ-RAW diagnostic: NO fc fold, NO embed/head "
+                         "restore (model-local rotations only)")
+    ap.add_argument("--vsq-bits", type=int, default=4)
+    ap.add_argument("--vsq-ctx-abits", type=int, default=None,
+                    help="HP controls: context-path activation bits "
+                         "(fc input + H_t), overriding vsq-bits")
+    ap.add_argument("--vsq-p2", action="store_true",
+                    help="M4a: branch-wise fc activation scales")
+    ap.add_argument("--vsq-rc", default=None,
+                    help="M5: context rotation for the VSQ draft — "
+                         "'rt' reuses target R1; or a path to an R matrix")
     args = ap.parse_args()
 
     random.seed(0); np.random.seed(0)
@@ -109,7 +126,7 @@ def main():
         DRAFT, attn_implementation="sdpa", dtype=torch.bfloat16).to(dev).eval()
 
     R1 = sq.load_rbin(args.rbin)["R1"] if args.rbin else None
-    rotated = args.target_mode != "fp16"
+    rotated = args.target_mode not in ("fp16", "w4a4_norot")
 
     mp3 = None
     if args.mp3_scales:
@@ -149,6 +166,52 @@ def main():
                               rc_ckpt=args.rc_ckpt, w_bits=wb,
                               a_bits=ab).to(dev)
         print(f"[rc] RCDraft active ckpt={args.rc_ckpt or 'identity'}")
+    stateless = False
+    if args.vsq_draft:
+        from .vsq_draft_rot import RotQuantDraft
+        from dflash.model import DFlashDraftModel as _DDM
+        del draft, draft_prequant          # drop the stock GPU copy (2 GB)
+        torch.cuda.empty_cache()
+        base = _DDM.from_pretrained(DRAFT, dtype=torch.bfloat16)
+        if not args.vsq_raw and rotated:
+            base = interfaces.fold_wc(base, R1, mp3_scales=mp3)
+        rq = RotQuantDraft(base, w_bits=args.vsq_bits,
+                           a_bits=args.vsq_bits, use_r2=True,
+                           train_rotations=False, device=dev)
+        if args.vsq_ctx_abits is not None:
+            rq.cfg["ctx_a_bits"] = args.vsq_ctx_abits
+        if args.vsq_p2:
+            rq.cfg["fc_p2"] = True
+        if args.vsq_rc:
+            Rc = R1.float().to(dev) if args.vsq_rc == "rt" else                 torch.load(args.vsq_rc, weights_only=False)["R_C"].float().to(dev)
+            rq.rc_matrix_buf = Rc
+        rq.rotary = rq.rotary.to(dev)
+        base_cpu_rotary = rq.rotary
+        del base                            # CPU copy; keep only rotary
+        torch.cuda.empty_cache()
+        if args.vsq_draft == "rt":
+            R1b = R1.float().to(dev)
+            rq.R1 = lambda: R1b
+            rq.cfg["use_r2"] = False
+            rq.R2 = lambda i: None
+        elif args.vsq_draft != "identity":
+            ck = torch.load(args.vsq_draft + ".best", map_location="cpu",
+                            weights_only=False)
+            R1b = ck["R1_D"].to(dev)
+            R2b = [t.to(dev) if t is not None else None
+                   for t in ck["R2_D"]]
+            rq.R1 = lambda: R1b
+            rq.R2 = (lambda i: R2b[i]) if R2b[0] is not None else \
+                (lambda i: None)
+            if R2b[0] is None:
+                rq.cfg["use_r2"] = False
+        rq.freeze_for_eval()
+        draft = rq.eval()
+        stateless = True
+        if args.vsq_raw:
+            embed_fn = head_fn = None       # intentional mismatch (M2)
+        print(f"[vsq] RotQuantDraft ckpt={args.vsq_draft} "
+              f"raw={args.vsq_raw} bits={args.vsq_bits}")
     if args.draft_transform:
         mod, fn = args.draft_transform.split(":")
         import importlib
@@ -181,7 +244,8 @@ def main():
                     draft, target, ids, args.max_new_tokens,
                     [tok.eos_token_id], 0.0, block_size=bs,
                     ctx_transform=ctx_transform, embed_fn=embed_fn,
-                    head_fn=head_fn, record_cycles=args.record_cycles)
+                    head_fn=head_fn, record_cycles=args.record_cycles,
+                    stateless_ctx=stateless)
                 if args.gate_h and pid < 3 and not rotated \
                         and args.interface == "stock":
                     torch.manual_seed(0)

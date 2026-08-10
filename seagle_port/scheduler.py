@@ -18,6 +18,9 @@ transition (START/DONE/FAIL/RETRY/GAVE-UP) — monitors tail this.
 import json, os, shlex, subprocess, sys, time
 
 POLL = 20
+import os as _os
+GPUS = [int(x) for x in _os.environ.get("SCHED_GPUS",
+                                        "0,1,2,3,4,5,6,7").split(",")]
 MEM_FREE_MIB = 1024
 FREE_STREAK = 3   # consecutive free polls before a GPU is claimable
 
@@ -56,7 +59,7 @@ def main():
             status[jid] = "done"
     tries = {}
     running = {}                   # id -> (Popen, [gpus], job)
-    free_streak = {g: 0 for g in range(8)}
+    free_streak = {g: 0 for g in GPUS}
     ev("SCHEDULER-START")
     while True:
         jobs = []
@@ -89,10 +92,10 @@ def main():
                     ev(f"FAIL {jid} rc={rc} -> GAVE-UP (see {j.get('log')})")
 
         owned = [g for _, gpus, _ in running.values() for g in gpus]
-        for g in range(8):
+        for g in GPUS:
             free_streak[g] = (free_streak[g] + 1
                               if gpu_free(g, owned) else 0)
-        free = [g for g in range(8) if free_streak[g] >= FREE_STREAK]
+        free = [g for g in GPUS if free_streak[g] >= FREE_STREAK]
 
         # idempotence: a job whose artifact already exists is done
         for j in jobs:

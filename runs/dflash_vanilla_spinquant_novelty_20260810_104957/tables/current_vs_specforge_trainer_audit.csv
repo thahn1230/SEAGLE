@@ -1,0 +1,16 @@
+aspect,previous_custom_trainer(train_rc cycle-replay),specforge_reference,match,consequence,action
+block_sampling,deployed speculative cycle prefixes,random anchors (up to 512) over full seq with 2 consecutive supervised tokens,NO,narrower state coverage; biased to deployed trajectory,new trainer uses SpecForge anchor sampling (ported+parity PASS)
+block_size,10 (deploy),config (10 for our ckpt),YES,-,keep
+anchor_sampling,cycle prefix_len only,uniform random sorted,NO,see block_sampling,ported
+target_context_visibility,ctx = tokens < prefix (exact),ctx kv < anchor (strict),YES(semantics),equivalent rule,ported mask bitwise-equal
+intra_block_mask,full bidirectional (is_causal=False),full bidirectional (non-sliding),YES,-,ported
+cross_block_mask,n/a (single block per forward),q_block==kv_block isolation,N/A->YES,multi-anchor efficiency,ported
+target_hidden_extraction,layers [1 8 15 22 29] concat,same via draft config,YES,-,keep
+Wc_hidden_norm,inside draft forward,inside draft forward,YES,-,keep
+shared_embedding,target.model.embed_tokens,target embed_tokens,YES,-,keep
+shared_lm_head,target.lm_head,target lm_head,YES,-,keep
+labels,deployed verifier posterior argmax,ground-truth token at anchor+k (k>=1); anchor slot excluded; loss_mask gated,NO,different objective (policy distill vs GT LM),new trainer uses SpecForge labels
+loss,weighted CE gamma=5 (posterior labels),CE * exp(-(pos-1)/gamma) on GT labels (+D-PACE variants),PARTIAL,same weighting formula different labels,ported exact
+position_weighting,exp(-(k-1)/5),exp(-(pos-1)/gamma) pos0 clamped,YES,-,ported
+teacher_forcing,deployed trajectory replay,corpus sequence teacher forcing,NO,-,ported
+inference_correspondence,exact deploy replay (Gate-H),mask/positions mirror deploy block layout,BOTH VALID,replay=deploy-faithful; specforge=canonical training,use SpecForge for training; replay retained for RCAL only

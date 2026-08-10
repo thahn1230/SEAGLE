@@ -1,0 +1,7 @@
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 131.64it/s]
+{'arm': 'D-P0_fp16', 'block_ce': 2.4124, 'block_pseudo_ppl': 11.161, 'top1_acc': 0.399}
+{'arm': 'D-P1_w4a4_norot', 'block_ce': 7.2328, 'block_pseudo_ppl': 1384.097, 'top1_acc': 0.0392, 'kl_vs_fp16draft': 4.581, 'top1_agree_vs_fp16draft': 0.0532}
+{'arm': 'D-P2_w4a4_random', 'block_ce': 4.8302, 'block_pseudo_ppl': 125.233, 'top1_acc': 0.1364, 'kl_vs_fp16draft': 2.4686, 'top1_agree_vs_fp16draft': 0.1964}
+{'arm': 'D-P3_w4a4_R1D', 'block_ce': 4.9587, 'block_pseudo_ppl': 142.412, 'top1_acc': 0.1264, 'kl_vs_fp16draft': 2.541, 'top1_agree_vs_fp16draft': 0.1875}
+{'arm': 'D-P4_w4a4_R1D_R2D', 'block_ce': 4.4715, 'block_pseudo_ppl': 87.491, 'top1_acc': 0.1683, 'kl_vs_fp16draft': 2.1423, 'top1_agree_vs_fp16draft': 0.2436}
+GATE E: PASS ({'D-P0_fp16': 2.4124, 'D-P1_w4a4_norot': 7.2328, 'D-P2_w4a4_random': 4.8302, 'D-P3_w4a4_R1D': 4.9587, 'D-P4_w4a4_R1D_R2D': 4.4715})

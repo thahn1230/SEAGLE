@@ -1,0 +1,9 @@
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 95.57it/s]
+[vsq] RotQuantDraft ckpt=identity raw=False bits=4
+[V_M3id] 10/60 cycle-tau=1.1317
+[V_M3id] 20/60 cycle-tau=1.1259
+[V_M3id] 30/60 cycle-tau=1.1232
+[V_M3id] 40/60 cycle-tau=1.1254
+[V_M3id] 50/60 cycle-tau=1.1301
+[V_M3id] 60/60 cycle-tau=1.1338
+[V_M3id] DONE gsm8kvalid cycle-pooled tau = 1.1338 over 8468 cycles

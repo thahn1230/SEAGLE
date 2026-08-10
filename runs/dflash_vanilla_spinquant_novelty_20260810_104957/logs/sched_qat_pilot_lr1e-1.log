@@ -1,0 +1,11 @@
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 174.26it/s]
+[qat Q2] trainable 1090.5M params lr 0.1
+[init] val_ce 7.0572
+{'step': 20, 'loss': 6.3994, 'acc': 0.0972}
+{'step': 40, 'loss': 7.1965, 'acc': 0.0347}
+[val] 50 ce 6.7036
+{'step': 60, 'loss': 6.0073, 'acc': 0.0486}
+{'step': 80, 'loss': 4.0631, 'acc': 0.1832}
+{'step': 100, 'loss': 4.3895, 'acc': 0.1806}
+[val] 100 ce 5.4448
+[qat Q2] DONE init 7.0572 best 5.4448 @ 100

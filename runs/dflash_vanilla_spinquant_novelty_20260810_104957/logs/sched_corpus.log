@@ -1,0 +1,69 @@
+[corpus] rccap rows: 48
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 103.30it/s]
+The following generation flags are not valid and may be ignored: ['temperature', 'top_p']. Set `TRANSFORMERS_VERBOSITY=info` for more details.
+The attention mask is not set and cannot be inferred from input because pad token is same as eos token. As a consequence, you may observe unexpected behavior. Please pass your input's `attention_mask` to obtain reliable results.
+[corpus] sharegpt 1/64
+[corpus] sharegpt 2/64
+[corpus] sharegpt 3/64
+[corpus] sharegpt 4/64
+[corpus] sharegpt 5/64
+[corpus] sharegpt 6/64
+[corpus] sharegpt 7/64
+[corpus] sharegpt 8/64
+[corpus] sharegpt 9/64
+[corpus] sharegpt 10/64
+[corpus] sharegpt 11/64
+[corpus] sharegpt 12/64
+[corpus] sharegpt 13/64
+[corpus] sharegpt 14/64
+[corpus] sharegpt 15/64
+[corpus] sharegpt 16/64
+[corpus] sharegpt 17/64
+[corpus] sharegpt 18/64
+[corpus] sharegpt 19/64
+[corpus] sharegpt 20/64
+[corpus] sharegpt 21/64
+[corpus] sharegpt 22/64
+[corpus] sharegpt 23/64
+[corpus] sharegpt 24/64
+[corpus] sharegpt 25/64
+[corpus] sharegpt 26/64
+[corpus] sharegpt 27/64
+[corpus] sharegpt 28/64
+[corpus] sharegpt 29/64
+[corpus] sharegpt 30/64
+[corpus] sharegpt 31/64
+[corpus] sharegpt 32/64
+[corpus] sharegpt 33/64
+[corpus] sharegpt 34/64
+[corpus] sharegpt 35/64
+[corpus] sharegpt 36/64
+[corpus] sharegpt 37/64
+[corpus] sharegpt 38/64
+[corpus] sharegpt 39/64
+[corpus] sharegpt 40/64
+[corpus] sharegpt 41/64
+[corpus] sharegpt 42/64
+[corpus] sharegpt 43/64
+[corpus] sharegpt 44/64
+[corpus] sharegpt 45/64
+[corpus] sharegpt 46/64
+[corpus] sharegpt 47/64
+[corpus] sharegpt 48/64
+[corpus] sharegpt 49/64
+[corpus] sharegpt 50/64
+[corpus] sharegpt 51/64
+[corpus] sharegpt 52/64
+[corpus] sharegpt 53/64
+[corpus] sharegpt 54/64
+[corpus] sharegpt 55/64
+[corpus] sharegpt 56/64
+[corpus] sharegpt 57/64
+[corpus] sharegpt 58/64
+[corpus] sharegpt 59/64
+[corpus] sharegpt 60/64
+[corpus] sharegpt 61/64
+[corpus] sharegpt 62/64
+[corpus] sharegpt 63/64
+[corpus] sharegpt 64/64
+[corpus] DONE 112 rows -> /home/thahn1230/dflash_workspace/dflash/runs/dflash_vanilla_spinquant_novelty_20260810_104957/tables/train_corpus.jsonl

@@ -1,0 +1,4 @@
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 79.55it/s]
+[quant] 36 QLinear, all_w_changed=True
+[M1_rtn] 10/80 cycle-tau=1.8526
+[M1_rtn] 20/80 cycle-tau=1.8857

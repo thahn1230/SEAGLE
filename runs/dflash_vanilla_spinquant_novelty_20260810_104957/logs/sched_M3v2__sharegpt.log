@@ -1,0 +1,14 @@
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 100.56it/s]
+[vsq] RotQuantDraft ckpt=/home/thahn1230/dflash_workspace/dflash/runs/dflash_vanilla_spinquant_novelty_20260810_104957/rotations/draft/R1D_s1r1.pt raw=False bits=4
+[M3_vsq] 10/80 cycle-tau=1.6310
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 91.22it/s]
+[vsq] RotQuantDraft ckpt=/home/thahn1230/dflash_workspace/dflash/runs/dflash_vanilla_spinquant_novelty_20260810_104957/rotations/draft/R1D_s1r1.pt raw=False bits=4
+[M3_vsq] 10/80 cycle-tau=1.6310
+[M3_vsq] 20/80 cycle-tau=1.6173
+[M3_vsq] 30/80 cycle-tau=1.5992
+[M3_vsq] 40/80 cycle-tau=1.5504
+[M3_vsq] 50/80 cycle-tau=1.5650
+[M3_vsq] 60/80 cycle-tau=1.5620
+[M3_vsq] 70/80 cycle-tau=1.5513
+[M3_vsq] 80/80 cycle-tau=1.5643
+[M3_vsq] DONE sharegpt cycle-pooled tau = 1.5643 over 25080 cycles

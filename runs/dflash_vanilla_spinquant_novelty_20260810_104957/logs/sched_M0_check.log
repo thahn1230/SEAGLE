@@ -1,0 +1,10 @@
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 80.05it/s]
+[gate_h] prompt 0 identical
+[gate_h] prompt 0 identical
+[gate_h] prompt 1 identical
+[gate_h] prompt 1 identical
+[gate_h] prompt 2 identical
+[gate_h] prompt 2 identical
+[M0_check] 10/20 cycle-tau=3.1699
+[M0_check] 20/20 cycle-tau=3.1099
+[M0_check] DONE mtbench cycle-pooled tau = 3.1099 over 4657 cycles

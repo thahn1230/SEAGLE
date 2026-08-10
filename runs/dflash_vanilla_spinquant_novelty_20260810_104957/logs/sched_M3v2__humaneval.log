@@ -1,0 +1,38 @@
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 128.56it/s]
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 93.89it/s]
+[vsq] RotQuantDraft ckpt=/home/thahn1230/dflash_workspace/dflash/runs/dflash_vanilla_spinquant_novelty_20260810_104957/rotations/draft/R1D_s1r1.pt raw=False bits=4
+[M3_vsq] 10/164 cycle-tau=1.9742
+[M3_vsq] 20/164 cycle-tau=1.9889
+[vsq] RotQuantDraft ckpt=/home/thahn1230/dflash_workspace/dflash/runs/dflash_vanilla_spinquant_novelty_20260810_104957/rotations/draft/R1D_s1r1.pt raw=False bits=4
+[M3_vsq] 10/164 cycle-tau=1.9742
+[M3_vsq] 30/164 cycle-tau=2.0098
+[M3_vsq] 20/164 cycle-tau=1.9889
+[M3_vsq] 40/164 cycle-tau=2.0170
+[M3_vsq] 30/164 cycle-tau=2.0098
+[M3_vsq] 50/164 cycle-tau=2.0545
+[M3_vsq] 40/164 cycle-tau=2.0170
+[M3_vsq] 60/164 cycle-tau=2.0546
+[M3_vsq] 50/164 cycle-tau=2.0545
+[M3_vsq] 60/164 cycle-tau=2.0546
+[M3_vsq] 70/164 cycle-tau=2.0478
+[M3_vsq] 80/164 cycle-tau=2.0945
+[M3_vsq] 70/164 cycle-tau=2.0478
+[M3_vsq] 90/164 cycle-tau=2.1039
+[M3_vsq] 80/164 cycle-tau=2.0945
+[M3_vsq] 90/164 cycle-tau=2.1039
+[M3_vsq] 100/164 cycle-tau=2.0878
+[M3_vsq] 100/164 cycle-tau=2.0878
+[M3_vsq] 110/164 cycle-tau=2.1283
+[M3_vsq] 110/164 cycle-tau=2.1283
+[M3_vsq] 120/164 cycle-tau=2.1310
+[M3_vsq] 120/164 cycle-tau=2.1310
+[M3_vsq] 130/164 cycle-tau=2.1161
+[M3_vsq] 130/164 cycle-tau=2.1161
+[M3_vsq] 140/164 cycle-tau=2.1093
+[M3_vsq] 140/164 cycle-tau=2.1093
+[M3_vsq] 150/164 cycle-tau=2.1067
+[M3_vsq] 150/164 cycle-tau=2.1067
+[M3_vsq] 160/164 cycle-tau=2.1024
+[M3_vsq] DONE humaneval cycle-pooled tau = 2.0990 over 18289 cycles
+[M3_vsq] 160/164 cycle-tau=2.1024
+[M3_vsq] DONE humaneval cycle-pooled tau = 2.0990 over 18289 cycles

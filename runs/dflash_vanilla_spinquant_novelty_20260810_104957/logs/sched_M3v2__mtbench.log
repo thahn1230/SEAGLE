@@ -1,0 +1,46 @@
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 106.15it/s]
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 84.40it/s]
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/thahn1230/dflash_workspace/dflash/seagle_port/eval_al.py", line 261, in <module>
+    main()
+  File "/home/thahn1230/dflash_workspace/dflash/seagle_port/eval_al.py", line 114, in main
+    target = sq.build_target(MODEL, args.target_mode, rbin_path=args.rbin,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/thahn1230/dflash_workspace/dflash/seagle_port/spinquant_target.py", line 112, in build_target
+    model = load_target(model_id, dtype=dtype, device=device, attn=attn)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/thahn1230/dflash_workspace/dflash/seagle_port/spinquant_target.py", line 46, in load_target
+    return m.to(device).eval()
+           ^^^^^^^^^^^^
+  File "/home/thahn1230/dflash_workspace/venv/lib/python3.12/site-packages/transformers/modeling_utils.py", line 4343, in to
+    return super().to(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/thahn1230/anaconda3/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1343, in to
+    return self._apply(convert)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/home/thahn1230/anaconda3/lib/python3.12/site-packages/torch/nn/modules/module.py", line 903, in _apply
+    module._apply(fn)
+  File "/home/thahn1230/anaconda3/lib/python3.12/site-packages/torch/nn/modules/module.py", line 903, in _apply
+    module._apply(fn)
+  File "/home/thahn1230/anaconda3/lib/python3.12/site-packages/torch/nn/modules/module.py", line 903, in _apply
+    module._apply(fn)
+  [Previous line repeated 2 more times]
+  File "/home/thahn1230/anaconda3/lib/python3.12/site-packages/torch/nn/modules/module.py", line 930, in _apply
+    param_applied = fn(param)
+                    ^^^^^^^^^
+  File "/home/thahn1230/anaconda3/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1329, in convert
+    return t.to(
+           ^^^^^
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 112.00 MiB. GPU 0 has a total capacity of 23.52 GiB of which 111.31 MiB is free. Process 1958869 has 15.34 GiB memory in use. Including non-PyTorch memory, this process has 8.05 GiB memory in use. Of the allocated memory 7.67 GiB is allocated by PyTorch, and 11.75 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+[vsq] RotQuantDraft ckpt=/home/thahn1230/dflash_workspace/dflash/runs/dflash_vanilla_spinquant_novelty_20260810_104957/rotations/draft/R1D_s1r1.pt raw=False bits=4
+[M3_vsq] 10/80 cycle-tau=1.4506
+[M3_vsq] 20/80 cycle-tau=1.4836
+[M3_vsq] 30/80 cycle-tau=1.4900
+[M3_vsq] 40/80 cycle-tau=1.5992
+[M3_vsq] 50/80 cycle-tau=1.6746
+[M3_vsq] 60/80 cycle-tau=1.7410
+[M3_vsq] 70/80 cycle-tau=1.7206
+[M3_vsq] 80/80 cycle-tau=1.6749
+[M3_vsq] DONE mtbench cycle-pooled tau = 1.6749 over 35501 cycles

@@ -1,0 +1,17 @@
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 172.63it/s]
+Token indices sequence length is longer than the specified maximum sequence length for this model (289077 > 131072). Running this sequence through the model will result in indexing errors
+{'arm': 'T-PPL0_fp16', 'seed': 's2', 'mode': 'fp16', 'rbin': '', 'wikitext2_ppl': 7.4368, 'fp_equiv': 'ref'}
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 62.62it/s]
+Token indices sequence length is longer than the specified maximum sequence length for this model (289077 > 131072). Running this sequence through the model will result in indexing errors
+{'arm': 'T-PPL1_rtn_norot', 'seed': 's2', 'mode': 'w4a4_norot', 'rbin': '', 'wikitext2_ppl': 189.9237}
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 147.92it/s]
+Token indices sequence length is longer than the specified maximum sequence length for this model (289077 > 131072). Running this sequence through the model will result in indexing errors
+{'arm': 'T-PPL2_hadamard', 'seed': 's2', 'mode': 'w4a4', 'rbin': '/home/thahn1230/dflash_workspace/outputs/rotations/llama31_hadamard/R.bin', 'wikitext2_ppl': 10.8898}
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 111.04it/s]
+Token indices sequence length is longer than the specified maximum sequence length for this model (289077 > 131072). Running this sequence through the model will result in indexing errors
+{'arm': 'T-PPL3_R1only', 'seed': 's2', 'mode': 'w4a4', 'rbin': '/home/thahn1230/dflash_workspace/outputs/rotations/llama31_w4a4kv16_s2/R1only.bin', 'wikitext2_ppl': 10.3309}
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 89.95it/s]
+Token indices sequence length is longer than the specified maximum sequence length for this model (289077 > 131072). Running this sequence through the model will result in indexing errors
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 183.10it/s]
+{'arm': 'T-PPL4_R1R2', 'seed': 's2', 'mode': 'w4a4', 'rbin': '/home/thahn1230/dflash_workspace/outputs/rotations/llama31_w4a4kv16_s2/R.bin', 'wikitext2_ppl': 8.7897, 'fp_equiv': 'argmax_agree=0.9609;logit_maxabs=1.188'}
+GATE C (s2): PASS (fp16 7.4368 rtn 189.9237 had 10.8898 R1R2 8.7897)

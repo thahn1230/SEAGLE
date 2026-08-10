@@ -1,0 +1,181 @@
+08-10 10:50:12 SCHEDULER-START
+08-10 17:07:54 START tppl_s0 gpus=[0]
+08-10 17:07:54 START tppl_s1 gpus=[1]
+08-10 17:08:34 FAIL tppl_s0 rc=1 -> RETRY
+08-10 17:08:34 FAIL tppl_s1 rc=1 -> RETRY
+08-10 17:08:35 START tppl_s0 gpus=[2]
+08-10 17:08:35 START tppl_s1 gpus=[3]
+08-10 17:09:16 FAIL tppl_s0 rc=1 -> GAVE-UP (see /home/thahn1230/dflash_workspace/dflash/runs/dflash_vanilla_spinquant_novelty_20260810_104957/logs/sched_tppl_s0.log)
+08-10 17:09:16 FAIL tppl_s1 rc=1 -> GAVE-UP (see /home/thahn1230/dflash_workspace/dflash/runs/dflash_vanilla_spinquant_novelty_20260810_104957/logs/sched_tppl_s1.log)
+08-10 17:11:44 START tppl_v2_s0 gpus=[0]
+08-10 17:11:44 START tppl_v2_s1 gpus=[1]
+08-10 17:14:51 START corpus gpus=[2]
+08-10 17:22:02 DONE corpus
+08-10 17:26:11 DONE tppl_v2_s1
+08-10 17:26:32 DONE tppl_v2_s0
+08-10 17:31:49 START M1__mtbench gpus=[0]
+08-10 17:31:49 START M1__gsm8k gpus=[1]
+08-10 17:31:49 START M1__humaneval gpus=[2]
+08-10 17:31:49 START M1__sharegpt gpus=[3]
+08-10 18:12:58 SCHEDULER-START
+08-10 18:12:59 SKIP-ARTIFACT M1__mtbench
+08-10 18:12:59 SKIP-ARTIFACT M1__gsm8k
+08-10 18:12:59 SKIP-ARTIFACT M1__humaneval
+08-10 18:12:59 SKIP-ARTIFACT M1__sharegpt
+08-10 18:20:34 SCHEDULER-START
+08-10 18:21:18 START tppl_s0 gpus=[0]
+08-10 18:21:38 FAIL tppl_s0 rc=1 -> RETRY
+08-10 18:22:21 START tppl_s0 gpus=[0]
+08-10 18:26:12 FAIL tppl_s0 rc=1 -> GAVE-UP (see /home/thahn1230/dflash_workspace/dflash/runs/dflash_vanilla_spinquant_novelty_20260810_104957/logs/sched_tppl_s0.log)
+08-10 18:26:55 START tppl_s1 gpus=[0]
+08-10 18:27:18 SCHEDULER-START
+08-10 18:29:06 START hcache_s1 gpus=[0]
+08-10 18:34:41 DONE hcache_s1
+08-10 18:35:24 START draft_rot_s1r0 gpus=[0]
+08-10 18:43:01 DONE draft_rot_s1r0
+08-10 18:43:43 START M0_check gpus=[0]
+08-10 18:46:30 DONE M0_check
+08-10 18:47:13 START M1__mtbench_r gpus=[0]
+08-10 18:55:12 START draft_rot_s1r1 gpus=[3]
+08-10 19:02:46 DONE draft_rot_s1r1
+08-10 19:03:28 START draft_rot_s1r2 gpus=[3]
+08-10 19:10:41 DONE draft_rot_s1r2
+08-10 19:11:24 START M0__mtbench gpus=[3]
+08-10 19:19:42 DONE M0__mtbench
+08-10 19:20:25 START M0__gsm8k gpus=[3]
+08-10 19:25:34 DONE M0__gsm8k
+08-10 19:26:17 START M0__humaneval gpus=[3]
+08-10 19:32:29 DONE M0__humaneval
+08-10 19:33:12 START M0__sharegpt gpus=[3]
+08-10 19:38:22 DONE M0__sharegpt
+08-10 19:39:04 START draft_rot_s1r0_nor2 gpus=[3]
+08-10 19:46:19 DONE draft_rot_s1r0_nor2
+08-10 19:53:48 SCHEDULER-START
+08-10 19:53:50 SKIP-ARTIFACT M1__mtbench_r
+08-10 19:55:56 START draft_ladder gpus=[3]
+08-10 19:57:19 DONE draft_ladder
+08-10 20:00:09 START gateG gpus=[3]
+08-10 20:03:38 FAIL gateG rc=1 -> RETRY
+08-10 20:03:39 SKIP-ARTIFACT gateG
+08-10 20:04:21 START M2__mtbench gpus=[3]
+08-10 20:07:48 FAIL M2__mtbench rc=1 -> RETRY
+08-10 20:07:49 SKIP-ARTIFACT M2__mtbench
+08-10 20:08:31 START M3__mtbench gpus=[3]
+08-10 20:11:58 FAIL M3__mtbench rc=1 -> RETRY
+08-10 20:11:59 SKIP-ARTIFACT M3__mtbench
+08-10 20:12:41 START M3__gsm8k gpus=[3]
+08-10 20:16:09 FAIL M3__gsm8k rc=1 -> RETRY
+08-10 20:16:10 SKIP-ARTIFACT M3__gsm8k
+08-10 20:16:52 START M3__humaneval gpus=[3]
+08-10 20:20:00 FAIL M3__humaneval rc=1 -> RETRY
+08-10 20:20:01 SKIP-ARTIFACT M3__humaneval
+08-10 20:20:43 START M3__sharegpt gpus=[3]
+08-10 20:24:11 FAIL M3__sharegpt rc=1 -> RETRY
+08-10 20:24:12 SKIP-ARTIFACT M3__sharegpt
+08-10 20:36:26 SCHEDULER-START
+08-10 20:37:09 START gateG gpus=[1]
+08-10 20:37:09 START M2__mtbench gpus=[3]
+08-10 20:39:54 FAIL gateG rc=1 -> RETRY
+08-10 20:40:36 FAIL M2__mtbench rc=1 -> RETRY
+08-10 20:40:36 START gateG gpus=[1]
+08-10 20:41:18 START M2__mtbench gpus=[3]
+08-10 20:43:22 FAIL gateG rc=1 -> GAVE-UP (see /home/thahn1230/dflash_workspace/dflash/runs/dflash_vanilla_spinquant_novelty_20260810_104957/logs/sched_gateG.log)
+08-10 20:44:45 FAIL M2__mtbench rc=1 -> GAVE-UP (see /home/thahn1230/dflash_workspace/dflash/runs/dflash_vanilla_spinquant_novelty_20260810_104957/logs/sched_M2__mtbench.log)
+08-10 20:48:38 START M3v2__mtbench gpus=[1]
+08-10 20:48:38 START M3v2__gsm8k gpus=[3]
+08-10 20:48:41 START M3v2__mtbench gpus=[1]
+08-10 20:48:41 START M3v2__gsm8k gpus=[3]
+08-10 20:49:01 FAIL M3v2__mtbench rc=1 -> RETRY
+08-10 20:49:01 FAIL M3v2__gsm8k rc=1 -> RETRY
+08-10 20:52:06 SKIP-ARTIFACT M3__mtbench
+08-10 20:52:06 SKIP-ARTIFACT M3__gsm8k
+08-10 20:52:11 SKIP-ARTIFACT M3v2__mtbench
+08-10 20:52:11 SKIP-ARTIFACT M3v2__gsm8k
+08-10 20:59:02 START M3v2__humaneval gpus=[2]
+08-10 21:01:39 START M3v2__humaneval gpus=[0]
+08-10 21:02:29 SKIP-ARTIFACT M3__humaneval
+08-10 21:34:08 DONE M3v2__gsm8k
+08-10 21:34:50 START M3v2__sharegpt gpus=[3]
+08-10 21:38:13 SKIP-ARTIFACT M3v2__sharegpt
+08-10 21:38:16 SKIP-ARTIFACT M3__sharegpt
+08-10 21:41:21 DONE M3v2__humaneval
+08-10 21:42:03 START M2v2__mtbench gpus=[2]
+08-10 21:42:03 START M2v2__mtbench gpus=[2]
+08-10 21:42:23 FAIL M2v2__mtbench rc=1 -> RETRY
+08-10 21:42:23 FAIL M2v2__mtbench rc=1 -> RETRY
+08-10 21:43:05 DONE M3v2__humaneval
+08-10 21:43:06 START M2v2__mtbench gpus=[2]
+08-10 21:43:06 START M2v2__mtbench gpus=[2]
+08-10 21:43:26 FAIL M2v2__mtbench rc=1 -> GAVE-UP (see /home/thahn1230/dflash_workspace/dflash/runs/dflash_vanilla_spinquant_novelty_20260810_104957/logs/sched_M2v2__mtbench.log)
+08-10 21:43:26 FAIL M2v2__mtbench rc=1 -> GAVE-UP (see /home/thahn1230/dflash_workspace/dflash/runs/dflash_vanilla_spinquant_novelty_20260810_104957/logs/sched_M2v2__mtbench.log)
+08-10 21:44:24 SCHEDULER-START
+08-10 21:45:07 START M3v2__sharegpt gpus=[0]
+08-10 21:45:07 START M2v2__mtbench gpus=[2]
+08-10 21:45:49 START M2v3__mtbench gpus=[3]
+08-10 22:17:45 FAIL M2v2__mtbench rc=-15 -> RETRY
+08-10 22:17:46 SKIP-ARTIFACT M2v2__mtbench
+08-10 22:17:46 START HP0_ctxA8__mtbench gpus=[1]
+08-10 22:18:28 START HP1_ctxFP16__mtbench gpus=[2]
+08-10 22:41:20 DONE M3v2__sharegpt
+08-10 22:42:01 DONE M2v3__mtbench
+08-10 22:51:22 START V_M3__gsm8kvalid gpus=[0]
+08-10 22:51:22 START V_M4a_p2__gsm8kvalid gpus=[3]
+08-10 22:58:11 DONE HP0_ctxA8__mtbench
+08-10 22:58:52 DONE HP1_ctxFP16__mtbench
+08-10 22:58:53 START V_M5_rc__gsm8kvalid gpus=[1]
+08-10 22:59:34 START V_M5_rconly__gsm8kvalid gpus=[2]
+08-10 23:05:01 DONE V_M3__gsm8kvalid
+08-10 23:05:43 DONE V_M4a_p2__gsm8kvalid
+08-10 23:05:43 START V_M3id__gsm8kvalid gpus=[0]
+08-10 23:08:27 DONE V_M5_rc__gsm8kvalid
+08-10 23:09:30 DONE V_M5_rconly__gsm8kvalid
+08-10 23:15:04 START M5_p2rc__mtbench gpus=[1]
+08-10 23:15:04 START M5_p2rc__gsm8k gpus=[2]
+08-10 23:15:04 START M5_p2rc__humaneval gpus=[3]
+08-10 23:16:26 START tppl_v2_s2 gpus=[4]
+08-10 23:16:26 START M5_p2rc__sharegpt gpus=[5]
+08-10 23:16:26 START V_G1__gsm8kvalid gpus=[6]
+08-10 23:16:26 START V_G1_rc__gsm8kvalid gpus=[7]
+08-10 23:27:06 DONE V_G1_rc__gsm8kvalid
+08-10 23:27:46 START M5_rconly__mtbench gpus=[7]
+08-10 23:28:46 DONE V_M3id__gsm8kvalid
+08-10 23:29:27 START M5_rconly__gsm8k gpus=[0]
+08-10 23:31:47 DONE tppl_v2_s2
+08-10 23:32:27 START M5_rconly__humaneval gpus=[4]
+08-10 23:32:47 DONE V_G1__gsm8kvalid
+08-10 23:33:27 START M5_rconly__sharegpt gpus=[6]
+08-10 23:39:27 DONE M5_p2rc__humaneval
+08-10 23:40:08 START V_M4b_mp3__gsm8kvalid gpus=[3]
+08-10 23:44:28 DONE M5_p2rc__gsm8k
+08-10 23:48:09 DONE M5_p2rc__sharegpt
+08-10 23:53:33 DONE V_M4b_mp3__gsm8kvalid
+08-10 23:56:57 DONE M5_p2rc__mtbench
+08-10 23:57:17 DONE M5_rconly__humaneval
+08-10 23:57:38 DONE M5_rconly__gsm8k
+08-11 00:04:12 DONE M5_rconly__sharegpt
+08-11 00:12:31 DONE M5_rconly__mtbench
+08-11 00:12:32 QUEUE-DRAINED (idle, waiting for appends)
+08-11 00:13:53 QUEUE-DRAINED (idle, waiting for appends)
+08-11 00:15:14 START rcal_M3_vsq gpus=[0]
+08-11 00:15:14 START rcal_M5_p2rc gpus=[1]
+08-11 00:15:14 START S2CHK__mtbench gpus=[2]
+08-11 00:15:14 START HP2_rcVSa8__mtbench gpus=[3]
+08-11 00:17:37 START mech gpus=[4]
+08-11 00:17:57 DONE mech
+08-11 00:18:39 START qat_pilot_lr3e-3 gpus=[4]
+08-11 00:18:39 START qat_pilot_lr1e-2 gpus=[5]
+08-11 00:18:39 START qat_pilot_lr3e-2 gpus=[6]
+08-11 00:18:39 START qat_pilot_lr1e-1 gpus=[7]
+08-11 00:20:59 DONE qat_pilot_lr3e-3
+08-11 00:20:59 DONE qat_pilot_lr1e-2
+08-11 00:20:59 DONE qat_pilot_lr3e-2
+08-11 00:21:19 DONE qat_pilot_lr1e-1
+08-11 00:22:21 DONE rcal_M5_p2rc
+08-11 00:25:47 FAIL rcal_M3_vsq rc=-15 -> RETRY
+08-11 00:25:47 FAIL S2CHK__mtbench rc=-15 -> RETRY
+08-11 00:25:47 FAIL HP2_rcVSa8__mtbench rc=-15 -> RETRY
+08-11 00:25:48 SKIP-ARTIFACT S2CHK__mtbench
+08-11 00:25:48 SKIP-ARTIFACT HP2_rcVSa8__mtbench
+08-11 00:25:48 START rcal_M3_vsq gpus=[1]
+08-11 00:26:08 FAIL rcal_M3_vsq rc=-15 -> GAVE-UP (see /home/thahn1230/dflash_workspace/dflash/runs/dflash_vanilla_spinquant_novelty_20260810_104957/logs/sched_rcal_M3_vsq.log)
+08-11 00:26:09 QUEUE-DRAINED (idle, waiting for appends)

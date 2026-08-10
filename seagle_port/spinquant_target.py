@@ -85,15 +85,17 @@ def quantize_target_weights(model, w_bits: int) -> int:
     return n
 
 
-def install_act_quant(model, a_bits: int, fp32_had: bool = False) -> None:
+def install_act_quant(model, a_bits: int, fp32_had: bool = False,
+                      online_had: bool = True) -> None:
     """Wrap decoder-layer linears in ActQuantWrapper; enable online R4 Hadamard
-    on down_proj input; configure per-token asym act quant (16 = passthrough)."""
+    on down_proj input (only when the weight side was folded by rotate_target);
+    configure per-token asym act quant (16 = passthrough)."""
     quant_utils.add_actquant(model.model.layers)
     had_K, K = hadamard_utils.get_hadK(model.config.intermediate_size)
     for layer in model.model.layers:
         for name, mod in layer.named_modules():
             if isinstance(mod, quant_utils.ActQuantWrapper):
-                if name.endswith("mlp.down_proj"):
+                if online_had and name.endswith("mlp.down_proj"):
                     mod.online_full_had = True
                     mod.had_K = had_K
                     mod.K = K
@@ -105,10 +107,16 @@ def install_act_quant(model, a_bits: int, fp32_had: bool = False) -> None:
 
 def build_target(model_id: str, mode: str, rbin_path: str | None = None,
                  dtype=torch.bfloat16, device="cuda", attn="sdpa"):
-    """mode: fp16 | rot_fp16 | w8a8 | w4a4  (rotated modes need rbin_path)."""
+    """mode: fp16 | rot_fp16 | w8a8 | w4a4 (rotated, need rbin_path)
+           | w4a4_norot (pure RTN, no rotation, no online Hadamard)."""
     model = load_target(model_id, dtype=dtype, device=device, attn=attn)
     if mode == "fp16":
         return model
+    if mode == "w4a4_norot":
+        model.cuda()
+        quantize_target_weights(model, 4)
+        install_act_quant(model, 4, online_had=False)
+        return model.to(device).eval()
     assert rbin_path, "rotated modes need an R.bin"
     rbin = load_rbin(rbin_path)
     rotate_target(model, rbin)

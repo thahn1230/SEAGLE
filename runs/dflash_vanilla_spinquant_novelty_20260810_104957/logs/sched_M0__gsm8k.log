@@ -1,0 +1,22 @@
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 91.22it/s]
+[M0_fp16] 10/200 cycle-tau=3.7997
+[M0_fp16] 20/200 cycle-tau=4.0255
+[M0_fp16] 30/200 cycle-tau=4.0935
+[M0_fp16] 40/200 cycle-tau=4.0761
+[M0_fp16] 50/200 cycle-tau=4.1164
+[M0_fp16] 60/200 cycle-tau=4.1094
+[M0_fp16] 70/200 cycle-tau=4.1018
+[M0_fp16] 80/200 cycle-tau=4.1526
+[M0_fp16] 90/200 cycle-tau=4.1635
+[M0_fp16] 100/200 cycle-tau=4.1665
+[M0_fp16] 110/200 cycle-tau=4.1730
+[M0_fp16] 120/200 cycle-tau=4.1515
+[M0_fp16] 130/200 cycle-tau=4.1735
+[M0_fp16] 140/200 cycle-tau=4.1906
+[M0_fp16] 150/200 cycle-tau=4.1830
+[M0_fp16] 160/200 cycle-tau=4.1902
+[M0_fp16] 170/200 cycle-tau=4.2112
+[M0_fp16] 180/200 cycle-tau=4.2330
+[M0_fp16] 190/200 cycle-tau=4.2184
+[M0_fp16] 200/200 cycle-tau=4.2129
+[M0_fp16] DONE gsm8k cycle-pooled tau = 4.2129 over 11213 cycles

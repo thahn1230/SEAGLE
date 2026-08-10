@@ -1,0 +1,51 @@
+{
+ "snapshot_time": "2026-08-10 14:51:12",
+ "git_head": "cd1771acc79d4e8761beed53ca8c9555c82abac0",
+ "jobs": [
+  {
+   "job": "target_rotation_w4a4kv16_seed0",
+   "model": "TARGET (meta-llama/Llama-3.1-8B-Instruct)",
+   "category": "T (official SpinQuant R1/R2) -> KEEP RUNNING",
+   "gpus": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "launcher": "/home/thahn1230/dflash_workspace/launch_rotopt_s0.sh",
+   "start": "2026-08-10 10:50 KST",
+   "step": "64/100",
+   "train_loss": 2.3603,
+   "forward_loss": "official SpinQuant optimize_rotation.py (causal LM CE on wikitext-2 calibration, quantized network w4a4kv16)",
+   "trainable": "R1 [4096x4096] + R2 per-layer [128x128] only (weights frozen)",
+   "optimizer": "SGDG (Cayley, stiefel=True), lr 1.5 cosine",
+   "calibration": "wikitext-2 train (SpinQuant default; disjoint from 4 AL test sets)",
+   "quant_objective": "W4A4, KV16 (matches deployment contract; NOT the old w16a4kv16)",
+   "checkpoint_out": "/home/thahn1230/dflash_workspace/outputs/rotations/llama31_w4a4kv16_s0/R.bin",
+   "cmdline": "#!/bin/bash\ncd /home/thahn1230/eagle_spinquant_w4a4/third_party/SpinQuant\nexport CUDA_VISIBLE_DEVICES=0,1,2,3\nexport PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True\nexport NCCL_P2P_DISABLE=1 NCCL_IB_DISABLE=1 WANDB_DISABLED=true WANDB_MODE=disabled\nOUT=/home/thahn1230/dflash_workspace/outputs/rotations/llama31_w4a4kv16_s0\nmkdir -p $OUT\nexec torchrun --nnodes=1 --nproc_per_node=4 --master_port=29600 optimize_rotation.py   --input_model meta-llama/Llama-3.1-8B-Instruct   --output_rotation_path $OUT   --output_dir $OUT/hf_trainer --logging_dir $OUT/logs   --model_max_length 2048 --fp16 False --bf16 True --log_on_each_node False   --per_device_train_batch_size 1 --logging_steps 1 --learning_rate 1.5   --weight_decay 0. --lr_scheduler_type cosine --gradient_checkpointing True   --save_safetensors False --report_to none --max_steps 100   --w_bits 4 --a_bits 4 --k_bits 16 --v_bits 16   --w_clip --a_asym --k_asym --v_asym --k_groupsize 128 --v_groupsize 128   --seed 0 --rotation_seed 0\n"
+  },
+  {
+   "job": "target_rotation_w4a4kv16_seed1",
+   "model": "TARGET (meta-llama/Llama-3.1-8B-Instruct)",
+   "category": "T (official SpinQuant R1/R2) -> KEEP RUNNING",
+   "gpus": [
+    4,
+    5,
+    6,
+    7
+   ],
+   "launcher": "/home/thahn1230/dflash_workspace/launch_rotopt_s1.sh",
+   "start": "2026-08-10 10:50 KST",
+   "step": "64/100",
+   "train_loss": 2.372,
+   "forward_loss": "official SpinQuant optimize_rotation.py (causal LM CE on wikitext-2 calibration, quantized network w4a4kv16)",
+   "trainable": "R1 [4096x4096] + R2 per-layer [128x128] only (weights frozen)",
+   "optimizer": "SGDG (Cayley, stiefel=True), lr 1.5 cosine",
+   "calibration": "wikitext-2 train (SpinQuant default; disjoint from 4 AL test sets)",
+   "quant_objective": "W4A4, KV16 (matches deployment contract; NOT the old w16a4kv16)",
+   "checkpoint_out": "/home/thahn1230/dflash_workspace/outputs/rotations/llama31_w4a4kv16_s1/R.bin",
+   "cmdline": "#!/bin/bash\ncd /home/thahn1230/eagle_spinquant_w4a4/third_party/SpinQuant\nexport CUDA_VISIBLE_DEVICES=4,5,6,7\nexport PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True\nexport NCCL_P2P_DISABLE=1 NCCL_IB_DISABLE=1 WANDB_DISABLED=true WANDB_MODE=disabled\nOUT=/home/thahn1230/dflash_workspace/outputs/rotations/llama31_w4a4kv16_s1\nmkdir -p $OUT\nexec torchrun --nnodes=1 --nproc_per_node=4 --master_port=29601 optimize_rotation.py   --input_model meta-llama/Llama-3.1-8B-Instruct   --output_rotation_path $OUT   --output_dir $OUT/hf_trainer --logging_dir $OUT/logs   --model_max_length 2048 --fp16 False --bf16 True --log_on_each_node False   --per_device_train_batch_size 1 --logging_steps 1 --learning_rate 1.5   --weight_decay 0. --lr_scheduler_type cosine --gradient_checkpointing True   --save_safetensors False --report_to none --max_steps 100   --w_bits 4 --a_bits 4 --k_bits 16 --v_bits 16   --w_clip --a_asym --k_asym --v_asym --k_groupsize 128 --v_groupsize 128   --seed 1 --rotation_seed 1\n"
+  }
+ ],
+ "draft_rotation_jobs": "NONE launched yet (trainer not written at update time) \u2014 no D-category classification needed"
+}

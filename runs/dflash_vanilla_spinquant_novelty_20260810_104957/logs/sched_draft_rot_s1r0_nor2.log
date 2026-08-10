@@ -1,0 +1,59 @@
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 181.93it/s]
+[init] val_ce 7.0936 acc 0.0418
+{'step': 10, 'loss': 7.1721, 'acc': 0.0647, 'dev_from_I': 18.367}
+{'step': 20, 'loss': 7.1423, 'acc': 0.0652, 'dev_from_I': 26.981}
+[val] step 25 ce 7.3764 acc 0.0359
+{'step': 30, 'loss': 6.5737, 'acc': 0.0524, 'dev_from_I': 33.169}
+{'step': 40, 'loss': 7.7822, 'acc': 0.066, 'dev_from_I': 37.807}
+{'step': 50, 'loss': 6.742, 'acc': 0.0437, 'dev_from_I': 41.611}
+[val] step 50 ce 7.0193 acc 0.0413
+{'step': 60, 'loss': 6.3276, 'acc': 0.0406, 'dev_from_I': 44.89}
+{'step': 70, 'loss': 6.9189, 'acc': 0.0733, 'dev_from_I': 47.708}
+[val] step 75 ce 6.8681 acc 0.0444
+{'step': 80, 'loss': 6.9346, 'acc': 0.0662, 'dev_from_I': 50.176}
+{'step': 90, 'loss': 6.1237, 'acc': 0.0643, 'dev_from_I': 52.42}
+{'step': 100, 'loss': 5.818, 'acc': 0.0468, 'dev_from_I': 54.515}
+[val] step 100 ce 6.9086 acc 0.0479
+{'step': 110, 'loss': 5.8961, 'acc': 0.0772, 'dev_from_I': 56.436}
+{'step': 120, 'loss': 6.7924, 'acc': 0.0538, 'dev_from_I': 58.215}
+[val] step 125 ce 7.1036 acc 0.0483
+{'step': 130, 'loss': 7.5096, 'acc': 0.0174, 'dev_from_I': 59.925}
+{'step': 140, 'loss': 6.7618, 'acc': 0.0526, 'dev_from_I': 61.531}
+{'step': 150, 'loss': 4.9474, 'acc': 0.106, 'dev_from_I': 63.099}
+[val] step 150 ce 6.5028 acc 0.0670
+{'step': 160, 'loss': 5.4474, 'acc': 0.059, 'dev_from_I': 64.667}
+{'step': 170, 'loss': 5.3127, 'acc': 0.1434, 'dev_from_I': 66.239}
+[val] step 175 ce 5.9492 acc 0.0867
+{'step': 180, 'loss': 5.2151, 'acc': 0.0733, 'dev_from_I': 67.783}
+{'step': 190, 'loss': 5.1048, 'acc': 0.1254, 'dev_from_I': 69.271}
+{'step': 200, 'loss': 4.4956, 'acc': 0.1679, 'dev_from_I': 70.672}
+[val] step 200 ce 5.1388 acc 0.1170
+{'step': 210, 'loss': 5.2653, 'acc': 0.0659, 'dev_from_I': 71.964}
+{'step': 220, 'loss': 3.6823, 'acc': 0.1888, 'dev_from_I': 73.126}
+[val] step 225 ce 4.8301 acc 0.1358
+{'step': 230, 'loss': 4.1711, 'acc': 0.2083, 'dev_from_I': 74.169}
+{'step': 240, 'loss': 3.9565, 'acc': 0.1484, 'dev_from_I': 75.141}
+{'step': 250, 'loss': 4.7699, 'acc': 0.1373, 'dev_from_I': 76.058}
+[val] step 250 ce 4.9098 acc 0.1220
+{'step': 260, 'loss': 4.0465, 'acc': 0.1424, 'dev_from_I': 76.953}
+{'step': 270, 'loss': 3.8336, 'acc': 0.1919, 'dev_from_I': 77.825}
+[val] step 275 ce 4.9606 acc 0.1240
+{'step': 280, 'loss': 3.6386, 'acc': 0.1771, 'dev_from_I': 78.681}
+{'step': 290, 'loss': 4.2933, 'acc': 0.1736, 'dev_from_I': 79.508}
+{'step': 300, 'loss': 5.0192, 'acc': 0.1032, 'dev_from_I': 80.31}
+[val] step 300 ce 4.9836 acc 0.1285
+{'step': 310, 'loss': 3.8163, 'acc': 0.1806, 'dev_from_I': 81.088}
+{'step': 320, 'loss': 5.8181, 'acc': 0.1215, 'dev_from_I': 81.85}
+[val] step 325 ce 4.7859 acc 0.1385
+{'step': 330, 'loss': 3.9635, 'acc': 0.1317, 'dev_from_I': 82.604}
+{'step': 340, 'loss': 4.3901, 'acc': 0.1533, 'dev_from_I': 83.329}
+{'step': 350, 'loss': 5.3668, 'acc': 0.0938, 'dev_from_I': 84.034}
+[val] step 350 ce 5.0285 acc 0.1404
+{'step': 360, 'loss': 4.0204, 'acc': 0.1701, 'dev_from_I': 84.719}
+{'step': 370, 'loss': 3.8092, 'acc': 0.1393, 'dev_from_I': 85.38}
+[val] step 375 ce 4.8465 acc 0.1262
+{'step': 380, 'loss': 4.4841, 'acc': 0.1418, 'dev_from_I': 86.015}
+{'step': 390, 'loss': 4.6032, 'acc': 0.1092, 'dev_from_I': 86.625}
+{'step': 400, 'loss': 3.7901, 'acc': 0.1957, 'dev_from_I': 87.212}
+[val] step 400 ce 4.9220 acc 0.1301
+[train_draft_rot] DONE best_val 4.7859 @ 325 init 7.0936 orth 3.34e-06

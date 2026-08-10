@@ -33,7 +33,11 @@ def dflash_generate_hooked(
     head_fn=None,
     record_cycles=False,
     return_stats=True,
+    stateless_ctx=False,
 ):
+    """stateless_ctx: for drafts without a KV cache (RotQuantDraft) — the
+    full context-feature history is accumulated host-side and passed whole
+    every cycle; position_ids = [0..prefix) ++ [start..start+B)."""
     num_input_tokens = input_ids.shape[1]
     max_length = num_input_tokens + max_new_tokens
     block_size = model.block_size if block_size is None else block_size
@@ -80,16 +84,31 @@ def dflash_generate_hooked(
         block_position_ids = position_ids[:, start:start + block_size]
         if block_size > 1:
             noise_embedding = embed_fn(block_output_ids)
-            draft_logits = head_fn(model(
-                target_hidden=target_hidden,
-                noise_embedding=noise_embedding,
-                position_ids=position_ids[
-                    :, past_key_values_draft.get_seq_length():start + block_size],
-                past_key_values=past_key_values_draft,
-                use_cache=True,
-                is_causal=False,
-            )[:, 1 - block_size:, :])
-            past_key_values_draft.crop(start)
+            if stateless_ctx:
+                pl = target_hidden.shape[1]
+                pos_sl = torch.cat(
+                    [position_ids[:, :pl],
+                     position_ids[:, start:start + block_size]], dim=1)
+                draft_logits = head_fn(model(
+                    target_hidden=target_hidden,
+                    noise_embedding=noise_embedding,
+                    position_ids=pos_sl,
+                    attention_mask=None,
+                    use_cache=False,
+                    is_causal=False,
+                )[:, 1 - block_size:, :])
+            else:
+                draft_logits = head_fn(model(
+                    target_hidden=target_hidden,
+                    noise_embedding=noise_embedding,
+                    position_ids=position_ids[
+                        :, past_key_values_draft.get_seq_length():
+                        start + block_size],
+                    past_key_values=past_key_values_draft,
+                    use_cache=True,
+                    is_causal=False,
+                )[:, 1 - block_size:, :])
+                past_key_values_draft.crop(start)
             block_output_ids[:, 1:] = sample(draft_logits)
             if draft_prefill and return_stats:
                 draft_prefill = False
@@ -122,11 +141,13 @@ def dflash_generate_hooked(
         acceptance_lengths.append(acceptance_length + 1)
 
         if block_size > 1:
-            target_hidden = extract_context_feature(
+            new_th = extract_context_feature(
                 output.hidden_states, model.target_layer_ids
             )[:, :acceptance_length + 1, :]
             if ctx_transform is not None:
-                target_hidden = ctx_transform(target_hidden)
+                new_th = ctx_transform(new_th)
+            target_hidden = torch.cat([target_hidden, new_th], dim=1) \
+                if stateless_ctx else new_th
 
         if stop_token_ids is not None and any(
             stop_token_id in output_ids[:, num_input_tokens:]

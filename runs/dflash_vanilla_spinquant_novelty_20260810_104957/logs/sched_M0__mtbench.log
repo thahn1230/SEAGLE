@@ -1,0 +1,10 @@
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 98.47it/s]
+[M0_fp16] 10/80 cycle-tau=3.1699
+[M0_fp16] 20/80 cycle-tau=3.1099
+[M0_fp16] 30/80 cycle-tau=3.2288
+[M0_fp16] 40/80 cycle-tau=3.5172
+[M0_fp16] 50/80 cycle-tau=4.0230
+[M0_fp16] 60/80 cycle-tau=4.1045
+[M0_fp16] 70/80 cycle-tau=3.9680
+[M0_fp16] 80/80 cycle-tau=3.8619
+[M0_fp16] DONE mtbench cycle-pooled tau = 3.8619 over 17242 cycles

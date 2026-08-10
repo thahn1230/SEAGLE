@@ -1,0 +1,8 @@
+{
+ "spinquant_commit": "vendored @ eagle_spinquant_w4a4/third_party/SpinQuant (SEAGLE-pinned)",
+ "specforge_commit": "87e8cf4b7cb8a53376dbde1b7226ef2558f78079",
+ "deepspec_commit": "005e03b81cec38b7da6399833d609ee89a2587f2",
+ "dflash_commit": "94e4abc5e0c31b67bc1a9d30f1cc34ece28a8756",
+ "retrieval_time": "2026-08-10T14:51:12",
+ "refs_location": "/home/thahn1230/dflash_workspace/refs/ (read-only clones)"
+}

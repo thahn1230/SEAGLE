@@ -1,0 +1,18 @@
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 94.31it/s]
+[M0_fp16] 10/164 cycle-tau=4.9356
+[M0_fp16] 20/164 cycle-tau=4.8194
+[M0_fp16] 30/164 cycle-tau=4.9528
+[M0_fp16] 40/164 cycle-tau=4.9296
+[M0_fp16] 50/164 cycle-tau=4.8839
+[M0_fp16] 60/164 cycle-tau=4.8111
+[M0_fp16] 70/164 cycle-tau=4.8038
+[M0_fp16] 80/164 cycle-tau=4.8367
+[M0_fp16] 90/164 cycle-tau=4.8256
+[M0_fp16] 100/164 cycle-tau=4.8460
+[M0_fp16] 110/164 cycle-tau=4.8682
+[M0_fp16] 120/164 cycle-tau=4.8466
+[M0_fp16] 130/164 cycle-tau=4.8706
+[M0_fp16] 140/164 cycle-tau=4.8838
+[M0_fp16] 150/164 cycle-tau=4.8862
+[M0_fp16] 160/164 cycle-tau=4.8907
+[M0_fp16] DONE humaneval cycle-pooled tau = 4.8920 over 13031 cycles

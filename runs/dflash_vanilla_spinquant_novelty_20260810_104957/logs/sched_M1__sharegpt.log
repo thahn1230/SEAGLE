@@ -1,0 +1,11 @@
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 89.81it/s]
+[quant] 36 QLinear, all_w_changed=True
+[M1_rtn] 10/80 cycle-tau=1.6909
+[M1_rtn] 20/80 cycle-tau=1.6885
+[M1_rtn] 30/80 cycle-tau=1.6380
+[M1_rtn] 40/80 cycle-tau=1.6216
+[M1_rtn] 50/80 cycle-tau=1.6035
+[M1_rtn] 60/80 cycle-tau=1.6068
+[M1_rtn] 70/80 cycle-tau=1.5870
+[M1_rtn] 80/80 cycle-tau=1.6105
+[M1_rtn] DONE sharegpt cycle-pooled tau = 1.6105 over 36385 cycles
