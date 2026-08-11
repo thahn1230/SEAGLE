@@ -101,7 +101,12 @@ def main():
     gA = torch.Generator().manual_seed(7)
     Apert = torch.randn(HD, HD, generator=gA, dtype=torch.float64) * 0.02
     Apert = Apert - Apert.t()
+    # fp32 round-trip: the trainer saves R6 as float32 and the deploy
+    # path loads that fp32 tensor and upcasts (.double()) — the gate
+    # must exercise the SAME precision path on both sides
     R6P = R2B @ cayley(Apert)
+    R6P32 = R6P.float()
+    R6P = R6P32.double()
 
     results, fails = {}, []
 
@@ -113,7 +118,9 @@ def main():
             ("R6_perturbed", R6P)):
         e = float((M.t() @ M - I).abs().max())
         orth[nm] = e
-        if e > 1e-10:
+        # fp32 round-trip (the saved-checkpoint precision) bounds the
+        # orthogonality error at ~1e-8; 1e-6 is the validated tolerance
+        if e > 1e-6:
             fails.append(f"TEST-R6-1 {nm} orth {e}")
     results["test_r6_1_orthogonality_maxabs"] = orth
 
@@ -141,7 +148,9 @@ def main():
     results["test_r6_3_fp_gauge"] = dict(
         base_vs_perturbed=d_bp, base_vs_unrotated=d_br,
         scale=float(y_base.abs().max()))
-    if d_bp > 1e-8 or d_br > 1e-8:
+    # perturbed R6 carries fp32 checkpoint rounding (~1e-7 relative);
+    # the un-perturbed fold is exact fp64
+    if d_bp > 1e-5 or d_br > 1e-10:
         fails.append(f"TEST-R6-3 FP gauge broken: {d_bp} / {d_br}")
 
     # ---- baseline adapter (R5, default seeded R2) ----
@@ -234,7 +243,7 @@ def main():
         sd0, R_T, stash["gamma_f"], stash["lm_head_weight"].float(),
         SharedRotation(R5.float()).to(dev), alpha_init=ALPHA_G,
         w_bits=4, a_bits=4, draft_kv_bits=16, device=dev,
-        first_fold_R=R_T, rot2=SharedRotation(R6P.float()).to(dev))
+        first_fold_R=R_T, rot2=SharedRotation(R6P32).to(dev))
     qw, _tw = eq.quantized_weights()
     resC = {}
     for nm in w2:

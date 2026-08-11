@@ -15,7 +15,12 @@ EV = ["python", "scripts/eval_eagle_acceptance_length.py"]
 
 
 def deploy_args(sd_path):
-    if rdck != "none":
+    if rdck != "none" and arec == "none":
+        # GS + R_D: global scale, no pathwise rescale (must NOT fall
+        # back to the LS alpha_rec stored inside the R_D checkpoint)
+        a = ["--target", tgt, "--draft-cfg", "rot",
+             "--ckpt", rdck, "--alpha", alpha]
+    elif rdck != "none":
         a = ["--target", tgt, "--draft-cfg", "rot_ep3p",
              "--ckpt", rdck, "--alpha", alpha, "--alpha-rec", arec]
     else:
