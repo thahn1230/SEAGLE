@@ -1,0 +1,91 @@
+Traceback (most recent call last):
+  File "/home/thahn1230/dflash_workspace/venv/lib/python3.12/site-packages/transformers/utils/hub.py", line 479, in cached_files
+    hf_hub_download(
+  File "/home/thahn1230/dflash_workspace/venv/lib/python3.12/site-packages/huggingface_hub/utils/_validators.py", line 114, in _inner_fn
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/home/thahn1230/dflash_workspace/venv/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 1014, in hf_hub_download
+    return _hf_hub_download_to_cache_dir(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/thahn1230/dflash_workspace/venv/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 1131, in _hf_hub_download_to_cache_dir
+    os.makedirs(os.path.dirname(blob_path), exist_ok=True)
+  File "<frozen os>", line 215, in makedirs
+  File "<frozen os>", line 225, in makedirs
+PermissionError: [Errno 13] Permission denied: '/data/.cache/huggingface/hub/models--z-lab--LLaMA3.1-8B-Instruct-DFlash-UltraChat'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/thahn1230/dflash_workspace/dflash/seagle_port/vsq_train_qat.py", line 148, in <module>
+    main()
+  File "/home/thahn1230/dflash_workspace/dflash/seagle_port/vsq_train_qat.py", line 74, in main
+    rq = build(args.arm, args.rbin, args.rot_ckpt, dev)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/thahn1230/dflash_workspace/dflash/seagle_port/vsq_train_qat.py", line 33, in build
+    base = DFlashDraftModel.from_pretrained(DRAFT, dtype=torch.bfloat16)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/thahn1230/dflash_workspace/venv/lib/python3.12/site-packages/transformers/modeling_utils.py", line 277, in _wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/thahn1230/dflash_workspace/venv/lib/python3.12/site-packages/transformers/modeling_utils.py", line 4734, in from_pretrained
+    resolved_config_file = cached_file(
+                           ^^^^^^^^^^^^
+  File "/home/thahn1230/dflash_workspace/venv/lib/python3.12/site-packages/transformers/utils/hub.py", line 322, in cached_file
+    file = cached_files(path_or_repo_id=path_or_repo_id, filenames=[filename], **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/thahn1230/dflash_workspace/venv/lib/python3.12/site-packages/transformers/utils/hub.py", line 524, in cached_files
+    raise OSError(
+OSError: PermissionError at /data/.cache/huggingface/hub/models--z-lab--LLaMA3.1-8B-Instruct-DFlash-UltraChat when downloading z-lab/LLaMA3.1-8B-Instruct-DFlash-UltraChat. Check cache directory permissions. Common causes: 1) another user is downloading the same model (please wait); 2) a previous download was canceled and the lock file needs manual removal.
+Traceback (most recent call last):
+  File "/home/thahn1230/dflash_workspace/venv/lib/python3.12/site-packages/transformers/utils/hub.py", line 479, in cached_files
+    hf_hub_download(
+  File "/home/thahn1230/dflash_workspace/venv/lib/python3.12/site-packages/huggingface_hub/utils/_validators.py", line 114, in _inner_fn
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/home/thahn1230/dflash_workspace/venv/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 1014, in hf_hub_download
+    return _hf_hub_download_to_cache_dir(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/thahn1230/dflash_workspace/venv/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 1131, in _hf_hub_download_to_cache_dir
+    os.makedirs(os.path.dirname(blob_path), exist_ok=True)
+  File "<frozen os>", line 215, in makedirs
+  File "<frozen os>", line 225, in makedirs
+PermissionError: [Errno 13] Permission denied: '/data/.cache/huggingface/hub/models--z-lab--LLaMA3.1-8B-Instruct-DFlash-UltraChat'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/thahn1230/dflash_workspace/dflash/seagle_port/vsq_train_qat.py", line 148, in <module>
+    main()
+  File "/home/thahn1230/dflash_workspace/dflash/seagle_port/vsq_train_qat.py", line 74, in main
+    rq = build(args.arm, args.rbin, args.rot_ckpt, dev)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/thahn1230/dflash_workspace/dflash/seagle_port/vsq_train_qat.py", line 33, in build
+    base = DFlashDraftModel.from_pretrained(DRAFT, dtype=torch.bfloat16)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/thahn1230/dflash_workspace/venv/lib/python3.12/site-packages/transformers/modeling_utils.py", line 277, in _wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/thahn1230/dflash_workspace/venv/lib/python3.12/site-packages/transformers/modeling_utils.py", line 4734, in from_pretrained
+    resolved_config_file = cached_file(
+                           ^^^^^^^^^^^^
+  File "/home/thahn1230/dflash_workspace/venv/lib/python3.12/site-packages/transformers/utils/hub.py", line 322, in cached_file
+    file = cached_files(path_or_repo_id=path_or_repo_id, filenames=[filename], **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/thahn1230/dflash_workspace/venv/lib/python3.12/site-packages/transformers/utils/hub.py", line 524, in cached_files
+    raise OSError(
+OSError: PermissionError at /data/.cache/huggingface/hub/models--z-lab--LLaMA3.1-8B-Instruct-DFlash-UltraChat when downloading z-lab/LLaMA3.1-8B-Instruct-DFlash-UltraChat. Check cache directory permissions. Common causes: 1) another user is downloading the same model (please wait); 2) a previous download was canceled and the lock file needs manual removal.
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 165.08it/s]
+[qat Q2] trainable 1090.5M params lr 0.1
+[init] val_ce 7.0572
+{'step': 20, 'loss': 6.7276, 'acc': 0.0417}
+{'step': 40, 'loss': 6.9262, 'acc': 0.0278}
+[val] 50 ce 6.5725
+{'step': 60, 'loss': 5.3459, 'acc': 0.0764}
+{'step': 80, 'loss': 3.6344, 'acc': 0.1908}
+{'step': 100, 'loss': 4.4635, 'acc': 0.1667}
+[val] 100 ce 5.4004
+[qat Q2] DONE init 7.0572 best 5.4004 @ 100

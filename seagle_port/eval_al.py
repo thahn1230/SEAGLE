@@ -108,6 +108,19 @@ def main():
     ap.add_argument("--vsq-rc", default=None,
                     help="M5: context rotation for the VSQ draft — "
                          "'rt' reuses target R1; or a path to an R matrix")
+    ap.add_argument("--vsq-ctx-smooth", default=None,
+                    help="FIDI I7: path to i7_smooth_*.pt — per-channel "
+                         "diagonal scale on the ctx K/V input (post-R_C "
+                         "basis), inverse folded into the ctx views")
+    ap.add_argument("--vsq-fp-components", default=None,
+                    help="FIDI §16: comma list of components kept FP16 "
+                         "(weight+input) in RotQuantDraft — from "
+                         "fc,q,k,v,o,gate,up,down")
+    ap.add_argument("--qat-ckpt", default=None,
+                    help="Q-family: vsq_train_qat weight ckpt (.pt; loads "
+                         ".best 'state') into RotQuantDraft before "
+                         "freeze_for_eval; rotations still come from "
+                         "--vsq-draft / --vsq-rc")
     args = ap.parse_args()
 
     random.seed(0); np.random.seed(0)
@@ -182,6 +195,14 @@ def main():
             rq.cfg["ctx_a_bits"] = args.vsq_ctx_abits
         if args.vsq_p2:
             rq.cfg["fc_p2"] = True
+        if args.vsq_fp_components:
+            rq.cfg["fp_components"] = frozenset(
+                args.vsq_fp_components.split(","))
+        if args.vsq_ctx_smooth:
+            rq.ctx_smooth_buf = torch.load(
+                args.vsq_ctx_smooth,
+                weights_only=False)["s"].float().to(dev)
+            print(f"[vsq] I7 ctx smooth {args.vsq_ctx_smooth}")
         if args.vsq_rc:
             Rc = R1.float().to(dev) if args.vsq_rc == "rt" else                 torch.load(args.vsq_rc, weights_only=False)["R_C"].float().to(dev)
             rq.rc_matrix_buf = Rc
@@ -205,6 +226,17 @@ def main():
                 (lambda i: None)
             if R2b[0] is None:
                 rq.cfg["use_r2"] = False
+        if args.qat_ckpt:
+            ckq = torch.load(args.qat_ckpt + ".best", map_location="cpu",
+                             weights_only=False)
+            missing, unexpected = rq.load_state_dict(ckq["state"],
+                                                     strict=False)
+            assert not unexpected, f"QAT unexpected keys: {unexpected[:5]}"
+            bad = [k for k in missing if not k.startswith(("r1.", "r2."))]
+            assert not bad, f"QAT missing non-rotation keys: {bad[:5]}"
+            print(f"[vsq] QAT weights {args.qat_ckpt} "
+                  f"arm={ckq['meta'].get('arm')} lr={ckq['meta'].get('lr')} "
+                  f"best_ce={ckq['meta'].get('best_val_ce', '?')}")
         rq.freeze_for_eval()
         draft = rq.eval()
         stateless = True

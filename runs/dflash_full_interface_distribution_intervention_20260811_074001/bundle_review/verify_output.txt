@@ -1,0 +1,257 @@
+[OK]       A tbl M0_fp16 mtbench report vs final_4dataset_al.csv         report=3.8619 artifact=3.8619
+[OK]       A tbl M0_fp16 mtbench report vs pooled shard tau              report=3.8619 artifact=3.86191
+[OK]       A tbl M0_fp16 gsm8k report vs final_4dataset_al.csv           report=4.2129 artifact=4.2129
+[OK]       A tbl M0_fp16 gsm8k report vs pooled shard tau                report=4.2129 artifact=4.21288
+[OK]       A tbl M0_fp16 humaneval report vs final_4dataset_al.csv       report=4.8920 artifact=4.892
+[OK]       A tbl M0_fp16 humaneval report vs pooled shard tau            report=4.8920 artifact=4.89203
+[OK]       A tbl M0_fp16 sharegpt report vs final_4dataset_al.csv        report=3.8391 artifact=3.8391
+[OK]       A tbl M0_fp16 sharegpt report vs pooled shard tau             report=3.8391 artifact=3.83914
+[OK]       A tbl M0_fp16 mean report vs csv mean_4ds                     report=4.2015 artifact=4.2015
+[OK]       A tbl M0_fp16 mean report vs mean of pooled shards            report=4.2015 artifact=4.20149
+[OK]       A tbl M1_rtn mtbench report vs final_4dataset_al.csv          report=1.8740 artifact=1.874
+[OK]       A tbl M1_rtn mtbench report vs pooled shard tau               report=1.8740 artifact=1.87401
+[OK]       A tbl M1_rtn gsm8k report vs final_4dataset_al.csv            report=1.6681 artifact=1.6681
+[OK]       A tbl M1_rtn gsm8k report vs pooled shard tau                 report=1.6681 artifact=1.66806
+[OK]       A tbl M1_rtn humaneval report vs final_4dataset_al.csv        report=1.6435 artifact=1.6435
+[OK]       A tbl M1_rtn humaneval report vs pooled shard tau             report=1.6435 artifact=1.64348
+[OK]       A tbl M1_rtn sharegpt report vs final_4dataset_al.csv         report=1.6105 artifact=1.6105
+[OK]       A tbl M1_rtn sharegpt report vs pooled shard tau              report=1.6105 artifact=1.61047
+[OK]       A tbl M1_rtn mean report vs csv mean_4ds                      report=1.6990 artifact=1.699
+[OK]       A tbl M1_rtn mean report vs mean of pooled shards             report=1.6990 artifact=1.699
+[OK]       A tbl M3_vsq mtbench report vs final_4dataset_al.csv          report=1.6749 artifact=1.6749
+[OK]       A tbl M3_vsq mtbench report vs pooled shard tau               report=1.6749 artifact=1.67494
+[OK]       A tbl M3_vsq gsm8k report vs final_4dataset_al.csv            report=2.0050 artifact=2.005
+[OK]       A tbl M3_vsq gsm8k report vs pooled shard tau                 report=2.0050 artifact=2.00501
+[OK]       A tbl M3_vsq humaneval report vs final_4dataset_al.csv        report=2.0990 artifact=2.099
+[OK]       A tbl M3_vsq humaneval report vs pooled shard tau             report=2.0990 artifact=2.09897
+[OK]       A tbl M3_vsq sharegpt report vs final_4dataset_al.csv         report=1.5643 artifact=1.5643
+[OK]       A tbl M3_vsq sharegpt report vs pooled shard tau              report=1.5643 artifact=1.56431
+[OK]       A tbl M3_vsq mean report vs csv mean_4ds                      report=1.8358 artifact=1.8358
+[OK]       A tbl M3_vsq mean report vs mean of pooled shards             report=1.8358 artifact=1.83581
+[OK]       A tbl M5_rconly mtbench report vs final_4dataset_al.csv       report=3.2030 artifact=3.203
+[OK]       A tbl M5_rconly mtbench report vs pooled shard tau            report=3.2030 artifact=3.20295
+[OK]       A tbl M5_rconly gsm8k report vs final_4dataset_al.csv         report=3.3123 artifact=3.3123
+[OK]       A tbl M5_rconly gsm8k report vs pooled shard tau              report=3.3123 artifact=3.3123
+[OK]       A tbl M5_rconly humaneval report vs final_4dataset_al.csv     report=3.9836 artifact=3.9836
+[OK]       A tbl M5_rconly humaneval report vs pooled shard tau          report=3.9836 artifact=3.98361
+[OK]       A tbl M5_rconly sharegpt report vs final_4dataset_al.csv      report=3.0313 artifact=3.0313
+[OK]       A tbl M5_rconly sharegpt report vs pooled shard tau           report=3.0313 artifact=3.03128
+[OK]       A tbl M5_rconly mean report vs csv mean_4ds                   report=3.3825 artifact=3.3825
+[OK]       A tbl M5_rconly mean report vs mean of pooled shards          report=3.3825 artifact=3.38253
+[OK]       A tbl M5_p2rc mtbench report vs final_4dataset_al.csv         report=3.4395 artifact=3.4395
+[OK]       A tbl M5_p2rc mtbench report vs pooled shard tau              report=3.4395 artifact=3.43955
+[OK]       A tbl M5_p2rc gsm8k report vs final_4dataset_al.csv           report=3.5510 artifact=3.551
+[OK]       A tbl M5_p2rc gsm8k report vs pooled shard tau                report=3.5510 artifact=3.55098
+[OK]       A tbl M5_p2rc humaneval report vs final_4dataset_al.csv       report=4.5042 artifact=4.5042
+[OK]       A tbl M5_p2rc humaneval report vs pooled shard tau            report=4.5042 artifact=4.50416
+[OK]       A tbl M5_p2rc sharegpt report vs final_4dataset_al.csv        report=3.2089 artifact=3.2089
+[OK]       A tbl M5_p2rc sharegpt report vs pooled shard tau             report=3.2089 artifact=3.20888
+[OK]       A tbl M5_p2rc mean report vs csv mean_4ds                     report=3.6759 artifact=3.6759
+[OK]       A tbl M5_p2rc mean report vs mean of pooled shards            report=3.6759 artifact=3.67589
+[OK]       A tbl M6_q5bp2 mtbench report vs final_4dataset_al.csv        report=3.5420 artifact=3.542
+[OK]       A tbl M6_q5bp2 mtbench report vs pooled shard tau             report=3.5420 artifact=3.54198
+[OK]       A tbl M6_q5bp2 gsm8k report vs final_4dataset_al.csv          report=3.7877 artifact=3.7877
+[OK]       A tbl M6_q5bp2 gsm8k report vs pooled shard tau               report=3.7877 artifact=3.78773
+[OK]       A tbl M6_q5bp2 humaneval report vs final_4dataset_al.csv      report=4.6500 artifact=4.65
+[OK]       A tbl M6_q5bp2 humaneval report vs pooled shard tau           report=4.6500 artifact=4.65004
+[OK]       A tbl M6_q5bp2 sharegpt report vs final_4dataset_al.csv       report=3.3121 artifact=3.3121
+[OK]       A tbl M6_q5bp2 sharegpt report vs pooled shard tau            report=3.3121 artifact=3.31211
+[OK]       A tbl M6_q5bp2 mean report vs csv mean_4ds                    report=3.8230 artifact=3.823
+[OK]       A tbl M6_q5bp2 mean report vs mean of pooled shards           report=3.8230 artifact=3.82296
+[OK]       A tbl M2_vsqraw mtbench report vs csv                         report=1.0000 artifact=1
+[OK]       A tbl M2_vsqraw mtbench report vs pooled shard                report=1.0000 artifact=1
+[OK]       B P1 range low |min|                                          report=2.19 artifact=2.18697
+[OK]       B P1 range high |max|                                         report=2.79 artifact=2.79306
+[OK]       B P4a range low                                               report=1.31 artifact=1.30728
+[OK]       B P4a range high                                              report=1.88 artifact=1.88464
+[OK]       B P4b range low                                               report=1.55 artifact=1.54596
+[OK]       B P4b range high                                              report=2.41 artifact=2.4052
+[OK]       B P3 range low                                                report=0.18 artifact=0.177597
+[OK]       B P3 range high                                               report=0.52 artifact=0.520554
+[OK]       B P5 delta mtbench                                            report=0.102 artifact=0.102428
+[OK]       B P5 delta gsm8k                                              report=0.237 artifact=0.236751
+[OK]       B P5 delta humaneval                                          report=0.146 artifact=0.14588
+[OK]       B P5 delta sharegpt                                           report=0.103 artifact=0.103232
+[OK]       B GAP mtbench delta                                           report=0.320 artifact=0.31993
+[OK]       B GAP gsm8k delta                                             report=0.425 artifact=0.425151
+[OK]       B GAP humaneval delta                                         report=0.242 artifact=0.241984
+[OK]       B GAP humaneval p                                             report=0.068 artifact=0.068
+[OK]       B GAP sharegpt delta                                          report=0.527 artifact=0.527035
+[OK]       B P6 M2->M3 delta                                             report=0.599 artifact=0.599158
+[OK]       B S2 seed-check delta                                         report=0.065 artifact=0.0649011
+[OK]       B S2CHK delta (S1 text)                                       report=0.065 artifact=0.0649011
+[OK]       B S2CHK p                                                     report=0.244 artifact=0.244
+[OK]       B replication delta 0.0000                                    report=0.0000 artifact=0
+[OK]       B P1 all sig (Holm)                                           
+[OK]       B P4a all sig (Holm)                                          
+[OK]       B P4b all sig (Holm)                                          
+[OK]       B P3 all sig (Holm)                                           
+[OK]       B P5 all sig (Holm)                                           
+[OK]       B GAP humaneval M5+M6 fail Holm                               
+[OK]       B GAP mt/gsm/sg sig (Holm)                                    
+[OK]       B P6 sig (Holm)                                               
+[OK]       B S2 n.s. (Holm)                                              
+[OK]       B Holm family size                                            report=53 artifact=53
+[OK]       B Holm rejected count                                         report=43 artifact=43
+[OK]       B Holm 10 non-rejections identity                             
+[OK]       S0 M3 4-ds mean                                               report=1.836 artifact=1.83581
+[OK]       S0 M0 4-ds mean                                               report=4.202 artifact=4.20149
+[OK]       S0 M6 4-ds mean                                               report=3.823 artifact=3.82296
+[OK]       S0 gap recovery pct                                           report=84.0 artifact=83.9993
+[OK]       S0 GAP humaneval delta                                        report=0.242 artifact=0.241984
+[OK]       S0 GAP humaneval p                                            report=0.068 artifact=0.068
+[OK]       S0 iface P4a low                                              report=1.31 artifact=1.30728
+[OK]       S0 iface P4a high                                             report=1.88 artifact=1.88464
+[OK]       S0 iface P3 low                                               report=0.18 artifact=0.177597
+[OK]       S0 iface P3 high                                              report=0.52 artifact=0.520554
+[OK]       S0 P2-alone hurts (val delta)                                 report=0.11 artifact=0.114275
+[OK]       S0 iface P5 low                                               report=0.10 artifact=0.102428
+[OK]       S0 iface P5 high                                              report=0.24 artifact=0.236751
+[OK]       S0 G1 validation delta                                        report=0.28 artifact=0.282935
+[OK]       S5 Q20 M3->M6 total 4-ds gain                                 report=1.99 artifact=1.98716
+[OK]       S5 Q9 R_C per-ds low (P4a)                                    report=1.31 artifact=1.30728
+[OK]       S5 Q9 R_C per-ds high (P4a)                                   report=1.88 artifact=1.88464
+[OK]       C V_M3                                                        report=2.0166 artifact=2.01659
+[OK]       C V_M4a_p2 (+P2)                                              report=1.9023 artifact=1.90232
+[OK]       C +P2 delta (bootstrap P2a)                                   report=0.114 artifact=0.114275
+[OK]       C V_M4b_mp3 (+MP3)                                            report=1.9225 artifact=1.92251
+[OK]       C V_M5_rconly (+R_C)                                          report=3.2132 artifact=3.21319
+[OK]       C V_M5_rc (+P2+R_C)                                           report=3.4070 artifact=3.40703
+[OK]       C V_G1                                                        report=1.7337 artifact=1.73366
+[OK]       C G1 delta (bootstrap VG1)                                    report=0.283 artifact=0.282935
+[OK]       C V_G1_rc (G1+RC)                                             report=3.276 artifact=3.27602
+[OK]       C V_M3id (R_D=I)                                              report=1.134 artifact=1.1338
+[OK]       C V_Q2                                                        report=2.4936 artifact=2.49364
+[OK]       C V_Q3                                                        report=2.7424 artifact=2.74244
+[OK]       C V_Q5                                                        report=3.1479 artifact=3.14787
+[OK]       C V_Q5b                                                       report=3.5009 artifact=3.50091
+[OK]       C V_Q5bp2                                                     report=3.6690 artifact=3.66896
+[OK]       C V_restv                                                     report=2.5637 artifact=2.56368
+[OK]       C restore-V delta                                             report=0.547 artifact=0.547092
+[OK]       C V_restk                                                     report=2.2612 artifact=2.26119
+[OK]       C restore-K delta                                             report=0.245 artifact=0.244594
+[OK]       C V_restq                                                     report=2.0397 artifact=2.03973
+[OK]       C restore-Q delta                                             report=0.023 artifact=0.0231349
+[OK]       C restore-Q p                                                 report=0.036 artifact=0.036
+[OK]       C restore-Q Holm-n.s.                                         
+[OK]       C V_resto                                                     report=2.0298 artifact=2.02981
+[OK]       C restore-O paired delta                                      report=0.013 artifact=0.0132166
+[OK]       C restore-O p                                                 report=0.315 artifact=0.315333
+[OK]       C restore-O n.s.                                              
+[OK]       C V_onlyv                                                     report=2.3141 artifact=2.31405
+[OK]       C V_onlyk                                                     report=2.9212 artifact=2.9212
+[OK]       C V_onlyq                                                     report=3.7611 artifact=3.76107
+[OK]       C V_onlyo                                                     report=3.7784 artifact=3.77843
+[OK]       C V_I7m3 pooled (I7 sentence)                                 report=1.1242 artifact=1.12424
+[OK]       C I7m3 paired delta (VI7A)                                    report=0.892 artifact=0.892354
+[OK]       C I7m3 p (VI7A)                                               report=3.3e-4 artifact=0.000333333
+[OK]       C V_I7m5 (I7 sentence)                                        report=3.1865 artifact=3.18653
+[OK]       C I7m5 delta (VI7B)                                           report=0.027 artifact=0.026661
+[OK]       C I7m5 p (VI7B)                                               report=0.287 artifact=0.287333
+[OK]       C I7m5 null (n.s.)                                            
+[OK]       D pilot 3e-2 best CE                                          report=6.361 artifact=6.36075
+[OK]       D pilot 1e-1 best CE                                          report=5.445 artifact=5.44484
+[OK]       D pilot 1e-1b best CE (this server)                           report=5.400 artifact=5.40044
+[OK]       D pilot 3e-1 best CE                                          report=5.218 artifact=5.21844
+[OK]       D main Q2 best CE                                             report=3.602 artifact=3.60241
+[OK]       D main Q3 best CE                                             report=3.479 artifact=3.479
+[OK]       D main Q5 init CE (no-move)                                   report=2.644 artifact=2.64448
+[OK]       D Q5 no-move (best==init, best_step 0)                        
+[OK]       D Q5@3e-2 best CE                                             report=2.389 artifact=2.38885
+[OK]       E R1 S3_Ht_dep kurtosis                                       report=180.5 artifact=180.471
+[OK]       E R1 S3_Ht_dep A4 NMSE                                        report=0.4496 artifact=0.449598
+[OK]       E R1 S3_Ht_dep code entropy                                   report=1.90 artifact=1.89751
+[OK]       E R3 pre S3_Ht_dep kurtosis                                   report=195.0 artifact=195.037
+[OK]       E R3 pre A4 NMSE                                              report=0.4463 artifact=0.446273
+[OK]       E R3 pre code entropy                                         report=1.87 artifact=1.87253
+[OK]       E R3 post S3_Ht_rc_dep kurtosis                               report=2.9 artifact=2.90935
+[OK]       E R3 post A4 NMSE                                             report=0.0182 artifact=0.0181649
+[OK]       E R3 post code entropy                                        report=3.21 artifact=3.20976
+[OK]       S0 H_t kurt range low                                         report=180 artifact=180.471
+[OK]       S0 H_t kurt range high                                        report=210 artifact=210.305
+[OK]       S0 H_t A4 NMSE after vanilla SQ                               report=0.45 artifact=0.449598
+[OK]       S0 H_t kurt after R_C                                         report=2.9 artifact=2.90935
+[OK]       S0 H_t NMSE after R_C                                         report=0.018 artifact=0.0181649
+[OK]       E Z_t kurtosis (R1 deployed)                                  report=635 artifact=634.86
+[OK]       E Z_t absmax                                                  report=1444 artifact=1444.44
+[OK]       E mechanism M1_naiveHt kurtosis                               report=69.5 artifact=69.4588
+[OK]       E mechanism M3_vsqHt kurtosis                                 report=69.4 artifact=69.4452
+[OK]       E mechanism M5_rcHt kurtosis                                  report=3.0 artifact=3.04041
+[OK]       E mechanism M1_naiveHt a4_nmse                                report=0.417 artifact=0.417359
+[OK]       E mechanism M3_vsqHt a4_nmse                                  report=0.417 artifact=0.417336
+[OK]       E mechanism M5_rcHt a4_nmse                                   report=0.019 artifact=0.0191011
+[OK]       F fidi_gate_d G_REG_bits4_bitwise True                        value=True
+[OK]       F fidi_gate_d G_REG_bits16_bitwise True                       value=True
+[OK]       F fidi_gate_d G_FP_bitwise True                               value=True
+[OK]       F fidi_gate_d G_TAP_bitwise True                              value=True
+[OK]       F T-PPL fp16                                                  report=7.437 artifact=7.4368
+[OK]       F T-PPL RTN                                                   report=189.9 artifact=189.924
+[OK]       F T-PPL hadamard                                              report=10.89 artifact=10.8898
+[OK]       F T-PPL R1-only min                                           report=10.17 artifact=10.1688
+[OK]       F T-PPL R1-only max                                           report=10.68 artifact=10.6793
+[OK]       F T-PPL R1+R2 min                                             report=8.79 artifact=8.7897
+[OK]       F T-PPL R1+R2 max                                             report=8.85 artifact=8.8543
+[OK]       F draft ladder D-P0_fp16 block CE                             report=2.41 artifact=2.4124
+[OK]       F draft ladder D-P1_w4a4_norot block CE                       report=7.23 artifact=7.2328
+[OK]       F draft ladder D-P2_w4a4_random block CE                      report=4.83 artifact=4.8302
+[OK]       F draft ladder D-P3_w4a4_R1D block CE                         report=4.96 artifact=4.9587
+[OK]       F draft ladder D-P4_w4a4_R1D_R2D block CE                     report=4.47 artifact=4.4715
+[OK]       G fc A_only NMSE                                              report=0.0174 artifact=0.0173744
+[OK]       G fc W_only NMSE                                              report=0.0350 artifact=0.0350029
+[OK]       G fc interaction NMSE                                         report=0.0008 artifact=0.000833765
+[OK]       G fc_p2 A_only NMSE (P2 trims A)                              report=0.0147 artifact=0.0146648
+[OK]       G k_ctx layer-mean A_only (const)                             report=0.2387 artifact=0.238707
+[OK]       G k_ctx layer-mean W_only (const)                             report=0.0074 artifact=0.00736934
+[OK]       G v_ctx layer-mean A_only (const)                             report=0.5297 artifact=0.529703
+[OK]       G v_ctx layer-mean W_only (const)                             report=0.0199 artifact=0.0199375
+[OK]       G ctx K/V activation_driven all layers                        
+[OK]       H fc full-concat Spearman (stock, all)                        report=-0.835 artifact=-0.834831
+[OK]       I only_v delta_vs_fp CE                                       report=1.77 artifact=1.7702
+[OK]       I only_k delta_vs_fp CE                                       report=0.80 artifact=0.8021
+[OK]       I only_fc delta_vs_fp CE                                      report=0.40 artifact=0.397
+[OK]       I only_q delta_vs_fp CE                                       report=0.30 artifact=0.2962
+[OK]       I only_o delta_vs_fp CE                                       report=0.28 artifact=0.2779
+[OK]       I only_mlp delta_vs_fp CE                                     report=0.18 artifact=0.1823
+[OK]       I restore_fc hurts (delta_vs_w4a4)                            report=0.37 artifact=0.3675
+[OK]       I ref fp16 CE (const)                                         report=2.2218 artifact=2.2218
+[OK]       I base w4a4 CE (const)                                        report=4.6975 artifact=4.6975
+[OK]       I only_v@0-2 min                                              report=0.40 artifact=0.4019
+[OK]       I only_v@0-2 max                                              report=0.49 artifact=0.4917
+[OK]       J M5 AL_q                                                     report=2.440 artifact=2.43955
+[OK]       J M5 RCAL                                                     report=2.191 artifact=2.19098
+[OK]       J M5 AFS                                                      report=0.915 artifact=0.91529
+[OK]       J M3cyc AL_q                                                  report=0.675 artifact=0.674939
+[OK]       J M3cyc RCAL                                                  report=0.624 artifact=0.623926
+[OK]       J M3cyc AFS                                                   report=0.934 artifact=0.934205
+[OK]       K scale-invariance cell count                                 report=50 artifact=50
+[OK]       K scale-invariance cell count denom                           report=50 artifact=50
+[OK]       K all s!=1 rows code-equal (act/wk/wv)                        
+[OK]       K max y_max_rel_dev over s!=1                                 report=0.0 artifact=0
+[OK]       L I7 proxy worse at every alpha (m3)                          
+[OK]       L I7 proxy worse at every alpha (m5)                          
+[OK]       M R1 stored ctx-K l0 kurtosis                                 report=11.1 artifact=11.0915
+[OK]       M R3 stored ctx-K l0 kurtosis                                 report=9.2 artifact=9.21437
+[OK]       M R1 KV4 k_ctx l0 NMSE                                        report=0.0201 artifact=0.0200839
+[OK]       M R3 KV4 k_ctx l0 NMSE                                        report=0.0189 artifact=0.0189049
+[OK]       M KV8 k_ctx l0 NMSE order 5e-5 (<1e-4, R1+R3)                 
+[OK]       N sharegpt prompt count                                       report=80 artifact=80
+[OK]       N sharegpt bit-identical rows                                 report=80 artifact=80
+[OK]       N M0shk == M0_fp16 sharegpt shard identical                   
+[OK]       O M3cyc reproduces M3 shard exactly (per-prompt tau vectors)  
+[OK]       O M3cyc pooled tau == M3 pooled tau                           report=0.0000 artifact=0
+[OK]       P V_RCrand pooled                                             report=3.1781 artifact=3.17809
+[OK]       P V_RChad pooled                                              report=3.1950 artifact=3.19501
+[OK]       P RCrand delta                                                report=0.035 artifact=0.0350994
+[OK]       P RCrand p                                                    report=0.131 artifact=0.131333
+[OK]       P RChad delta                                                 report=0.018 artifact=0.0181778
+[OK]       P RChad p                                                     report=0.543 artifact=0.543333
+[OK]       P Q6 init CE                                                  report=2.561 artifact=2.56104
+[OK]       P Q6 best CE                                                  report=2.3145 artifact=2.31455
+[OK]       P V_Q6 pooled                                                 report=3.6275 artifact=3.62755
+[OK]       P Q6 delta                                                    report=0.041 artifact=0.0414104
+[OK]       P Q6 p                                                        report=0.192 artifact=0.192
+[OK]       P rcal_M6 AL_q                                                report=2.542 artifact=2.54198
+[OK]       P rcal_M6 RCAL                                                report=2.2655 artifact=2.26548
+[OK]       P rcal_M6 AFS                                                 report=0.9097 artifact=0.909712
+total checks = 255
+missing=0 mismatch=0

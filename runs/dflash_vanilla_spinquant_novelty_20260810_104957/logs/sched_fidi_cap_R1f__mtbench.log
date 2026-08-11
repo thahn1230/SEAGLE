@@ -1,0 +1,10 @@
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 48.05it/s]
+[fidi] R1f mtbench 10/80 turns
+[fidi] R1f mtbench 20/80 turns
+[fidi] R1f mtbench 30/80 turns
+[fidi] R1f mtbench 40/80 turns
+[fidi] R1f mtbench 50/80 turns
+[fidi] R1f mtbench 60/80 turns
+[fidi] R1f mtbench 70/80 turns
+[fidi] R1f mtbench 80/80 turns
+[fidi] R1f__mtbench DONE tensors=13 qsites=8

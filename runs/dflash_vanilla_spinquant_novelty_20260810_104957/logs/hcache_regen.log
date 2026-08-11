@@ -1,0 +1,7 @@
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 41.13it/s]
+[cache] 20/112
+[cache] 40/112
+[cache] 60/112
+[cache] 80/112
+[cache] 100/112
+[cache] DONE 112 rows -> runs/dflash_vanilla_spinquant_novelty_20260810_104957/hcache_w4a4_s1

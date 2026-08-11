@@ -1,0 +1,69 @@
+VSQ — DFlash × vanilla-SpinQuant novelty study + FIDI amendment  FINAL OUTPUT (2026-08-11)
+Runs: runs/dflash_vanilla_spinquant_novelty_20260810_104957 (VSQ)
+      runs/dflash_full_interface_distribution_intervention_20260811_074001 (FIDI)
+Reports: docs/DFLASH_SPINQUANT_NOVELTY_STUDY.md
+         docs/DFLASH_SPINQUANT_NOVELTY_ADVERSARIAL_AUDIT.md
+Verifier: seagle_port/verify_dflash_spinquant_novelty.py — 255 checks, missing=0 mismatch=0.
+Continued across a server migration (handoff @ec1fd18); cross-server bit-replication proven
+(M3cyc == canonical M3 shard exactly; rebuilt sharegpt.jsonl reproduces M0 bit-identically).
+
+VERDICT — CASE D (refined): vanilla SpinQuant, correctly applied end-to-end (Gate C
+target PPL 8.79-8.85; Gate E draft CE 4.47; mandatory interface folds), reaches only
+4-ds mean AL 1.836 vs FP16 4.202 (~ naive RTN 1.699). Three different corrections at
+three different interfaces are each independently significant (paired bootstrap 3000,
+Holm over 53 comparisons, 43 rejected):
+
+  AL ladder (MT / GSM8K / HumanEval / ShareGPT / 4-ds mean):
+    M0  FP16                4.202  (3.862 / 4.213 / 4.892 / 3.839)
+    M1  naive W4A4          1.699
+    M3  vanilla SpinQuant   1.836  (M2 RAW without interface folds: tau 1.000)
+    M5a +R_C                3.383  (+1.31..+1.88/ds, all sig)
+    M5  +P2+R_C             3.676  (P2 on top of R_C +0.18..+0.52, all sig; alone it HURTS)
+    M6  +QAT (final)        3.823  (+0.10..+0.24/ds, all sig) = 84.0% of the gap recovered;
+        humaneval gap to FP16 statistically closed (both M5/M6 cells Holm-n.s.)
+    RCAL(mtbench, tau-1): M3 0.624 / M5 2.191 / M6 2.266 at AFS 0.91-0.93 (not deceptive).
+
+MECHANISM (FIDI, deployed-forward captures, 7 configs x 2 datasets, paired replay):
+  1) H_t = hidden_norm(W_c concat(H1..H29)) is THE bottleneck: kurtosis 180-210 and
+     per-token A4 NMSE 0.45 AFTER complete vanilla SpinQuant (fc fold algebraically
+     cancels R1_T -> outside model-local closure); R_C drops it to kurt 2.9 / NMSE 0.018.
+     Independent confirmations: hcache counterfactual (69.5=69.4 vs 3.0) and ctx-A8
+     ablation (8-bit ctx alone recovers most of R_C: HP2 3.415 vs M5a-mtbench 3.203).
+  2) ctx K/V error is pure activation-driven (A-only/W-only = 34x for K, 27x for V);
+     all 92 draft weight views are W4-benign; no interaction-driven site.
+  3) The stored cache was never the problem: post-k_norm/RoPE K and raw V are tame
+     (kurt 3.6-11), hypothetical KV4 NMSE 0.010-0.020, KV8 ~5e-5; R_C barely changes
+     cache distributions (it fixes projection-input accuracy). KV4 = future opportunity.
+  4) V is the most fragile projection class (only-V CE +1.77, val AL 2.31; K second);
+     no per-layer pathology. restore-fc alone HURTS (+0.37 CE): fc quantization acts
+     as an implicit outlier smoother.
+  5) Trained weights exhibit Tier-1/2 compensatory alignment with target outlier
+     channels (W_c Spearman -0.835; V-ctx -0.25; ablation sensitivity ~ channel RMS)
+     — FP-benign, W4A4-fatal under shared per-token scales. No causal claim (no
+     training trajectory available).
+  6) Interventions: global scalar = bit-exact quantization gauge (proof; arm closed).
+     SmoothQuant-style per-channel scale FAILS (proxy worse at every alpha; deployed
+     -0.892 sig without R_C, null on top of R_C). Branch scalars = P2/MP3 family;
+     under P2 granularity MP3 is a gauge (explains non-stacking). Rotation is the
+     unique effective correction at H_t — and rotation CHOICE is free: random
+     orthogonal 3.178 / Hadamard 3.195 / R1_T-reuse 3.213 all tied (placement is the
+     novelty; training-free deployment).
+  7) CASE E rejected on measurement (G1 R1_D:=R1_T: -0.283 sig worse); draft-residual
+     rotations are the one place the learned basis matters (random 4.83 vs learned 4.47 CE).
+
+SELECTION HYGIENE: all choices on gsm8kvalid or trainer CE (frozen before test runs;
+RD/manifests/QAT_SELECTION_NOTE.md); Q5 LR amendment and M6 P2-eval-composition
+disclosed — the latter RESOLVED post-hoc (Q6 trained-with-P2 ties, delta -0.041 n.s.).
+Supplementary arms (audit closure) labeled post-hoc in report §8.
+
+DEPLOYMENT RECIPE (training-optional): vanilla SpinQuant (target+draft) + mandatory
+interface folds + ctx-specific gamma K/V views + R_C := any orthogonal (R1_T reuse
+natural) folded into ctx views + P2 branch scales at fc + optional QAT (Q5-recipe,
+lr 3e-2, 400 steps) for the last +0.15. Extra memory: ~84 MiB ctx views (already
+required for correctness); runtime: offline folds only.
+
+Artifacts: FIDI/tables/*.csv (19 required tables incl. intervention_map,
+final_4dataset_al, scale_invariance_test), RD/figs FIG_A..H + FIDI/figs FIG_A..E,
+RD/stats/bootstrap_*.json + holm_adjusted.json, capture shards
+FIDI/tables/capture__*.json (raw npz server-local, 11 GB, not committed;
+hcache/cycles/QAT ckpts likewise regenerable — commands in report §9).

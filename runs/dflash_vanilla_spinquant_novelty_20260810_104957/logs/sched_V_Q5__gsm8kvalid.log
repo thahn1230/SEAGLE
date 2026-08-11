@@ -1,0 +1,10 @@
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 137.37it/s]
+[vsq] QAT weights /home/thahn1230/dflash_workspace/dflash/runs/dflash_vanilla_spinquant_novelty_20260810_104957/rotations/draft/QAT_Q5.pt arm=Q5 lr=0.3 best_ce=?
+[vsq] RotQuantDraft ckpt=/home/thahn1230/dflash_workspace/dflash/runs/dflash_vanilla_spinquant_novelty_20260810_104957/rotations/draft/R1D_s1r1.pt raw=False bits=4
+[V_Q5] 10/60 cycle-tau=3.0048
+[V_Q5] 20/60 cycle-tau=2.9482
+[V_Q5] 30/60 cycle-tau=3.0632
+[V_Q5] 40/60 cycle-tau=3.1190
+[V_Q5] 50/60 cycle-tau=3.1131
+[V_Q5] 60/60 cycle-tau=3.1479
+[V_Q5] DONE gsm8kvalid cycle-pooled tau = 3.1479 over 3050 cycles

@@ -1,0 +1,2 @@
+[gate] {'G_D_rel_err': 0.011155912652611732, 'G_D_pass': False, 'G_TAP_bitwise': True, 'G_FP_bitwise': False, 'G_quant_changes_output': True, 'tap_names': ['S3_Ht_dep', 'S3_Zt_dep', 'S4_k_stored_l0', 'S4_k_stored_l1', 'S4_k_stored_l2', 'S4_k_stored_l3', 'S4_k_stored_l4', 'S4_kctx_lin_l0']}
+[gate] FAIL

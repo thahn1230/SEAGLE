@@ -60,6 +60,9 @@ class RotQuantDraft(nn.Module):
                         r4_draft=r4_draft, ctx_a_bits=None,
                         fc_p2=False)
         self.rc_matrix_buf = None
+        # FIDI I7: per-channel SmoothQuant-like scale on the ctx K/V input
+        # (post-R_C basis). FP-preserving pair: x*(s) vs W/(s) on input cols.
+        self.ctx_smooth_buf = None
         self.block_size = draft.block_size
         self.mask_token_id = draft.mask_token_id
         self.target_layer_ids = draft.target_layer_ids
@@ -135,15 +138,15 @@ class RotQuantDraft(nn.Module):
         the fp32 source buffers afterwards."""
         R1 = self.R1()
         F = {}
-        F["fc"] = self._wq(self.fc_w).to(torch.bfloat16)
+        F["fc"] = self._wq(self.fc_w, "fc").to(torch.bfloat16)
         for i in range(self.n_layers):
             R2 = self.R2(i)
-            F[f"wq_{i}"] = self._wq(getattr(self, f"wq_{i}") @ R1).to(
+            F[f"wq_{i}"] = self._wq(getattr(self, f"wq_{i}") @ R1, "q").to(
                 torch.bfloat16)
             F[f"wk_noise_{i}"] = self._wq(
-                getattr(self, f"wk_noise_{i}") @ R1).to(torch.bfloat16)
+                getattr(self, f"wk_noise_{i}") @ R1, "k").to(torch.bfloat16)
             F[f"wv_noise_{i}"] = self._wq(self._headwise(
-                getattr(self, f"wv_noise_{i}"), R2, "out") @ R1).to(
+                getattr(self, f"wv_noise_{i}"), R2, "out") @ R1, "v").to(
                 torch.bfloat16)
             Rc = self.rc_matrix_buf
             wkc_src = getattr(self, f"wk_ctx_{i}")
@@ -151,18 +154,21 @@ class RotQuantDraft(nn.Module):
             if Rc is not None:
                 wkc_src = wkc_src @ Rc
                 wvc_src = wvc_src @ Rc
-            F[f"wk_ctx_{i}"] = self._wq(wkc_src).to(torch.bfloat16)
-            F[f"wv_ctx_{i}"] = self._wq(wvc_src).to(torch.bfloat16)
+            if self.ctx_smooth_buf is not None:
+                wkc_src = wkc_src / self.ctx_smooth_buf[None, :]
+                wvc_src = wvc_src / self.ctx_smooth_buf[None, :]
+            F[f"wk_ctx_{i}"] = self._wq(wkc_src, "k").to(torch.bfloat16)
+            F[f"wv_ctx_{i}"] = self._wq(wvc_src, "v").to(torch.bfloat16)
             F[f"wo_{i}"] = self._wq(R1.t() @ self._headwise(
-                getattr(self, f"wo_{i}"), R2, "in")).to(torch.bfloat16)
+                getattr(self, f"wo_{i}"), R2, "in"), "o").to(torch.bfloat16)
             F[f"wg_{i}"] = self._wq(
-                getattr(self, f"wg_{i}") @ R1).to(torch.bfloat16)
+                getattr(self, f"wg_{i}") @ R1, "gate").to(torch.bfloat16)
             F[f"wu_{i}"] = self._wq(
-                getattr(self, f"wu_{i}") @ R1).to(torch.bfloat16)
+                getattr(self, f"wu_{i}") @ R1, "up").to(torch.bfloat16)
             wd = getattr(self, f"wd_{i}")
             if self.cfg["r4_draft"]:
                 wd = wd @ self.had4
-            F[f"wd_{i}"] = self._wq(R1.t() @ wd).to(torch.bfloat16)
+            F[f"wd_{i}"] = self._wq(R1.t() @ wd, "down").to(torch.bfloat16)
         self._F = F
         self.register_buffer("R1_frozen", R1.clone())
         self.register_buffer("gamma_f_b", self.gamma_f.clone())
@@ -175,10 +181,26 @@ class RotQuantDraft(nn.Module):
         return self
 
     # ---- quant helpers (STE)
-    def _wq(self, w):
+    # comp: FIDI §16 component-selective W4A4 — components named in
+    # cfg["fp_components"] ({"fc","q","k","v","o","gate","up","down"})
+    # bypass BOTH their weight and input quantizers; empty/absent = no-op.
+    def _fp(self, comp):
+        if comp is None:
+            return False
+        S = self.cfg.get("fp_components", ())
+        if isinstance(comp, tuple):        # ("k", layer) — "k" or "k@2"
+            c, li = comp
+            return c in S or f"{c}@{li}" in S
+        return comp in S
+
+    def _wq(self, w, comp=None):
+        if self._fp(comp):
+            return w
         return rtn_sym_perchannel(w, self.cfg["w_bits"])
 
-    def _aq(self, x):
+    def _aq(self, x, comp=None):
+        if self._fp(comp):
+            return x
         return act_fake_ste(x, self.cfg["a_bits"])
 
     @staticmethod
@@ -209,16 +231,29 @@ class RotQuantDraft(nn.Module):
         # (γ moved into ctx K/V views)
         cab = self.cfg.get("ctx_a_bits") or self.cfg["a_bits"]
         tf = target_hidden.float()
-        if self.cfg.get("fc_p2"):
+        if self._fp("fc"):
+            thin = tf
+        elif self.cfg.get("fc_p2"):
             B0, S0, MD = tf.shape
             thin = act_fake_ste(tf.reshape(B0, S0, 5, MD // 5), cab
                                 ).reshape(B0, S0, MD)
         else:
             thin = act_fake_ste(tf, cab)
-        Wfc = getw("fc", lambda: self._wq(self.fc_w))
-        Ht = self._rms(thin @ Wfc.t(), self.eps)
+        Wfc = getw("fc", lambda: self._wq(self.fc_w, "fc"))
+        cap = getattr(self, "_cap", None)   # FIDI capture tap (None = off)
+        capd = getattr(self, "_cap_deep", None)  # FIDI §17 AW-input taps
+        Zt = thin @ Wfc.t()
+        if cap:
+            cap("S3_Zt_dep", Zt)
+        Ht = self._rms(Zt, self.eps)
+        if cap:
+            cap("S3_Ht_dep", Ht)
         if self.rc_matrix_buf is not None:
             Ht = Ht @ self.rc_matrix_buf
+            if cap:
+                cap("S3_Ht_rc_dep", Ht)
+        if self.ctx_smooth_buf is not None:
+            Ht = Ht * self.ctx_smooth_buf   # inverse folded into ctx K/V views
         # input boundary: shared-embed output -> draft basis
         h = (noise_embedding.float() @ R1)
         S = target_hidden.shape[1]
@@ -227,25 +262,43 @@ class RotQuantDraft(nn.Module):
         B_, Q = h.shape[:2]
         for i in range(self.n_layers):
             R2 = self.R2(i)
-            xn = self._aq(self._rms(h, 1e-6))
+            xn_raw = self._rms(h, 1e-6)
+            if capd:
+                capd(f"xn_l{i}", xn_raw)
+            xn_q = self._aq(xn_raw, ("q", i))
+            xn_k = self._aq(xn_raw, ("k", i))
+            xn_v = self._aq(xn_raw, ("v", i))
             wq = getw(f"wq_{i}", lambda: self._wq(
-                getattr(self, f"wq_{i}") @ R1))
+                getattr(self, f"wq_{i}") @ R1, ("q", i)))
             wkn = getw(f"wk_noise_{i}", lambda: self._wq(
-                getattr(self, f"wk_noise_{i}") @ R1))
+                getattr(self, f"wk_noise_{i}") @ R1, ("k", i)))
             wvn = getw(f"wv_noise_{i}", lambda: self._wq(self._headwise(
-                getattr(self, f"wv_noise_{i}"), R2, "out") @ R1))
-            xc = act_fake_ste(Ht, cab)
+                getattr(self, f"wv_noise_{i}"), R2, "out") @ R1, ("v", i)))
+            xc_k = Ht if self._fp(("k", i)) else act_fake_ste(Ht, cab)
+            xc_v = Ht if self._fp(("v", i)) else act_fake_ste(Ht, cab)
             Rc = self.rc_matrix_buf
-            wkc = getw(f"wk_ctx_{i}", lambda: self._wq(
-                getattr(self, f"wk_ctx_{i}") if Rc is None else
-                getattr(self, f"wk_ctx_{i}") @ Rc))
-            wvc = getw(f"wv_ctx_{i}", lambda: self._wq(self._headwise(
-                getattr(self, f"wv_ctx_{i}"), R2, "out") if Rc is None else
-                self._headwise(getattr(self, f"wv_ctx_{i}"), R2, "out") @ Rc))
-            q = (xn @ wq.t()).view(B_, Q, -1, HD)
+            Sm = self.ctx_smooth_buf
+
+            def _ctx_build(src, comp):
+                w = src if Rc is None else src @ Rc
+                if Sm is not None:
+                    w = w / Sm[None, :]
+                return self._wq(w, comp)
+            wkc = getw(f"wk_ctx_{i}", lambda: _ctx_build(
+                getattr(self, f"wk_ctx_{i}"), ("k", i)))
+            wvc = getw(f"wv_ctx_{i}", lambda: _ctx_build(self._headwise(
+                getattr(self, f"wv_ctx_{i}"), R2, "out"), ("v", i)))
+            q = (xn_q @ wq.t()).view(B_, Q, -1, HD)
             q = self._rms(q) * getattr(self, f"qn_{i}")
-            k = torch.cat([xc @ wkc.t(), xn @ wkn.t()], dim=1)
-            v = torch.cat([xc @ wvc.t(), xn @ wvn.t()], dim=1)
+            kc_, kn_ = xc_k @ wkc.t(), xn_k @ wkn.t()
+            vc_, vn_ = xc_v @ wvc.t(), xn_v @ wvn.t()
+            if cap:
+                cap(f"S4_kctx_lin_l{i}", kc_)
+                cap(f"S4_vctx_lin_l{i}", vc_)
+                cap(f"S4_kdraft_lin_l{i}", kn_)
+                cap(f"S4_vdraft_lin_l{i}", vn_)
+            k = torch.cat([kc_, kn_], dim=1)
+            v = torch.cat([vc_, vn_], dim=1)
             KVL = k.shape[1]
             k = self._rms(k.view(B_, KVL, -1, HD)) * getattr(self, f"kn_{i}")
             v = v.view(B_, KVL, -1, HD)
@@ -260,21 +313,30 @@ class RotQuantDraft(nn.Module):
             cq, sq = cos[:, -Q:].unsqueeze(1), sin[:, -Q:].unsqueeze(1)
             q = q * cq + rot(q) * sq
             k = k * cos.unsqueeze(1) + rot(k) * sin.unsqueeze(1)
+            if cap:
+                cap(f"S4_k_stored_l{i}", k)   # post k_norm + RoPE, [B,h,KVL,HD]
+                cap(f"S4_v_stored_l{i}", v)   # raw projection, [B,h,KVL,HD]
             kr = k.repeat_interleave(q.shape[1] // k.shape[1], dim=1)
             vr = v.repeat_interleave(q.shape[1] // v.shape[1], dim=1)
             attn = torch.nn.functional.scaled_dot_product_attention(
                 q, kr, vr, attn_mask=attention_mask, is_causal=False)
             a = attn.transpose(1, 2).reshape(B_, Q, -1)
+            if capd:
+                capd(f"attn_out_l{i}", a)
             wo = getw(f"wo_{i}", lambda: self._wq(
                 R1.t() @ self._headwise(getattr(self, f"wo_{i}"),
-                                        R2, "in")))
-            h = h + self._aq(a) @ wo.t()
-            xp = self._aq(self._rms(h, 1e-6))
+                                        R2, "in"), ("o", i)))
+            h = h + self._aq(a, ("o", i)) @ wo.t()
+            xp_raw = self._rms(h, 1e-6)
+            if capd:
+                capd(f"xp_l{i}", xp_raw)
+            xp_g = self._aq(xp_raw, ("gate", i))
+            xp_u = self._aq(xp_raw, ("up", i))
             wg = getw(f"wg_{i}", lambda: self._wq(
-                getattr(self, f"wg_{i}") @ R1))
+                getattr(self, f"wg_{i}") @ R1, ("gate", i)))
             wu = getw(f"wu_{i}", lambda: self._wq(
-                getattr(self, f"wu_{i}") @ R1))
-            z = torch.nn.functional.silu(xp @ wg.t()) * (xp @ wu.t())
+                getattr(self, f"wu_{i}") @ R1, ("up", i)))
+            z = torch.nn.functional.silu(xp_g @ wg.t()) * (xp_u @ wu.t())
             if self.cfg["r4_draft"]:
                 z = z @ self.had4
             if frozen:
@@ -283,8 +345,10 @@ class RotQuantDraft(nn.Module):
                 wd = getattr(self, f"wd_{i}")
                 if self.cfg["r4_draft"]:
                     wd = wd @ self.had4
-                wd = self._wq(R1.t() @ wd)
-            h = h + self._aq(z) @ wd.t()
+                wd = self._wq(R1.t() @ wd, ("down", i))
+            if capd:
+                capd(f"z_l{i}", z)   # post-had4 when r4_draft: deployed input
+            h = h + self._aq(z, ("down", i)) @ wd.t()
         # output boundary: bare final norm, then D_γf · R1^T, shared head
         out = self._rms(h, self.eps) @ R1.t() * self.gamma_f
         return out.to(xdt)

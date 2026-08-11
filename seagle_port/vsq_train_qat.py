@@ -56,6 +56,10 @@ def build(arm, rbin, rot_ckpt, device):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--arm", required=True, choices=["Q2", "Q3", "Q5"])
+    ap.add_argument("--fc-p2", action="store_true",
+                    help="Q6 supplementary: train WITH per-branch fc "
+                         "activation scales (closes the M6 eval-composition "
+                         "caveat)")
     ap.add_argument("--cache-dir", required=True)
     ap.add_argument("--rbin", required=True)
     ap.add_argument("--rot-ckpt", required=True)
@@ -72,6 +76,8 @@ def main():
     torch.manual_seed(args.seed)
     random.seed(args.seed)
     rq = build(args.arm, args.rbin, args.rot_ckpt, dev)
+    if args.fc_p2:
+        rq.cfg["fc_p2"] = True
     embed, head = load_shared_modules(dev)
     for p in list(embed.parameters()) + list(head.parameters()):
         p.requires_grad_(False)

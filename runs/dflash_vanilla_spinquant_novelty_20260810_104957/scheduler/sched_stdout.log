@@ -1,0 +1,174 @@
+08-11 07:48:05 SCHEDULER-START
+08-11 07:48:46 START M3cyc__mtbench gpus=[1]
+08-11 07:48:46 START S2CHKv2__mtbench gpus=[2]
+08-11 07:48:46 START HP2v2_rcVSa8__mtbench gpus=[3]
+08-11 07:48:46 START qat_pilot_lr3e-1 gpus=[4]
+08-11 07:48:46 START qat_pilot_lr1e-1b gpus=[5]
+08-11 07:49:06 FAIL M3cyc__mtbench rc=1 -> RETRY
+08-11 07:49:06 FAIL S2CHKv2__mtbench rc=1 -> RETRY
+08-11 07:49:06 FAIL HP2v2_rcVSa8__mtbench rc=1 -> RETRY
+08-11 07:49:06 FAIL qat_pilot_lr3e-1 rc=1 -> RETRY
+08-11 07:49:06 FAIL qat_pilot_lr1e-1b rc=1 -> RETRY
+08-11 07:49:07 START M3cyc__mtbench gpus=[0]
+08-11 07:49:07 START S2CHKv2__mtbench gpus=[6]
+08-11 07:49:07 START HP2v2_rcVSa8__mtbench gpus=[7]
+08-11 07:49:27 FAIL M3cyc__mtbench rc=1 -> GAVE-UP (see /home/thahn1230/dflash_workspace/dflash/runs/dflash_vanilla_spinquant_novelty_20260810_104957/logs/sched_M3cyc__mtbench.log)
+08-11 07:49:27 FAIL S2CHKv2__mtbench rc=1 -> GAVE-UP (see /home/thahn1230/dflash_workspace/dflash/runs/dflash_vanilla_spinquant_novelty_20260810_104957/logs/sched_S2CHKv2__mtbench.log)
+08-11 07:49:27 FAIL HP2v2_rcVSa8__mtbench rc=1 -> GAVE-UP (see /home/thahn1230/dflash_workspace/dflash/runs/dflash_vanilla_spinquant_novelty_20260810_104957/logs/sched_HP2v2_rcVSa8__mtbench.log)
+08-11 07:49:48 START qat_pilot_lr3e-1 gpus=[1]
+08-11 07:49:48 START qat_pilot_lr1e-1b gpus=[2]
+08-11 07:50:08 FAIL qat_pilot_lr3e-1 rc=1 -> GAVE-UP (see /home/thahn1230/dflash_workspace/dflash/runs/dflash_vanilla_spinquant_novelty_20260810_104957/logs/sched_qat_pilot_lr3e-1.log)
+08-11 07:50:08 FAIL qat_pilot_lr1e-1b rc=1 -> GAVE-UP (see /home/thahn1230/dflash_workspace/dflash/runs/dflash_vanilla_spinquant_novelty_20260810_104957/logs/sched_qat_pilot_lr1e-1b.log)
+08-11 07:50:29 START M0cyc__mtbench gpus=[0]
+08-11 07:50:29 START M0cyc__gsm8k gpus=[3]
+08-11 07:50:49 FAIL M0cyc__mtbench rc=1 -> RETRY
+08-11 07:50:49 FAIL M0cyc__gsm8k rc=1 -> RETRY
+08-11 07:50:49 START M0cyc__mtbench gpus=[1]
+08-11 07:50:49 START M0cyc__gsm8k gpus=[2]
+08-11 07:51:09 FAIL M0cyc__mtbench rc=1 -> GAVE-UP (see /home/thahn1230/dflash_workspace/dflash/runs/dflash_vanilla_spinquant_novelty_20260810_104957/logs/sched_M0cyc__mtbench.log)
+08-11 07:51:09 FAIL M0cyc__gsm8k rc=1 -> GAVE-UP (see /home/thahn1230/dflash_workspace/dflash/runs/dflash_vanilla_spinquant_novelty_20260810_104957/logs/sched_M0cyc__gsm8k.log)
+08-11 07:54:46 SCHEDULER-START
+08-11 07:55:29 START M3cyc__mtbench gpus=[0]
+08-11 07:55:29 START S2CHKv2__mtbench gpus=[1]
+08-11 07:55:29 START HP2v2_rcVSa8__mtbench gpus=[2]
+08-11 07:55:29 START qat_pilot_lr3e-1 gpus=[3]
+08-11 07:55:29 START qat_pilot_lr1e-1b gpus=[4]
+08-11 07:55:29 START M0cyc__mtbench gpus=[5]
+08-11 07:55:29 START M0cyc__gsm8k gpus=[6]
+08-11 07:58:29 DONE qat_pilot_lr3e-1
+08-11 07:58:29 DONE qat_pilot_lr1e-1b
+08-11 07:58:29 DONE M0cyc__gsm8k
+08-11 07:59:10 START qat_pilot_lr1e0 gpus=[3]
+08-11 08:00:10 DONE M0cyc__mtbench
+08-11 08:00:50 START fidi_gauge gpus=[4]
+08-11 08:01:10 DONE fidi_gauge
+08-11 08:01:31 DONE qat_pilot_lr1e0
+08-11 08:03:33 START qat_main_Q2 gpus=[3]
+08-11 08:03:33 START qat_main_Q3 gpus=[4]
+08-11 08:03:33 START qat_main_Q5 gpus=[5]
+08-11 08:11:35 DONE qat_main_Q5
+08-11 08:11:35 START V_Q5__gsm8kvalid gpus=[7]
+08-11 08:11:55 DONE qat_main_Q3
+08-11 08:12:15 DONE qat_main_Q2
+08-11 08:12:15 START V_Q2__gsm8kvalid gpus=[5]
+08-11 08:12:36 START V_Q3__gsm8kvalid gpus=[4]
+08-11 08:18:37 START qat_main_Q5lr1e-1 gpus=[3]
+08-11 08:18:37 START qat_main_Q5lr3e-2 gpus=[6]
+08-11 08:23:57 DONE V_Q5__gsm8kvalid
+08-11 08:24:37 START fidi_gate_d gpus=[7]
+08-11 08:24:57 FAIL fidi_gate_d rc=1 -> RETRY
+08-11 08:24:57 SKIP-ARTIFACT fidi_gate_d
+08-11 08:25:37 START fidi_cap_R0__mtbench gpus=[7]
+08-11 08:26:17 DONE V_Q3__gsm8kvalid
+08-11 08:26:17 DONE qat_main_Q5lr3e-2
+08-11 08:26:38 DONE V_Q2__gsm8kvalid
+08-11 08:26:38 DONE qat_main_Q5lr1e-1
+08-11 08:26:58 START fidi_cap_R0__gsm8k gpus=[4]
+08-11 08:26:58 START fidi_cap_R0q__mtbench gpus=[6]
+08-11 08:27:18 START fidi_gate_d2 gpus=[3]
+08-11 08:27:18 START V_Q5b__gsm8kvalid gpus=[5]
+08-11 08:28:38 DONE fidi_gate_d2
+08-11 08:29:18 START fidi_gate_d3 gpus=[3]
+08-11 08:30:38 DONE fidi_gate_d3
+08-11 08:31:18 START fidi_smoothcal gpus=[3]
+08-11 08:31:58 DONE fidi_smoothcal
+08-11 08:32:39 START fidi_cap_R0q__gsm8k gpus=[3]
+08-11 08:32:59 DONE S2CHKv2__mtbench
+08-11 08:33:39 START fidi_cap_R1f__mtbench gpus=[1]
+08-11 08:47:19 DONE fidi_cap_R1f__mtbench
+08-11 08:47:59 START fidi_cap_R1f__gsm8k gpus=[1]
+08-11 08:53:19 DONE V_Q5b__gsm8kvalid
+08-11 08:53:59 DONE fidi_cap_R0__mtbench
+08-11 08:53:59 DONE fidi_cap_R0__gsm8k
+08-11 08:53:59 START V_Q5bp2__gsm8kvalid gpus=[5]
+08-11 08:54:40 START fidi_cap_R1__mtbench gpus=[4]
+08-11 08:54:40 START fidi_cap_R1__gsm8k gpus=[7]
+08-11 08:56:40 DONE fidi_cap_R1f__gsm8k
+08-11 08:57:20 START fidi_cap_R2__mtbench gpus=[1]
+08-11 09:02:00 DONE fidi_cap_R0q__mtbench
+08-11 09:02:00 DONE fidi_cap_R0q__gsm8k
+08-11 09:02:40 START fidi_cap_R2__gsm8k gpus=[3]
+08-11 09:02:40 START fidi_cap_R3__mtbench gpus=[6]
+08-11 09:14:00 DONE V_Q5bp2__gsm8kvalid
+08-11 09:14:40 START M6__mtbench gpus=[5]
+08-11 09:15:00 DONE HP2v2_rcVSa8__mtbench
+08-11 09:15:40 START M6__gsm8k gpus=[2]
+08-11 09:23:40 DONE fidi_cap_R1__gsm8k
+08-11 09:24:21 START M6__humaneval gpus=[7]
+08-11 09:35:01 DONE fidi_cap_R2__mtbench
+08-11 09:35:41 START M6__sharegpt gpus=[1]
+08-11 09:39:41 DONE fidi_cap_R1__mtbench
+08-11 09:40:21 START fidi_cap_R3__gsm8k gpus=[4]
+08-11 09:41:01 FAIL M6__sharegpt rc=1 -> RETRY
+08-11 09:41:41 START M6__sharegpt gpus=[1]
+08-11 09:44:41 DONE fidi_cap_R2__gsm8k
+08-11 09:45:21 START fidi_cap_R4__mtbench gpus=[3]
+08-11 09:46:41 FAIL M6__sharegpt rc=1 -> GAVE-UP (see /home/thahn1230/dflash_workspace/dflash/runs/dflash_vanilla_spinquant_novelty_20260810_104957/logs/sched_M6__sharegpt.log)
+08-11 09:47:21 START M0shk__sharegpt gpus=[1]
+08-11 09:56:01 DONE M0shk__sharegpt
+08-11 09:56:42 START M6v2__sharegpt gpus=[1]
+08-11 10:07:22 DONE fidi_cap_R3__gsm8k
+08-11 10:08:02 START fidi_cap_R4__gsm8k gpus=[4]
+08-11 10:09:22 DONE M6__humaneval
+08-11 10:10:02 START fidi_weights gpus=[7]
+08-11 10:15:02 DONE M6__gsm8k
+08-11 10:15:42 START fidi_qkvo_ce gpus=[2]
+08-11 10:18:02 DONE fidi_weights
+08-11 10:18:42 START fidi_awdecomp gpus=[7]
+08-11 10:21:02 DONE fidi_qkvo_ce
+08-11 10:21:43 START fidi_alignment gpus=[2]
+08-11 10:22:23 DONE fidi_alignment
+08-11 10:23:03 START V_restq__gsm8kvalid gpus=[2]
+08-11 10:24:43 DONE fidi_awdecomp
+08-11 10:25:23 START V_onlyq__gsm8kvalid gpus=[7]
+08-11 10:26:43 DONE fidi_cap_R4__mtbench
+08-11 10:27:23 START V_restk__gsm8kvalid gpus=[3]
+08-11 10:39:23 DONE M3cyc__mtbench
+08-11 10:40:03 DONE fidi_cap_R3__mtbench
+08-11 10:40:03 START rcal_M3cyc gpus=[0]
+08-11 10:40:23 DONE V_onlyq__gsm8kvalid
+08-11 10:40:43 START V_onlyk__gsm8kvalid gpus=[6]
+08-11 10:41:03 DONE M6__mtbench
+08-11 10:41:04 START V_restv__gsm8kvalid gpus=[7]
+08-11 10:41:44 START V_onlyv__gsm8kvalid gpus=[5]
+08-11 10:43:04 DONE fidi_cap_R4__gsm8k
+08-11 10:43:44 START V_resto__gsm8kvalid gpus=[4]
+08-11 10:45:24 DONE V_restq__gsm8kvalid
+08-11 10:46:04 START V_onlyo__gsm8kvalid gpus=[2]
+08-11 10:46:24 DONE V_restk__gsm8kvalid
+08-11 10:47:04 START V_I7m3__gsm8kvalid gpus=[3]
+08-11 10:51:44 DONE M6v2__sharegpt
+08-11 10:52:24 START V_I7m5__gsm8kvalid gpus=[1]
+08-11 10:53:44 DONE V_onlyk__gsm8kvalid
+08-11 10:55:25 DONE V_restv__gsm8kvalid
+08-11 10:55:45 DONE rcal_M3cyc
+08-11 10:56:05 DONE V_onlyo__gsm8kvalid
+08-11 10:56:25 DONE V_onlyv__gsm8kvalid
+08-11 10:59:27 DONE V_resto__gsm8kvalid
+08-11 11:02:50 DONE V_I7m5__gsm8kvalid
+08-11 11:09:17 DONE V_I7m3__gsm8kvalid
+08-11 11:09:17 QUEUE-DRAINED (idle, waiting for appends)
+08-11 11:10:38 QUEUE-DRAINED (idle, waiting for appends)
+08-11 11:11:58 QUEUE-DRAINED (idle, waiting for appends)
+08-11 11:13:19 QUEUE-DRAINED (idle, waiting for appends)
+08-11 11:14:39 QUEUE-DRAINED (idle, waiting for appends)
+08-11 11:16:00 QUEUE-DRAINED (idle, waiting for appends)
+08-11 11:17:20 QUEUE-DRAINED (idle, waiting for appends)
+08-11 11:18:41 QUEUE-DRAINED (idle, waiting for appends)
+08-11 11:20:01 QUEUE-DRAINED (idle, waiting for appends)
+08-11 11:21:21 QUEUE-DRAINED (idle, waiting for appends)
+08-11 11:22:42 QUEUE-DRAINED (idle, waiting for appends)
+08-11 11:24:02 START qat_main_Q6 gpus=[0]
+08-11 11:24:02 START rcal_M6 gpus=[1]
+08-11 11:24:02 START V_RCrand__gsm8kvalid gpus=[2]
+08-11 11:24:02 START V_RChad__gsm8kvalid gpus=[3]
+08-11 11:31:27 DONE rcal_M6
+08-11 11:31:47 DONE qat_main_Q6
+08-11 11:31:47 START V_Q6__gsm8kvalid gpus=[4]
+08-11 11:35:30 DONE V_RCrand__gsm8kvalid
+08-11 11:35:50 DONE V_RChad__gsm8kvalid
+08-11 11:41:36 DONE V_Q6__gsm8kvalid
+08-11 11:41:37 QUEUE-DRAINED (idle, waiting for appends)
+08-11 11:42:57 QUEUE-DRAINED (idle, waiting for appends)
+08-11 11:44:18 QUEUE-DRAINED (idle, waiting for appends)
+08-11 11:45:38 QUEUE-DRAINED (idle, waiting for appends)

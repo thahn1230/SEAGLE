@@ -1,0 +1,32 @@
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 117.12it/s]
+[qat Q5] trainable 1090.5M params lr 0.1
+[init] val_ce 2.6445
+{'step': 20, 'loss': 2.6597, 'acc': 0.3333}
+{'step': 40, 'loss': 4.0628, 'acc': 0.1875}
+[val] 50 ce 3.1253
+{'step': 60, 'loss': 3.1492, 'acc': 0.2361}
+{'step': 80, 'loss': 1.7805, 'acc': 0.4427}
+{'step': 100, 'loss': 2.8744, 'acc': 0.3889}
+[val] 100 ce 3.2114
+{'step': 120, 'loss': 2.256, 'acc': 0.3101}
+{'step': 140, 'loss': 2.8051, 'acc': 0.2971}
+[val] 150 ce 3.1586
+{'step': 160, 'loss': 1.5902, 'acc': 0.4815}
+{'step': 180, 'loss': 1.4783, 'acc': 0.5417}
+{'step': 200, 'loss': 2.4328, 'acc': 0.3688}
+[val] 200 ce 3.1554
+{'step': 220, 'loss': 1.4621, 'acc': 0.5248}
+{'step': 240, 'loss': 1.5343, 'acc': 0.5069}
+[val] 250 ce 3.0896
+{'step': 260, 'loss': 1.1617, 'acc': 0.6331}
+{'step': 280, 'loss': 0.8544, 'acc': 0.6597}
+{'step': 300, 'loss': 2.4438, 'acc': 0.3194}
+[val] 300 ce 3.0966
+{'step': 320, 'loss': 3.2061, 'acc': 0.2639}
+{'step': 340, 'loss': 0.9001, 'acc': 0.6691}
+[val] 350 ce 3.1522
+{'step': 360, 'loss': 1.1206, 'acc': 0.6111}
+{'step': 380, 'loss': 1.7301, 'acc': 0.4236}
+{'step': 400, 'loss': 1.5965, 'acc': 0.5588}
+[val] 400 ce 2.7005
+[qat Q5] DONE init 2.6445 best 2.6445 @ 0

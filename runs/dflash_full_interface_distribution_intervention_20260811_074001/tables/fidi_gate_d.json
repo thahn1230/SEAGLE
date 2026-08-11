@@ -1,0 +1,9 @@
+{
+ "G_REG_bits4_bitwise": true,
+ "G_REG_bits16_bitwise": true,
+ "G_FP_bitwise": true,
+ "G_TAP_bitwise": true,
+ "info_stock_vs_rq16_rel": 0.012292987667024136,
+ "info_quant_changes_output": true,
+ "n_taps": 52
+}

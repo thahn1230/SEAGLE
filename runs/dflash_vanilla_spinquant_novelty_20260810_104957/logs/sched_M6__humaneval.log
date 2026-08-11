@@ -1,0 +1,25 @@
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 69.93it/s]
+[vsq] QAT weights /home/thahn1230/dflash_workspace/dflash/runs/dflash_vanilla_spinquant_novelty_20260810_104957/rotations/draft/QAT_Q5_lr3e-2.pt arm=Q5 lr=0.03 best_ce=?
+[vsq] RotQuantDraft ckpt=/home/thahn1230/dflash_workspace/dflash/runs/dflash_vanilla_spinquant_novelty_20260810_104957/rotations/draft/R1D_s1r1.pt raw=False bits=4
+ humaneval ...
+Downloading readme: 0.00B [00:00, ?B/s]Downloading readme: 6.52kB [00:00, 17.4MB/s]
+Downloading data:   0%|          | 0.00/83.9k [00:00<?, ?B/s]Downloading data: 100%|██████████| 83.9k/83.9k [00:01<00:00, 63.5kB/s]Downloading data: 100%|██████████| 83.9k/83.9k [00:01<00:00, 63.4kB/s]
+Generating test split:   0%|          | 0/164 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 164/164 [00:00<00:00, 24997.85 examples/s]
+ /home/thahn1230/dflash_workspace/dflash/cache/humaneval.jsonl  (164 samples)
+[M6_q5bp2] 10/164 cycle-tau=4.1595
+[M6_q5bp2] 20/164 cycle-tau=4.1028
+[M6_q5bp2] 30/164 cycle-tau=4.1650
+[M6_q5bp2] 40/164 cycle-tau=4.1790
+[M6_q5bp2] 50/164 cycle-tau=4.2866
+[M6_q5bp2] 60/164 cycle-tau=4.4169
+[M6_q5bp2] 70/164 cycle-tau=4.5203
+[M6_q5bp2] 80/164 cycle-tau=4.4187
+[M6_q5bp2] 90/164 cycle-tau=4.4243
+[M6_q5bp2] 100/164 cycle-tau=4.4814
+[M6_q5bp2] 110/164 cycle-tau=4.5924
+[M6_q5bp2] 120/164 cycle-tau=4.5894
+[M6_q5bp2] 130/164 cycle-tau=4.6170
+[M6_q5bp2] 140/164 cycle-tau=4.6789
+[M6_q5bp2] 150/164 cycle-tau=4.6332
+[M6_q5bp2] 160/164 cycle-tau=4.6475
+[M6_q5bp2] DONE humaneval cycle-pooled tau = 4.6500 over 8261 cycles

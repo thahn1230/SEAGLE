@@ -1,0 +1,8 @@
+method,tag,mtbench,gsm8k,humaneval,sharegpt,mean_4ds
+FP16,M0_fp16,3.8619,4.2129,4.8920,3.8391,4.2015
+naive W4A4 RTN,M1_rtn,1.8740,1.6681,1.6435,1.6105,1.6990
+"vanilla SQ RAW (interface-broken, mtbench only)",M2_vsqraw,1.0000,,,,
+vanilla SpinQuant (correct mandatory folds),M3_vsq,1.6749,2.0050,2.0990,1.5643,1.8358
++ R_C (H_t context rotation),M5_rconly,3.2030,3.3123,3.9836,3.0313,3.3825
++ P2 + R_C,M5_p2rc,3.4395,3.5510,4.5042,3.2089,3.6759
+"Final: + QAT draft weights (Q5,3e-2) + P2 + R_C",M6_q5bp2,3.5420,3.7877,4.6500,3.3121,3.8230

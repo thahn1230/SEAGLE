@@ -1,0 +1,30 @@
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 98.16it/s]
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/thahn1230/dflash_workspace/dflash/seagle_port/eval_al.py", line 314, in <module>
+    main()
+  File "/home/thahn1230/dflash_workspace/dflash/seagle_port/eval_al.py", line 252, in main
+    rows = load_dataset_rows(args.dataset, args.max_samples)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/thahn1230/dflash_workspace/dflash/seagle_port/eval_al.py", line 49, in load_dataset_rows
+    rows = [json.loads(l) for l in open(path)]
+                                   ^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/home/thahn1230/dflash_workspace/dflash/seagle_port/../cache/sharegpt.jsonl'
+[vsq] QAT weights /home/thahn1230/dflash_workspace/dflash/runs/dflash_vanilla_spinquant_novelty_20260810_104957/rotations/draft/QAT_Q5_lr3e-2.pt arm=Q5 lr=0.03 best_ce=?
+[vsq] RotQuantDraft ckpt=/home/thahn1230/dflash_workspace/dflash/runs/dflash_vanilla_spinquant_novelty_20260810_104957/rotations/draft/R1D_s1r1.pt raw=False bits=4
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 87.30it/s]
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/thahn1230/dflash_workspace/dflash/seagle_port/eval_al.py", line 314, in <module>
+    main()
+  File "/home/thahn1230/dflash_workspace/dflash/seagle_port/eval_al.py", line 252, in main
+    rows = load_dataset_rows(args.dataset, args.max_samples)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/thahn1230/dflash_workspace/dflash/seagle_port/eval_al.py", line 49, in load_dataset_rows
+    rows = [json.loads(l) for l in open(path)]
+                                   ^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/home/thahn1230/dflash_workspace/dflash/seagle_port/../cache/sharegpt.jsonl'
+[vsq] QAT weights /home/thahn1230/dflash_workspace/dflash/runs/dflash_vanilla_spinquant_novelty_20260810_104957/rotations/draft/QAT_Q5_lr3e-2.pt arm=Q5 lr=0.03 best_ce=?
+[vsq] RotQuantDraft ckpt=/home/thahn1230/dflash_workspace/dflash/runs/dflash_vanilla_spinquant_novelty_20260810_104957/rotations/draft/R1D_s1r1.pt raw=False bits=4

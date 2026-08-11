@@ -1,0 +1,24 @@
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:00<00:00, 26.28it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 34.77it/s]
+[vsq] QAT weights /home/thahn1230/dflash_workspace/dflash/runs/dflash_vanilla_spinquant_novelty_20260810_104957/rotations/draft/QAT_Q5_lr3e-2.pt arm=Q5 lr=0.03 best_ce=?
+[vsq] RotQuantDraft ckpt=/home/thahn1230/dflash_workspace/dflash/runs/dflash_vanilla_spinquant_novelty_20260810_104957/rotations/draft/R1D_s1r1.pt raw=False bits=4
+[M6_q5bp2] 10/200 cycle-tau=4.4118
+[M6_q5bp2] 20/200 cycle-tau=4.0559
+[M6_q5bp2] 30/200 cycle-tau=3.8305
+[M6_q5bp2] 40/200 cycle-tau=3.6842
+[M6_q5bp2] 50/200 cycle-tau=3.6878
+[M6_q5bp2] 60/200 cycle-tau=3.6587
+[M6_q5bp2] 70/200 cycle-tau=3.7001
+[M6_q5bp2] 80/200 cycle-tau=3.7136
+[M6_q5bp2] 90/200 cycle-tau=3.7097
+[M6_q5bp2] 100/200 cycle-tau=3.8087
+[M6_q5bp2] 110/200 cycle-tau=3.8642
+[M6_q5bp2] 120/200 cycle-tau=3.8381
+[M6_q5bp2] 130/200 cycle-tau=3.8173
+[M6_q5bp2] 140/200 cycle-tau=3.8179
+[M6_q5bp2] 150/200 cycle-tau=3.7947
+[M6_q5bp2] 160/200 cycle-tau=3.7993
+[M6_q5bp2] 170/200 cycle-tau=3.7826
+[M6_q5bp2] 180/200 cycle-tau=3.8259
+[M6_q5bp2] 190/200 cycle-tau=3.7886
+[M6_q5bp2] 200/200 cycle-tau=3.7877
+[M6_q5bp2] DONE gsm8k cycle-pooled tau = 3.7877 over 10152 cycles

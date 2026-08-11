@@ -1,0 +1,155 @@
+Traceback (most recent call last):
+  File "/home/thahn1230/dflash_workspace/venv/lib/python3.12/site-packages/huggingface_hub/utils/_http.py", line 403, in hf_raise_for_status
+    response.raise_for_status()
+  File "/home/thahn1230/anaconda3/lib/python3.12/site-packages/requests/models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 401 Client Error: Unauthorized for url: https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct/resolve/main/chat_template.jinja
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/thahn1230/dflash_workspace/venv/lib/python3.12/site-packages/transformers/utils/hub.py", line 479, in cached_files
+    hf_hub_download(
+  File "/home/thahn1230/dflash_workspace/venv/lib/python3.12/site-packages/huggingface_hub/utils/_validators.py", line 114, in _inner_fn
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/home/thahn1230/dflash_workspace/venv/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 1014, in hf_hub_download
+    return _hf_hub_download_to_cache_dir(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/thahn1230/dflash_workspace/venv/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 1121, in _hf_hub_download_to_cache_dir
+    _raise_on_head_call_error(head_call_error, force_download, local_files_only)
+  File "/home/thahn1230/dflash_workspace/venv/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 1662, in _raise_on_head_call_error
+    raise head_call_error
+  File "/home/thahn1230/dflash_workspace/venv/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 1550, in _get_metadata_or_catch_error
+    metadata = get_hf_file_metadata(
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/thahn1230/dflash_workspace/venv/lib/python3.12/site-packages/huggingface_hub/utils/_validators.py", line 114, in _inner_fn
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/home/thahn1230/dflash_workspace/venv/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 1467, in get_hf_file_metadata
+    r = _request_wrapper(
+        ^^^^^^^^^^^^^^^^^
+  File "/home/thahn1230/dflash_workspace/venv/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 283, in _request_wrapper
+    response = _request_wrapper(
+               ^^^^^^^^^^^^^^^^^
+  File "/home/thahn1230/dflash_workspace/venv/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 307, in _request_wrapper
+    hf_raise_for_status(response)
+  File "/home/thahn1230/dflash_workspace/venv/lib/python3.12/site-packages/huggingface_hub/utils/_http.py", line 420, in hf_raise_for_status
+    raise _format(GatedRepoError, message, response) from e
+huggingface_hub.errors.GatedRepoError: 401 Client Error. (Request ID: Root=1-6a7ad44a-0b7b2a7578d0dc2730d5ba6d;3a1e97c7-fea1-4cbf-8626-c771104e99a3)
+
+Cannot access gated repo for url https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct/resolve/main/chat_template.jinja.
+Access to model meta-llama/Llama-3.1-8B-Instruct is restricted. You must have access to it and be authenticated to access it. Please log in.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/thahn1230/dflash_workspace/dflash/seagle_port/eval_al.py", line 298, in <module>
+    main()
+  File "/home/thahn1230/dflash_workspace/dflash/seagle_port/eval_al.py", line 127, in main
+    tok = AutoTokenizer.from_pretrained(MODEL)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/thahn1230/dflash_workspace/venv/lib/python3.12/site-packages/transformers/models/auto/tokenization_auto.py", line 1156, in from_pretrained
+    return tokenizer_class.from_pretrained(pretrained_model_name_or_path, *inputs, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/thahn1230/dflash_workspace/venv/lib/python3.12/site-packages/transformers/tokenization_utils_base.py", line 2076, in from_pretrained
+    resolved_vocab_files[file_id] = cached_file(
+                                    ^^^^^^^^^^^^
+  File "/home/thahn1230/dflash_workspace/venv/lib/python3.12/site-packages/transformers/utils/hub.py", line 322, in cached_file
+    file = cached_files(path_or_repo_id=path_or_repo_id, filenames=[filename], **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/thahn1230/dflash_workspace/venv/lib/python3.12/site-packages/transformers/utils/hub.py", line 543, in cached_files
+    raise OSError(
+OSError: You are trying to access a gated repo.
+Make sure to have access to it at https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct.
+401 Client Error. (Request ID: Root=1-6a7ad44a-0b7b2a7578d0dc2730d5ba6d;3a1e97c7-fea1-4cbf-8626-c771104e99a3)
+
+Cannot access gated repo for url https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct/resolve/main/chat_template.jinja.
+Access to model meta-llama/Llama-3.1-8B-Instruct is restricted. You must have access to it and be authenticated to access it. Please log in.
+Traceback (most recent call last):
+  File "/home/thahn1230/dflash_workspace/venv/lib/python3.12/site-packages/huggingface_hub/utils/_http.py", line 403, in hf_raise_for_status
+    response.raise_for_status()
+  File "/home/thahn1230/anaconda3/lib/python3.12/site-packages/requests/models.py", line 1024, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 401 Client Error: Unauthorized for url: https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct/resolve/main/chat_template.jinja
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/thahn1230/dflash_workspace/venv/lib/python3.12/site-packages/transformers/utils/hub.py", line 479, in cached_files
+    hf_hub_download(
+  File "/home/thahn1230/dflash_workspace/venv/lib/python3.12/site-packages/huggingface_hub/utils/_validators.py", line 114, in _inner_fn
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/home/thahn1230/dflash_workspace/venv/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 1014, in hf_hub_download
+    return _hf_hub_download_to_cache_dir(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/thahn1230/dflash_workspace/venv/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 1121, in _hf_hub_download_to_cache_dir
+    _raise_on_head_call_error(head_call_error, force_download, local_files_only)
+  File "/home/thahn1230/dflash_workspace/venv/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 1662, in _raise_on_head_call_error
+    raise head_call_error
+  File "/home/thahn1230/dflash_workspace/venv/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 1550, in _get_metadata_or_catch_error
+    metadata = get_hf_file_metadata(
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/thahn1230/dflash_workspace/venv/lib/python3.12/site-packages/huggingface_hub/utils/_validators.py", line 114, in _inner_fn
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/home/thahn1230/dflash_workspace/venv/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 1467, in get_hf_file_metadata
+    r = _request_wrapper(
+        ^^^^^^^^^^^^^^^^^
+  File "/home/thahn1230/dflash_workspace/venv/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 283, in _request_wrapper
+    response = _request_wrapper(
+               ^^^^^^^^^^^^^^^^^
+  File "/home/thahn1230/dflash_workspace/venv/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 307, in _request_wrapper
+    hf_raise_for_status(response)
+  File "/home/thahn1230/dflash_workspace/venv/lib/python3.12/site-packages/huggingface_hub/utils/_http.py", line 420, in hf_raise_for_status
+    raise _format(GatedRepoError, message, response) from e
+huggingface_hub.errors.GatedRepoError: 401 Client Error. (Request ID: Root=1-6a7ad45f-7fafb8ab396009da48fb92d2;944de930-6fe0-43ae-9e0d-792b91659c76)
+
+Cannot access gated repo for url https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct/resolve/main/chat_template.jinja.
+Access to model meta-llama/Llama-3.1-8B-Instruct is restricted. You must have access to it and be authenticated to access it. Please log in.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/thahn1230/dflash_workspace/dflash/seagle_port/eval_al.py", line 298, in <module>
+    main()
+  File "/home/thahn1230/dflash_workspace/dflash/seagle_port/eval_al.py", line 127, in main
+    tok = AutoTokenizer.from_pretrained(MODEL)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/thahn1230/dflash_workspace/venv/lib/python3.12/site-packages/transformers/models/auto/tokenization_auto.py", line 1156, in from_pretrained
+    return tokenizer_class.from_pretrained(pretrained_model_name_or_path, *inputs, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/thahn1230/dflash_workspace/venv/lib/python3.12/site-packages/transformers/tokenization_utils_base.py", line 2076, in from_pretrained
+    resolved_vocab_files[file_id] = cached_file(
+                                    ^^^^^^^^^^^^
+  File "/home/thahn1230/dflash_workspace/venv/lib/python3.12/site-packages/transformers/utils/hub.py", line 322, in cached_file
+    file = cached_files(path_or_repo_id=path_or_repo_id, filenames=[filename], **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/thahn1230/dflash_workspace/venv/lib/python3.12/site-packages/transformers/utils/hub.py", line 543, in cached_files
+    raise OSError(
+OSError: You are trying to access a gated repo.
+Make sure to have access to it at https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct.
+401 Client Error. (Request ID: Root=1-6a7ad45f-7fafb8ab396009da48fb92d2;944de930-6fe0-43ae-9e0d-792b91659c76)
+
+Cannot access gated repo for url https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct/resolve/main/chat_template.jinja.
+Access to model meta-llama/Llama-3.1-8B-Instruct is restricted. You must have access to it and be authenticated to access it. Please log in.
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 46.49it/s]
+ gsm8k ...
+Downloading readme: 0.00B [00:00, ?B/s]Downloading readme: 7.93kB [00:00, 13.9MB/s]
+Downloading data:   0%|          | 0.00/2.31M [00:00<?, ?B/s]Downloading data: 100%|██████████| 2.31M/2.31M [00:01<00:00, 1.36MB/s]Downloading data: 100%|██████████| 2.31M/2.31M [00:01<00:00, 1.35MB/s]
+Downloading data:   0%|          | 0.00/419k [00:00<?, ?B/s]Downloading data: 100%|██████████| 419k/419k [00:00<00:00, 507kB/s]Downloading data: 100%|██████████| 419k/419k [00:00<00:00, 507kB/s]
+Generating train split:   0%|          | 0/7473 [00:00<?, ? examples/s]Generating train split: 100%|██████████| 7473/7473 [00:00<00:00, 321787.51 examples/s]
+Generating test split:   0%|          | 0/1319 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 1319/1319 [00:00<00:00, 307896.65 examples/s]
+ /home/thahn1230/dflash_workspace/dflash/cache/gsm8k.jsonl  (1319 samples)
+[M0cyc] 10/60 cycle-tau=3.7997
+[M0cyc] 20/60 cycle-tau=4.0255
+[M0cyc] 30/60 cycle-tau=4.0935
+[M0cyc] 40/60 cycle-tau=4.0761
+[M0cyc] 50/60 cycle-tau=4.1164
+[M0cyc] 60/60 cycle-tau=4.1094
+[M0cyc] DONE gsm8k cycle-pooled tau = 4.1094 over 3400 cycles

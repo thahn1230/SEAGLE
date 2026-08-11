@@ -1,0 +1,2 @@
+[gate] {'G_REG_bits4_bitwise': True, 'G_REG_bits16_bitwise': True, 'G_FP_bitwise': True, 'G_TAP_bitwise': True, 'info_stock_vs_rq16_rel': 0.012292987667024136, 'info_quant_changes_output': True, 'n_taps': 52}
+[gate] PASS

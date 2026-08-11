@@ -1,0 +1,8 @@
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 86.97it/s]
+[fidi] R0q gsm8k 10/60 turns
+[fidi] R0q gsm8k 20/60 turns
+[fidi] R0q gsm8k 30/60 turns
+[fidi] R0q gsm8k 40/60 turns
+[fidi] R0q gsm8k 50/60 turns
+[fidi] R0q gsm8k 60/60 turns
+[fidi] R0q__gsm8k DONE tensors=48 qsites=28
