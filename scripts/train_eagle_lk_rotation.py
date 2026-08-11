@@ -122,6 +122,11 @@ def main():
                     help="load R_D from this checkpoint and hold it "
                          "FIXED (SharedRotation) — e.g. the frozen R5 "
                          "while training R6 only; overrides --rot")
+    ap.add_argument("--rot-anchor-ckpt", default=None,
+                    help="load R_D from this checkpoint and train a "
+                         "ResidualRotation AROUND it (R = R_old @ C(A), "
+                         "A init 0) — re-optimize R5 starting from the "
+                         "old learned R5; overrides --rot")
     ap.add_argument("--train-r2", action="store_true",
                     help="learn draft-aware R6 = R2_base @ C(B): "
                          "residual Cayley correction around the seeded "
@@ -193,6 +198,13 @@ def main():
                          weights_only=False)
         rot = SharedRotation(ckf["R_D"].float())
         print(f"[lk] R_D held FIXED from {args.rot_fixed_ckpt}",
+              flush=True)
+    elif args.rot_anchor_ckpt:
+        cka = torch.load(args.rot_anchor_ckpt, map_location="cpu",
+                         weights_only=False)
+        rot = ResidualRotation(cka["R_D"].float(), trust=args.trust,
+                               radius=args.radius)
+        print(f"[lk] R_D re-optimized AROUND {args.rot_anchor_ckpt}",
               flush=True)
     elif args.rot == "shared":
         rot = SharedRotation(R_T)

@@ -185,6 +185,18 @@ def main():
                     choices=["C3", "C7", "C7b", "C6", "C8"])
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--run-dir", required=True)
+    ap.add_argument("--vloss-coef", type=float, default=1.0,
+                    help="SmoothL1 feature-loss coefficient (causal "
+                         "ablation; canonical 1.0)")
+    ap.add_argument("--ploss-coef", type=float, default=0.1,
+                    help="SoftCE distillation coefficient (canonical "
+                         "0.1)")
+    ap.add_argument("--train-mask", default=None,
+                    help="comma subset of {proj,attn,mlp} to TRAIN; "
+                         "others frozen (module-freeze causal ablation; "
+                         "None = canonical full set). NOTE: first and "
+                         "recurrent projection share fc weights and "
+                         "cannot be separated.")
     ap.add_argument("--steps", type=int, default=6000)
     ap.add_argument("--bs", type=int, default=1)
     ap.add_argument("--accum", type=int, default=4)
@@ -290,6 +302,17 @@ def main():
         first_fold_R=first_fold,
         alpha_rec_init=args.alpha_rec).to(dev)
     core.log_alpha.requires_grad_(False)
+    if args.train_mask:
+        keep = set(args.train_mask.split(","))
+        assert keep <= {"proj", "attn", "mlp"}, keep
+        group_of = dict(W_e="proj", W_h="proj", b_fc="proj",
+                        Wq="attn", Wk="attn", Wv="attn", Wo="attn",
+                        Wgate="mlp", Wup="mlp", Wdown="mlp")
+        for nm, p in core.named_parameters():
+            g = group_of.get(nm.split(".")[-1])
+            if g is not None and g not in keep:
+                p.requires_grad_(False)
+        print(f"[{tag}] train-mask {sorted(keep)}", flush=True)
     trainable = [p for p in core.parameters() if p.requires_grad]
     n_tr = sum(p.numel() for p in trainable)
     print(f"[{tag}] trainable params: {n_tr/1e6:.1f}M "
@@ -429,7 +452,8 @@ def main():
             lp = core.head_logits(hf).log_softmax(-1)
             ploss = -(tp * lp).sum(-1).sum() / nsel
             del tp, lp
-            loss = (1.0 * vloss + 0.1 * ploss) / nmicro
+            loss = (args.vloss_coef * vloss
+                    + args.ploss_coef * ploss) / nmicro
             loss.backward()
             acc_v += vloss.item() / nmicro
             acc_p += ploss.item() / nmicro

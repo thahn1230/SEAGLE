@@ -180,13 +180,21 @@ def main():
         if r6 is not None:
             print(f"[al] draft-aware R6 from ckpt (shape "
                   f"{tuple(r6.shape)})", flush=True)
+        kw = dict(D4)
+        # diagnostic FP-draft execution: same R5 gauge, quant overridden
+        for a_, k_ in (("quant_first", "quant_first"),
+                       ("quant_recurrent", "quant_recurrent"),
+                       ("quant_ar", "quant_ar")):
+            v = getattr(args, a_, None)
+            if v is not None:
+                kw[k_] = v
         ad = ConcatSelectiveDraftAdapter(
             model, st, dev, torch.float16, variant="folded",
             first_hidden_mode=fhm, trace=False, first_fold_R=R_T,
             r2_override=(r6.double() if r6 is not None else None),
             embed_scale_alpha=(args.alpha if args.alpha is not None
                                else float(ck.get("alpha", def_alpha))),
-            **D4)
+            **kw)
     elif args.draft_cfg == "rot_ep3p":
         # R_D draft gauge + EP3-P pathwise scales: stash R1 <- R_D,
         # T->D bridge pinned at R_T (first_fold_R), alpha/alpha_rec from
