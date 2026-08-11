@@ -472,6 +472,45 @@ to the runtime.
 **Scope limit.** All quantization here is fake (quantize-dequantize with
 FP16 matmuls). None of these timings is an INT4 deployment throughput claim.
 
+## 10.5 Relation to how SpinQuant itself trains rotations
+
+Worth stating explicitly, because it changes how the arms should be read.
+SpinQuant optimizes **R1 and every per-layer R2 jointly** — one parameter
+list, one optimizer, one loss (`optimize_rotation.py:103-108`:
+`trainable_parameters = [model.R1.weight] + [layers[i].self_attn.R2.weight
+for i in range(num_hidden_layers)]`, handed to a single `SGDG(...,
+stiefel=True)`). There is no alternating or staged schedule. Its objective is
+plain next-token cross-entropy on wikitext-2 with W4A4 fake-quant in the
+loop, over 100 steps at global batch 8, with rotations initialized to random
+Hadamard and kept on the Stiefel manifold by a 5-iteration Cayley loop plus
+occasional (~1%) QR re-normalization.
+
+Mapping that onto this study:
+
+| Arm | Relation to SpinQuant's own procedure |
+|---|---|
+| A1 (R1_D only) | not a SpinQuant configuration — R2 held fixed |
+| A2 (R2_D only) | not a SpinQuant configuration — R1 held fixed |
+| **A3 (joint)** | **SpinQuant's procedure, with the objective swapped from target CE to the draft's acceptance-aware surrogate** |
+| A4 (composed)  | something SpinQuant never does |
+
+Two consequences. First, the A4 result (composition falls below A1) is an
+independent confirmation of SpinQuant's design choice: separately-optimized
+rotations do not compose, so joint optimization is the right default.
+Second, and more pointed: **even when we follow SpinQuant's joint procedure,
+the R2 component contributes nothing measurable for the draft.** A3 vs A1 is
+non-significant on 4/4 datasets, and the jointly-trained R2 generator settles
+at 5.62-5.78 versus 16.3-23.2 when trained alone — the optimizer, free to
+move both, largely declines to move R2.
+
+A plausible structural reason (stated as interpretation, not measurement):
+the target has 32 independent per-layer R2 matrices, each with its own share
+of the CE objective, whereas this draft has a single decoder layer and one
+R2 shared across all 32 heads. In that geometry the residual-stream basis
+R1 can absorb what the single attention-local rotation would otherwise do.
+Whether the conclusion would change for a multi-layer draft is untested here
+and is the natural follow-up.
+
 ## 11. Scientific conclusion
 
 > **"Draft-awareness is primarily required for R1; R2 can remain fixed."**
