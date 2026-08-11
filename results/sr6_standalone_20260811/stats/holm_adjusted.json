@@ -1,0 +1,114 @@
+{
+ "mtbench:transplant_vs_gs_mtbench": {
+  "p_raw": 0.422,
+  "floored": false,
+  "delta": 0.0214,
+  "ci": [
+   -0.0304,
+   0.0686
+  ],
+  "dataset": "mtbench",
+  "family": "mtbench",
+  "p_holm": 0.844,
+  "reject_05": false,
+  "p_display": "0.422 (holm 0.844)"
+ },
+ "mtbench:joint_vs_r5_mtbench": {
+  "p_raw": 0.5586666666666666,
+  "floored": false,
+  "delta": 0.017,
+  "ci": [
+   -0.038,
+   0.0757
+  ],
+  "dataset": "mtbench",
+  "family": "mtbench",
+  "p_holm": 0.844,
+  "reject_05": false,
+  "p_display": "0.5587 (holm 0.844)"
+ },
+ "humaneval:joint_vs_r5_humaneval": {
+  "p_raw": 0.25866666666666666,
+  "floored": false,
+  "delta": -0.0304,
+  "ci": [
+   -0.0839,
+   0.0215
+  ],
+  "dataset": "humaneval",
+  "family": "humaneval",
+  "p_holm": 0.517333,
+  "reject_05": false,
+  "p_display": "0.2587 (holm 0.5173)"
+ },
+ "humaneval:transplant_vs_gs_humaneval": {
+  "p_raw": 0.92,
+  "floored": false,
+  "delta": 0.0035,
+  "ci": [
+   -0.0523,
+   0.0558
+  ],
+  "dataset": "humaneval",
+  "family": "humaneval",
+  "p_holm": 0.92,
+  "reject_05": false,
+  "p_display": "0.92 (holm 0.92)"
+ },
+ "gsm8k:joint_vs_r5_gsm8k": {
+  "p_raw": 0.25733333333333336,
+  "floored": false,
+  "delta": -0.0234,
+  "ci": [
+   -0.0681,
+   0.0196
+  ],
+  "dataset": "gsm8k",
+  "family": "gsm8k",
+  "p_holm": 0.514667,
+  "reject_05": false,
+  "p_display": "0.2573 (holm 0.5147)"
+ },
+ "gsm8k:transplant_vs_gs_gsm8k": {
+  "p_raw": 0.606,
+  "floored": false,
+  "delta": -0.0099,
+  "ci": [
+   -0.0462,
+   0.0274
+  ],
+  "dataset": "gsm8k",
+  "family": "gsm8k",
+  "p_holm": 0.606,
+  "reject_05": false,
+  "p_display": "0.606 (holm 0.606)"
+ },
+ "sharegpt:transplant_vs_gs_sharegpt": {
+  "p_raw": 0.30133333333333334,
+  "floored": false,
+  "delta": 0.0327,
+  "ci": [
+   -0.0281,
+   0.0972
+  ],
+  "dataset": "sharegpt",
+  "family": "sharegpt",
+  "p_holm": 0.602667,
+  "reject_05": false,
+  "p_display": "0.3013 (holm 0.6027)"
+ },
+ "sharegpt:joint_vs_r5_sharegpt": {
+  "p_raw": 0.8106666666666666,
+  "floored": false,
+  "delta": -0.0083,
+  "ci": [
+   -0.0747,
+   0.0562
+  ],
+  "dataset": "sharegpt",
+  "family": "sharegpt",
+  "p_holm": 0.810667,
+  "reject_05": false,
+  "p_display": "0.8107 (holm 0.8107)"
+ }
+}

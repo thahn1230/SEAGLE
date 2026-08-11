@@ -1,0 +1,52 @@
+[
+ {
+  "name": "joint_vs_r5_sharegpt",
+  "a": "B9_T4@int4",
+  "b": "JOINT_s1@int4",
+  "dataset": "sharegpt",
+  "status": "ok",
+  "tau_a": 3.2351,
+  "ci_a": [
+   3.1371,
+   3.3345
+  ],
+  "tau_b": 3.2268,
+  "ci_b": [
+   3.1222,
+   3.3299
+  ],
+  "delta_b_minus_a": -0.0083,
+  "ci_delta": [
+   -0.0747,
+   0.0562
+  ],
+  "p_two_sided": 0.8106666666666666,
+  "n_common": 80,
+  "reps": 3000
+ },
+ {
+  "name": "transplant_vs_gs_sharegpt",
+  "a": "B3_T4@int4",
+  "b": "TRANSPLANT@int4",
+  "dataset": "sharegpt",
+  "status": "ok",
+  "tau_a": 3.1092,
+  "ci_a": [
+   3.0304,
+   3.1916
+  ],
+  "tau_b": 3.1418,
+  "ci_b": [
+   3.0476,
+   3.2316
+  ],
+  "delta_b_minus_a": 0.0327,
+  "ci_delta": [
+   -0.0281,
+   0.0972
+  ],
+  "p_two_sided": 0.30133333333333334,
+  "n_common": 80,
+  "reps": 3000
+ }
+]

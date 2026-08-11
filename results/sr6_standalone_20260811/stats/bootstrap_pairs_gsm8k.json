@@ -1,0 +1,52 @@
+[
+ {
+  "name": "joint_vs_r5_gsm8k",
+  "a": "B9_T4@int4",
+  "b": "JOINT_s1@int4",
+  "dataset": "gsm8k",
+  "status": "ok",
+  "tau_a": 3.6875,
+  "ci_a": [
+   3.644,
+   3.7309
+  ],
+  "tau_b": 3.6641,
+  "ci_b": [
+   3.6243,
+   3.7055
+  ],
+  "delta_b_minus_a": -0.0234,
+  "ci_delta": [
+   -0.0681,
+   0.0196
+  ],
+  "p_two_sided": 0.25733333333333336,
+  "n_common": 200,
+  "reps": 3000
+ },
+ {
+  "name": "transplant_vs_gs_gsm8k",
+  "a": "B3_T4@int4",
+  "b": "TRANSPLANT@int4",
+  "dataset": "gsm8k",
+  "status": "ok",
+  "tau_a": 3.449,
+  "ci_a": [
+   3.4104,
+   3.4878
+  ],
+  "tau_b": 3.4391,
+  "ci_b": [
+   3.3978,
+   3.4802
+  ],
+  "delta_b_minus_a": -0.0099,
+  "ci_delta": [
+   -0.0462,
+   0.0274
+  ],
+  "p_two_sided": 0.606,
+  "n_common": 200,
+  "reps": 3000
+ }
+]

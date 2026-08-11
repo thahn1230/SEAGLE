@@ -1,0 +1,52 @@
+[
+ {
+  "name": "joint_vs_r5_mtbench",
+  "a": "B9_T4@int4",
+  "b": "JOINT_s1@int4",
+  "dataset": "mtbench",
+  "status": "ok",
+  "tau_a": 3.1645,
+  "ci_a": [
+   3.0659,
+   3.2689
+  ],
+  "tau_b": 3.1814,
+  "ci_b": [
+   3.0767,
+   3.2855
+  ],
+  "delta_b_minus_a": 0.017,
+  "ci_delta": [
+   -0.038,
+   0.0757
+  ],
+  "p_two_sided": 0.5586666666666666,
+  "n_common": 80,
+  "reps": 3000
+ },
+ {
+  "name": "transplant_vs_gs_mtbench",
+  "a": "B3_T4@int4",
+  "b": "TRANSPLANT@int4",
+  "dataset": "mtbench",
+  "status": "ok",
+  "tau_a": 2.9955,
+  "ci_a": [
+   2.892,
+   3.1122
+  ],
+  "tau_b": 3.017,
+  "ci_b": [
+   2.9201,
+   3.1123
+  ],
+  "delta_b_minus_a": 0.0214,
+  "ci_delta": [
+   -0.0304,
+   0.0686
+  ],
+  "p_two_sided": 0.422,
+  "n_common": 80,
+  "reps": 3000
+ }
+]

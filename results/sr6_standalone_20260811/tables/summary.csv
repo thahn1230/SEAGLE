@@ -1,0 +1,7 @@
+method,mtbench,gsm8k,sharegpt,humaneval,mean4
+GS PTQ (canonical B3_T4),2.9955,3.449,3.1092,3.749,3.3257
+GS + R6 standalone (median s2),3.0392,3.4819,3.1204,3.8029,3.3611
+GS + R6 transplant ctrl (R5-cond.),3.017,3.4391,3.1418,3.7526,3.3376
+GS + R5 (canonical B9_T4),3.1645,3.6875,3.2351,3.8282,3.4788
+GS + R5 + R6 sequential (canonical),3.1698,3.6379,3.2853,3.8244,3.4794
+GS + R5R6 JOINT co-trained (median s1),3.1814,3.6641,3.2268,3.7977,3.4675

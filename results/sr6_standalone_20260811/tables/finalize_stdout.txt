@@ -1,0 +1,11 @@
+python: can't open file '/data/thahn1230/scripts/bootstrap_eagle_tau.py': [Errno 2] No such file or directory
+python: can't open file '/data/thahn1230/scripts/bootstrap_eagle_tau.py': [Errno 2] No such file or directory
+python: can't open file '/data/thahn1230/scripts/bootstrap_eagle_tau.py': [Errno 2] No such file or directory
+python: can't open file '/data/thahn1230/scripts/bootstrap_eagle_tau.py': [Errno 2] No such file or directory
+python: can't open file '/data/thahn1230/scripts/holm_adjust_bootstrap.py': [Errno 2] No such file or directory
+GS_baseline [2.9955, 3.449, 3.1092, 3.749] 3.3257
+GS_R6_standalone_s2 [4.0392, 4.4819, 4.1204, 4.8029] 4.3611
+TRANSPLANT_ctrl [4.017, None, None, None] incomplete
+GS_R5_ref [3.1645, 3.6875, 3.2351, 3.8282] 3.4788
+GS_R5R6_seq_ref [3.1698, 3.6379, 3.2853, 3.8244] 3.4794
+[finalize] DONE — tables/summary.csv + stats/

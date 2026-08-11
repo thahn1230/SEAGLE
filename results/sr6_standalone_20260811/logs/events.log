@@ -1,0 +1,100 @@
+08-11 20:39:57 SCHEDULER-START
+08-11 20:40:40 START sr6_train_s0 gpus=[0]
+08-11 20:40:40 START sr6_train_s1 gpus=[1]
+08-11 20:40:40 START sr6_train_s2 gpus=[2]
+08-11 20:41:00 FAIL sr6_train_s0 rc=1 -> RETRY
+08-11 20:41:00 FAIL sr6_train_s1 rc=1 -> RETRY
+08-11 20:41:00 FAIL sr6_train_s2 rc=1 -> RETRY
+08-11 20:41:01 START sr6_train_s0 gpus=[3]
+08-11 20:41:01 START sr6_train_s1 gpus=[4]
+08-11 20:41:01 START sr6_train_s2 gpus=[5]
+08-11 20:41:21 FAIL sr6_train_s0 rc=1 -> GAVE-UP (see runs/eagle1_gs_standalone_r6_ptq_20260811_203417/logs/sched_sr6_train_s0.log)
+08-11 20:41:21 FAIL sr6_train_s1 rc=1 -> GAVE-UP (see runs/eagle1_gs_standalone_r6_ptq_20260811_203417/logs/sched_sr6_train_s1.log)
+08-11 20:41:21 FAIL sr6_train_s2 rc=1 -> GAVE-UP (see runs/eagle1_gs_standalone_r6_ptq_20260811_203417/logs/sched_sr6_train_s2.log)
+08-11 20:41:22 QUEUE-DRAINED (idle, waiting for appends)
+08-11 20:42:43 QUEUE-DRAINED (idle, waiting for appends)
+08-11 20:44:04 START GATE_BASIS__mtbench gpus=[0]
+08-11 20:44:25 START sr6_train_v2_s0 gpus=[1]
+08-11 20:44:25 START sr6_train_v2_s1 gpus=[2]
+08-11 20:44:25 START sr6_train_v2_s2 gpus=[3]
+08-11 20:48:31 START TRANSPLANT__mtbench gpus=[4]
+08-11 20:54:58 DONE GATE_BASIS__mtbench
+08-11 20:59:25 DONE TRANSPLANT__mtbench
+08-11 21:24:13 START joint_train_s0 gpus=[0]
+08-11 21:24:13 START joint_train_s1 gpus=[4]
+08-11 21:24:13 START joint_train_s2 gpus=[5]
+08-11 22:06:35 DONE sr6_train_v2_s0
+08-11 22:06:36 START SR6_s0__mtbench gpus=[6]
+08-11 22:06:36 START SR6_s0__gsm8k gpus=[7]
+08-11 22:07:16 START SR6_s0__sharegpt gpus=[1]
+08-11 22:07:36 DONE sr6_train_v2_s1
+08-11 22:07:36 DONE sr6_train_v2_s2
+08-11 22:08:17 START SR6_s1__mtbench gpus=[2]
+08-11 22:08:17 START SR6_s2__mtbench gpus=[3]
+08-11 22:18:17 DONE SR6_s0__mtbench
+08-11 22:18:24 SCHEDULER-START
+08-11 22:18:25 SKIP-ARTIFACT sr6_train_s0
+08-11 22:18:25 SKIP-ARTIFACT sr6_train_s1
+08-11 22:18:25 SKIP-ARTIFACT sr6_train_s2
+08-11 22:18:46 SKIP-ARTIFACT SR6_s1__mtbench
+08-11 22:18:46 SKIP-ARTIFACT SR6_s0__sharegpt
+08-11 22:19:07 START SR6_s2__mtbench gpus=[6]
+08-11 22:19:28 START joint_train_s0 gpus=[1]
+08-11 22:19:28 START joint_train_s1 gpus=[2]
+08-11 22:20:09 START joint_train_s2 gpus=[3]
+08-11 22:22:12 DONE SR6_s2__mtbench
+08-11 22:22:54 START SR6_s0__gsm8k gpus=[6]
+08-11 22:42:23 DONE SR6_s0__gsm8k
+08-11 22:43:05 START SR6_s0__humaneval gpus=[6]
+08-11 22:55:40 START SR6_s1__gsm8k gpus=[5]
+08-11 22:56:01 START SR6_s1__sharegpt gpus=[4]
+08-11 22:56:21 START SR6_s1__humaneval gpus=[0]
+08-11 22:59:41 DONE SR6_s0__humaneval
+08-11 23:00:21 START SR6_s2__gsm8k gpus=[6]
+08-11 23:06:41 DONE SR6_s1__sharegpt
+08-11 23:07:22 START SR6_s2__sharegpt gpus=[4]
+08-11 23:12:42 DONE SR6_s1__humaneval
+08-11 23:13:22 START SR6_s2__humaneval gpus=[0]
+08-11 23:15:02 DONE SR6_s1__gsm8k
+08-11 23:15:43 START JOINT_s0__mtbench gpus=[5]
+08-11 23:17:43 DONE SR6_s2__sharegpt
+08-11 23:18:23 START JOINT_s1__mtbench gpus=[4]
+08-11 23:20:43 DONE SR6_s2__gsm8k
+08-11 23:21:24 START JOINT_s2__mtbench gpus=[6]
+08-11 23:25:44 DONE JOINT_s0__mtbench
+08-11 23:26:24 START JOINT_s0__gsm8k gpus=[5]
+08-11 23:29:24 DONE SR6_s2__humaneval
+08-11 23:29:24 START finalize_stats gpus=[]
+08-11 23:29:44 DONE JOINT_s1__mtbench
+08-11 23:29:44 DONE finalize_stats
+08-11 23:30:05 START JOINT_s0__sharegpt gpus=[0]
+08-11 23:30:25 START JOINT_s0__humaneval gpus=[4]
+08-11 23:31:25 DONE JOINT_s2__mtbench
+08-11 23:32:06 START JOINT_s1__gsm8k gpus=[6]
+08-11 23:40:26 DONE JOINT_s0__sharegpt
+08-11 23:41:06 START JOINT_s1__sharegpt gpus=[0]
+08-11 23:45:26 DONE JOINT_s0__gsm8k
+08-11 23:46:06 DONE JOINT_s0__humaneval
+08-11 23:46:07 START JOINT_s1__humaneval gpus=[5]
+08-11 23:46:47 START JOINT_s2__gsm8k gpus=[4]
+08-11 23:49:47 DONE joint_train_s1
+08-11 23:50:07 DONE joint_train_s0
+08-11 23:50:28 START JOINT_s2__sharegpt gpus=[2]
+08-11 23:50:48 START JOINT_s2__humaneval gpus=[1]
+08-11 23:51:48 DONE joint_train_s2
+08-11 23:51:48 DONE JOINT_s1__sharegpt
+08-11 23:52:29 START TRANSPLANT__gsm8k gpus=[0]
+08-11 23:52:29 START TRANSPLANT__sharegpt gpus=[3]
+08-11 23:54:09 DONE JOINT_s1__gsm8k
+08-11 23:54:49 START TRANSPLANT__humaneval gpus=[6]
+08-12 00:01:09 DONE JOINT_s2__sharegpt
+08-12 00:02:50 DONE JOINT_s1__humaneval
+08-12 00:02:50 DONE TRANSPLANT__sharegpt
+08-12 00:05:53 DONE JOINT_s2__gsm8k
+08-12 00:06:13 DONE JOINT_s2__humaneval
+08-12 00:09:59 DONE TRANSPLANT__humaneval
+08-12 00:12:45 DONE TRANSPLANT__gsm8k
+08-12 00:12:46 QUEUE-DRAINED (idle, waiting for appends)
+08-12 00:14:07 QUEUE-DRAINED (idle, waiting for appends)
+08-12 00:15:27 QUEUE-DRAINED (idle, waiting for appends)
+08-12 00:16:48 QUEUE-DRAINED (idle, waiting for appends)

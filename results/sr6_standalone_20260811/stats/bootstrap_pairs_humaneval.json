@@ -1,0 +1,52 @@
+[
+ {
+  "name": "joint_vs_r5_humaneval",
+  "a": "B9_T4@int4",
+  "b": "JOINT_s1@int4",
+  "dataset": "humaneval",
+  "status": "ok",
+  "tau_a": 3.8282,
+  "ci_a": [
+   3.7762,
+   3.8844
+  ],
+  "tau_b": 3.7977,
+  "ci_b": [
+   3.7465,
+   3.8502
+  ],
+  "delta_b_minus_a": -0.0304,
+  "ci_delta": [
+   -0.0839,
+   0.0215
+  ],
+  "p_two_sided": 0.25866666666666666,
+  "n_common": 164,
+  "reps": 3000
+ },
+ {
+  "name": "transplant_vs_gs_humaneval",
+  "a": "B3_T4@int4",
+  "b": "TRANSPLANT@int4",
+  "dataset": "humaneval",
+  "status": "ok",
+  "tau_a": 3.749,
+  "ci_a": [
+   3.6981,
+   3.8
+  ],
+  "tau_b": 3.7526,
+  "ci_b": [
+   3.705,
+   3.8015
+  ],
+  "delta_b_minus_a": 0.0035,
+  "ci_delta": [
+   -0.0523,
+   0.0558
+  ],
+  "p_two_sided": 0.92,
+  "n_common": 164,
+  "reps": 3000
+ }
+]
