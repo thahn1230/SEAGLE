@@ -118,6 +118,22 @@ def main():
                          "recurrent e-slice rescale)")
     ap.add_argument("--train-alpha", action="store_true")
     ap.add_argument("--train-draft-core", action="store_true")
+    ap.add_argument("--rot-fixed-ckpt", default=None,
+                    help="load R_D from this checkpoint and hold it "
+                         "FIXED (SharedRotation) — e.g. the frozen R5 "
+                         "while training R6 only; overrides --rot")
+    ap.add_argument("--train-r2", action="store_true",
+                    help="learn draft-aware R6 = R2_base @ C(B): "
+                         "residual Cayley correction around the seeded "
+                         "baseline V/O rotation, same shared-[128,128] "
+                         "granularity")
+    ap.add_argument("--r2-lr", type=float, default=None,
+                    help="LR for R6 params (default: --lr)")
+    ap.add_argument("--init-sd", default=None,
+                    help="override draft weights from this state dict "
+                         "(e.g. a completed QAT checkpoint) before core "
+                         "build; weights stay FROZEN unless "
+                         "--train-draft-core")
     ap.add_argument("--kv-bits", type=int, default=4)
     ap.add_argument("--first-mode", default="gamma_R1",
                     choices=["gamma_R1", "identity"],
@@ -160,7 +176,25 @@ def main():
             if "lm_head.weight" in f.keys() and W_lm is None:
                 W_lm = f.get_tensor("lm_head.weight").float()
 
-    if args.rot == "shared":
+    if args.init_sd:
+        init = torch.load(args.init_sd, map_location="cpu",
+                          weights_only=False)
+        init = init.get("draft_state_dict", init.get("model", init))
+        n_hit = 0
+        for k in list(sd.keys()):
+            if k in init:
+                sd[k] = init[k].to(sd[k].dtype)
+                n_hit += 1
+        print(f"[lk] draft weights initialized from {args.init_sd} "
+              f"({n_hit} tensors)", flush=True)
+
+    if args.rot_fixed_ckpt:
+        ckf = torch.load(args.rot_fixed_ckpt, map_location="cpu",
+                         weights_only=False)
+        rot = SharedRotation(ckf["R_D"].float())
+        print(f"[lk] R_D held FIXED from {args.rot_fixed_ckpt}",
+              flush=True)
+    elif args.rot == "shared":
         rot = SharedRotation(R_T)
     elif args.rot == "full":
         if args.rot_init == "RT":
@@ -185,12 +219,24 @@ def main():
         first_fold = torch.eye(R_T.shape[0])
     else:
         gamma_eff, first_fold = gamma, R_T
+
+    rot2 = None
+    R2_base = None
+    if args.train_r2:
+        from eagle_spinquant.exact_quantized_rotation_forward import HD
+        g2 = torch.Generator().manual_seed(0)
+        R2_base = torch.linalg.qr(
+            torch.randn(HD, HD, generator=g2,
+                        dtype=torch.float64))[0]
+        rot2 = ResidualRotation(R2_base.float(), trust=args.trust,
+                                radius=args.radius).to(dev)
+
     model = ExactQATRotatedDraft(
         sd, R_T, gamma_eff, W_lm, rot, alpha_init=args.alpha_init,
         train_alpha=args.train_alpha, w_bits=4, a_bits=4,
         draft_kv_bits=args.kv_bits, train_draft_core=args.train_draft_core,
         device=dev, first_fold_R=first_fold,
-        alpha_rec_init=args.alpha_rec_init)
+        alpha_rec_init=args.alpha_rec_init, rot2=rot2)
 
     windows, man = load_corpus(args.corpus, args.run_dir)
     n_val = max(len(windows) // 10, 16)
@@ -204,6 +250,10 @@ def main():
     if rot.trainable:
         groups.append(dict(params=[p for p in rot.parameters()],
                            lr=args.lr))
+    if rot2 is not None:
+        groups.append(dict(params=[p for p in rot2.parameters()],
+                           lr=(args.r2_lr if args.r2_lr is not None
+                               else args.lr)))
     if args.train_alpha:
         groups.append(dict(params=[model.log_alpha], lr=args.lr))
     if args.train_draft_core:
@@ -298,6 +348,7 @@ def main():
         return total, a_stack.detach()
 
     best_val = None
+    best_snap = dict(step=None)
     for step in range(args.steps):
         opt.zero_grad(set_to_none=True)
         p_on = curriculum_p_onpolicy(step, args.steps, args.onpolicy)
@@ -310,6 +361,8 @@ def main():
             acc_alpha.append(aw)
             (lw / args.accum).backward()
         pen = rot.penalty()
+        if rot2 is not None:
+            pen = pen + rot2.penalty()
         if float(pen) != 0.0:
             pen.backward()
         torch.nn.utils.clip_grad_norm_(
@@ -317,6 +370,10 @@ def main():
         opt.step()
         sched.step()
         rot.post_step()
+        if rot2 is not None:
+            rot2.post_step()
+            oe2 = rot2.orth_error()
+            assert oe2 < 1e-3, f"Gate R6-D: orth {oe2}"
         if hasattr(rot, "orth_error"):
             oe = rot.orth_error()
             assert oe < 1e-3, f"Gate G: orth {oe}"
@@ -346,6 +403,13 @@ def main():
                             val_expected_tau=et))
             if best_val is None or et > best_val[0]:
                 best_val = (et, step)
+                # TRUE-best snapshot of the trainable rotations at this
+                # validation optimum (evaluated later, not just logged)
+                best_snap = dict(step=step, val_expected_tau=et)
+                if rot.trainable:
+                    best_snap["R_D"] = rot.R().detach().cpu().clone()
+                if rot2 is not None:
+                    best_snap["R6"] = rot2.R().detach().cpu().clone()
 
     geo = rotation_geometry(rot.R().detach().cpu(), R_T) \
         if rot.trainable else rotation_geometry(R_T, R_T)
@@ -359,6 +423,25 @@ def main():
                           divergence_rates=div.rates(),
                           counters=model.counters),
                 log=log)
+    if rot2 is not None:
+        save["R6"] = rot2.R().detach().cpu()
+        save["meta"]["r6_geometry"] = rotation_geometry(
+            save["R6"].double(), R2_base)
+        save["meta"]["r6_orth_error"] = rot2.orth_error()
+        save["meta"]["r6_generator_fro"] = float(
+            rot2.A().detach().norm())
+    if best_snap.get("step") is not None:
+        save["best_snapshot"] = best_snap
+        # deployable TRUE-best checkpoint: best-val rotations promoted to
+        # the top-level keys the eval adapter reads
+        best_ck = dict(save)
+        best_ck["R_D"] = best_snap.get("R_D", save["R_D"])
+        if "R6" in save:
+            best_ck["R6"] = best_snap.get("R6", save["R6"])
+        best_ck["meta"] = dict(save["meta"],
+                               selected="best_val",
+                               best_step=best_snap["step"])
+        torch.save(best_ck, args.out + ".best.pt")
     if args.train_draft_core:
         save["core_weights"] = model.export_original_state()
     torch.save(save, args.out)

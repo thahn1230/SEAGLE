@@ -115,14 +115,21 @@ class FakeW4A4Linear(nn.Module):
         return y.reshape(*shp, self.out_features)
 
 
-def build_spinquant_w4a4_draft_state(sd, R1, gamma, r2_seed=0):
+def build_spinquant_w4a4_draft_state(sd, R1, gamma, r2_seed=0,
+                                     r2_override=None):
     """R1-conjugate (pure-R1) + R2 (V/O per-head) + R4 (MLP-down Hadamard fold).
-    Returns (state_dict, meta) where meta has r2/r4 flags + had_K/K for R4."""
+    Returns (state_dict, meta) where meta has r2/r4 flags + had_K/K for R4.
+    r2_override: composed [HD,HD] rotation (e.g. learned draft-aware R6 =
+    R2_base @ C(B)) replacing the seeded baseline R2; folded identically."""
     conv = pr.build_pure_r1_draft_state(sd, R1, gamma)          # R1 conjugation
     p = "layers.0."
-    # R2: conjugate v_proj/o_proj (weights) by a random Hadamard-128 R2
-    g = torch.Generator().manual_seed(r2_seed)
-    R2 = torch.linalg.qr(torch.randn(HD, HD, generator=g, dtype=torch.float64))[0]
+    # R2: conjugate v_proj/o_proj (weights) by the shared [128,128] R2
+    if r2_override is not None:
+        R2 = r2_override.double()
+    else:
+        g = torch.Generator().manual_seed(r2_seed)
+        R2 = torch.linalg.qr(torch.randn(HD, HD, generator=g,
+                                         dtype=torch.float64))[0]
     v = conv[p + "self_attn.v_proj.weight"].double()
     o = conv[p + "self_attn.o_proj.weight"].double()
     v2, o2 = spd.conjugate_v_o(v, o, R2)

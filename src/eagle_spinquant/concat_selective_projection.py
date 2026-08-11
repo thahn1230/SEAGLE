@@ -304,7 +304,8 @@ class ConcatSelectiveDraftAdapter(VariantAdapter):
                  first_fold_R=None,
                  proj_rot_first=None, proj_rot_rec=None,
                  ar_quant_mask=None,
-                 ar_r2r4=False, trace=True, trace_cap=4000):
+                 ar_r2r4=False, r2_override=None,
+                 trace=True, trace_cap=4000):
         super().__init__(ea_model, stash, device, dtype)
         assert variant in ("folded", "explicit")
         assert first_hidden_mode in FIRST_HIDDEN_MODES
@@ -346,6 +347,9 @@ class ConcatSelectiveDraftAdapter(VariantAdapter):
         # rotation (the folded T->D bridge). first_fold_R = R_T.
         self.first_fold_R = first_fold_R
         self.ar_r2r4 = ar_r2r4
+        # draft-aware R6: composed [HD,HD] V/O rotation replacing the
+        # seeded baseline R2 in the offline fold (None = baseline)
+        self.r2_override = r2_override
         self.name = f"concat_selective_{variant}" + (f"_nc-{nc}" if nc else "")
         W = ra.in_fold(stash["lm_head_weight"].cpu().double(),
                        self.R1.cpu().double())               # W_lm·R1
@@ -386,7 +390,8 @@ class ConcatSelectiveDraftAdapter(VariantAdapter):
         # ---- decoder: R1-conjugated (reuse validated conversion); embedding
         # and fc stay ORIGINAL in the loaded state (fc module replaced below)
         if self.quant_ar != "fp16" and self.ar_r2r4:
-            conv, meta = fq.build_spinquant_w4a4_draft_state(sd, R1c, gc)
+            conv, meta = fq.build_spinquant_w4a4_draft_state(
+                sd, R1c, gc, r2_override=self.r2_override)
             self._ar_meta = meta
         else:
             conv, _extra = ra.convert_draft_state(sd, R1c, gc, mode="r1")

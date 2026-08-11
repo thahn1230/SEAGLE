@@ -176,9 +176,14 @@ def main():
         st = dict(stash)
         R_T = stash["R1"].clone()
         st["R1"] = ck["R_D"].double()
+        r6 = ck.get("R6")
+        if r6 is not None:
+            print(f"[al] draft-aware R6 from ckpt (shape "
+                  f"{tuple(r6.shape)})", flush=True)
         ad = ConcatSelectiveDraftAdapter(
             model, st, dev, torch.float16, variant="folded",
             first_hidden_mode=fhm, trace=False, first_fold_R=R_T,
+            r2_override=(r6.double() if r6 is not None else None),
             embed_scale_alpha=(args.alpha if args.alpha is not None
                                else float(ck.get("alpha", def_alpha))),
             **D4)

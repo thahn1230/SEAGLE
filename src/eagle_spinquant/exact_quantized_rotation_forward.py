@@ -140,10 +140,13 @@ class ExactQuantizedRotationForward(nn.Module):
     def __init__(self, sd, R_T, gamma, W_lm, rot, alpha_init=32.0,
                  train_alpha=False, w_bits=4, a_bits=4, draft_kv_bits=16,
                  train_draft_core=False, r2_seed=0, device="cuda:0",
-                 first_fold_R=None, alpha_rec_init=None):
+                 first_fold_R=None, alpha_rec_init=None, rot2=None):
         super().__init__()
         self.dev = device
         self.rot = rot
+        # optional draft-aware attention V/O rotation R6 (rotation module
+        # with .R() -> [HD,HD]); None => the fixed seeded baseline R2
+        self.rot2 = rot2
         self.w_bits, self.a_bits = w_bits, a_bits
         self.kv_bits = draft_kv_bits
         D = sd["fc.weight"].shape[0]
@@ -226,7 +229,8 @@ class ExactQuantizedRotationForward(nn.Module):
         Rf = self.R_first.to(dd)
         gam = self.gamma64.to(dd)
         gl = self.gl64.to(dd)
-        R2 = self.R2_64.to(dd)
+        R2 = (self.rot2.R().to(self.dev).to(dd)
+              if self.rot2 is not None else self.R2_64.to(dd))
 
         def c16(x):
             return x.half()
