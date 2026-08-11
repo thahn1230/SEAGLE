@@ -152,6 +152,10 @@ def main():
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--device", default="cuda:0")
     ap.add_argument("--eval-every", type=int, default=200)
+    ap.add_argument("--snap-every", type=int, default=0,
+                    help="save intermediate rotation snapshots every N "
+                         "steps to <out>.step<N>.pt (trajectory "
+                         "diagnostics)")
     args = ap.parse_args()
     assert os.environ.get("CUDA_VISIBLE_DEVICES") in \
         tuple(str(i) for i in range(8))
@@ -422,6 +426,14 @@ def main():
                     best_snap["R_D"] = rot.R().detach().cpu().clone()
                 if rot2 is not None:
                     best_snap["R6"] = rot2.R().detach().cpu().clone()
+        if args.snap_every and (step + 1) % args.snap_every == 0:
+            snap = dict(R_D=rot.R().detach().cpu(),
+                        alpha=model.alpha_exact,
+                        alpha_rec=model.alpha_rec_exact,
+                        meta=dict(step=step + 1, snapshot=True))
+            if rot2 is not None:
+                snap["R6"] = rot2.R().detach().cpu()
+            torch.save(snap, f"{args.out}.step{step + 1}.pt")
 
     geo = rotation_geometry(rot.R().detach().cpu(), R_T) \
         if rot.trainable else rotation_geometry(R_T, R_T)
