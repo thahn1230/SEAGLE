@@ -1,0 +1,5 @@
+Stage,Before,After,absmax_before,absmax_after,kurtosis_before,kurtosis_after,quantNMSE_before,quantNMSE_after
+concat H_i,no R1_T,+R1_T,326.0296,26.75,171433.433,344.0949,0.4719,0.0513
+H_t,no R_C,+R_C,33.5034,5.1365,189.0708,2.905,0.4555,0.0182
+ctx K cache,R_C OFF,R_C ON,,,,,0.3555,0.1898
+ctx V cache,R_C OFF,R_C ON,,,,,0.7015,0.4424

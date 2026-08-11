@@ -1,0 +1,8 @@
+[cap mtbench] trajectory cyc__M0cyc__mtbench.jsonl, 40 turns
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 85.81it/s]
+[cap mtbench] condition FP ready
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 107.02it/s]
+[cap mtbench] condition QOFF ready
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 80.78it/s]
+[cap mtbench] condition QON ready
+[cap mtbench] DONE stats=125 samples=66 manifest+=42240

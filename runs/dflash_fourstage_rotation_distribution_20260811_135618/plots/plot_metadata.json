@@ -1,0 +1,299 @@
+{
+ "FIG_A_Hconcat_before_after_R1_sameZ": {
+  "zmax": 326.0,
+  "shape_before": [
+   256,
+   1024
+  ],
+  "shape_after": [
+   256,
+   1024
+  ]
+ },
+ "FIG_B_Wc_stock_vs_R1fold_sameZ": {
+  "zmax": 0.15676839649677277,
+  "shape_before": [
+   64,
+   80
+  ],
+  "shape_after": [
+   64,
+   80
+  ]
+ },
+ "FIG_B_Wc_stockW4_vs_foldW4_sameZ": {
+  "zmax": 0.03624599799513817,
+  "shape_before": [
+   64,
+   80
+  ],
+  "shape_after": [
+   64,
+   80
+  ]
+ },
+ "FIG_B2_Wc_stride_raw_sameZ": {
+  "zmax": 0.94921875,
+  "shape_before": [
+   256,
+   1280
+  ],
+  "shape_after": [
+   256,
+   1280
+  ]
+ },
+ "FIG_C_Ht_before_after_RC_sameZ": {
+  "zmax": 34.875,
+  "shape_before": [
+   256,
+   4096
+  ],
+  "shape_after": [
+   256,
+   4096
+  ]
+ },
+ "FIG_C2_Ht_A4_before_after_RC_sameZ": {
+  "zmax": 33.9375,
+  "shape_before": [
+   256,
+   4096
+  ],
+  "shape_after": [
+   256,
+   4096
+  ]
+ },
+ "WORST_CASE_DIAGNOSTIC_Ht_RC_sameZ": {
+  "zmax": 34.875,
+  "shape_before": [
+   64,
+   4096
+  ],
+  "shape_after": [
+   64,
+   4096
+  ]
+ },
+ "FIG_D_L0_context_K_cache_RCoff_on_sameZ": {
+  "zmax": 15.59375,
+  "shape_before": [
+   128,
+   1024
+  ],
+  "shape_after": [
+   128,
+   1024
+  ]
+ },
+ "FIG_D_L0_context_V_cache_RCoff_on_sameZ": {
+  "zmax": 33.5625,
+  "shape_before": [
+   128,
+   1024
+  ],
+  "shape_after": [
+   128,
+   1024
+  ]
+ },
+ "FIG_D_L0_draft_K_cache_RCoff_on_sameZ": {
+  "zmax": 7.60546875,
+  "shape_before": [
+   128,
+   1024
+  ],
+  "shape_after": [
+   128,
+   1024
+  ]
+ },
+ "FIG_D_L0_draft_V_cache_RCoff_on_sameZ": {
+  "zmax": 17.0625,
+  "shape_before": [
+   128,
+   1024
+  ],
+  "shape_after": [
+   128,
+   1024
+  ]
+ },
+ "FIG_D_L1_context_K_cache_RCoff_on_sameZ": {
+  "zmax": 10.75,
+  "shape_before": [
+   128,
+   1024
+  ],
+  "shape_after": [
+   128,
+   1024
+  ]
+ },
+ "FIG_D_L1_context_V_cache_RCoff_on_sameZ": {
+  "zmax": 38.15625,
+  "shape_before": [
+   128,
+   1024
+  ],
+  "shape_after": [
+   128,
+   1024
+  ]
+ },
+ "FIG_D_L1_draft_K_cache_RCoff_on_sameZ": {
+  "zmax": 8.9453125,
+  "shape_before": [
+   128,
+   1024
+  ],
+  "shape_after": [
+   128,
+   1024
+  ]
+ },
+ "FIG_D_L1_draft_V_cache_RCoff_on_sameZ": {
+  "zmax": 28.109375,
+  "shape_before": [
+   128,
+   1024
+  ],
+  "shape_after": [
+   128,
+   1024
+  ]
+ },
+ "FIG_D_L2_context_K_cache_RCoff_on_sameZ": {
+  "zmax": 9.8984375,
+  "shape_before": [
+   128,
+   1024
+  ],
+  "shape_after": [
+   128,
+   1024
+  ]
+ },
+ "FIG_D_L2_context_V_cache_RCoff_on_sameZ": {
+  "zmax": 44.1875,
+  "shape_before": [
+   128,
+   1024
+  ],
+  "shape_after": [
+   128,
+   1024
+  ]
+ },
+ "FIG_D_L2_draft_K_cache_RCoff_on_sameZ": {
+  "zmax": 8.5,
+  "shape_before": [
+   128,
+   1024
+  ],
+  "shape_after": [
+   128,
+   1024
+  ]
+ },
+ "FIG_D_L2_draft_V_cache_RCoff_on_sameZ": {
+  "zmax": 42.15625,
+  "shape_before": [
+   128,
+   1024
+  ],
+  "shape_after": [
+   128,
+   1024
+  ]
+ },
+ "FIG_D_L3_context_K_cache_RCoff_on_sameZ": {
+  "zmax": 9.5546875,
+  "shape_before": [
+   128,
+   1024
+  ],
+  "shape_after": [
+   128,
+   1024
+  ]
+ },
+ "FIG_D_L3_context_V_cache_RCoff_on_sameZ": {
+  "zmax": 63.0,
+  "shape_before": [
+   128,
+   1024
+  ],
+  "shape_after": [
+   128,
+   1024
+  ]
+ },
+ "FIG_D_L3_draft_K_cache_RCoff_on_sameZ": {
+  "zmax": 8.3203125,
+  "shape_before": [
+   128,
+   1024
+  ],
+  "shape_after": [
+   128,
+   1024
+  ]
+ },
+ "FIG_D_L3_draft_V_cache_RCoff_on_sameZ": {
+  "zmax": 61.25,
+  "shape_before": [
+   128,
+   1024
+  ],
+  "shape_after": [
+   128,
+   1024
+  ]
+ },
+ "FIG_D_L4_context_K_cache_RCoff_on_sameZ": {
+  "zmax": 10.484375,
+  "shape_before": [
+   128,
+   1024
+  ],
+  "shape_after": [
+   128,
+   1024
+  ]
+ },
+ "FIG_D_L4_context_V_cache_RCoff_on_sameZ": {
+  "zmax": 63.125,
+  "shape_before": [
+   128,
+   1024
+  ],
+  "shape_after": [
+   128,
+   1024
+  ]
+ },
+ "FIG_D_L4_draft_K_cache_RCoff_on_sameZ": {
+  "zmax": 8.9765625,
+  "shape_before": [
+   128,
+   1024
+  ],
+  "shape_after": [
+   128,
+   1024
+  ]
+ },
+ "FIG_D_L4_draft_V_cache_RCoff_on_sameZ": {
+  "zmax": 53.9375,
+  "shape_before": [
+   128,
+   1024
+  ],
+  "shape_after": [
+   128,
+   1024
+  ]
+ }
+}

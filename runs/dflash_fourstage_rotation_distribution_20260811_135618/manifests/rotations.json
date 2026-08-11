@@ -1,0 +1,11 @@
+{
+ "R1_T_R2_T": {
+  "path": "outputs/rotations/llama31_w4a4kv16_s1/R.bin",
+  "sha256": "f433a88b9cd40a4f97e2f114cf373dc892a2cc9254af7fbfd4248fb1a3c5d0ff"
+ },
+ "R1_D_R2_D": {
+  "path": "runs/dflash_vanilla_spinquant_novelty_20260810_104957/rotations/draft/R1D_s1r1.pt.best",
+  "sha256": "114459473b87cd2e97fd490f933eb533b6a2347fba18bcda75e16926cbef67d0"
+ },
+ "R_C": "R1_T reuse (same R.bin), applied as runtime Ht @ rc_matrix_buf + ctx views folded @R_C"
+}

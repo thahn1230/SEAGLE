@@ -1,0 +1,35 @@
+{
+ "run": "runs/dflash_fourstage_rotation_distribution_20260811_135618",
+ "created": "2026-08-11",
+ "seed": 0,
+ "plot_rows": 256,
+ "datasets": {
+  "mtbench": {
+   "traj": "cyc__M0cyc__mtbench.jsonl",
+   "n_prompts": 20
+  },
+  "gsm8k": {
+   "traj": "cyc__M0cyc__gsm8k.jsonl",
+   "n_prompts": 20
+  },
+  "humaneval": {
+   "traj": "cyc__FSTRAJ__humaneval.jsonl (fresh n20 fp16 recording)",
+   "n_prompts": 20
+  },
+  "sharegpt": {
+   "traj": "cyc__FSTRAJ__sharegpt.jsonl (fresh n20 fp16 recording)",
+   "n_prompts": 20
+  }
+ },
+ "conditions": {
+  "FP": "target rot_fp16 (s1) + RotQuantDraft bits16, R_C OFF  (FP reference; FP==stock by basis audit)",
+  "QOFF": "target w4a4 (s1) + RotQuantDraft W4A4, R_C OFF        (= deployed M3)",
+  "QON": "target w4a4 (s1) + RotQuantDraft W4A4, R_C = R1_T ON  (= deployed M5a; explicit runtime Ht@R_C, class A)"
+ },
+ "basis_contract": "runs FIDI tables/basis_audit.json (verdict D): H_i_rot=H_i@R1_T; fold cancels R1_T; Z_t/H_t ORIGINAL basis; deployed R_C = runtime Ht@rc_matrix_buf; ctx/draft separate gamma-fused K/V views; K stored post-k_norm+RoPE, V raw; ctx persistent / draft transient (crop)",
+ "quantizers": {
+  "A4": "per-token asym (rc.act_fake_ste / dkva act_quant_detail)",
+  "W4": "per-row sym RTN (rc.rtn_sym_perchannel) = deployed draft policy",
+  "KV_diag": "act_quant_detail per (token,head) rows of head_dim=128, bits 4/8 (diagnostic only)"
+ }
+}

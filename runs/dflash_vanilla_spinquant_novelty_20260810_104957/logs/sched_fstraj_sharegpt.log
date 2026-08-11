@@ -1,0 +1,4 @@
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 160.73it/s]
+[FSTRAJ] 10/20 cycle-tau=3.8661
+[FSTRAJ] 20/20 cycle-tau=3.7616
+[FSTRAJ] DONE sharegpt cycle-pooled tau = 3.7616 over 2861 cycles

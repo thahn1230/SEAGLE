@@ -354,3 +354,25 @@
 08-11 11:44:18 QUEUE-DRAINED (idle, waiting for appends)
 08-11 11:45:38 QUEUE-DRAINED (idle, waiting for appends)
 08-11 11:46:58 QUEUE-DRAINED (idle, waiting for appends)
+08-11 14:22:45 SCHEDULER-START
+08-11 14:22:46 SKIP-ARTIFACT M6__sharegpt
+08-11 14:22:46 QUEUE-DRAINED (idle, waiting for appends)
+08-11 14:24:27 START fstraj_humaneval gpus=[0]
+08-11 14:24:27 START fstraj_sharegpt gpus=[1]
+08-11 14:24:27 START fscap_mtbench gpus=[2]
+08-11 14:24:27 START fscap_gsm8k gpus=[3]
+08-11 14:25:27 DONE fstraj_humaneval
+08-11 14:25:27 START fscap_humaneval gpus=[4]
+08-11 14:26:28 DONE fstraj_sharegpt
+08-11 14:26:28 START fscap_sharegpt gpus=[0]
+08-11 14:43:36 DONE fscap_gsm8k
+08-11 14:44:57 DONE fscap_humaneval
+08-11 14:46:18 DONE fscap_sharegpt
+08-11 14:51:03 DONE fscap_mtbench
+08-11 14:51:03 START fsplots gpus=[0]
+08-11 15:04:38 DONE fsplots
+08-11 15:04:38 START fsfinal gpus=[1]
+08-11 15:04:58 DONE fsfinal
+08-11 15:04:59 START fsverify gpus=[2]
+08-11 15:05:19 DONE fsverify
+08-11 15:05:19 START fscommit gpus=[0]

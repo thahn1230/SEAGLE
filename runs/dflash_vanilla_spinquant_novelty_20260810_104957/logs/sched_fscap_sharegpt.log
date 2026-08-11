@@ -1,0 +1,8 @@
+[cap sharegpt] trajectory cyc__FSTRAJ__sharegpt.jsonl, 20 turns
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 157.14it/s]
+[cap sharegpt] condition FP ready
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 112.06it/s]
+[cap sharegpt] condition QOFF ready
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 76.68it/s]
+[cap sharegpt] condition QON ready
+[cap sharegpt] DONE stats=125 samples=66 manifest+=20592

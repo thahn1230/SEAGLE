@@ -1,0 +1,157 @@
+[OK]       rotation hash R1_T_R2_T f433a88b9cd40a4f
+[OK]       rotation hash R1_D_R2_D 114459473b87cd2e
+[OK]       mtbench stats A_before_R1 
+[OK]       mtbench stats A_after_R1 
+[OK]       mtbench stats C_Ht_preRC 
+[OK]       mtbench stats C_Ht_postRC 
+[OK]       mtbench stats C_Ht_FP 
+[OK]       mtbench cache stats coverage 60/60
+[OK]       gsm8k stats A_before_R1 
+[OK]       gsm8k stats A_after_R1 
+[OK]       gsm8k stats C_Ht_preRC 
+[OK]       gsm8k stats C_Ht_postRC 
+[OK]       gsm8k stats C_Ht_FP 
+[OK]       gsm8k cache stats coverage 60/60
+[OK]       humaneval stats A_before_R1 
+[OK]       humaneval stats A_after_R1 
+[OK]       humaneval stats C_Ht_preRC 
+[OK]       humaneval stats C_Ht_postRC 
+[OK]       humaneval stats C_Ht_FP 
+[OK]       humaneval cache stats coverage 60/60
+[OK]       sharegpt stats A_before_R1 
+[OK]       sharegpt stats A_after_R1 
+[OK]       sharegpt stats C_Ht_preRC 
+[OK]       sharegpt stats C_Ht_postRC 
+[OK]       sharegpt stats C_Ht_FP 
+[OK]       sharegpt cache stats coverage 60/60
+[OK]       pair shape mtbench Hconcat_before_R1 (640, 20480) vs (640, 20480)
+[OK]       pair positions identical mtbench Hconcat_before_R1 n=640
+[OK]       pair shape mtbench Ht_before_RC (640, 4096) vs (640, 4096)
+[OK]       pair positions identical mtbench Ht_before_RC n=640
+[OK]       pair shape mtbench Ht_before_RC_A4dq (640, 4096) vs (640, 4096)
+[OK]       pair positions identical mtbench Ht_before_RC_A4dq n=640
+[OK]       pair shape gsm8k Hconcat_before_R1 (320, 20480) vs (320, 20480)
+[OK]       pair positions identical gsm8k Hconcat_before_R1 n=320
+[OK]       pair shape gsm8k Ht_before_RC (320, 4096) vs (320, 4096)
+[OK]       pair positions identical gsm8k Ht_before_RC n=320
+[OK]       pair shape gsm8k Ht_before_RC_A4dq (320, 4096) vs (320, 4096)
+[OK]       pair positions identical gsm8k Ht_before_RC_A4dq n=320
+[OK]       pair shape humaneval Hconcat_before_R1 (320, 20480) vs (320, 20480)
+[OK]       pair positions identical humaneval Hconcat_before_R1 n=320
+[OK]       pair shape humaneval Ht_before_RC (320, 4096) vs (320, 4096)
+[OK]       pair positions identical humaneval Ht_before_RC n=320
+[OK]       pair shape humaneval Ht_before_RC_A4dq (320, 4096) vs (320, 4096)
+[OK]       pair positions identical humaneval Ht_before_RC_A4dq n=320
+[OK]       pair shape sharegpt Hconcat_before_R1 (312, 20480) vs (312, 20480)
+[OK]       pair positions identical sharegpt Hconcat_before_R1 n=312
+[OK]       pair shape sharegpt Ht_before_RC (312, 4096) vs (312, 4096)
+[OK]       pair positions identical sharegpt Ht_before_RC n=312
+[OK]       pair shape sharegpt Ht_before_RC_A4dq (312, 4096) vs (312, 4096)
+[OK]       pair positions identical sharegpt Ht_before_RC_A4dq n=312
+[OK]       cache samples mtbench L0 kctx 
+[OK]       cache samples mtbench L0 vctx 
+[OK]       cache samples mtbench L0 kdr 
+[OK]       cache samples mtbench L0 vdr 
+[OK]       cache samples mtbench L1 kctx 
+[OK]       cache samples mtbench L1 vctx 
+[OK]       cache samples mtbench L1 kdr 
+[OK]       cache samples mtbench L1 vdr 
+[OK]       cache samples mtbench L2 kctx 
+[OK]       cache samples mtbench L2 vctx 
+[OK]       cache samples mtbench L2 kdr 
+[OK]       cache samples mtbench L2 vdr 
+[OK]       cache samples mtbench L3 kctx 
+[OK]       cache samples mtbench L3 vctx 
+[OK]       cache samples mtbench L3 kdr 
+[OK]       cache samples mtbench L3 vdr 
+[OK]       cache samples mtbench L4 kctx 
+[OK]       cache samples mtbench L4 vctx 
+[OK]       cache samples mtbench L4 kdr 
+[OK]       cache samples mtbench L4 vdr 
+[OK]       cache samples gsm8k L0 kctx 
+[OK]       cache samples gsm8k L0 vctx 
+[OK]       cache samples gsm8k L0 kdr 
+[OK]       cache samples gsm8k L0 vdr 
+[OK]       cache samples gsm8k L1 kctx 
+[OK]       cache samples gsm8k L1 vctx 
+[OK]       cache samples gsm8k L1 kdr 
+[OK]       cache samples gsm8k L1 vdr 
+[OK]       cache samples gsm8k L2 kctx 
+[OK]       cache samples gsm8k L2 vctx 
+[OK]       cache samples gsm8k L2 kdr 
+[OK]       cache samples gsm8k L2 vdr 
+[OK]       cache samples gsm8k L3 kctx 
+[OK]       cache samples gsm8k L3 vctx 
+[OK]       cache samples gsm8k L3 kdr 
+[OK]       cache samples gsm8k L3 vdr 
+[OK]       cache samples gsm8k L4 kctx 
+[OK]       cache samples gsm8k L4 vctx 
+[OK]       cache samples gsm8k L4 kdr 
+[OK]       cache samples gsm8k L4 vdr 
+[OK]       cache samples humaneval L0 kctx 
+[OK]       cache samples humaneval L0 vctx 
+[OK]       cache samples humaneval L0 kdr 
+[OK]       cache samples humaneval L0 vdr 
+[OK]       cache samples humaneval L1 kctx 
+[OK]       cache samples humaneval L1 vctx 
+[OK]       cache samples humaneval L1 kdr 
+[OK]       cache samples humaneval L1 vdr 
+[OK]       cache samples humaneval L2 kctx 
+[OK]       cache samples humaneval L2 vctx 
+[OK]       cache samples humaneval L2 kdr 
+[OK]       cache samples humaneval L2 vdr 
+[OK]       cache samples humaneval L3 kctx 
+[OK]       cache samples humaneval L3 vctx 
+[OK]       cache samples humaneval L3 kdr 
+[OK]       cache samples humaneval L3 vdr 
+[OK]       cache samples humaneval L4 kctx 
+[OK]       cache samples humaneval L4 vctx 
+[OK]       cache samples humaneval L4 kdr 
+[OK]       cache samples humaneval L4 vdr 
+[OK]       cache samples sharegpt L0 kctx 
+[OK]       cache samples sharegpt L0 vctx 
+[OK]       cache samples sharegpt L0 kdr 
+[OK]       cache samples sharegpt L0 vdr 
+[OK]       cache samples sharegpt L1 kctx 
+[OK]       cache samples sharegpt L1 vctx 
+[OK]       cache samples sharegpt L1 kdr 
+[OK]       cache samples sharegpt L1 vdr 
+[OK]       cache samples sharegpt L2 kctx 
+[OK]       cache samples sharegpt L2 vctx 
+[OK]       cache samples sharegpt L2 kdr 
+[OK]       cache samples sharegpt L2 vdr 
+[OK]       cache samples sharegpt L3 kctx 
+[OK]       cache samples sharegpt L3 vctx 
+[OK]       cache samples sharegpt L3 kdr 
+[OK]       cache samples sharegpt L3 vdr 
+[OK]       cache samples sharegpt L4 kctx 
+[OK]       cache samples sharegpt L4 vctx 
+[OK]       cache samples sharegpt L4 kdr 
+[OK]       cache samples sharegpt L4 vdr 
+[OK]       cache NMSE conditions mtbench {'QON', 'QOFF'}
+[OK]       cache NMSE coverage mtbench 
+[OK]       cache NMSE conditions gsm8k {'QON', 'QOFF'}
+[OK]       cache NMSE coverage gsm8k 
+[OK]       cache NMSE conditions humaneval {'QON', 'QOFF'}
+[OK]       cache NMSE coverage humaneval 
+[OK]       cache NMSE conditions sharegpt {'QON', 'QOFF'}
+[OK]       cache NMSE coverage sharegpt 
+[OK]       plot FIG_A_Hconcat_before_after_R1_sameZ 
+[OK]       zmax metadata FIG_A_Hconcat_before_after_R1_sameZ 
+[OK]       plot FIG_B_Wc_stock_vs_R1fold_sameZ 
+[OK]       zmax metadata FIG_B_Wc_stock_vs_R1fold_sameZ 
+[OK]       plot FIG_B_Wc_stockW4_vs_foldW4_sameZ 
+[OK]       zmax metadata FIG_B_Wc_stockW4_vs_foldW4_sameZ 
+[OK]       plot FIG_C_Ht_before_after_RC_sameZ 
+[OK]       zmax metadata FIG_C_Ht_before_after_RC_sameZ 
+[OK]       plot FIG_C2_Ht_A4_before_after_RC_sameZ 
+[OK]       zmax metadata FIG_C2_Ht_A4_before_after_RC_sameZ 
+[OK]       FIG_D cache figures 20 >= 20
+[OK]       four-stage summary figure 
+[OK]       worst-case diagnostic (labeled) 
+[OK]       table tensor_location_map.md 
+[OK]       table kv_cache_write_map.md 
+[OK]       table fourstage_rotation_stats.csv 
+[OK]       table fourstage_rotation_delta.csv 
+[OK]       table plot_sample_manifest.csv 
+missing=0 mismatch=0

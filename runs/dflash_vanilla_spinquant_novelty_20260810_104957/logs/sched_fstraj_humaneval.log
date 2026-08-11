@@ -1,0 +1,4 @@
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 132.49it/s]
+[FSTRAJ] 10/20 cycle-tau=4.9356
+[FSTRAJ] 20/20 cycle-tau=4.8194
+[FSTRAJ] DONE humaneval cycle-pooled tau = 4.8194 over 1395 cycles

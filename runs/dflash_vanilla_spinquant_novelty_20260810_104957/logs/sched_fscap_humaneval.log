@@ -1,0 +1,8 @@
+[cap humaneval] trajectory cyc__FSTRAJ__humaneval.jsonl, 20 turns
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 129.18it/s]
+[cap humaneval] condition FP ready
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 44.72it/s]
+[cap humaneval] condition QOFF ready
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 61.84it/s]
+[cap humaneval] condition QON ready
+[cap humaneval] DONE stats=125 samples=66 manifest+=21120

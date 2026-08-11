@@ -1,0 +1,8 @@
+[cap gsm8k] trajectory cyc__M0cyc__gsm8k.jsonl, 20 turns
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 86.38it/s]
+[cap gsm8k] condition FP ready
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 60.73it/s]
+[cap gsm8k] condition QOFF ready
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 41.04it/s]
+[cap gsm8k] condition QON ready
+[cap gsm8k] DONE stats=125 samples=66 manifest+=21120
