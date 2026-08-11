@@ -1,0 +1,138 @@
+
+==================================================================
+§1 TARGET -> W_c CONTRACT (fold per source block)
+==================================================================
+source: interfaces.fold_wc — 'fc.weight[:, i*D:(i+1)*D] <- W_i @ R1' (fp64 staging); target residual H_i_rot = H_i @ R1_T
+  block 0: ALGEBRA (fp64 fold) max_rel=8.899e-16 | DEPLOYED (bf16-stored fold) max_rel=7.070e-04 (= ordinary bf16 weight rounding, not a basis error)
+  block 1: ALGEBRA (fp64 fold) max_rel=1.392e-15 | DEPLOYED (bf16-stored fold) max_rel=8.134e-04 (= ordinary bf16 weight rounding, not a basis error)
+  block 2: ALGEBRA (fp64 fold) max_rel=1.698e-15 | DEPLOYED (bf16-stored fold) max_rel=1.354e-03 (= ordinary bf16 weight rounding, not a basis error)
+  block 3: ALGEBRA (fp64 fold) max_rel=2.091e-15 | DEPLOYED (bf16-stored fold) max_rel=2.058e-03 (= ordinary bf16 weight rounding, not a basis error)
+  block 4: ALGEBRA (fp64 fold) max_rel=3.408e-15 | DEPLOYED (bf16-stored fold) max_rel=1.614e-03 (= ordinary bf16 weight rounding, not a basis error)
+
+==================================================================
+§2 BASIS OF Z_t AND H_t
+==================================================================
+  ALGEBRA:  Z_fold(fp64) vs Z_stock: max_rel=2.276e-15
+  DEPLOYED: Z_fold(bf16-stored) vs Z_stock: max_rel=4.791e-04 (bf16 rounding only)
+  H_t_fold vs H_t_stock: max_rel=3.003e-04
+  => the mandatory fold CANCELS R1_T: Z_t and H_t live in the ORIGINAL (stock draft context) basis, NOT R1_T basis.
+
+==================================================================
+§3 DRAFT R1_D/R2_D CONTRACT (deployed M3 equations)
+==================================================================
+  residual basis: h = e_orig @ R1_D  (input boundary, vsq_draft_rot:
+    'h = noise_embedding @ R1' after embed restore e_orig = e_rot @ R1_T^T)
+  reading views  : W_q,W_k^noise,W_gate,W_up : (W D_gamma_ln) @ R1_D
+  V noise        : headwise-R2_out(W_v D_gamma_ln) @ R1_D
+  O              : R1_D^T @ headwise-R2_in(W_o)   (writes into R1_D basis)
+  down           : R1_D^T @ (W_down @ had4), activation z @ had4
+  output boundary: rms_bare(h) @ R1_D^T * gamma_final  (then head_fn:
+                   @ R1_T into the rotated shared lm_head)
+  n(e R1_D) == n(e) R1_D : max_rel=1.398e-08  (orthogonal rms)
+  noise-K branch: n(h)@(W gam_in R1_D)^T == RMSNorm_in(e)@W^T : max_rel=1.060e-06
+  O writes R1_D basis: a@(R1_D^T Wo)^T == (a@Wo^T)@R1_D : max_rel=3.072e-15
+  out boundary == RMSNorm_final(e_orig): max_rel=1.505e-06
+
+==================================================================
+§4 SHARED K/V CRITICAL AUDIT (per-layer views + bases)
+==================================================================
+  ctx activation basis : ORIGINAL (H_t, §2)   [M5: ORIGINAL@R_C]
+  draft activation basis: R1_D
+  L0: W_K_ctx 1270e4d94d0a6154 vs manual(W gam_hid) rel=0.0e+00 | W_K_draft bdcb7ad4822634f3 (buffer@R1_D at fwd) | distinct=True
+       ctx-K FP == stock: 1.7e-16 | draft-K FP == stock: 1.1e-06 | V ctx/noise pair via R2_out<->O R2_in
+       V-ctx R2-rotated == stock@R2 pairing: 1.0e-06
+  L1: W_K_ctx 17ed9feaae3ff775 vs manual(W gam_hid) rel=0.0e+00 | W_K_draft 4d294f6f68b87930 (buffer@R1_D at fwd) | distinct=True
+       ctx-K FP == stock: 2.7e-16 | draft-K FP == stock: 1.1e-06 | V ctx/noise pair via R2_out<->O R2_in
+       V-ctx R2-rotated == stock@R2 pairing: 1.6e-06
+  L2: W_K_ctx 03f44eb97dc7e797 vs manual(W gam_hid) rel=0.0e+00 | W_K_draft 78d1f632cf9350b9 (buffer@R1_D at fwd) | distinct=True
+       ctx-K FP == stock: 2.6e-16 | draft-K FP == stock: 9.9e-07 | V ctx/noise pair via R2_out<->O R2_in
+       V-ctx R2-rotated == stock@R2 pairing: 1.1e-06
+  L3: W_K_ctx 0a2d9d6eda14421d vs manual(W gam_hid) rel=0.0e+00 | W_K_draft 9659fc1984b23217 (buffer@R1_D at fwd) | distinct=True
+       ctx-K FP == stock: 3.1e-16 | draft-K FP == stock: 1.2e-06 | V ctx/noise pair via R2_out<->O R2_in
+       V-ctx R2-rotated == stock@R2 pairing: 1.0e-06
+  L4: W_K_ctx af3406ad4b1a4bbb vs manual(W gam_hid) rel=0.0e+00 | W_K_draft 7f46a730a3c0f186 (buffer@R1_D at fwd) | distinct=True
+       ctx-K FP == stock: 2.8e-16 | draft-K FP == stock: 1.1e-06 | V ctx/noise pair via R2_out<->O R2_in
+       V-ctx R2-rotated == stock@R2 pairing: 9.2e-07
+  VERDICT §4: ctx and draft use SEPARATE, basis-matched views (same source W, different gamma+rotation fusion) -> M3 VALID: True
+
+==================================================================
+§5 G1 (R1_D := R1_T) DOES NOT ROTATE H_t
+==================================================================
+  Derivation: H_i R -> mandatory fold multiplies W_c blocks by R ->
+  Z_t = (H_i R)(W_c,i R)^T = H_i W_c,i^T  (R cancels) -> RMSNorm ->
+  H_t in ORIGINAL basis, INDEPENDENT of the draft-residual choice R1_D.
+  Setting R1_D := R1_T only changes the residual-stream views.
+  Implementation check (eval_al --vsq-draft rt): rq.R1 := R1_T, R2 := None; ctx views wk_ctx_i/wv_ctx_i carry NO R1_D term (source above), hence identical with/without G1:
+    hash(wk_ctx_0) M3 == G1 : 1270e4d94d0a6154 (view formula has no R1_D dependency)
+
+==================================================================
+§6 RMSNORM GAMMA NON-COMMUTATIVITY
+==================================================================
+  bare n(z R)==n(z) R (orthogonal): max_rel=3.399e-08
+  WITH gamma: RMSNorm(zR) vs RMSNorm(z)R: max_rel=4.724e-01  (O(1) => NON-commuting, as expected unless gamma uniform; gamma_hidden std=0.141)
+  Deployed resolution: bare-rms in the forward; gamma absorbed into ctx K/V views BEFORE R_C -> algebra exact (§7).
+
+==================================================================
+§7 R_C IMPLEMENTATION CLASS
+==================================================================
+  SOURCE: Ht = Ht @ self.rc_matrix_buf
+  CLASS = A: EXPLICIT RUNTIME rotation 'Ht = Ht @ rc_matrix_buf'
+  ([S,4096]x[4096,4096] dense matmul, once per draft forward, shared by
+  all 5 layers), PLUS ctx K/V views folded with @R_C (offline at freeze).
+  => any 'zero runtime cost' wording is INVALID for the activation side.
+  A-form exact: (n(Z)R_C)(W gam R_C)^T == RMSNorm(Z) W^T : max_rel=5.810e-08
+  folded-B candidate Wc_B=R_C^T@Wc_fold: Z_B == Z R_C : max_rel=3.316e-15; n(Z_B)==n(Z)R_C : max_rel=3.443e-08
+  => B exists and is FP-equivalent, but is NOT what deployed code does (and B changes W4 codes of W_c — see §9).
+
+==================================================================
+§8 THREE-WAY FP PARITY (REF stock / EXPLICIT algebra / FOLDED rq)
+==================================================================
+  ctx-K L0: EXPLICIT vs stock-form: 5.810e-08 | FOLDED(rq tap, bf16 path) vs stock-form: 1.286e-04
+  S3 H_t(dep tap) vs bare n(Z_stock): 2.170e-04 (pre-R_C tap; post-RC tap vs n(Z)R_C: 1.319e-03)
+  final hidden (pre-head, original basis): FOLDED-M5 vs REF stock: max_rel=7.979e-03  (bf16 mixed-precision path; R_C-M5 is FP-equivalent to stock by the §4/§7 identities)
+
+==================================================================
+§9 QUANTIZED PARITY + A4 SITES
+==================================================================
+  A4 sites (deployed, BOTH proxy and AL evals — implementation A):
+    fc input   : per-token (P2: per-branch) on target_hidden (rot basis)
+    ctx K/V in : per-token on H_t AFTER runtime @R_C   <- xc site
+    noise sites: per-token on rms(h) in R1_D basis; o/gate/up/down likewise
+  W4 sites: per-row RTN on each folded view (incl. views @R_C).
+  xc integer codes: deployed vs explicit-A recompute: identical=True (393216 codes)
+  wk_ctx_0 W4 dequant: deployed-formula vs manual: max_rel=0.000e+00
+  form-B W_c W4 codes vs deployed-A W_c codes: differing fraction ~76.99% -> B is NOT quant-equivalent to A; all reported AL used A consistently (same code path in proxy+eval) -> comparisons are apples-to-apples.
+
+==================================================================
+§10 RUNTIME OPERATOR DIFF M3 vs M5
+==================================================================
+  M5 minus M3 (runtime): EXACTLY ONE extra op —
+    Ht @ R_C : [S,4096]x[4096,4096] dense, once per draft forward
+    measured 335 us @ S=512 fp32 on this GPU
+    FLOPs: 16.8 MMAC/token ~= 2x the ctx K+V projections (8.4 MMAC/token)
+  NOT added at runtime: extra norm (bare-rms already there), extra
+    quantization (same xc site), extra memory (R_C folded into the SAME
+    ctx view tensors; the ~84 MiB ctx views exist in M3 already; +64 MiB
+    for the R_C matrix itself in fp32 if kept unfused).
+  Offline-only: view folding at freeze_for_eval; form-B W_c fold would
+    remove the runtime op but changes W_c quantization codes (§9).
+
+==================================================================
+§11 BOUNDARY TABLE
+==================================================================
+| Boundary | Incoming basis | Consumer expected basis | Current compensation | FP correct? | Quant boundary preserved? |
+|---|---|---|---|---|---|
+| target H_i -> W_c | R1_T | R1_T (folded W_c) | W_c block fold @R1_T | yes (1e-15 fp64) | yes (A4 on rot input both impls) |
+| W_c -> hidden_norm | ORIGINAL (fold cancels) | ORIGINAL | none needed (proved §2) | yes | n/a (Z_t never quantized) |
+| hidden_norm -> context K | ORIGINAL (@R_C in M5) | view basis = gamma_hid[@R_C] | ctx-specific view W gam_h[@R_C] | yes | yes (xc after R_C, same site) |
+| hidden_norm -> context V | ORIGINAL (@R_C) | gamma_hid+R2_out[@R_C] | ctx view + R2 pairing with O | yes | yes |
+| draft residual -> Q | R1_D | R1_D | (W gam_in)@R1_D view | yes | yes |
+| draft residual -> K | R1_D | R1_D | (W gam_in)@R1_D view (SEPARATE from ctx view) | yes | yes |
+| draft residual -> V | R1_D | R1_D | R2_out(W gam_in)@R1_D | yes | yes |
+| draft final hidden -> shared LM head | R1_D | R1_T (rotated head) | rms@R1_D^T*gam_f then head_fn @R1_T | yes | head bf16 (never quantized) |
+| shared embedding -> draft residual | R1_T (rotated embed) | R1_D | embed_fn @R1_T^T then @R1_D input boundary | yes | embeds bf16 (never quantized) |
+
+==================================================================
+§12 FINAL VERDICT
+==================================================================
+D. AL RESULTS VALID BUT ZERO-RUNTIME CLAIM INVALID — explicit runtime rotation remains (Ht @ R_C, class A)

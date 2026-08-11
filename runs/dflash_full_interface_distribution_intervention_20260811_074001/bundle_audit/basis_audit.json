@@ -1,0 +1,17 @@
+{
+ "s1_fold_maxrel": 3.408297989957182e-15,
+ "s1_bf16_maxrel": 0.002058114936620418,
+ "s2_zt_maxrel": 2.275588434149204e-15,
+ "s2_bf16_maxrel": 0.00047908944847600257,
+ "s3_noiseK_maxrel": 1.060468576003903e-06,
+ "s4_m3_valid": true,
+ "s5_g1_ctx_independent": true,
+ "s6_gamma_noncommute_rel": 0.47236983636613433,
+ "s7_class": "A_runtime_activation_rotation_plus_folded_views",
+ "s7_a_form_maxrel": 5.809604096057777e-08,
+ "s8_final_hidden_maxrel_bf16": 0.007978723384439945,
+ "s9_codes_identical": true,
+ "s10_rc_runtime_us_S512": 334.74894473329186,
+ "s11_rows": 9,
+ "verdict": "D. AL RESULTS VALID BUT ZERO-RUNTIME CLAIM INVALID \u2014 explicit runtime rotation remains (Ht @ R_C, class A)"
+}

@@ -60,7 +60,15 @@ DEPLOYMENT RECIPE (training-optional): vanilla SpinQuant (target+draft) + mandat
 interface folds + ctx-specific gamma K/V views + R_C := any orthogonal (R1_T reuse
 natural) folded into ctx views + P2 branch scales at fc + optional QAT (Q5-recipe,
 lr 3e-2, 400 steps) for the last +0.15. Extra memory: ~84 MiB ctx views (already
-required for correctness); runtime: offline folds only.
+required for correctness) + 32-64 MiB R_C matrix. Runtime (basis audit, verdict D):
+weight views fold offline, but the deployed R_C is an explicit runtime rotation
+Ht @ R_C (16.8 MMAC/token, ~2x ctx K+V projection FLOPs; 335 us @ S=512 fp32);
+a fully-folded FP-equivalent form exists but crosses the W_c W4 boundary (77%
+code change) and would need revalidation. See FIDI tables/basis_audit.json +
+seagle_port/fidi_basis_audit.py (12-section audit: all basis boundaries proven
+correct at fp64 1e-15; M3 shared-K/V uses separate basis-matched views; gamma/R_C
+non-commutativity handled exactly via bare-rms + gamma-in-views; quantized codes
+of deployed-vs-explicit implementation bit-identical).
 
 Artifacts: FIDI/tables/*.csv (19 required tables incl. intervention_map,
 final_4dataset_al, scale_invariance_test), RD/figs FIG_A..H + FIDI/figs FIG_A..E,

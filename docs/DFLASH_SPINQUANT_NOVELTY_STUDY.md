@@ -321,14 +321,24 @@ H_t. Full placement map: `FIDI/tables/intervention_map.csv`.
 
 ## 7. Complexity/runtime accounting (CASE D honesty requirement)
 
-R_C = R1_T reuse: zero new learned parameters; ctx-specific K/V views are
-already mandatory for γ-fusion correctness, so R_C folding adds only an
-offline matmul per view — no runtime cost. P2: five per-branch scales per
+R_C = R1_T reuse: zero new learned parameters. CORRECTED BY THE BASIS AUDIT
+(`FIDI/tables/basis_audit.json`, verdict D): the deployed implementation is
+class A — ctx K/V weight views are folded @R_C offline, but the activation
+side is an EXPLICIT RUNTIME rotation `Ht = Ht @ R_C` ([S,4096]×[4096,4096]
+dense, once per draft forward, shared by all 5 layers; measured 335 µs at
+S=512 fp32 on a 4090; 16.8 MMAC/token ≈ 2× the ctx K+V projection FLOPs).
+Any earlier "zero runtime cost" wording is retracted. A fully-folded form B
+(W_c_B = R_C^T @ W_c_fold, exploiting n(zR)=n(z)R for bare RMS) is
+FP-equivalent (verified to 3e-15) and would remove the runtime op, but it
+moves the rotation across the W_c W4 quantization boundary (77% of integer
+codes change) — adopting B would require re-validating the W_c quant arm;
+all reported AL numbers used A consistently (proxy and eval share the code
+path), so comparisons are apples-to-apples. P2: five per-branch scales per
 token at the fc input (negligible). QAT: training-time cost only (~8 min ×
 1 GPU at 400 steps); deployment weights unchanged in format. Memory: ctx
 K/V views double k/v weight storage for the draft (2×1024×4096×2 tensors
-per layer, bf16 ≈ 84 MB total) — the honest price of the interface-correct
-system, already paid in M3.
+per layer, bf16 ≈ 84 MB total) — already paid in M3; R_C adds +64 MiB for
+the fp32 rotation matrix at runtime (or 32 MiB bf16).
 
 ## 8. Post-hoc supplementary arms (queued after selection freeze; labels explicit)
 
