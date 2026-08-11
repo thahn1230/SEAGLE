@@ -51,14 +51,26 @@ def pool_cols(A, out_cols):
 
 
 def surf3d(ax, Z, xlab, ylab, zmax, title, xf=1, boundaries=None,
-           blabels=None):
+           blabels=None, cmax=None):
+    # value-range -> color: PowerNorm with the color range CLIPPED at the
+    # pair-level p99.5 (cmax), so sparse tall outliers saturate to RED while
+    # the bulk carpet stays blue. The z AXIS keeps the true magnitude
+    # (zlim = shared zmax); only the COLOR saturates — stated on the
+    # colorbar and in plot_metadata.json. cmax/norm shared across a pair.
+    from matplotlib import colors as mcolors
     n, d = Z.shape
     xs = np.arange(d) * xf
     ys = np.arange(n)
     Xg, Yg = np.meshgrid(xs, ys)
-    ax.plot_surface(Xg, Yg, Z, cmap="coolwarm", vmin=0, vmax=zmax,
-                    rcount=min(n, 128), ccount=min(d, 512),
-                    linewidth=0, antialiased=False)
+    cv = max(cmax if cmax is not None else zmax, 1e-9)
+    norm = mcolors.PowerNorm(gamma=0.5, vmin=0.0, vmax=cv, clip=True)
+    surf = ax.plot_surface(Xg, Yg, Z, cmap="coolwarm", norm=norm,
+                           rcount=min(n, 128), ccount=min(d, 1024),
+                           linewidth=0, antialiased=False)
+    cb = plt.colorbar(surf, ax=ax, fraction=0.035, pad=0.08, shrink=0.7)
+    cb.set_label("|value| color (red = ≥ pair p99.5, PowerNorm γ=0.5)",
+                 fontsize=7)
+    cb.ax.tick_params(labelsize=7)
     ax.set_xlabel(xlab, labelpad=8)
     ax.set_ylabel(ylab, labelpad=8)
     ax.set_zlabel("|value|", labelpad=6)
@@ -82,15 +94,20 @@ def surf3d(ax, Z, xlab, ylab, zmax, title, xf=1, boundaries=None,
 def pair_fig(VR, name, A, B, tA, tB, xlab, ylab, xf=1, boundaries=None,
              blabels=None):
     zmax = float(max(np.abs(A).max(), np.abs(B).max()))
-    META[name] = {"zmax": zmax, "shape_before": list(A.shape),
-                  "shape_after": list(B.shape)}
+    cmax = float(max(np.percentile(np.abs(A), 99.5),
+                     np.percentile(np.abs(B), 99.5)))
+    META[name] = {"zmax": zmax, "color_vmax_p99.5": cmax,
+                  "shape_before": list(A.shape),
+                  "shape_after": list(B.shape),
+                  "color_norm": "PowerNorm(gamma=0.5, vmin=0, "
+                                "vmax=pair_p99.5, clip) — z axis unclipped"}
     for mode in ("sameZ", "autoscale"):
         fig = plt.figure(figsize=(13, 5.2), facecolor="white")
         for j, (Z, tt) in enumerate(((A, tA), (B, tB))):
             ax = fig.add_subplot(1, 2, j + 1, projection="3d")
             zm = zmax if mode == "sameZ" else float(np.abs(Z).max())
             surf3d(ax, np.abs(Z), xlab, ylab, zm, tt, xf, boundaries,
-                   blabels)
+                   blabels, cmax=cmax)
         fig.tight_layout()
         for ext in ("png", "pdf"):
             if mode == "autoscale" and ext == "pdf":
@@ -275,11 +292,14 @@ def main():
     on, _ = pooled_rows(VR, "L0_kctx_cache_QON", 128)
     rows[3] = (off, on, "ctx K cache (L0) R_C OFF", "R_C ON")
     for r, (A, B, tA, tB) in enumerate(rows):
+        A, B = np.asarray(A), np.asarray(B)
         zmax = float(max(np.abs(A).max(), np.abs(B).max()))
+        cmax = float(max(np.percentile(np.abs(A), 99.5),
+                         np.percentile(np.abs(B), 99.5)))
         for j, (Z, tt) in enumerate(((A, tA), (B, tB))):
             ax = fig.add_subplot(4, 2, r * 2 + j + 1, projection="3d")
-            surf3d(ax, np.abs(np.asarray(Z)), "Channel",
-                   "Token/Out-ch/Pos", zmax, tt)
+            surf3d(ax, np.abs(Z), "Channel",
+                   "Token/Out-ch/Pos", zmax, tt, cmax=cmax)
     fig.tight_layout()
     fig.savefig(f"{VR}/plots/FIG_ROTATION_FOUR_STAGE_SUMMARY.png", dpi=300)
     fig.savefig(f"{VR}/plots/FIG_ROTATION_FOUR_STAGE_SUMMARY.pdf")

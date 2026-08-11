@@ -128,13 +128,13 @@
 [OK]       cache samples sharegpt L4 vctx 
 [OK]       cache samples sharegpt L4 kdr 
 [OK]       cache samples sharegpt L4 vdr 
-[OK]       cache NMSE conditions mtbench {'QON', 'QOFF'}
+[OK]       cache NMSE conditions mtbench {'QOFF', 'QON'}
 [OK]       cache NMSE coverage mtbench 
-[OK]       cache NMSE conditions gsm8k {'QON', 'QOFF'}
+[OK]       cache NMSE conditions gsm8k {'QOFF', 'QON'}
 [OK]       cache NMSE coverage gsm8k 
-[OK]       cache NMSE conditions humaneval {'QON', 'QOFF'}
+[OK]       cache NMSE conditions humaneval {'QOFF', 'QON'}
 [OK]       cache NMSE coverage humaneval 
-[OK]       cache NMSE conditions sharegpt {'QON', 'QOFF'}
+[OK]       cache NMSE conditions sharegpt {'QOFF', 'QON'}
 [OK]       cache NMSE coverage sharegpt 
 [OK]       plot FIG_A_Hconcat_before_after_R1_sameZ 
 [OK]       zmax metadata FIG_A_Hconcat_before_after_R1_sameZ 
