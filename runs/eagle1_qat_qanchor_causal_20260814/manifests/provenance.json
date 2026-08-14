@@ -1,0 +1,36 @@
+{
+ "study": "eagle1_qat_quantized_anchor_causal",
+ "created_utc": "2026-08-14T15:00:00Z",
+ "base_commit": "df2e131c7ede3938e3893bbe0b76313076bd369c",
+ "branch": "exp/eagle1-qat-quantized-anchor-causal",
+ "env": {
+  "torch": "2.6.0+cu124",
+  "cuda": "12.4",
+  "driver": "550.163.01",
+  "gpu": "8x RTX 4090",
+  "python": "/home/thahn1230/anaconda3/envs/seagle"
+ },
+ "target_R_bin_sha": "4b7e91d2a7531bb8",
+ "r5_sha": "20c03f004d6edbf8",
+ "draft_base": "yuhuili/EAGLE-llama2-chat-7B @44e37ec3 (public draft = deployed GS+R5 PTQ anchor lineage)",
+ "gs_alpha": 32.89964245299412,
+ "w4": "per-out-channel symmetric RTN + MSE clip (norm 2.4, grid 100, maxshrink 0.8, maxq 7) \u2014 TO BE FROZEN to PTQ anchor values for all anchor experiments (A2)",
+ "a4": "per-token asymmetric dynamic (unchanged, deployment contract)",
+ "seeds": {
+  "training": [
+   0,
+   1,
+   2
+  ],
+  "data_shuffle": "per-trainer --seed",
+  "bootstrap": 20260723
+ },
+ "reused_artifacts": {
+  "canonical_run": "runs/eagle1_aaq_canonical_20260813_082500",
+  "ptq_rows": "CANON_B1/B3/B5/B7/B9 shards (exact original-server reproduction)",
+  "plain_lr_frontier_existing": "CAN_P2 (conv/hybrid @1e-5), CAN_T6 (conv/hybrid @1e-6), LRP pilots (@3e-6,1e-6 hybrid)",
+  "ckpts": "/data/thahn1230/aaq_ckpts/CAN_*",
+  "aggressive_primary": "CAN_P2_B_conv_s0 (lr 1e-5, public-draft init, chain pipeline \u2014 same lineage as anchor C0)",
+  "aggressive_secondary": "CQH_gsr5 (43% down flips; NOTE different init anchor.pt + ShareGPT data \u2014 labeled confound)"
+ }
+}
