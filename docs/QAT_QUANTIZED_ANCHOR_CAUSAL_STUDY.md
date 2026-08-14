@@ -95,3 +95,28 @@ results sections are appended as phases complete.
   calib/validation for selection, final contract once.
 
 (Results appended below as phases complete.)
+
+## RESULTS — Phase A (2026-08-14)
+
+**Gate A: PASS.** Gate-D harness (`tables/gateD_qat_parity.json`):
+QAT training forward vs canonical deployment adapter — all 9 quantized
+weight tensors byte/value-equal and the K=4 teacher-forced chain equal
+in hidden/logits/greedy tokens, in BOTH structural modes (identity,
+gamma_R1); max|dlogit| = 0.0. The parity target is fake-quant-vs-
+fake-quant (no real INT4 kernel in this path; stated in section 1).
+A2 anchor semantics: frozen-scale module + 7 unit gates PASS; anchor
+captured (sha 98c9ee85, 236M weights, self-flip 0).
+
+A3 status: W4A4 depth curves measured (PTQ free-running gap at depths
+2-4: 0.184/0.222/0.248; tuned-QAT: 0.161/0.173/0.253 — the tf-vs-free
+gap is NOT reduced by tuned QAT). FP16 control: first measurement gave
+implausibly low absolute alphas (tf 0.41 at depth 1); the identity-mode
+Gate-D parity PASSES, so the chain implementation matches the runtime —
+the fp16-CORPUS/interface pairing is under re-audit before the control
+is used. The depth-collapse attribution claim is therefore DEFERRED
+until a validated FP16 control exists (interpretation rule respected).
+
+B-prep (`tables/b_prep_flip_stats.json`): same-lineage aggressive
+checkpoint = CAN_P2_B_conv_s0@st3000, H_Q 13.90%, down_proj 31.02%,
+D_Q 0.01435; monotone step trajectory captured (st100..st3000).
+Tuned-hybrid selected ckpt: H_Q 1.00% (down 1.20%).
