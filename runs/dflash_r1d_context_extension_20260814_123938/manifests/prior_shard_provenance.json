@@ -1,0 +1,98 @@
+{
+ "al__PRIOR_F0_fp16__fp16__mtbench.csv": {
+  "source": "runs/dflash_vanilla_spinquant_novelty_20260810_104957/shards/al__M0_fp16__fp16__mtbench.csv",
+  "sha": "2cb8e03deb8f0161"
+ },
+ "al__PRIOR_F0_fp16__fp16__gsm8k.csv": {
+  "source": "runs/dflash_vanilla_spinquant_novelty_20260810_104957/shards/al__M0_fp16__fp16__gsm8k.csv",
+  "sha": "7cdd21512f45a08c"
+ },
+ "al__PRIOR_F0_fp16__fp16__humaneval.csv": {
+  "source": "runs/dflash_vanilla_spinquant_novelty_20260810_104957/shards/al__M0_fp16__fp16__humaneval.csv",
+  "sha": "875710d18ed74b48"
+ },
+ "al__PRIOR_F0_fp16__fp16__sharegpt.csv": {
+  "source": "runs/dflash_vanilla_spinquant_novelty_20260810_104957/shards/al__M0_fp16__fp16__sharegpt.csv",
+  "sha": "30e3adc33840453e"
+ },
+ "al__PRIOR_F1_rtn__w4a4_norot__mtbench.csv": {
+  "source": "runs/dflash_vanilla_spinquant_novelty_20260810_104957/shards/al__M1_rtn__w4a4_norot__mtbench.csv",
+  "sha": "e1e9f96782d079b3"
+ },
+ "al__PRIOR_F1_rtn__w4a4_norot__gsm8k.csv": {
+  "source": "runs/dflash_vanilla_spinquant_novelty_20260810_104957/shards/al__M1_rtn__w4a4_norot__gsm8k.csv",
+  "sha": "68086d42222dd12f"
+ },
+ "al__PRIOR_F1_rtn__w4a4_norot__humaneval.csv": {
+  "source": "runs/dflash_vanilla_spinquant_novelty_20260810_104957/shards/al__M1_rtn__w4a4_norot__humaneval.csv",
+  "sha": "a740396c6ac80dac"
+ },
+ "al__PRIOR_F1_rtn__w4a4_norot__sharegpt.csv": {
+  "source": "runs/dflash_vanilla_spinquant_novelty_20260810_104957/shards/al__M1_rtn__w4a4_norot__sharegpt.csv",
+  "sha": "3f12f09bfc1924a8"
+ },
+ "al__PRIOR_F2_vanillaSQ__w4a4__mtbench.csv": {
+  "source": "runs/dflash_vanilla_spinquant_novelty_20260810_104957/shards/al__M3_vsq__w4a4__mtbench.csv",
+  "sha": "883b923e38192700"
+ },
+ "al__PRIOR_F2_vanillaSQ__w4a4__gsm8k.csv": {
+  "source": "runs/dflash_vanilla_spinquant_novelty_20260810_104957/shards/al__M3_vsq__w4a4__gsm8k.csv",
+  "sha": "b33a83925e67d82b"
+ },
+ "al__PRIOR_F2_vanillaSQ__w4a4__humaneval.csv": {
+  "source": "runs/dflash_vanilla_spinquant_novelty_20260810_104957/shards/al__M3_vsq__w4a4__humaneval.csv",
+  "sha": "bfc5d14857d01dba"
+ },
+ "al__PRIOR_F2_vanillaSQ__w4a4__sharegpt.csv": {
+  "source": "runs/dflash_vanilla_spinquant_novelty_20260810_104957/shards/al__M3_vsq__w4a4__sharegpt.csv",
+  "sha": "e7d1e6638ad21c52"
+ },
+ "al__PRIOR_F4_rt__w4a4__mtbench.csv": {
+  "source": "runs/dflash_vanilla_spinquant_novelty_20260810_104957/shards/al__M5_rconly__w4a4__mtbench.csv",
+  "sha": "1b6b493b83454840"
+ },
+ "al__PRIOR_F4_rt__w4a4__gsm8k.csv": {
+  "source": "runs/dflash_vanilla_spinquant_novelty_20260810_104957/shards/al__M5_rconly__w4a4__gsm8k.csv",
+  "sha": "90eef5487e27815d"
+ },
+ "al__PRIOR_F4_rt__w4a4__humaneval.csv": {
+  "source": "runs/dflash_vanilla_spinquant_novelty_20260810_104957/shards/al__M5_rconly__w4a4__humaneval.csv",
+  "sha": "7d605826bf72cc63"
+ },
+ "al__PRIOR_F4_rt__w4a4__sharegpt.csv": {
+  "source": "runs/dflash_vanilla_spinquant_novelty_20260810_104957/shards/al__M5_rconly__w4a4__sharegpt.csv",
+  "sha": "2d205c3b257d1d51"
+ },
+ "al__PRIOR_F5_rt_p2__w4a4__mtbench.csv": {
+  "source": "runs/dflash_vanilla_spinquant_novelty_20260810_104957/shards/al__M5_p2rc__w4a4__mtbench.csv",
+  "sha": "360e8db595381a42"
+ },
+ "al__PRIOR_F5_rt_p2__w4a4__gsm8k.csv": {
+  "source": "runs/dflash_vanilla_spinquant_novelty_20260810_104957/shards/al__M5_p2rc__w4a4__gsm8k.csv",
+  "sha": "7121df67ad5ed8fc"
+ },
+ "al__PRIOR_F5_rt_p2__w4a4__humaneval.csv": {
+  "source": "runs/dflash_vanilla_spinquant_novelty_20260810_104957/shards/al__M5_p2rc__w4a4__humaneval.csv",
+  "sha": "b18b1728fc8701d3"
+ },
+ "al__PRIOR_F5_rt_p2__w4a4__sharegpt.csv": {
+  "source": "runs/dflash_vanilla_spinquant_novelty_20260810_104957/shards/al__M5_p2rc__w4a4__sharegpt.csv",
+  "sha": "d11c2e10e155e61e"
+ },
+ "al__PRIOR_F6_rt_p2_qat__w4a4__mtbench.csv": {
+  "source": "runs/dflash_vanilla_spinquant_novelty_20260810_104957/shards/al__M6_q5bp2__w4a4__mtbench.csv",
+  "sha": "90bcbdfdd4ae2335"
+ },
+ "al__PRIOR_F6_rt_p2_qat__w4a4__gsm8k.csv": {
+  "source": "runs/dflash_vanilla_spinquant_novelty_20260810_104957/shards/al__M6_q5bp2__w4a4__gsm8k.csv",
+  "sha": "d7b362e73cc89eb4"
+ },
+ "al__PRIOR_F6_rt_p2_qat__w4a4__humaneval.csv": {
+  "source": "runs/dflash_vanilla_spinquant_novelty_20260810_104957/shards/al__M6_q5bp2__w4a4__humaneval.csv",
+  "sha": "7dff5af5f4447d8d"
+ },
+ "al__PRIOR_F6_rt_p2_qat__w4a4__sharegpt.csv": {
+  "source": "runs/dflash_vanilla_spinquant_novelty_20260810_104957/shards/al__M6_q5bp2__w4a4__sharegpt.csv",
+  "sha": "a9dddfda70492f01"
+ }
+}

@@ -1,0 +1,11 @@
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 112.43it/s]
+[vsq] RotQuantDraft ckpt=/home/thahn1230/dflash_workspace/dflash/runs/dflash_vanilla_spinquant_novelty_20260810_104957/rotations/draft/R1D_s1r1.pt raw=False bits=4
+[F3b_c8] 10/80 cycle-tau=3.3099
+[F3b_c8] 20/80 cycle-tau=3.2120
+[F3b_c8] 30/80 cycle-tau=3.2495
+[F3b_c8] 40/80 cycle-tau=3.1228
+[F3b_c8] 50/80 cycle-tau=3.0931
+[F3b_c8] 60/80 cycle-tau=3.0298
+[F3b_c8] 70/80 cycle-tau=2.9830
+[F3b_c8] 80/80 cycle-tau=3.0204
+[F3b_c8] DONE sharegpt cycle-pooled tau = 3.0204 over 12995 cycles

@@ -1,0 +1,9 @@
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 151.72it/s]
+[vsq] RotQuantDraft ckpt=/home/thahn1230/dflash_workspace/dflash/runs/dflash_r1d_context_extension_20260814_123938/rotations/R1DC_l03.pt raw=False bits=4
+[C9b_r1dc_l03] 10/60 cycle-tau=3.1086
+[C9b_r1dc_l03] 20/60 cycle-tau=3.1064
+[C9b_r1dc_l03] 30/60 cycle-tau=3.2231
+[C9b_r1dc_l03] 40/60 cycle-tau=3.2878
+[C9b_r1dc_l03] 50/60 cycle-tau=3.2794
+[C9b_r1dc_l03] 60/60 cycle-tau=3.3164
+[C9b_r1dc_l03] DONE gsm8kvalid cycle-pooled tau = 3.3164 over 2895 cycles

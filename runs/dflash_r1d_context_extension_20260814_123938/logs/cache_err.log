@@ -1,0 +1,13 @@
+[R1D_DeltaR      ] K-cache NMSE mean=0.01122 V-cache NMSE mean=0.02887
+[R1DC            ] K-cache NMSE mean=0.01292 V-cache NMSE mean=0.03533
+[none            ] K-cache NMSE mean=0.30041 V-cache NMSE mean=0.59690
+[R1_D            ] K-cache NMSE mean=0.02493 V-cache NMSE mean=0.06875
+[R1_T_currentRC  ] K-cache NMSE mean=0.01156 V-cache NMSE mean=0.03088
+[Hadamard        ] K-cache NMSE mean=0.01136 V-cache NMSE mean=0.03092
+[Random_s101     ] K-cache NMSE mean=0.01206 V-cache NMSE mean=0.03198
+[Random_s102     ] K-cache NMSE mean=0.01212 V-cache NMSE mean=0.03258
+[Random_s103     ] K-cache NMSE mean=0.01190 V-cache NMSE mean=0.03225
+[Random_s1234    ] K-cache NMSE mean=0.01214 V-cache NMSE mean=0.03239
+[RC_L0_learned   ] K-cache NMSE mean=0.02194 V-cache NMSE mean=0.05780
+[R_combo_c7b     ] K-cache NMSE mean=0.01198 V-cache NMSE mean=0.03249
+wrote tables/ctx_cache_error.csv (RoPE is norm-preserving: post-k_norm == stored-K-cache NMSE)

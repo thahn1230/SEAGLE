@@ -1,0 +1,138 @@
+{
+ "matrices": {
+  "R1_T": {
+   "name": "R1_T",
+   "source": "/home/thahn1230/dflash_workspace/outputs/rotations/llama31_w4a4kv16_s1/R.bin",
+   "dtype": "torch.float32",
+   "shape": [
+    4096,
+    4096
+   ],
+   "tensor_sha": "90b1571af74a6649",
+   "orth_fro": 2.5506276395008127e-05,
+   "det_sign": 1
+  },
+  "R1_D": {
+   "name": "R1_D",
+   "source": "/home/thahn1230/dflash_workspace/dflash/runs/dflash_vanilla_spinquant_novelty_20260810_104957/rotations/draft/R1D_s1r1.pt.best",
+   "dtype": "torch.float32",
+   "shape": [
+    4096,
+    4096
+   ],
+   "tensor_sha": "1b78dd7561d1c29a",
+   "orth_fro": 7.592283995180223e-05,
+   "det_sign": 1
+  },
+  "RC_current": {
+   "name": "RC_current",
+   "source": "vsq-rc=rt (R1 of s1 R.bin)",
+   "dtype": "torch.float64",
+   "shape": [
+    4096,
+    4096
+   ],
+   "tensor_sha": "90b1571af74a6649",
+   "orth_fro": 2.5506276395008127e-05,
+   "det_sign": 1
+  },
+  "Hadamard": {
+   "name": "Hadamard",
+   "source": "/home/thahn1230/dflash_workspace/dflash/runs/dflash_full_interface_distribution_intervention_20260811_074001/tables/rc_hadamard.pt",
+   "dtype": "torch.float32",
+   "shape": [
+    4096,
+    4096
+   ],
+   "tensor_sha": "45120180cf6b9cf5",
+   "orth_fro": 0.0,
+   "det_sign": 1
+  },
+  "Random_fidi": {
+   "name": "Random_fidi",
+   "source": "/home/thahn1230/dflash_workspace/dflash/runs/dflash_full_interface_distribution_intervention_20260811_074001/tables/rc_random.pt",
+   "dtype": "torch.float32",
+   "shape": [
+    4096,
+    4096
+   ],
+   "tensor_sha": "51b90a128e77b8fa",
+   "orth_fro": 2.295285214534192e-06,
+   "det_sign": 1
+  },
+  "RC1_reuseRT": {
+   "name": "RC1_reuseRT",
+   "source": "/home/thahn1230/dflash_workspace/dflash/runs/dflash_seagle_transfer_20260807_180238/rotations/RC1_reuseRT.pt",
+   "dtype": "torch.float32",
+   "shape": [
+    4096,
+    4096
+   ],
+   "tensor_sha": "5bbd292e2519ce11",
+   "orth_fro": 2.5397166549178055e-05,
+   "det_sign": -1
+  },
+  "RC_L0": {
+   "name": "RC_L0",
+   "source": "/home/thahn1230/dflash_workspace/dflash/runs/dflash_seagle_transfer_20260807_180238/rotations/RC_L0.pt",
+   "dtype": "torch.float32",
+   "shape": [
+    4096,
+    4096
+   ],
+   "tensor_sha": "59c6c4280171109c",
+   "orth_fro": 6.635664192002649e-05,
+   "det_sign": 1
+  },
+  "Random_s101": {
+   "name": "Random_s101",
+   "source": "QR(randn) seed=101",
+   "dtype": "torch.float64",
+   "shape": [
+    4096,
+    4096
+   ],
+   "tensor_sha": "ffeb46a56b0a51f8",
+   "orth_fro": 1.083866357822599e-13,
+   "det_sign": 1
+  },
+  "Random_s102": {
+   "name": "Random_s102",
+   "source": "QR(randn) seed=102",
+   "dtype": "torch.float64",
+   "shape": [
+    4096,
+    4096
+   ],
+   "tensor_sha": "866f85e8c8460a5f",
+   "orth_fro": 1.0834289169033553e-13,
+   "det_sign": 1
+  },
+  "Random_s103": {
+   "name": "Random_s103",
+   "source": "QR(randn) seed=103",
+   "dtype": "torch.float64",
+   "shape": [
+    4096,
+    4096
+   ],
+   "tensor_sha": "dc6e7d79deac27cb",
+   "orth_fro": 1.0825706755279246e-13,
+   "det_sign": 1
+  },
+  "R_combo": {
+   "name": "R_combo",
+   "source": "R1_D @ RC_current (C7b)",
+   "dtype": "torch.float64",
+   "shape": [
+    4096,
+    4096
+   ],
+   "tensor_sha": "e82874728fc4355b",
+   "orth_fro": 8.012292541873364e-05,
+   "det_sign": 1
+  }
+ },
+ "rc_current_equals_r1t": true,
+ "rc_current_equals_r1d": false
+}

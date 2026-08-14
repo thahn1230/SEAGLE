@@ -1,0 +1,9 @@
+arm,meaning,tau_micro
+C0_none,none,2.0166
+PRIOR_V_M4a_p2,P2 alone (prior),1.9023
+C1_r1d,R1_D,3.1582
+C1_r1d_p2,R1_D + P2,3.3515
+CQ_r1d_qat,R1_D + P2 + QAT,3.5783
+C2_r1t,R1_T,3.2132
+PRIOR_V_M5_rc,R1_T + P2 (prior),3.407
+PRIOR_V_Q5bp2,R1_T + P2 + QAT (prior),3.669

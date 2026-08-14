@@ -1,0 +1,9 @@
+comparison,p,holm_alpha,significant
+gsm8kvalid:P1_noneVsR1D,0.0003333333333333333,0.00625,True
+gsm8kvalid:P7_bestVsP2,0.0003333333333333333,0.0071428571428571435,True
+gsm8kvalid:P8_ptqVsQat,0.0003333333333333333,0.008333333333333333,True
+gsm8kvalid:P2_r1dVsR1T,0.004666666666666667,0.01,True
+gsm8kvalid:P6_r1dVsResid,0.034,0.0125,False
+gsm8kvalid:P5_r1dVsCombo,0.062,0.016666666666666666,False
+gsm8kvalid:P4_r1dVsRnd101,0.146,0.025,False
+gsm8kvalid:P3_r1dVsHad,0.19466666666666665,0.05,False

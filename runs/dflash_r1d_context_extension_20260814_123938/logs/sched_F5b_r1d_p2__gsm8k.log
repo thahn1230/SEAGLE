@@ -1,0 +1,23 @@
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 148.16it/s]
+[vsq] RotQuantDraft ckpt=/home/thahn1230/dflash_workspace/dflash/runs/dflash_vanilla_spinquant_novelty_20260810_104957/rotations/draft/R1D_s1r1.pt raw=False bits=4
+[F5b_r1d_p2] 10/200 cycle-tau=4.0055
+[F5b_r1d_p2] 20/200 cycle-tau=3.7139
+[F5b_r1d_p2] 30/200 cycle-tau=3.5138
+[F5b_r1d_p2] 40/200 cycle-tau=3.3982
+[F5b_r1d_p2] 50/200 cycle-tau=3.4169
+[F5b_r1d_p2] 60/200 cycle-tau=3.3746
+[F5b_r1d_p2] 70/200 cycle-tau=3.3928
+[F5b_r1d_p2] 80/200 cycle-tau=3.4210
+[F5b_r1d_p2] 90/200 cycle-tau=3.4263
+[F5b_r1d_p2] 100/200 cycle-tau=3.5321
+[F5b_r1d_p2] 110/200 cycle-tau=3.5996
+[F5b_r1d_p2] 120/200 cycle-tau=3.5738
+[F5b_r1d_p2] 130/200 cycle-tau=3.5493
+[F5b_r1d_p2] 140/200 cycle-tau=3.5358
+[F5b_r1d_p2] 150/200 cycle-tau=3.5124
+[F5b_r1d_p2] 160/200 cycle-tau=3.5227
+[F5b_r1d_p2] 170/200 cycle-tau=3.5095
+[F5b_r1d_p2] 180/200 cycle-tau=3.5411
+[F5b_r1d_p2] 190/200 cycle-tau=3.5186
+[F5b_r1d_p2] 200/200 cycle-tau=3.5145
+[F5b_r1d_p2] DONE gsm8k cycle-pooled tau = 3.5145 over 10932 cycles

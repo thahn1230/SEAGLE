@@ -1,0 +1,50 @@
+{
+ "gsm8kvalid:P1_noneVsR1D": {
+  "p": 0.0003333333333333333,
+  "holm_alpha": 0.00625,
+  "significant": true,
+  "source": "bootstrap_primary.json"
+ },
+ "gsm8kvalid:P7_bestVsP2": {
+  "p": 0.0003333333333333333,
+  "holm_alpha": 0.0071428571428571435,
+  "significant": true,
+  "source": "bootstrap_primary2.json"
+ },
+ "gsm8kvalid:P8_ptqVsQat": {
+  "p": 0.0003333333333333333,
+  "holm_alpha": 0.008333333333333333,
+  "significant": true,
+  "source": "bootstrap_primary2.json"
+ },
+ "gsm8kvalid:P2_r1dVsR1T": {
+  "p": 0.004666666666666667,
+  "holm_alpha": 0.01,
+  "significant": true,
+  "source": "bootstrap_primary.json"
+ },
+ "gsm8kvalid:P6_r1dVsResid": {
+  "p": 0.034,
+  "holm_alpha": 0.0125,
+  "significant": false,
+  "source": "bootstrap_primary2.json"
+ },
+ "gsm8kvalid:P5_r1dVsCombo": {
+  "p": 0.062,
+  "holm_alpha": 0.016666666666666666,
+  "significant": false,
+  "source": "bootstrap_primary.json"
+ },
+ "gsm8kvalid:P4_r1dVsRnd101": {
+  "p": 0.146,
+  "holm_alpha": 0.025,
+  "significant": false,
+  "source": "bootstrap_primary.json"
+ },
+ "gsm8kvalid:P3_r1dVsHad": {
+  "p": 0.19466666666666665,
+  "holm_alpha": 0.05,
+  "significant": false,
+  "source": "bootstrap_primary.json"
+ }
+}

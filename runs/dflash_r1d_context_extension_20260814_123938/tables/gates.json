@@ -1,0 +1,90 @@
+{
+ "GATE-1 R1_D orthogonality": {
+  "pass": true,
+  "detail": "||R1_D^T R1_D - I||_F = 7.592e-05"
+ },
+ "GATE-2 FP ctx K/V equivalence under R1_D": {
+  "pass": true,
+  "detail": "max_rel K=4.721e-07 V=1.406e-06 over 5 layers (fp32-stored views; audit contract <1e-5)"
+ },
+ "GATE-3 draft-side R1_D path unchanged": {
+  "pass": true,
+  "detail": "noise-view source rc-free=True; wk_noise hashes invariant under rc set=True"
+ },
+ "GATE-4 R2/O pairing unchanged": {
+  "pass": true,
+  "detail": "V-ctx(R1_D)+R2 pairing vs stock: max_rel=1.059e-06 (fp32-stored R2_D; audit contract <1e-5)"
+ },
+ "GATE-5 A4 occurs AFTER H_t rotation": {
+  "pass": true,
+  "detail": "source order ok=True; deployed xc codes == A4(Ht@R1_D) recompute: match=1.000000"
+ },
+ "GATE-6 sequential == combined (C7a==C7b)": {
+  "pass": true,
+  "detail": "FP max_rel=6.774e-07; A4 code match=0.999998; quantized ctx-K out max_rel=7.367e-04 -> ONE combined orthogonal rotation, NOT two independent corrections"
+ },
+ "GATE-7 hidden cache provenance": {
+  "pass": true,
+  "detail": "rbin_sha16=f433a88b9cd40a4f mode=w4a4 n_rows=112"
+ },
+ "GATE-8 config hashes recorded": {
+  "pass": true,
+  "detail": "R.bin=f433a88b9cd40a4f R1D=114459473b87cd2e + 9 minted arm ckpts in rotations/MANIFEST.json"
+ },
+ "GATE-9 validation split contract": {
+  "pass": true,
+  "detail": "gsm8kvalid = train[1000:1060], sha=4e9ad064f74eb7d5; test sets untouched (frozen checksums in VSQ manifests)"
+ },
+ "hashes": {
+  "R.bin_s1": "f433a88b9cd40a4f",
+  "R1D_ckpt": "114459473b87cd2e",
+  "minted": {
+   "rc_R1D.pt": {
+    "from": "R1_D",
+    "file_sha": "7875754c6683fd10",
+    "tensor_sha": "1b78dd7561d1c29a"
+   },
+   "rc_R1T.pt": {
+    "from": "R1_T",
+    "file_sha": "68f19c5cc4dd0d29",
+    "tensor_sha": "90b1571af74a6649"
+   },
+   "rc_current.pt": {
+    "from": "RC_current",
+    "file_sha": "c5f32cdbdd3ce976",
+    "tensor_sha": "90b1571af74a6649"
+   },
+   "rc_hadamard.pt": {
+    "from": "Hadamard",
+    "file_sha": "7a42576d2e30fcb7",
+    "tensor_sha": "45120180cf6b9cf5"
+   },
+   "rc_combo_c7b.pt": {
+    "from": "R_combo",
+    "file_sha": "b32dfb105586ec6d",
+    "tensor_sha": "e82874728fc4355b"
+   },
+   "rc_random_s101.pt": {
+    "from": "Random_s101",
+    "file_sha": "3173131db8a45507",
+    "tensor_sha": "ffeb46a56b0a51f8"
+   },
+   "rc_random_s102.pt": {
+    "from": "Random_s102",
+    "file_sha": "7f7f112779c085be",
+    "tensor_sha": "866f85e8c8460a5f"
+   },
+   "rc_random_s103.pt": {
+    "from": "Random_s103",
+    "file_sha": "7b01b6a398d0476e",
+    "tensor_sha": "dc6e7d79deac27cb"
+   },
+   "rc_learned_l0.pt": {
+    "from": "RC_L0",
+    "file_sha": "a440016ad2557bf6",
+    "tensor_sha": "59c6c4280171109c"
+   }
+  }
+ },
+ "gsm8kvalid_sha": "4e9ad064f74eb7d5"
+}

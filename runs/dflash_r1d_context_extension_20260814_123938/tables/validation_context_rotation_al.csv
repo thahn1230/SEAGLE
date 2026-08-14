@@ -1,0 +1,21 @@
+arm,context_policy,meaning,tau_micro,AL_macro,cycles,full_block_rate,delta_vs_C0,ht_a4_nmse,K_nmse,V_nmse
+C0_none,none,model-local SpinQuant only,2.0166,2.0173,4761,0.0,0.0,0.4823912978172302,0.27355,0.5969
+C1_r1d,R1_D,extend Draft R1 to H_t (PRIMARY),3.1582,3.1548,3040,0.0036,1.1416,0.06888648122549057,0.02385,0.06875
+C1_r1d_p2,R1_D + P2,R1_D ctx rotation + fc branch scales,3.3515,3.337,2865,0.0108,1.3349,,,
+C2_r1t,R1_T,reuse Target R1 == current deployed R_C,3.2132,3.2049,2988,0.0044,1.1966,0.017867285758256912,0.01076,0.03088
+C4_had,Hadamard,training-free orthogonal (seed 1234),3.195,3.1905,3005,0.0047,1.1784,0.01771244779229164,0.01071,0.03092
+C5_rnd_s101,random s101,training-free orthogonal,3.1929,3.1851,3007,0.004,1.1763,0.019336771219968796,0.0112,0.03198
+C5_rnd_s102,random s102,training-free orthogonal,3.1834,3.1915,3016,0.0043,1.1668,0.01979839615523815,0.01126,0.03258
+C5_rnd_s103,random s103,training-free orthogonal,3.2025,3.1911,2998,0.004,1.1859,0.019573481753468513,0.01119,0.03225
+C5_rnd_s1234,random s1234,FIDI control matrix,3.1781,3.1758,3021,0.0046,1.1615,0.01992613449692726,0.0113,0.03239
+C6_learned,learned R_C (DFST L0),cycle-replay-trained (diag.),3.2251,3.2206,2977,0.0047,1.2085,0.054131895303726196,0.02009,0.0578
+C7_combo,R1_D@R1_T combo,"C7b combined (== sequential, GATE-6)",3.2014,3.1955,2999,0.003,1.1848,0.019701803103089333,0.01118,0.03249
+C8_resid,R1_D@DeltaR,C8 residual-trained context rotation,3.2025,3.1964,2998,0.004,1.1859,0.018720781430602074,0.0105,0.02887
+C9_r1dc,shared R1_DC,C9 joint draft+ctx shared rotation,3.3372,3.3353,2877,0.008,1.3206,0.023201510310173035,0.01213,0.03533
+C9b_r1dc_l03,shared R1_DC l0.3,C9 lambda_ctx=0.3 sweep arm,3.3164,3.3155,2895,0.0048,1.2998,,,
+CQ_r1d_qat,R1_D + P2 + QAT,Q5-recipe QAT on the R1_D basis,3.5783,3.5735,2687,0.0138,1.5617,,,
+PRIOR_V_M3,none (prior),VSQ-run V_M3 reproduction anchor,2.0166,2.0173,4761,0.0,0.0,,,
+PRIOR_V_M4a_p2,P2 alone (prior),"M3+P2, no ctx rotation",1.9023,1.9072,5047,0.0,-0.1143,,,
+PRIOR_V_M5_rc,R1_T + P2 (prior),M5 config,3.407,3.4092,2818,0.017,1.3904,,,
+PRIOR_V_M5_rconly,R1_T (prior),VSQ-run V_M5_rconly anchor,3.2132,3.2049,2988,0.0044,1.1966,,,
+PRIOR_V_Q5bp2,R1_T + P2 + QAT (prior),M6 config,3.669,3.6618,2619,0.0195,1.6524,,,

@@ -26,7 +26,7 @@ from .vsq_train_draft_rot import load_shared_modules
 DRAFT = "z-lab/LLaMA3.1-8B-Instruct-DFlash-UltraChat"
 
 
-def build(arm, rbin, rot_ckpt, device):
+def build(arm, rbin, rot_ckpt, device, rc_path=None):
     import sys
     sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
     from dflash.model import DFlashDraftModel
@@ -44,7 +44,13 @@ def build(arm, rbin, rot_ckpt, device):
         rq.R1 = lambda: R1b
         rq.R2 = lambda i: R2b[i]
     if arm == "Q5":
-        rq.rc_matrix_buf = R1T.float().to(device)
+        # R1DCE: --rc-path overrides the ctx rotation (default R1_T reuse)
+        if rc_path:
+            Rc = torch.load(rc_path, map_location="cpu",
+                            weights_only=False)["R_C"]
+            rq.rc_matrix_buf = Rc.float().to(device)
+        else:
+            rq.rc_matrix_buf = R1T.float().to(device)
     for p in rq.r1.parameters():
         p.requires_grad_(False)
     for m in rq.r2:
@@ -63,6 +69,9 @@ def main():
     ap.add_argument("--cache-dir", required=True)
     ap.add_argument("--rbin", required=True)
     ap.add_argument("--rot-ckpt", required=True)
+    ap.add_argument("--rc-path", default=None,
+                    help="R1DCE: ctx rotation ckpt {'R_C':...} for Q5 "
+                         "instead of R1_T reuse")
     ap.add_argument("--out", required=True)
     ap.add_argument("--steps", type=int, default=400)
     ap.add_argument("--lr", type=float, required=True)
@@ -75,7 +84,8 @@ def main():
     dev = args.device
     torch.manual_seed(args.seed)
     random.seed(args.seed)
-    rq = build(args.arm, args.rbin, args.rot_ckpt, dev)
+    rq = build(args.arm, args.rbin, args.rot_ckpt, dev,
+               rc_path=args.rc_path)
     if args.fc_p2:
         rq.cfg["fc_p2"] = True
     embed, head = load_shared_modules(dev)

@@ -1,0 +1,13 @@
+[GATE-1 R1_D orthogonality] PASS — ||R1_D^T R1_D - I||_F = 7.592e-05
+[GATE-2 FP ctx K/V equivalence under R1_D] PASS — max_rel K=4.721e-07 V=1.406e-06 over 5 layers (fp32-stored views; audit contract <1e-5)
+[GATE-3 draft-side R1_D path unchanged] PASS — noise-view source rc-free=True; wk_noise hashes invariant under rc set=True
+[GATE-4 R2/O pairing unchanged] PASS — V-ctx(R1_D)+R2 pairing vs stock: max_rel=1.059e-06 (fp32-stored R2_D; audit contract <1e-5)
+    rotation site : ['Ht = Ht @ self.rc_matrix_buf']
+    A4 sites      : ['xc_k = Ht if self._fp(("k", i)) else act_fake_ste(Ht, cab)', 'xc_v = Ht if self._fp(("v", i)) else act_fake_ste(Ht, cab)']
+[GATE-5 A4 occurs AFTER H_t rotation] PASS — source order ok=True; deployed xc codes == A4(Ht@R1_D) recompute: match=1.000000
+[GATE-6 sequential == combined (C7a==C7b)] PASS — FP max_rel=6.774e-07; A4 code match=0.999998; quantized ctx-K out max_rel=7.367e-04 -> ONE combined orthogonal rotation, NOT two independent corrections
+[GATE-7 hidden cache provenance] PASS — rbin_sha16=f433a88b9cd40a4f mode=w4a4 n_rows=112
+[GATE-8 config hashes recorded] PASS — R.bin=f433a88b9cd40a4f R1D=114459473b87cd2e + 9 minted arm ckpts in rotations/MANIFEST.json
+[GATE-9 validation split contract] PASS — gsm8kvalid = train[1000:1060], sha=4e9ad064f74eb7d5; test sets untouched (frozen checksums in VSQ manifests)
+
+GATES: 9/9 PASS

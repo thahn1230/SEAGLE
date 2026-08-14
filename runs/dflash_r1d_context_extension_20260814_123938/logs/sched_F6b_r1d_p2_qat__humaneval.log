@@ -1,0 +1,20 @@
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 84.19it/s]
+[vsq] QAT weights /home/thahn1230/dflash_workspace/dflash/runs/dflash_r1d_context_extension_20260814_123938/rotations/QAT_CQ_r1d.pt arm=Q5 lr=0.03 best_ce=?
+[vsq] RotQuantDraft ckpt=/home/thahn1230/dflash_workspace/dflash/runs/dflash_vanilla_spinquant_novelty_20260810_104957/rotations/draft/R1D_s1r1.pt raw=False bits=4
+[F6b_r1d_p2_qat] 10/164 cycle-tau=4.0829
+[F6b_r1d_p2_qat] 20/164 cycle-tau=4.0112
+[F6b_r1d_p2_qat] 30/164 cycle-tau=4.0526
+[F6b_r1d_p2_qat] 40/164 cycle-tau=4.0776
+[F6b_r1d_p2_qat] 50/164 cycle-tau=4.2098
+[F6b_r1d_p2_qat] 60/164 cycle-tau=4.3412
+[F6b_r1d_p2_qat] 70/164 cycle-tau=4.4360
+[F6b_r1d_p2_qat] 80/164 cycle-tau=4.3326
+[F6b_r1d_p2_qat] 90/164 cycle-tau=4.3424
+[F6b_r1d_p2_qat] 100/164 cycle-tau=4.4077
+[F6b_r1d_p2_qat] 110/164 cycle-tau=4.5333
+[F6b_r1d_p2_qat] 120/164 cycle-tau=4.5173
+[F6b_r1d_p2_qat] 130/164 cycle-tau=4.5492
+[F6b_r1d_p2_qat] 140/164 cycle-tau=4.5978
+[F6b_r1d_p2_qat] 150/164 cycle-tau=4.5527
+[F6b_r1d_p2_qat] 160/164 cycle-tau=4.5790
+[F6b_r1d_p2_qat] DONE humaneval cycle-pooled tau = 4.5843 over 8381 cycles

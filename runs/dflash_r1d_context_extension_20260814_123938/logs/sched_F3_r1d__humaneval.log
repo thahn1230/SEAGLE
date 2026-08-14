@@ -1,0 +1,19 @@
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 142.33it/s]
+[vsq] RotQuantDraft ckpt=/home/thahn1230/dflash_workspace/dflash/runs/dflash_vanilla_spinquant_novelty_20260810_104957/rotations/draft/R1D_s1r1.pt raw=False bits=4
+[F3_r1d] 10/164 cycle-tau=3.4749
+[F3_r1d] 20/164 cycle-tau=3.4408
+[F3_r1d] 30/164 cycle-tau=3.4890
+[F3_r1d] 40/164 cycle-tau=3.4936
+[F3_r1d] 50/164 cycle-tau=3.5743
+[F3_r1d] 60/164 cycle-tau=3.6655
+[F3_r1d] 70/164 cycle-tau=3.7550
+[F3_r1d] 80/164 cycle-tau=3.7115
+[F3_r1d] 90/164 cycle-tau=3.7156
+[F3_r1d] 100/164 cycle-tau=3.7850
+[F3_r1d] 110/164 cycle-tau=3.8734
+[F3_r1d] 120/164 cycle-tau=3.8609
+[F3_r1d] 130/164 cycle-tau=3.8742
+[F3_r1d] 140/164 cycle-tau=3.9274
+[F3_r1d] 150/164 cycle-tau=3.8968
+[F3_r1d] 160/164 cycle-tau=3.9218
+[F3_r1d] DONE humaneval cycle-pooled tau = 3.9186 over 9801 cycles

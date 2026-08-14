@@ -1,0 +1,15 @@
+[c8] train tokens=34046 val=6214
+[c8] init val ctx-NMSE=0.04610 (pure R1_D: 0.04610)
+[c8] step   25 train=0.01962 val=0.01966 ||dR-I||_F/sqrt(d)=0.3486 *best
+[c8] step   50 train=0.01980 val=0.01976 ||dR-I||_F/sqrt(d)=0.4446
+[c8] step   75 train=0.01974 val=0.01962 ||dR-I||_F/sqrt(d)=0.5129 *best
+[c8] step  100 train=0.01980 val=0.01975 ||dR-I||_F/sqrt(d)=0.5682
+[c8] step  125 train=0.01975 val=0.01962 ||dR-I||_F/sqrt(d)=0.6158 *best
+[c8] step  150 train=0.01955 val=0.01960 ||dR-I||_F/sqrt(d)=0.6579 *best
+[c8] step  175 train=0.01949 val=0.01962 ||dR-I||_F/sqrt(d)=0.6953
+[c8] step  200 train=0.01953 val=0.01960 ||dR-I||_F/sqrt(d)=0.7293 *best
+[c8] step  225 train=0.01985 val=0.01977 ||dR-I||_F/sqrt(d)=0.7610
+[c8] step  250 train=0.01983 val=0.01972 ||dR-I||_F/sqrt(d)=0.7902
+[c8] step  275 train=0.01953 val=0.01956 ||dR-I||_F/sqrt(d)=0.8176 *best
+[c8] step  300 train=0.01956 val=0.01968 ||dR-I||_F/sqrt(d)=0.8429
+[c8] saved runs/dflash_r1d_context_extension_20260814_123938/rotations/rc_R1D_deltaR.pt; stats={'val_init': 0.04610095173120499, 'val_pure_r1d': 0.04610095173120499, 'val_best': 0.019556822255253792, 'best_step': 275, 'deltaR_dist_fro_over_sqrtd': 0.8168079853057861, 'rot_angle_max_rad': 3.0103854052874803, 'rot_angle_mean_rad': 0.7067146420122079, 'rot_angle_p99_rad': 2.8642975233177435}

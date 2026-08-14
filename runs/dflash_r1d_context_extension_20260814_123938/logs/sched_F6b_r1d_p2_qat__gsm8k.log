@@ -1,0 +1,24 @@
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 58.97it/s]
+[vsq] QAT weights /home/thahn1230/dflash_workspace/dflash/runs/dflash_r1d_context_extension_20260814_123938/rotations/QAT_CQ_r1d.pt arm=Q5 lr=0.03 best_ce=?
+[vsq] RotQuantDraft ckpt=/home/thahn1230/dflash_workspace/dflash/runs/dflash_vanilla_spinquant_novelty_20260810_104957/rotations/draft/R1D_s1r1.pt raw=False bits=4
+[F6b_r1d_p2_qat] 10/200 cycle-tau=4.2252
+[F6b_r1d_p2_qat] 20/200 cycle-tau=3.9209
+[F6b_r1d_p2_qat] 30/200 cycle-tau=3.7267
+[F6b_r1d_p2_qat] 40/200 cycle-tau=3.5858
+[F6b_r1d_p2_qat] 50/200 cycle-tau=3.5799
+[F6b_r1d_p2_qat] 60/200 cycle-tau=3.5521
+[F6b_r1d_p2_qat] 70/200 cycle-tau=3.5826
+[F6b_r1d_p2_qat] 80/200 cycle-tau=3.6142
+[F6b_r1d_p2_qat] 90/200 cycle-tau=3.6076
+[F6b_r1d_p2_qat] 100/200 cycle-tau=3.7185
+[F6b_r1d_p2_qat] 110/200 cycle-tau=3.7793
+[F6b_r1d_p2_qat] 120/200 cycle-tau=3.7558
+[F6b_r1d_p2_qat] 130/200 cycle-tau=3.7397
+[F6b_r1d_p2_qat] 140/200 cycle-tau=3.7433
+[F6b_r1d_p2_qat] 150/200 cycle-tau=3.7229
+[F6b_r1d_p2_qat] 160/200 cycle-tau=3.7238
+[F6b_r1d_p2_qat] 170/200 cycle-tau=3.7096
+[F6b_r1d_p2_qat] 180/200 cycle-tau=3.7502
+[F6b_r1d_p2_qat] 190/200 cycle-tau=3.7238
+[F6b_r1d_p2_qat] 200/200 cycle-tau=3.7198
+[F6b_r1d_p2_qat] DONE gsm8k cycle-pooled tau = 3.7198 over 10342 cycles

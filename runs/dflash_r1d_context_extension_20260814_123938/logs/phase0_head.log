@@ -1,0 +1,45 @@
+======================================================================
+PHASE-0: CANDIDATE CONTEXT-ROTATION MATRIX AUDIT
+======================================================================
+R1_T file  : /home/thahn1230/dflash_workspace/outputs/rotations/llama31_w4a4kv16_s1/R.bin  sha=f433a88b9cd40a4f
+[R1_T          ] src=/home/thahn1230/dflash_workspace/outputs/rotations/llama31_w4a4kv16_s1/R.bin
+    dtype=torch.float32 shape=(4096, 4096) tensor_sha=90b1571af74a6649 ||R^TR-I||_F=2.551e-05 det_sign=+1
+R1_D file  : /home/thahn1230/dflash_workspace/dflash/runs/dflash_vanilla_spinquant_novelty_20260810_104957/rotations/draft/R1D_s1r1.pt.best  sha=114459473b87cd2e
+[R1_D          ] src=/home/thahn1230/dflash_workspace/dflash/runs/dflash_vanilla_spinquant_novelty_20260810_104957/rotations/draft/R1D_s1r1.pt.best
+    dtype=torch.float32 shape=(4096, 4096) tensor_sha=1b78dd7561d1c29a ||R^TR-I||_F=7.592e-05 det_sign=+1
+    R2_D: 5 per-layer [(128, 128)] (UNTOUCHED by this study, §18)
+[RC_current    ] src=vsq-rc=rt (R1 of s1 R.bin)
+    dtype=torch.float64 shape=(4096, 4096) tensor_sha=90b1571af74a6649 ||R^TR-I||_F=2.551e-05 det_sign=+1
+Hadamard file: /home/thahn1230/dflash_workspace/dflash/runs/dflash_full_interface_distribution_intervention_20260811_074001/tables/rc_hadamard.pt  sha=b52e24f5c818c5a8
+[Hadamard      ] src=/home/thahn1230/dflash_workspace/dflash/runs/dflash_full_interface_distribution_intervention_20260811_074001/tables/rc_hadamard.pt
+    dtype=torch.float32 shape=(4096, 4096) tensor_sha=45120180cf6b9cf5 ||R^TR-I||_F=0.000e+00 det_sign=+1
+Random_fidi file: /home/thahn1230/dflash_workspace/dflash/runs/dflash_full_interface_distribution_intervention_20260811_074001/tables/rc_random.pt  sha=512154c84affc6cc
+[Random_fidi   ] src=/home/thahn1230/dflash_workspace/dflash/runs/dflash_full_interface_distribution_intervention_20260811_074001/tables/rc_random.pt
+    dtype=torch.float32 shape=(4096, 4096) tensor_sha=51b90a128e77b8fa ||R^TR-I||_F=2.295e-06 det_sign=+1
+RC1_reuseRT file: /home/thahn1230/dflash_workspace/dflash/runs/dflash_seagle_transfer_20260807_180238/rotations/RC1_reuseRT.pt  sha=1697a349957de4f3
+[RC1_reuseRT   ] src=/home/thahn1230/dflash_workspace/dflash/runs/dflash_seagle_transfer_20260807_180238/rotations/RC1_reuseRT.pt
+    dtype=torch.float32 shape=(4096, 4096) tensor_sha=5bbd292e2519ce11 ||R^TR-I||_F=2.540e-05 det_sign=-1
+RC_L0 file: /home/thahn1230/dflash_workspace/dflash/runs/dflash_seagle_transfer_20260807_180238/rotations/RC_L0.pt  sha=8443b3f82b9423a0
+[RC_L0         ] src=/home/thahn1230/dflash_workspace/dflash/runs/dflash_seagle_transfer_20260807_180238/rotations/RC_L0.pt
+    dtype=torch.float32 shape=(4096, 4096) tensor_sha=59c6c4280171109c ||R^TR-I||_F=6.636e-05 det_sign=+1
+[Random_s101   ] src=QR(randn) seed=101
+    dtype=torch.float64 shape=(4096, 4096) tensor_sha=ffeb46a56b0a51f8 ||R^TR-I||_F=1.084e-13 det_sign=+1
+[Random_s102   ] src=QR(randn) seed=102
+    dtype=torch.float64 shape=(4096, 4096) tensor_sha=866f85e8c8460a5f ||R^TR-I||_F=1.083e-13 det_sign=+1
+[Random_s103   ] src=QR(randn) seed=103
+    dtype=torch.float64 shape=(4096, 4096) tensor_sha=dc6e7d79deac27cb ||R^TR-I||_F=1.083e-13 det_sign=+1
+[R_combo       ] src=R1_D @ RC_current (C7b)
+    dtype=torch.float64 shape=(4096, 4096) tensor_sha=e82874728fc4355b ||R^TR-I||_F=8.012e-05 det_sign=+1
+
+PAIRWISE SIMILARITY  (||A-B||_F/sqrt(d) | tr(A^T B)/d | equal)
+  R1_T           vs R1_D          :   1.4143 | -0.00011 | False
+  R1_T           vs RC_current    :   0.0000 | +1.00000 | True
+  R1_T           vs Hadamard      :   1.4129 | +0.00190 | False
+  R1_T           vs Random_fidi   :   1.4144 | -0.00033 | False
+  R1_T           vs RC1_reuseRT   :   1.4207 | -0.00925 | False
+  R1_T           vs RC_L0         :   1.4141 | +0.00011 | False
+  R1_T           vs Random_s101   :   1.4140 | +0.00028 | False
+  R1_T           vs Random_s102   :   1.4142 | +0.00009 | False
+  R1_T           vs Random_s103   :   1.4144 | -0.00028 | False
+  R1_T           vs R_combo       :   1.2585 | +0.20805 | False
+  R1_D           vs RC_current    :   1.4143 | -0.00011 | False

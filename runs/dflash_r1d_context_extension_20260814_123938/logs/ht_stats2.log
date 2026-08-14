@@ -1,0 +1,15 @@
+[ht] reusing sample /home/thahn1230/dflash_workspace/dflash/runs/dflash_r1d_context_extension_20260814_123938/captures/ht_sample.npz (8000 tokens of 40260)
+[R1D_DeltaR      ] kurt=     2.93 absmax=   5.38 top0.1%E=0.0047 A4-NMSE(mean)=0.01872 SQNR=17.28dB ent/tok=3.140b
+[R1DC            ] kurt=     3.09 absmax=   6.32 top0.1%E=0.0091 A4-NMSE(mean)=0.02320 SQNR=16.34dB ent/tok=2.994b
+[none            ] kurt=   240.13 absmax=  39.59 top0.1%E=0.3776 A4-NMSE(mean)=0.48239 SQNR= 3.17dB ent/tok=0.305b
+[R1_D            ] kurt=     4.26 absmax=  11.99 top0.1%E=0.0263 A4-NMSE(mean)=0.06889 SQNR=11.62dB ent/tok=2.267b
+[R1_T_currentRC  ] kurt=     2.89 absmax=   5.09 top0.1%E=0.0031 A4-NMSE(mean)=0.01787 SQNR=17.48dB ent/tok=3.172b
+[Hadamard        ] kurt=     2.87 absmax=   5.43 top0.1%E=0.0032 A4-NMSE(mean)=0.01771 SQNR=17.52dB ent/tok=3.178b
+[Random_s101     ] kurt=     2.99 absmax=   5.58 top0.1%E=0.0050 A4-NMSE(mean)=0.01934 SQNR=17.14dB ent/tok=3.117b
+[Random_s102     ] kurt=     3.00 absmax=   5.41 top0.1%E=0.0056 A4-NMSE(mean)=0.01980 SQNR=17.03dB ent/tok=3.100b
+[Random_s103     ] kurt=     3.00 absmax=   5.61 top0.1%E=0.0050 A4-NMSE(mean)=0.01957 SQNR=17.08dB ent/tok=3.109b
+[Random_s1234    ] kurt=     3.01 absmax=   5.55 top0.1%E=0.0061 A4-NMSE(mean)=0.01993 SQNR=17.01dB ent/tok=3.097b
+[RC_L0_learned   ] kurt=     4.10 absmax=  15.23 top0.1%E=0.0220 A4-NMSE(mean)=0.05413 SQNR=12.67dB ent/tok=2.490b
+[R_combo_c7b     ] kurt=     3.01 absmax=   5.60 top0.1%E=0.0054 A4-NMSE(mean)=0.01970 SQNR=17.05dB ent/tok=3.104b
+wrote tables/ht_candidate_stats.csv
+wrote tables/ht_a4_candidate_stats.csv

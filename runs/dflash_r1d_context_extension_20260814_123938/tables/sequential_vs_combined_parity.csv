@@ -1,0 +1,4 @@
+check,value
+pass,True
+detail,"FP max_rel=6.774e-07; A4 code match=0.999998; quantized ctx-K out max_rel=7.367e-04 -> ONE combined orthogonal rotation, NOT two independent corrections"
+conclusion,"R1_D then R_C is ONE combined orthogonal rotation at one quantization boundary, not two independent corrections (no quant/nonlinearity between them)"

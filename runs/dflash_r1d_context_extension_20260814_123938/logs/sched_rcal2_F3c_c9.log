@@ -1,0 +1,26 @@
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 149.33it/s]
+{
+ "n_cycles": 17960,
+ "AL_q": 2.312639198218263,
+ "AL_0": 2.2379175946547885,
+ "RCAL": 2.0814587973273944,
+ "SAL": 0.23118040089086866,
+ "LAL": 0.1564587973273941,
+ "P_A": 0.9000361141206211,
+ "R_A": 0.9300873286393153,
+ "AFS": 0.9148149960845733,
+ "branch_divergence_rate": 0.2049554565701559,
+ "min_relation_rate": 1.0,
+ "first_divergence_depth_hist": {
+  "3": 480,
+  "1": 1769,
+  "2": 881,
+  "5": 147,
+  "4": 273,
+  "6": 65,
+  "7": 38,
+  "8": 21,
+  "9": 7
+ }
+}
+[rcal] DONE /home/thahn1230/dflash_workspace/dflash/runs/dflash_r1d_context_extension_20260814_123938/cycles/rcal__F3c_c9__mtbench.jsonl

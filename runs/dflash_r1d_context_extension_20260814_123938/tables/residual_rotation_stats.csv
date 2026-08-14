@@ -1,0 +1,9 @@
+metric,value
+val_init,0.04610095173120499
+val_pure_r1d,0.04610095173120499
+val_best,0.019556822255253792
+best_step,275
+deltaR_dist_fro_over_sqrtd,0.8168079853057861
+rot_angle_max_rad,3.0103854052874803
+rot_angle_mean_rad,0.7067146420122079
+rot_angle_p99_rad,2.8642975233177435

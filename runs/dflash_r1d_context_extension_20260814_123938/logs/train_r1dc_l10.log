@@ -1,0 +1,39 @@
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 140.02it/s]
+[c9 l1.0] init val: draftCE=2.7995 ctxNMSE=0.04677 acc=0.3388 comb=2.8463
+[c9] step   20 draftCE=2.7532 ctxNMSE=0.02197 ||D-I||/sqrt(d)=0.5445
+[c9 val] step 25 ce=2.8121 ctx=0.02189 acc=0.3383 comb=2.8340 *best
+[c9] step   40 draftCE=3.9120 ctxNMSE=0.02100 ||D-I||/sqrt(d)=0.7039
+[c9 val] step 50 ce=2.7927 ctx=0.02181 acc=0.3481 comb=2.8146 *best
+[c9] step   60 draftCE=3.1809 ctxNMSE=0.02129 ||D-I||/sqrt(d)=0.8086
+[c9 val] step 75 ce=2.7989 ctx=0.02195 acc=0.3292 comb=2.8208
+[c9] step   80 draftCE=2.5748 ctxNMSE=0.02122 ||D-I||/sqrt(d)=0.8894
+[c9] step  100 draftCE=2.1071 ctxNMSE=0.02247 ||D-I||/sqrt(d)=0.9566
+[c9 val] step 100 ce=2.7749 ctx=0.02246 acc=0.3266 comb=2.7974 *best
+[c9] step  120 draftCE=3.5244 ctxNMSE=0.02689 ||D-I||/sqrt(d)=1.0138
+[c9 val] step 125 ce=2.8268 ctx=0.02318 acc=0.3324 comb=2.8500
+[c9] step  140 draftCE=3.1001 ctxNMSE=0.02250 ||D-I||/sqrt(d)=1.0634
+[c9 val] step 150 ce=2.7326 ctx=0.02259 acc=0.3515 comb=2.7552 *best
+[c9] step  160 draftCE=1.8499 ctxNMSE=0.02286 ||D-I||/sqrt(d)=1.1068
+[c9 val] step 175 ce=2.8843 ctx=0.02241 acc=0.3293 comb=2.9067
+[c9] step  180 draftCE=1.9043 ctxNMSE=0.02347 ||D-I||/sqrt(d)=1.1454
+[c9] step  200 draftCE=2.8656 ctxNMSE=0.02305 ||D-I||/sqrt(d)=1.1803
+[c9 val] step 200 ce=2.6940 ctx=0.02328 acc=0.3481 comb=2.7173 *best
+[c9] step  220 draftCE=1.6854 ctxNMSE=0.02320 ||D-I||/sqrt(d)=1.2122
+[c9 val] step 225 ce=2.7519 ctx=0.02316 acc=0.3546 comb=2.7750
+[c9] step  240 draftCE=1.4896 ctxNMSE=0.02202 ||D-I||/sqrt(d)=1.2416
+[c9 val] step 250 ce=2.6599 ctx=0.02344 acc=0.3596 comb=2.6834 *best
+[c9] step  260 draftCE=2.4085 ctxNMSE=0.02465 ||D-I||/sqrt(d)=1.2685
+[c9 val] step 275 ce=2.8116 ctx=0.02451 acc=0.3413 comb=2.8361
+[c9] step  280 draftCE=1.6927 ctxNMSE=0.02410 ||D-I||/sqrt(d)=1.2932
+[c9] step  300 draftCE=2.8091 ctxNMSE=0.02356 ||D-I||/sqrt(d)=1.3163
+[c9 val] step 300 ce=2.8128 ctx=0.02389 acc=0.3443 comb=2.8367
+[c9] step  320 draftCE=3.8138 ctxNMSE=0.02322 ||D-I||/sqrt(d)=1.3381
+[c9 val] step 325 ce=2.5539 ctx=0.02389 acc=0.3845 comb=2.5778 *best
+[c9] step  340 draftCE=2.5686 ctxNMSE=0.02444 ||D-I||/sqrt(d)=1.3583
+[c9 val] step 350 ce=2.8097 ctx=0.02326 acc=0.3436 comb=2.8330
+[c9] step  360 draftCE=1.5549 ctxNMSE=0.02334 ||D-I||/sqrt(d)=1.3772
+[c9 val] step 375 ce=2.6073 ctx=0.02583 acc=0.3580 comb=2.6331
+[c9] step  380 draftCE=2.5870 ctxNMSE=0.02637 ||D-I||/sqrt(d)=1.3952
+[c9] step  400 draftCE=1.8685 ctxNMSE=0.02607 ||D-I||/sqrt(d)=1.4122
+[c9 val] step 400 ce=2.7565 ctx=0.02580 acc=0.3466 comb=2.7823
+[c9] DONE {'init': {'ce': 2.7995190620422363, 'ctx': 0.04676944687962532, 'acc': 0.3387911240259806}, 'best_comb': 2.577836557105184, 'best_step': 325, 'best_ce': 2.5539439996083577, 'best_ctx': 0.023892557496825853, 'lambda_draft': 1.0, 'lambda_ctx': 1.0, 'R1DC_dist_from_R1D': 1.4122377634048462}

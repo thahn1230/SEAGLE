@@ -1,0 +1,47 @@
+{
+ "rc_R1D.pt": {
+  "from": "R1_D",
+  "file_sha": "7875754c6683fd10",
+  "tensor_sha": "1b78dd7561d1c29a"
+ },
+ "rc_R1T.pt": {
+  "from": "R1_T",
+  "file_sha": "68f19c5cc4dd0d29",
+  "tensor_sha": "90b1571af74a6649"
+ },
+ "rc_current.pt": {
+  "from": "RC_current",
+  "file_sha": "c5f32cdbdd3ce976",
+  "tensor_sha": "90b1571af74a6649"
+ },
+ "rc_hadamard.pt": {
+  "from": "Hadamard",
+  "file_sha": "7a42576d2e30fcb7",
+  "tensor_sha": "45120180cf6b9cf5"
+ },
+ "rc_combo_c7b.pt": {
+  "from": "R_combo",
+  "file_sha": "b32dfb105586ec6d",
+  "tensor_sha": "e82874728fc4355b"
+ },
+ "rc_random_s101.pt": {
+  "from": "Random_s101",
+  "file_sha": "3173131db8a45507",
+  "tensor_sha": "ffeb46a56b0a51f8"
+ },
+ "rc_random_s102.pt": {
+  "from": "Random_s102",
+  "file_sha": "7f7f112779c085be",
+  "tensor_sha": "866f85e8c8460a5f"
+ },
+ "rc_random_s103.pt": {
+  "from": "Random_s103",
+  "file_sha": "7b01b6a398d0476e",
+  "tensor_sha": "dc6e7d79deac27cb"
+ },
+ "rc_learned_l0.pt": {
+  "from": "RC_L0",
+  "file_sha": "a440016ad2557bf6",
+  "tensor_sha": "59c6c4280171109c"
+ }
+}

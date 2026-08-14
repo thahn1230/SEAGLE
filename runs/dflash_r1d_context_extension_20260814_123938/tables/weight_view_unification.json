@@ -1,0 +1,53 @@
+{
+ "gamma_ctx=hidden_norm": {
+  "mean": 1.1659092903137207,
+  "std": 0.14055907726287842
+ },
+ "per_layer": [
+  {
+   "layer": 0,
+   "cos(gamma_ctx,gamma_draft)": 0.9872976541519165,
+   "rel_l2_diff": 0.30949679017066956,
+   "ratio_min": 0.3259911835193634,
+   "ratio_max": 3.0045249462127686,
+   "ctx_vs_draft_K_view_rel_diff_postR1D": 0.31116968393325806
+  },
+  {
+   "layer": 1,
+   "cos(gamma_ctx,gamma_draft)": 0.9870790839195251,
+   "rel_l2_diff": 1.259209394454956,
+   "ratio_min": 0.550595223903656,
+   "ratio_max": 9.08108139038086,
+   "ctx_vs_draft_K_view_rel_diff_postR1D": 1.250242829322815
+  },
+  {
+   "layer": 2,
+   "cos(gamma_ctx,gamma_draft)": 0.9886648654937744,
+   "rel_l2_diff": 0.189993754029274,
+   "ratio_min": 0.25517240166664124,
+   "ratio_max": 5.511111259460449,
+   "ctx_vs_draft_K_view_rel_diff_postR1D": 0.19069507718086243
+  },
+  {
+   "layer": 3,
+   "cos(gamma_ctx,gamma_draft)": 0.9919819831848145,
+   "rel_l2_diff": 0.16397182643413544,
+   "ratio_min": 0.22839505970478058,
+   "ratio_max": 2.6160337924957275,
+   "ctx_vs_draft_K_view_rel_diff_postR1D": 0.16962775588035583
+  },
+  {
+   "layer": 4,
+   "cos(gamma_ctx,gamma_draft)": 0.9902440309524536,
+   "rel_l2_diff": 0.16173683106899261,
+   "ratio_min": 0.280303031206131,
+   "ratio_max": 5.232067584991455,
+   "ctx_vs_draft_K_view_rel_diff_postR1D": 0.16295182704925537
+  }
+ ],
+ "same_basis_under_C1": true,
+ "same_gamma": false,
+ "same_exact_tensor": false,
+ "view_sharing_possible": "NO \u2014 W_K,ctx=(W_K D_gamma_hid)R1_D vs W_K,draft=(W_K D_gamma_in,i)R1_D differ by the diagonal gamma contract; equal only if gamma_hid==gamma_in,i",
+ "ctx_view_memory_bytes_bf16": 83886080
+}

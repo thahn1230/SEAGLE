@@ -1,0 +1,16 @@
+  Ht@R_dense_fp32          S=   1     73.9 us/fwd     73.95 us/tok
+  Ht@R_dense_bf16          S=   1     33.6 us/fwd     33.56 us/tok
+  Ht_fast_hadamard_bf16    S=   1     11.1 us/fwd     11.07 us/tok
+  Ht@R_dense_fp32          S=   8     35.8 us/fwd      4.48 us/tok
+  Ht@R_dense_bf16          S=   8     22.1 us/fwd      2.76 us/tok
+  Ht_fast_hadamard_bf16    S=   8     11.0 us/fwd      1.37 us/tok
+  Ht@R_dense_fp32          S=  32     33.1 us/fwd      1.03 us/tok
+  Ht@R_dense_bf16          S=  32     18.7 us/fwd      0.58 us/tok
+  Ht_fast_hadamard_bf16    S=  32     11.1 us/fwd      0.35 us/tok
+  Ht@R_dense_fp32          S= 128    109.4 us/fwd      0.85 us/tok
+  Ht@R_dense_bf16          S= 128     34.9 us/fwd      0.27 us/tok
+  Ht_fast_hadamard_bf16    S= 128     10.9 us/fwd      0.09 us/tok
+  Ht@R_dense_fp32          S= 512    341.5 us/fwd      0.67 us/tok
+  Ht@R_dense_bf16          S= 512    121.0 us/fwd      0.24 us/tok
+  Ht_fast_hadamard_bf16    S= 512     14.4 us/fwd      0.03 us/tok
+wrote tables/runtime_context_rotation.csv + memory_cost.csv

@@ -1,0 +1,15 @@
+[kv] H_t sample (8000, 4096)
+[§19] gamma cos(ctx,draft) per layer: [0.9873, 0.9871, 0.9887, 0.992, 0.9902]
+[R1D_DeltaR      ] K AW-NMSE mean=0.01050 V AW-NMSE mean=0.02887 (A-only K 0.00467)
+[R1DC            ] K AW-NMSE mean=0.01213 V AW-NMSE mean=0.03533 (A-only K 0.00579)
+[none            ] K AW-NMSE mean=0.27355 V AW-NMSE mean=0.59690 (A-only K 0.26793)
+[R1_D            ] K AW-NMSE mean=0.02385 V AW-NMSE mean=0.06875 (A-only K 0.01718)
+[R1_T_currentRC  ] K AW-NMSE mean=0.01076 V AW-NMSE mean=0.03088 (A-only K 0.00445)
+[Hadamard        ] K AW-NMSE mean=0.01071 V AW-NMSE mean=0.03092 (A-only K 0.00442)
+[Random_s101     ] K AW-NMSE mean=0.01120 V AW-NMSE mean=0.03198 (A-only K 0.00483)
+[Random_s102     ] K AW-NMSE mean=0.01126 V AW-NMSE mean=0.03258 (A-only K 0.00494)
+[Random_s103     ] K AW-NMSE mean=0.01119 V AW-NMSE mean=0.03225 (A-only K 0.00488)
+[Random_s1234    ] K AW-NMSE mean=0.01130 V AW-NMSE mean=0.03239 (A-only K 0.00497)
+[RC_L0_learned   ] K AW-NMSE mean=0.02009 V AW-NMSE mean=0.05780 (A-only K 0.01350)
+[R_combo_c7b     ] K AW-NMSE mean=0.01118 V AW-NMSE mean=0.03249 (A-only K 0.00492)
+wrote tables/ctx_kv_aw_decomposition.csv + ctx_kv_layerwise_nmse.csv

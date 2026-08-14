@@ -1,0 +1,4 @@
+item,bytes_fp32,bytes_bf16,note
+separate R_C matrix (current M5/M6),67108864,33554432,extra checkpoint + resident buffer
+R1_D reused at H_t (C1),0,0,"R1_frozen [4096^2] fp32 already resident for the draft path in freeze_for_eval; rc_matrix_buf can alias the SAME tensor -> zero ADDITIONAL storage, zero new checkpoint. Ht@R1_D REMAINS a runtime op (not zero-runtime)."
+"ctx K/V weight views (any rotation, incl. none)",,83886080,mandatory in M3 already (gamma contract); rotation folded into the same tensors offline
