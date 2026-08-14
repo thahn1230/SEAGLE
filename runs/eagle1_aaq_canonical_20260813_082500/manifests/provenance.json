@@ -1,0 +1,12 @@
+{
+ "study": "eagle1_aaq_canonical",
+ "created_utc": "2026-08-13T08:25:00Z",
+ "hostname": "gpusystem",
+ "canonical_restoration": {
+  "R_bin_sha": "4b7e91d2 (original server)",
+  "RD_HYB_s2_sha": "20c03f00",
+  "anchor_sha_expected": "a7c6ccc8",
+  "gate": "CANON_B3/B9 mtbench+sharegpt EXACT 4-decimal match to original-server values (bit-level cross-server reproduction)"
+ },
+ "note": "absolute scale = original-server table; all pairings same-server shards only"
+}

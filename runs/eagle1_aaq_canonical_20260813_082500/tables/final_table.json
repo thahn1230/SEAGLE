@@ -1,0 +1,132 @@
+{
+ "Naive PTQ": {
+  "tag": "CANON_B1",
+  "mean4": null
+ },
+ "GS PTQ": {
+  "tag": "CANON_B3",
+  "mean4": null
+ },
+ "LS PTQ": {
+  "tag": "CANON_B5",
+  "mean4": null
+ },
+ "GS+R5 PTQ": {
+  "tag": "CANON_B9",
+  "mean4": null
+ },
+ "LS+R5 PTQ": {
+  "tag": "CANON_B7",
+  "mean4": null
+ },
+ "Naive convQAT": {
+  "tag": "CFIN_QH_naive_s0",
+  "sharegpt": 1.7449,
+  "mtbench": 1.7165,
+  "gsm8k": 1.8373,
+  "humaneval": 1.918,
+  "mean4": 1.8042
+ },
+ "GS convQAT": {
+  "tag": "CFIN_QH_gs_s1",
+  "sharegpt": 3.2876,
+  "gsm8k": 3.6193,
+  "mtbench": 3.1876,
+  "humaneval": 3.6946,
+  "mean4": 3.4473
+ },
+ "LS convQAT": {
+  "tag": "CFIN_QH_ls_s0",
+  "sharegpt": 3.2214,
+  "gsm8k": 3.6085,
+  "humaneval": 3.6866,
+  "mtbench": 3.1695,
+  "mean4": 3.4215
+ },
+ "GS+R5 convQAT": {
+  "tag": "CFIN_QH_gsr5_s0",
+  "humaneval": 3.7013,
+  "gsm8k": 3.5832,
+  "sharegpt": 3.251,
+  "mtbench": 3.1726,
+  "mean4": 3.427
+ },
+ "LS+R5 convQAT": {
+  "tag": "CFIN_QH_lsr5_s0",
+  "sharegpt": 3.2532,
+  "humaneval": 3.6917,
+  "gsm8k": 3.5998,
+  "mtbench": 3.1925,
+  "mean4": 3.4343
+ },
+ "Naive AA-tuned": {
+  "tag": "CFIN_T6hybrid_naive_s0",
+  "humaneval": 1.7325,
+  "sharegpt": 1.5256,
+  "mtbench": 1.5198,
+  "gsm8k": 1.7189,
+  "mean4": 1.6242
+ },
+ "GS AA-tuned": {
+  "tag": "CFIN_T6hybrid_gs_s2",
+  "humaneval": 3.8327,
+  "mtbench": 3.331,
+  "gsm8k": 3.8353,
+  "sharegpt": 3.39,
+  "mean4": 3.5972
+ },
+ "LS AA-tuned": {
+  "tag": "CFIN_T6hybrid_ls_s2",
+  "sharegpt": 3.3874,
+  "gsm8k": 3.8683,
+  "mtbench": 3.3125,
+  "humaneval": 3.8457,
+  "mean4": 3.6035
+ },
+ "GS+R5 AA-tuned": {
+  "tag": "CFIN_T6hybrid_gsr5_s1",
+  "sharegpt": 3.4041,
+  "mtbench": 3.3158,
+  "gsm8k": 3.8381,
+  "humaneval": 3.8872,
+  "mean4": 3.6113
+ },
+ "LS+R5 AA-tuned": {
+  "tag": "CFIN_T6hybrid_lsr5_s2",
+  "gsm8k": 3.8264,
+  "sharegpt": 3.4156,
+  "humaneval": 3.8369,
+  "mtbench": 3.3312,
+  "mean4": 3.6025
+ },
+ "GS convQAT-tuned": {
+  "tag": "CFIN_T6conv_gs_s1",
+  "mtbench": 3.3202,
+  "humaneval": 3.9193,
+  "sharegpt": 3.4218,
+  "gsm8k": 3.8386,
+  "mean4": 3.625
+ },
+ "GS+R5 convQAT-tuned": {
+  "tag": "CFIN_T6conv_gsr5_s1",
+  "mtbench": 3.3024,
+  "gsm8k": 3.8243,
+  "mean4": null
+ },
+ "GS AA-matched": {
+  "tag": "CFIN_P2hybrid_gs_s2",
+  "sharegpt": 3.2575,
+  "gsm8k": 3.6467,
+  "humaneval": 3.7368,
+  "mtbench": 3.14,
+  "mean4": 3.4453
+ },
+ "GS+R5 AA-matched": {
+  "tag": "CFIN_P2hybrid_gsr5_s0",
+  "mtbench": 3.1563,
+  "sharegpt": 3.2334,
+  "gsm8k": 3.5987,
+  "humaneval": 3.6118,
+  "mean4": 3.4001
+ }
+}

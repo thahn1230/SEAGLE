@@ -1,0 +1,282 @@
+{
+ "gsm8k:F1_aa_vs_ptq_gsr5": {
+  "p_raw": 0.0003333333333333333,
+  "floored": true,
+  "delta": -0.1506,
+  "ci": [
+   -0.1994,
+   -0.1028
+  ],
+  "dataset": "gsm8k",
+  "family": "F1_aa_vs_ptq_gsr5",
+  "p_holm": 0.001333,
+  "reject_05": true,
+  "p_display": "< 4/3000"
+ },
+ "sharegpt:F1_aa_vs_ptq_gsr5": {
+  "p_raw": 0.0003333333333333333,
+  "floored": true,
+  "delta": -0.169,
+  "ci": [
+   -0.2326,
+   -0.1068
+  ],
+  "dataset": "sharegpt",
+  "family": "F1_aa_vs_ptq_gsr5",
+  "p_holm": 0.001333,
+  "reject_05": true,
+  "p_display": "< 4/3000"
+ },
+ "mtbench:F1_aa_vs_ptq_gsr5": {
+  "p_raw": 0.0006666666666666666,
+  "floored": false,
+  "delta": -0.1513,
+  "ci": [
+   -0.225,
+   -0.08
+  ],
+  "dataset": "mtbench",
+  "family": "F1_aa_vs_ptq_gsr5",
+  "p_holm": 0.001333,
+  "reject_05": true,
+  "p_display": "0.0006667 (holm 0.001333)"
+ },
+ "humaneval:F1_aa_vs_ptq_gsr5": {
+  "p_raw": 0.020666666666666667,
+  "floored": false,
+  "delta": -0.059,
+  "ci": [
+   -0.112,
+   -0.0081
+  ],
+  "dataset": "humaneval",
+  "family": "F1_aa_vs_ptq_gsr5",
+  "p_holm": 0.020667,
+  "reject_05": true,
+  "p_display": "0.02067 (holm 0.02067)"
+ },
+ "mtbench:F2_aa_vs_conv_gsr5": {
+  "p_raw": 0.0003333333333333333,
+  "floored": true,
+  "delta": -0.1431,
+  "ci": [
+   -0.2155,
+   -0.0727
+  ],
+  "dataset": "mtbench",
+  "family": "F2_aa_vs_conv_gsr5",
+  "p_holm": 0.001333,
+  "reject_05": true,
+  "p_display": "< 4/3000"
+ },
+ "gsm8k:F2_aa_vs_conv_gsr5": {
+  "p_raw": 0.0003333333333333333,
+  "floored": true,
+  "delta": -0.2549,
+  "ci": [
+   -0.3031,
+   -0.2091
+  ],
+  "dataset": "gsm8k",
+  "family": "F2_aa_vs_conv_gsr5",
+  "p_holm": 0.001333,
+  "reject_05": true,
+  "p_display": "< 4/3000"
+ },
+ "sharegpt:F2_aa_vs_conv_gsr5": {
+  "p_raw": 0.0003333333333333333,
+  "floored": true,
+  "delta": -0.1531,
+  "ci": [
+   -0.2221,
+   -0.086
+  ],
+  "dataset": "sharegpt",
+  "family": "F2_aa_vs_conv_gsr5",
+  "p_holm": 0.001333,
+  "reject_05": true,
+  "p_display": "< 4/3000"
+ },
+ "humaneval:F2_aa_vs_conv_gsr5": {
+  "p_raw": 0.0003333333333333333,
+  "floored": true,
+  "delta": -0.1859,
+  "ci": [
+   -0.2363,
+   -0.1317
+  ],
+  "dataset": "humaneval",
+  "family": "F2_aa_vs_conv_gsr5",
+  "p_holm": 0.001333,
+  "reject_05": true,
+  "p_display": "< 4/3000"
+ },
+ "mtbench:F3_aa_vs_ptq_lsr5": {
+  "p_raw": 0.0006666666666666666,
+  "floored": false,
+  "delta": -0.1308,
+  "ci": [
+   -0.2008,
+   -0.0614
+  ],
+  "dataset": "mtbench",
+  "family": "F3_aa_vs_ptq_lsr5",
+  "p_holm": 0.002667,
+  "reject_05": true,
+  "p_display": "0.0006667 (holm 0.002667)"
+ },
+ "gsm8k:F3_aa_vs_ptq_lsr5": {
+  "p_raw": 0.0006666666666666666,
+  "floored": false,
+  "delta": -0.0874,
+  "ci": [
+   -0.1335,
+   -0.0428
+  ],
+  "dataset": "gsm8k",
+  "family": "F3_aa_vs_ptq_lsr5",
+  "p_holm": 0.002667,
+  "reject_05": true,
+  "p_display": "0.0006667 (holm 0.002667)"
+ },
+ "sharegpt:F3_aa_vs_ptq_lsr5": {
+  "p_raw": 0.0026666666666666666,
+  "floored": false,
+  "delta": -0.1041,
+  "ci": [
+   -0.1769,
+   -0.0316
+  ],
+  "dataset": "sharegpt",
+  "family": "F3_aa_vs_ptq_lsr5",
+  "p_holm": 0.005333,
+  "reject_05": true,
+  "p_display": "0.002667 (holm 0.005333)"
+ },
+ "humaneval:F3_aa_vs_ptq_lsr5": {
+  "p_raw": 0.44533333333333336,
+  "floored": false,
+  "delta": 0.0188,
+  "ci": [
+   -0.0327,
+   0.0679
+  ],
+  "dataset": "humaneval",
+  "family": "F3_aa_vs_ptq_lsr5",
+  "p_holm": 0.445333,
+  "reject_05": false,
+  "p_display": "0.4453 (holm 0.4453)"
+ },
+ "mtbench:F4_aa_vs_conv_gs": {
+  "p_raw": 0.0003333333333333333,
+  "floored": true,
+  "delta": -0.1434,
+  "ci": [
+   -0.2133,
+   -0.0758
+  ],
+  "dataset": "mtbench",
+  "family": "F4_aa_vs_conv_gs",
+  "p_holm": 0.001333,
+  "reject_05": true,
+  "p_display": "< 4/3000"
+ },
+ "gsm8k:F4_aa_vs_conv_gs": {
+  "p_raw": 0.0003333333333333333,
+  "floored": true,
+  "delta": -0.216,
+  "ci": [
+   -0.2652,
+   -0.1663
+  ],
+  "dataset": "gsm8k",
+  "family": "F4_aa_vs_conv_gs",
+  "p_holm": 0.001333,
+  "reject_05": true,
+  "p_display": "< 4/3000"
+ },
+ "humaneval:F4_aa_vs_conv_gs": {
+  "p_raw": 0.0003333333333333333,
+  "floored": true,
+  "delta": -0.1382,
+  "ci": [
+   -0.192,
+   -0.0844
+  ],
+  "dataset": "humaneval",
+  "family": "F4_aa_vs_conv_gs",
+  "p_holm": 0.001333,
+  "reject_05": true,
+  "p_display": "< 4/3000"
+ },
+ "sharegpt:F4_aa_vs_conv_gs": {
+  "p_raw": 0.0006666666666666666,
+  "floored": false,
+  "delta": -0.1025,
+  "ci": [
+   -0.1636,
+   -0.0433
+  ],
+  "dataset": "sharegpt",
+  "family": "F4_aa_vs_conv_gs",
+  "p_holm": 0.001333,
+  "reject_05": true,
+  "p_display": "0.0006667 (holm 0.001333)"
+ },
+ "gsm8k:F5_aa_vs_conv_lsr5": {
+  "p_raw": 0.0003333333333333333,
+  "floored": true,
+  "delta": -0.2266,
+  "ci": [
+   -0.2764,
+   -0.1794
+  ],
+  "dataset": "gsm8k",
+  "family": "F5_aa_vs_conv_lsr5",
+  "p_holm": 0.001333,
+  "reject_05": true,
+  "p_display": "< 4/3000"
+ },
+ "sharegpt:F5_aa_vs_conv_lsr5": {
+  "p_raw": 0.0003333333333333333,
+  "floored": true,
+  "delta": -0.1624,
+  "ci": [
+   -0.2454,
+   -0.0814
+  ],
+  "dataset": "sharegpt",
+  "family": "F5_aa_vs_conv_lsr5",
+  "p_holm": 0.001333,
+  "reject_05": true,
+  "p_display": "< 4/3000"
+ },
+ "humaneval:F5_aa_vs_conv_lsr5": {
+  "p_raw": 0.0003333333333333333,
+  "floored": true,
+  "delta": -0.1452,
+  "ci": [
+   -0.2026,
+   -0.0894
+  ],
+  "dataset": "humaneval",
+  "family": "F5_aa_vs_conv_lsr5",
+  "p_holm": 0.001333,
+  "reject_05": true,
+  "p_display": "< 4/3000"
+ },
+ "mtbench:F5_aa_vs_conv_lsr5": {
+  "p_raw": 0.0006666666666666666,
+  "floored": false,
+  "delta": -0.1387,
+  "ci": [
+   -0.2112,
+   -0.0659
+  ],
+  "dataset": "mtbench",
+  "family": "F5_aa_vs_conv_lsr5",
+  "p_holm": 0.001333,
+  "reject_05": true,
+  "p_display": "0.0006667 (holm 0.001333)"
+ }
+}

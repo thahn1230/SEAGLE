@@ -66,6 +66,16 @@ def main():
     ap.add_argument("--n-prompts", type=int, default=10)
     ap.add_argument("--max-new-tokens", type=int, default=128)
     ap.add_argument("--device", default="cuda:0")
+    # AA-QAT study (2026-08-14): parity-INVARIANCE for retrained drafts —
+    # same T4KV16_D4P3 lane, optionally with a QAT state dict, a fixed
+    # R_D basis, and P3 scales; output suffixed with --tag
+    ap.add_argument("--draft-sd", default=None)
+    ap.add_argument("--rd-ckpt", default=None)
+    ap.add_argument("--alpha", type=float, default=None)
+    ap.add_argument("--alpha-rec", type=float, default=None)
+    ap.add_argument("--tag", default="")
+    ap.add_argument("--only", default=None,
+                    help="run just this CONFIGS key (e.g. T4KV16_D4P3)")
     args = ap.parse_args()
     torch.set_grad_enabled(False)
     assert os.environ.get("CUDA_VISIBLE_DEVICES") in \
@@ -80,9 +90,11 @@ def main():
     tdir = os.path.join(args.run_dir, "tables")
     os.makedirs(tdir, exist_ok=True)
     for cname, (tq, t_kv, d_on, d_kv) in CONFIGS.items():
-        shard = os.path.join(tdir, f"vc__{cname}.csv")
+        if args.only and cname != args.only:
+            continue
+        shard = os.path.join(tdir, f"vc__{cname}{args.tag}.csv")
         if os.path.exists(shard):
-            print(f"[vc] {cname}: exists, skip", flush=True)
+            print(f"[vc] {cname}{args.tag}: exists, skip", flush=True)
             continue
         rows = []
         kind = "none" if tq == "none" else KIND
@@ -104,9 +116,31 @@ def main():
             install_kv4_on_past(past, bits=t_kv)
         ad = None
         if d_on:
+            if args.draft_sd:
+                sd_new = torch.load(args.draft_sd, map_location="cpu",
+                                    weights_only=False)
+                sd_new = sd_new.get("draft_state_dict",
+                                    sd_new.get("model", sd_new))
+                ea = model.ea_layer
+                ea.load_state_dict({k: v.to(ea.fc.weight.dtype)
+                                    for k, v in sd_new.items()},
+                                   strict=True)
+                ea.to(dev)
+            st_use = stash
+            kw = dict(D4P3)
+            if args.rd_ckpt:
+                rck = torch.load(args.rd_ckpt, map_location="cpu",
+                                 weights_only=False)
+                st_use = dict(stash)
+                kw["first_fold_R"] = stash["R1"].clone()
+                st_use["R1"] = rck["R_D"].double()
+            if args.alpha is not None:
+                kw["embed_scale_alpha"] = args.alpha
+            if args.alpha_rec is not None:
+                kw["embed_scale_alpha_rec"] = args.alpha_rec
             ad = ConcatSelectiveDraftAdapter(
-                model, stash, dev, torch.float16, variant="folded",
-                first_hidden_mode="gamma_R1", trace=False, **D4P3)
+                model, st_use, dev, torch.float16, variant="folded",
+                first_hidden_mode="gamma_R1", trace=False, **kw)
             ad.install()
         dpatch = DraftKV4Patch(model.ea_layer, bits=d_kv).install() \
             if d_kv < 16 else None

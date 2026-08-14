@@ -23,6 +23,7 @@ sys.path.insert(0, os.path.join(PROJECT_ROOT, "src"))
 sys.path.insert(0, os.path.join(PROJECT_ROOT, "third_party", "EAGLE"))
 
 import torch
+import torch.nn.functional as F
 from eagle_spinquant import experiment, study, lk_losses as L
 from eagle_spinquant import fake_w4a4_draft as fq
 from eagle_spinquant.exact_qat_rotated_draft import ExactQATRotatedDraft
@@ -121,7 +122,30 @@ def main():
                          "loss (lower better) or expected tau (higher)")
     ap.add_argument("--objective", default="hybrid",
                     choices=["kl", "tv", "neglog", "hybrid", "hybrid_fixed",
-                             "exptau", "topk_kl", "accsurv"])
+                             "exptau", "topk_kl", "accsurv",
+                             # acceptance-aware QAT study (2026-08-12):
+                             # conv     = conventional EAGLE loss in-chain
+                             #            (SmoothL1(h,t) + 0.1 SoftCE,
+                             #            t from corpus a_chain, C7
+                             #            transform ((a R1^T)*gamma) R_D)
+                             # greedy   = depth-weighted -log q(argmax p)
+                             # survival = -expected_tau(alpha_1..K)
+                             #            (= -(1 + sum_k prod_j<=k a_j))
+                             "conv", "greedy", "survival"])
+    ap.add_argument("--conv-depth", default="uniform",
+                    choices=["uniform", "gamma"],
+                    help="conv objective depth weighting: uniform (matches "
+                         "the conventional trainer's uniform token mean) "
+                         "or gamma^k (LK convention)")
+    ap.add_argument("--rot-fixed-ckpt", default=None,
+                    help="load a pretrained R_D from a rotation ckpt "
+                         "(e.g. RD_GS_A1_s1001.pt) and hold it FIXED "
+                         "(SharedRotation); overrides --rot")
+    ap.add_argument("--save-core-steps", default="",
+                    help="comma list of optimizer-step counts at which to "
+                         "export the original-basis core weights to "
+                         "<out>.step<N>.pt (requires --train-draft-core); "
+                         "N=0 is the pristine init, N=--steps the final")
     ap.add_argument("--eta", type=float, default=3.0)
     ap.add_argument("--aux-greedy", type=float, default=0.0)
     ap.add_argument("--gamma-depth", type=float, default=0.8)
@@ -204,6 +228,18 @@ def main():
         rot = FullRotation(R0)
     else:
         rot = ResidualRotation(R_T, trust=args.trust, radius=args.radius)
+    if args.rot_fixed_ckpt:
+        # frozen pretrained R5 (draft-aware residual rotation): the QAT
+        # arms train weights UNDER the fixed R_D basis (study section 15)
+        rck = torch.load(args.rot_fixed_ckpt, map_location="cpu",
+                         weights_only=False)
+        rot = SharedRotation(rck["R_D"].float())
+        rck_sha = hashlib.sha256(
+            open(args.rot_fixed_ckpt, "rb").read()).hexdigest()[:16]
+        print(f"[lk] fixed R_D from {args.rot_fixed_ckpt} "
+              f"(sha {rck_sha}, trained_step "
+              f"{rck.get('meta', {}).get('checkpoint_policy')})",
+              flush=True)
     rot = rot.to(dev)
 
     r2_rot = None
@@ -226,6 +262,15 @@ def main():
         alpha_rec_init=args.alpha_rec_init, r2_rot=r2_rot)
 
     windows, man = load_corpus(args.corpus, args.run_dir)
+    if args.objective == "conv":
+        assert "a_chain" in windows[0], \
+            "conv objective needs an a_chain-extended corpus (rebuild " \
+            "with the 2026-08-12 builder)"
+        assert args.onpolicy == "tf", "conv objective is teacher-forced"
+    # conv/diagnostic transform constants (C7 semantics, see
+    # train_eagle_draft_int4_qat.py teacher(): t = ((a R1^T)*gamma_f) R_D)
+    conv_R1 = R_T.to(dev)
+    conv_g = gamma.to(dev).float()
     n_val = max(len(windows) // 10, 16)
     W_tr, W_va = windows[:-n_val], windows[-n_val:]
     print(f"[lk] {len(W_tr)} train / {len(W_va)} val windows "
@@ -332,6 +377,12 @@ def main():
                                        recur_tokens=teach)
             zT = torch.stack([w["teacher_logits"][:args.K].float()
                               for w in ws]).to(dev)
+        conv_t = None
+        if args.objective == "conv":
+            with torch.no_grad():
+                ach = torch.stack([w["a_chain"][:args.K].float()
+                                   for w in ws]).to(dev)
+                conv_t = ((ach @ conv_R1.t()) * conv_g) @ rot.R().detach()
         total = 0.0
         alphas = []
         logps = []                          # accsurv per-depth log q(t_k)
@@ -357,27 +408,157 @@ def main():
                 lk, _lam, _a = L.hybrid_lk(zTk, zDk, fixed_lambda=0.5)
             elif args.objective == "topk_kl":
                 lk = L.kl_topk(zTk, zDk, k=64)
+            elif args.objective == "greedy":
+                # Q3 (study section 10): hard verifier-token objective,
+                # -log q(argmax p_k), gamma^k depth weights (LK convention)
+                lk = L.greedy_ce(zTk, zDk)
+            elif args.objective == "conv":
+                # Q0-in-chain (study sections 11-12): the conventional
+                # EAGLE draft loss computed at the SAME K chain positions
+                # on the SAME corpus as the acceptance-aware objectives —
+                # vloss = SmoothL1(h_k, t_k) with t_k the C7-transformed
+                # teacher hidden, ploss = SoftCE through the deployed head
+                hkf = _h.squeeze(1)
+                tk = conv_t[:, k]
+                vloss = F.smooth_l1_loss(hkf.float(), tk,
+                                         reduction="none").mean(-1)
+                with torch.no_grad():
+                    tp = model.head_logits(tk).softmax(-1)
+                lp = model.head_logits(hkf).log_softmax(-1)
+                lk = vloss + 0.1 * (-(tp * lp).sum(-1))
+            elif args.objective == "survival":
+                lk = None            # coupled across depths, added below
             else:                                   # exptau
                 lk = 0.1 * L.kl_full(zTk, zDk)      # trust regularizer
             alphas.append(L.overlap_alpha(zTk, zDk))
-            if args.objective != "exptau":
-                total = total + wk[k] * lk.mean()
-            else:
+            if args.objective == "survival":
+                pass
+            elif args.objective == "exptau":
                 total = total + lk.mean()
+            elif args.objective == "conv" and args.conv_depth == "uniform":
+                total = total + lk.mean() / args.K
+            else:
+                total = total + wk[k] * lk.mean()
             if args.aux_greedy > 0:
                 total = total + args.aux_greedy * wk[k] * \
                     L.greedy_ce(zTk, zDk).mean()
         a_stack = torch.stack(alphas, dim=-1)       # (B, K)
         if args.objective == "exptau":
             total = total + L.expected_tau_loss(a_stack).mean()
+        elif args.objective == "survival":
+            # Q2 (study section 9): L = -R_surrogate = -sum_k prod_j<=k
+            # alpha_j; expected_tau = 1 + R_surrogate (constant offset,
+            # identical gradient; alphas carry grad through min(p,q))
+            total = total - L.expected_tau(a_stack).mean()
         elif args.objective == "accsurv":
             total = total - L.prefix_survival(
                 torch.stack(logps, dim=-1)).mean()
         return total, a_stack.detach()
 
+    @torch.no_grad()
+    def diag_panel(ws):
+        """Cross-objective diagnostic panel (AA-QAT study section 16):
+        the SAME metric set logged whatever objective is trained, on the
+        held-out validation windows. Per-depth means over the chunk."""
+        tok = torch.stack([w["tok_ids"].long() for w in ws]).to(dev)
+        a = torch.stack([w["a_seq"].float() for w in ws]).to(dev)
+        teach = torch.stack([w["teacher_tokens"][:args.K].long()
+                             for w in ws]).to(dev)
+        zT = torch.stack([w["teacher_logits"][:args.K].float()
+                          for w in ws]).to(dev)
+        has_ach = "a_chain" in ws[0]
+        tgt = None
+        if has_ach:
+            ach = torch.stack([w["a_chain"][:args.K].float()
+                               for w in ws]).to(dev)
+            tgt = ((ach @ conv_R1.t()) * conv_g) @ rot.R()
+        outs = model.forward_chain(tok, a, args.K, recur_tokens=teach)
+        per = {m: [] for m in ("alpha", "kl", "tv", "hyb", "gce", "top1",
+                               "logq", "rank", "sl1", "cos", "nmse",
+                               "conv")}
+        als, lqs = [], []
+        for k, (lg, hk, _c) in enumerate(outs):
+            zTk = zT[:, k]
+            al = L.overlap_alpha(zTk, lg)
+            hy, _lam, _a2 = L.hybrid_lk(zTk, lg, eta=args.eta)
+            lq = L.teacher_token_logp(lg, teach[:, k])
+            als.append(al)
+            lqs.append(lq)
+            per["alpha"].append(float(al.mean()))
+            per["kl"].append(float(L.kl_full(zTk, lg).mean()))
+            per["tv"].append(float(L.tv(zTk, lg).mean()))
+            per["hyb"].append(float(hy.mean()))
+            per["gce"].append(float(L.greedy_ce(zTk, lg).mean()))
+            per["top1"].append(float((lg.argmax(-1) == teach[:, k])
+                                     .float().mean()))
+            per["logq"].append(float(lq.mean()))
+            zy = lg.gather(-1, teach[:, k].unsqueeze(-1))
+            per["rank"].append(float((lg >= zy).sum(-1).float().mean()))
+            if has_ach:
+                hf = hk.squeeze(1).float()
+                tk_ = tgt[:, k]
+                sl1 = F.smooth_l1_loss(hf, tk_,
+                                       reduction="none").mean(-1)
+                per["sl1"].append(float(sl1.mean()))
+                per["cos"].append(float(
+                    F.cosine_similarity(hf, tk_, dim=-1).mean()))
+                per["nmse"].append(float(
+                    ((hf - tk_).pow(2).sum(-1)
+                     / tk_.pow(2).sum(-1).clamp_min(1e-9)).mean()))
+                tp = model.head_logits(tk_).softmax(-1)
+                lp = model.head_logits(hk.squeeze(1)).log_softmax(-1)
+                per["conv"].append(float(
+                    (sl1 + 0.1 * (-(tp * lp).sum(-1))).mean()))
+        a_st = torch.stack(als, dim=-1)
+        per["expected_tau"] = float(L.expected_tau(a_st).mean())
+        per["survival"] = float(L.expected_tau(a_st).mean() - 1.0)
+        per["greedy_survival"] = float(L.prefix_survival(
+            torch.stack(lqs, dim=-1)).mean())
+        per["n"] = len(ws)
+        return per
+
+    core_steps = (sorted({int(x) for x in args.save_core_steps.split(",")
+                          if x.strip() != ""})
+                  if args.save_core_steps else [])
+    if core_steps:
+        assert args.train_draft_core, "--save-core-steps needs core"
+
+    def save_core_ckpt(nstep):
+        """Original-basis draft state dict in the conv-QAT export format
+        (eval-compatible: {'draft_state_dict': ..., 'meta': ...})."""
+        ex = model.export_original_state()
+        sd_out = {k: v.clone() for k, v in sd.items()}
+        sd_out["fc.weight"] = torch.cat([ex["W_e"], ex["W_h"]], dim=1)
+        sd_out["fc.bias"] = ex["b_fc"]
+        m = {"Wq": "self_attn.q_proj.weight",
+             "Wk": "self_attn.k_proj.weight",
+             "Wv": "self_attn.v_proj.weight",
+             "Wo": "self_attn.o_proj.weight",
+             "Wgate": "mlp.gate_proj.weight",
+             "Wup": "mlp.up_proj.weight",
+             "Wdown": "mlp.down_proj.weight"}
+        for k, v in m.items():
+            sd_out[f"layers.0.{v}"] = ex[k]
+        sd_out["layers.0.post_attention_layernorm.weight"] = ex["gl"]
+        p = f"{args.out}.step{nstep:04d}.pt"
+        torch.save({"draft_state_dict":
+                    {k: v.half() for k, v in sd_out.items()},
+                    "meta": dict(step=nstep, objective=args.objective,
+                                 seed=args.seed, core_lr=args.core_lr,
+                                 lr=args.lr, K=args.K,
+                                 alpha=(model.alpha_exact
+                                        if not args.train_alpha
+                                        else float(model.log_alpha.exp())),
+                                 alpha_rec=model.alpha_rec_exact,
+                                 rot_fixed_ckpt=args.rot_fixed_ckpt,
+                                 out=args.out)}, p)
+        print(f"[lk] core ckpt step {nstep} -> {p}", flush=True)
+
     best_val = None
     best_state = None
     for step in range(args.steps):
+        if step in core_steps:
+            save_core_ckpt(step)
         opt.zero_grad(set_to_none=True)
         p_on = curriculum_p_onpolicy(step, args.steps, args.onpolicy)
         acc_alpha = []
@@ -439,6 +620,29 @@ def main():
                             val_expected_tau=et, val_loss=vloss,
                             r2_orth_error=r2_oe,
                             r2_generator_frob=r2_gen))
+            # AA-QAT study: objective-independent diagnostic panel on the
+            # same held-out windows (chunked; equal chunk sizes -> mean of
+            # chunk means == pooled mean)
+            pans = [diag_panel(W_va[i0:i0 + 16])
+                    for i0 in range(0, min(len(W_va), 64), 16)]
+            panel = {}
+            for key in pans[0]:
+                if key == "n":
+                    panel["n"] = sum(p["n"] for p in pans)
+                elif isinstance(pans[0][key], list):
+                    if pans[0][key]:
+                        panel[key] = [round(sum(p[key][i] for p in pans)
+                                            / len(pans), 5)
+                                      for i in range(len(pans[0][key]))]
+                else:
+                    panel[key] = round(sum(p[key] for p in pans)
+                                       / len(pans), 5)
+            log.append(dict(step=step, panel=panel))
+            print(f"[lk] PANEL step {step}: alpha={panel['alpha']} "
+                  f"top1={panel['top1']} exp_tau="
+                  f"{panel['expected_tau']:.4f}"
+                  + (f" sl1={panel['sl1']}" if panel.get("sl1") else ""),
+                  flush=True)
             metric = vloss if args.val_metric == "loss" else et
             cand_ok = not math.isnan(metric)
             incumbent_nan = (best_val is not None
@@ -462,6 +666,9 @@ def main():
                           if r2_rot is not None else None),
                     R2_W=(r2_rot.W.detach().cpu()
                           if r2_rot is not None else None))
+
+    if args.steps in core_steps:
+        save_core_ckpt(args.steps)
 
     # ---- weight-freeze proof: model weights bit-identical before/after ----
     freeze_after = _weight_hashes()

@@ -1,0 +1,62 @@
+{
+ "gs_s0": {
+  "step": 2000,
+  "calib_tau": 3.2328
+ },
+ "gs_s1": {
+  "step": 3000,
+  "calib_tau": 3.2362
+ },
+ "gs_s2": {
+  "step": 3000,
+  "calib_tau": 3.24
+ },
+ "gsr5_s0": {
+  "step": 2500,
+  "calib_tau": 3.2734
+ },
+ "gsr5_s1": {
+  "step": 3000,
+  "calib_tau": 3.2868
+ },
+ "gsr5_s2": {
+  "step": 2500,
+  "calib_tau": 3.302
+ },
+ "naive_s0": {
+  "step": 1000,
+  "calib_tau": 1.66
+ },
+ "naive_s1": {
+  "step": 1000,
+  "calib_tau": 1.6758
+ },
+ "naive_s2": {
+  "step": 1000,
+  "calib_tau": 1.6428
+ },
+ "ls_s0": {
+  "step": 3000,
+  "calib_tau": 3.2416
+ },
+ "ls_s1": {
+  "step": 3000,
+  "calib_tau": 3.2531
+ },
+ "ls_s2": {
+  "step": 1500,
+  "calib_tau": 3.2497
+ },
+ "lsr5_s0": {
+  "step": 2000,
+  "calib_tau": 3.3109
+ },
+ "lsr5_s1": {
+  "step": 2500,
+  "calib_tau": 3.3005
+ },
+ "lsr5_s2": {
+  "step": 3000,
+  "calib_tau": 3.2819
+ }
+}

@@ -1,0 +1,71 @@
+{
+ "teacher": "t4",
+ "mode": "greedy",
+ "n_windows": 5000,
+ "shards": [
+  {
+   "shard": "lkcorpus__can_all__s000.pt",
+   "n": 500,
+   "sha256": "3b61b1fe64c258e7848ea1cfe4f6db7847c57b41c8a770ac93473d46031cdb30"
+  },
+  {
+   "shard": "lkcorpus__can_all__s001.pt",
+   "n": 500,
+   "sha256": "4c0c54e181b689d4749a1f1c92499fd251975aadf22d876b2bd7378d93abd1dd"
+  },
+  {
+   "shard": "lkcorpus__can_all__s002.pt",
+   "n": 500,
+   "sha256": "ae9e1d2693a55d18685a2cb9c18c088c5b2565c2841e79b08bc4e8b6d05073e6"
+  },
+  {
+   "shard": "lkcorpus__can_all__s003.pt",
+   "n": 500,
+   "sha256": "70583a97dfd007b84f8c975ab80f3e1b2d386fd4d356baf8c402c2eba8ad5d68"
+  },
+  {
+   "shard": "lkcorpus__can_all__s004.pt",
+   "n": 500,
+   "sha256": "10a0b7f77cd69b27bd8cc917e2742efe874bbd4dfe481245f40cb5fb5598bbc0"
+  },
+  {
+   "shard": "lkcorpus__can_all__s005.pt",
+   "n": 500,
+   "sha256": "eee48cb540835738ab5f869eda45f1faaf6a0f675199191987cf317cac3fa1df"
+  },
+  {
+   "shard": "lkcorpus__can_all__s006.pt",
+   "n": 500,
+   "sha256": "d0690ded45a3144154e519548929c08aa43ad3a986d7fd25a095b108cecbe681"
+  },
+  {
+   "shard": "lkcorpus__can_all__s007.pt",
+   "n": 500,
+   "sha256": "539907d2b9792892639af7e5832391e144943ceb5f6d48c3108dd5d8dc86b027"
+  },
+  {
+   "shard": "lkcorpus__can_all__s008.pt",
+   "n": 500,
+   "sha256": "b29ca383a52692a4aa8a326189f3edc62e70ba0745a5d62d7725d0e3d70a5b4a"
+  },
+  {
+   "shard": "lkcorpus__can_all__s009.pt",
+   "n": 500,
+   "sha256": "291286c44ae476619dd97a10d31ec5c64a923184683aef74dd30f911431ab4f9"
+  }
+ ],
+ "domains": "wiki,c4,sharegpt,gsm8k,code",
+ "seed": "1-5 per-domain",
+ "stratified_shuffle_seed": 0,
+ "val_tail_domain_counts": {
+  "gsm8k": 107,
+  "code": 99,
+  "c4": 101,
+  "sharegpt": 92,
+  "wiki": 101
+ },
+ "a_chain": true,
+ "T": 48,
+ "K": 6,
+ "gen_len": 64
+}

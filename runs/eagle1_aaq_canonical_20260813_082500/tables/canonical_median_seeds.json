@@ -1,0 +1,146 @@
+{
+ "P2conv_gs": {
+  "median_seed": "s2",
+  "mtbench": 3.1721,
+  "all": {
+   "s0": 3.186,
+   "s1": 3.129,
+   "s2": 3.1721
+  }
+ },
+ "P2conv_gsr5": {
+  "median_seed": "s0",
+  "mtbench": 3.1518,
+  "all": {
+   "s0": 3.1518,
+   "s1": 3.1876,
+   "s2": 3.1254
+  }
+ },
+ "P2hybrid_gs": {
+  "median_seed": "s2",
+  "mtbench": 3.14,
+  "all": {
+   "s0": 3.1488,
+   "s1": 3.1296,
+   "s2": 3.14
+  }
+ },
+ "P2hybrid_gsr5": {
+  "median_seed": "s0",
+  "mtbench": 3.1563,
+  "all": {
+   "s0": 3.1563,
+   "s1": 3.1168,
+   "s2": 3.1592
+  }
+ },
+ "QH_gs": {
+  "median_seed": "s1",
+  "mtbench": 3.1876,
+  "all": {
+   "s0": 3.1848,
+   "s1": 3.1876,
+   "s2": 3.1997
+  }
+ },
+ "QH_gsr5": {
+  "median_seed": "s0",
+  "mtbench": 3.1726,
+  "all": {
+   "s0": 3.1726,
+   "s1": 3.1346,
+   "s2": 3.2205
+  }
+ },
+ "QH_ls": {
+  "median_seed": "s0",
+  "mtbench": 3.1695,
+  "all": {
+   "s0": 3.1695,
+   "s1": 3.2265,
+   "s2": 3.1689
+  }
+ },
+ "QH_lsr5": {
+  "median_seed": "s0",
+  "mtbench": 3.1925,
+  "all": {
+   "s0": 3.1925,
+   "s1": 3.159,
+   "s2": 3.193
+  }
+ },
+ "T6conv_gs": {
+  "median_seed": "s1",
+  "mtbench": 3.3202,
+  "all": {
+   "s0": 3.3356,
+   "s1": 3.3202,
+   "s2": 3.3054
+  }
+ },
+ "T6conv_gsr5": {
+  "median_seed": "s1",
+  "mtbench": 3.3024,
+  "all": {
+   "s0": 3.2731,
+   "s1": 3.3024,
+   "s2": 3.3141
+  }
+ },
+ "T6hybrid_gs": {
+  "median_seed": "s2",
+  "mtbench": 3.331,
+  "all": {
+   "s0": 3.3467,
+   "s1": 3.3069,
+   "s2": 3.331
+  }
+ },
+ "T6hybrid_gsr5": {
+  "median_seed": "s1",
+  "mtbench": 3.3158,
+  "all": {
+   "s0": 3.3641,
+   "s1": 3.3158,
+   "s2": 3.3005
+  }
+ },
+ "T6hybrid_ls": {
+  "median_seed": "s2",
+  "mtbench": 3.3125,
+  "all": {
+   "s0": 3.3125,
+   "s1": 3.3357,
+   "s2": 3.3125
+  }
+ },
+ "T6hybrid_lsr5": {
+  "median_seed": "s2",
+  "mtbench": 3.3312,
+  "all": {
+   "s0": 3.3395,
+   "s1": 3.3063,
+   "s2": 3.3312
+  }
+ },
+ "T6hybrid_naive": {
+  "median_seed": "s0",
+  "mtbench": 1.5198,
+  "all": {
+   "s0": 1.5198,
+   "s1": 1.5221,
+   "s2": 1.4814
+  }
+ },
+ "QH_naive": {
+  "median_seed": "s0",
+  "mtbench": 1.7165,
+  "all": {
+   "s0": 1.7165,
+   "s1": 1.7249,
+   "s2": 1.6961
+  }
+ }
+}

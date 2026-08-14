@@ -403,6 +403,7 @@ class ExactQuantizedRotationForward(nn.Module):
                       recur_tokens=None, rollout=None, exact=False):
         qw, tw = self.quantized_weights(exact)
         R = tw["R"]
+        self._last_head = qw["head"]        # for head_logits() on targets
         a = (self.alpha_exact if not self.log_alpha.requires_grad
              else self.log_alpha.exp())
         # EP3-P: recurrent input e-slice rescale (runtime

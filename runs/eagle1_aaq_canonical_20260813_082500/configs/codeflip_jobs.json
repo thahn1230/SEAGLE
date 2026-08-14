@@ -1,0 +1,40 @@
+[
+ {
+  "name": "T6hybrid_gs_s2",
+  "sd": "/data/thahn1230/aaq_ckpts/CAN_T6_gs_hybrid_s2.pt.step3000.pt",
+  "rot": null,
+  "alpha": 32.89964245299412
+ },
+ {
+  "name": "T6conv_gs_s1",
+  "sd": "/data/thahn1230/aaq_ckpts/CAN_T6_gs_conv_s1.pt.step2000.pt",
+  "rot": null,
+  "alpha": 32.89964245299412
+ },
+ {
+  "name": "T6hybrid_gsr5_s1",
+  "sd": "/data/thahn1230/aaq_ckpts/CAN_T6_gsr5_hybrid_s1.pt.step1000.pt",
+  "rot": "/home/thahn1230/SEAGLE/runs/eagle1_draft_residual_rotation_ep3p_20260804_165317/rotations/RD_HYB_s2.pt",
+  "alpha": 32.89964245299412
+ },
+ {
+  "name": "T6conv_gsr5_s1",
+  "sd": "/data/thahn1230/aaq_ckpts/CAN_T6_gsr5_conv_s1.pt.step1500.pt",
+  "rot": "/home/thahn1230/SEAGLE/runs/eagle1_draft_residual_rotation_ep3p_20260804_165317/rotations/RD_HYB_s2.pt",
+  "alpha": 32.89964245299412
+ },
+ {
+  "name": "QH_gs_s1",
+  "sd": "/home/thahn1230/SEAGLE/runs/eagle1_aaq_canonical_20260813_082500/ckpts/CQH_gs_s1_step2500.pt",
+  "rot": null,
+  "alpha": 32.89964245299412,
+  "init_sd": "/home/thahn1230/SEAGLE/checkpoints/eagle1_fresh_fp16_anchor/anchor.pt"
+ },
+ {
+  "name": "QH_gsr5_s0",
+  "sd": "/home/thahn1230/SEAGLE/runs/eagle1_aaq_canonical_20260813_082500/ckpts/CQH_gsr5_s0_step3000.pt",
+  "rot": "/home/thahn1230/SEAGLE/runs/eagle1_draft_residual_rotation_ep3p_20260804_165317/rotations/RD_HYB_s2.pt",
+  "alpha": 32.89964245299412,
+  "init_sd": "/home/thahn1230/SEAGLE/checkpoints/eagle1_fresh_fp16_anchor/anchor.pt"
+ }
+]

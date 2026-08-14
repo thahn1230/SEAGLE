@@ -311,7 +311,12 @@ def main():
         # materializes more than ~4096 rows of full attention at once
         with torch.no_grad():
             B, T = ids.shape
-            c = max(1, 4096 // max(T, 1))
+            # 2048 rows (was 4096): on gpusystem the W4A4 fake-quant
+            # target + core-QAT states leave no headroom for the 2-row
+            # 2048-token explicit-attention spike (OOM at step 0,
+            # 2026-08-12). Chunking is exact row-splitting under
+            # no_grad — bitwise-identical teacher features.
+            c = max(1, 2048 // max(T, 1))
             hs = [model.base_model.model(
                 input_ids=ids[i:i + c].to(dev),
                 attention_mask=am[i:i + c].to(dev)).last_hidden_state

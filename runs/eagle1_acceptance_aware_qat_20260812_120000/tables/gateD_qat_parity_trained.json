@@ -1,0 +1,148 @@
+{
+ "verdict": "PASS",
+ "fails": [],
+ "alpha": 32.89964245299412,
+ "draft_sd": "/data/thahn1230/aaq_ckpts/P2_A_hybrid_s0.pt.step1500.pt",
+ "results": {
+  "identity": {
+   "weights": {
+    "W_first": {
+     "equal": false,
+     "max_abs_diff": 0.0
+    },
+    "W_rec": {
+     "equal": true,
+     "max_abs_diff": 0.0
+    },
+    "q": {
+     "equal": true,
+     "max_abs_diff": 0.0
+    },
+    "k": {
+     "equal": true,
+     "max_abs_diff": 0.0
+    },
+    "v": {
+     "equal": true,
+     "max_abs_diff": 0.0
+    },
+    "o": {
+     "equal": true,
+     "max_abs_diff": 0.0
+    },
+    "gate": {
+     "equal": true,
+     "max_abs_diff": 0.0
+    },
+    "up": {
+     "equal": true,
+     "max_abs_diff": 0.0
+    },
+    "down": {
+     "equal": true,
+     "max_abs_diff": 0.0
+    },
+    "head": {
+     "equal": true,
+     "max_abs_diff": 0.0
+    }
+   },
+   "chain": [
+    {
+     "depth": 0,
+     "max_dlogits": 0.0,
+     "max_dh": 0.0,
+     "greedy_tok_equal": true
+    },
+    {
+     "depth": 1,
+     "max_dlogits": 0.0,
+     "max_dh": 0.0,
+     "greedy_tok_equal": true
+    },
+    {
+     "depth": 2,
+     "max_dlogits": 0.0,
+     "max_dh": 0.0,
+     "greedy_tok_equal": true
+    },
+    {
+     "depth": 3,
+     "max_dlogits": 0.0,
+     "max_dh": 0.0,
+     "greedy_tok_equal": true
+    }
+   ]
+  },
+  "gamma_R1": {
+   "weights": {
+    "W_first": {
+     "equal": true,
+     "max_abs_diff": 0.0
+    },
+    "W_rec": {
+     "equal": true,
+     "max_abs_diff": 0.0
+    },
+    "q": {
+     "equal": true,
+     "max_abs_diff": 0.0
+    },
+    "k": {
+     "equal": true,
+     "max_abs_diff": 0.0
+    },
+    "v": {
+     "equal": true,
+     "max_abs_diff": 0.0
+    },
+    "o": {
+     "equal": true,
+     "max_abs_diff": 0.0
+    },
+    "gate": {
+     "equal": true,
+     "max_abs_diff": 0.0
+    },
+    "up": {
+     "equal": true,
+     "max_abs_diff": 0.0
+    },
+    "down": {
+     "equal": true,
+     "max_abs_diff": 0.0
+    },
+    "head": {
+     "equal": true,
+     "max_abs_diff": 0.0
+    }
+   },
+   "chain": [
+    {
+     "depth": 0,
+     "max_dlogits": 0.0,
+     "max_dh": 0.0,
+     "greedy_tok_equal": true
+    },
+    {
+     "depth": 1,
+     "max_dlogits": 0.0,
+     "max_dh": 0.0,
+     "greedy_tok_equal": true
+    },
+    {
+     "depth": 2,
+     "max_dlogits": 0.0,
+     "max_dh": 0.0,
+     "greedy_tok_equal": true
+    },
+    {
+     "depth": 3,
+     "max_dlogits": 0.0,
+     "max_dh": 0.0,
+     "greedy_tok_equal": true
+    }
+   ]
+  }
+ }
+}

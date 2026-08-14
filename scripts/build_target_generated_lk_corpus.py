@@ -14,7 +14,13 @@ raw-text-window regime but with full-vocab teachers (ablation 13.6).
 Each shard stores per window:
   prompt_row_id, domain, gen_mode, temperature, seed, pos_offset,
   tok_ids (T+K_STORE+1) int32, a_seq (T,D) fp16,
-  teacher_logits (K_STORE,V) fp16, teacher_tokens (K_STORE,) int32.
+  teacher_logits (K_STORE,V) fp16, teacher_tokens (K_STORE,) int32,
+  a_chain (K_STORE,D) fp16 — the exposed-basis teacher hiddens at the K
+  supervised chain positions (H[s+T .. s+T+K-1], i.e. the hiddens whose
+  lm_head output IS teacher_logits[k]); added 2026-08-12 for the
+  acceptance-aware-QAT study's conventional-objective-in-chain arm and
+  hidden-reconstruction diagnostics. Prior fields are bit-identical to the
+  pre-extension builder (same prompts/seeds/greedy chain).
 
 Train pools are disjoint from every eval manifest (Gate F): sharegpt/gsm8k
 use offset>=2000 of their ordered pools, wiki uses the TRAIN split (eval
@@ -211,6 +217,7 @@ def main():
                 seed=args.seed, pos_offset=int(s),
                 tok_ids=toks_t[s:s + T_WIN + K_STORE + 1].clone(),
                 a_seq=H[s:s + T_WIN].cpu().half(),
+                a_chain=H[s + T_WIN:s + T_WIN + K_STORE].cpu().half(),
                 teacher_logits=LG[s + T_WIN:s + T_WIN + K_STORE]
                 .cpu().half(),
                 teacher_tokens=toks_t[s + T_WIN + 1:
