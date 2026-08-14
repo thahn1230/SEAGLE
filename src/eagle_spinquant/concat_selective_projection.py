@@ -228,7 +228,8 @@ class BranchwiseActLinear(nn.Module):
         self.name = name
         self.w_bits, self.e_bits, self.h_bits = w_bits, e_bits, h_bits
         self.register_buffer("w_fake",
-                             fq._weight_fake_quant(weight.data, w_bits)
+                             fq._weight_fake_quant(weight.data, w_bits,
+                                                   name=name)
                              if w_bits < 16 else weight.data.clone())
         self.register_buffer("bias_", bias.data.clone()
                              if bias is not None else None)

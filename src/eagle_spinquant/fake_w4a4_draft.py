@@ -32,8 +32,33 @@ def _act_quantizer(bits=4):
     return q
 
 
-def _weight_fake_quant(w, bits=4):
-    """RTN per-channel symmetric fake quant with MSE clip search (target policy)."""
+# qanchor study (2026-08-14): when FROZEN_WQ is set (dict: site-name ->
+# per-out-channel scale), weight fake-quant for MATCHED names uses the
+# FROZEN anchor scale (clamp(round(w/s), -(maxq+1), maxq) * s) instead of
+# re-running find_params/MSE-clip — required for code-preserving
+# deployment of constructed/anchored models (anchor contract section A2).
+FROZEN_WQ = None
+_FROZEN_MAXQ = 7
+
+
+def _weight_fake_quant(w, bits=4, name=None):
+    """RTN per-channel symmetric fake quant with MSE clip search (target
+    policy); frozen-anchor-scale path when FROZEN_WQ covers `name`.
+    FROZEN_WQ[name] is either a scale tensor, or a dict
+    {"scale": s, "codes": C} — with codes present the deployed weight is
+    EXACTLY s*C (constructed-code deployment; folded input ignored)."""
+    if FROZEN_WQ is not None and name is not None and name in FROZEN_WQ:
+        assert bits == 4, "frozen anchor scales are W4-only"
+        e = FROZEN_WQ[name]
+        if isinstance(e, dict):
+            s = e["scale"].to(w.device)
+            if e.get("codes") is not None:
+                return (s * e["codes"].to(w.device).float()).to(w.dtype)
+        else:
+            s = e.to(w.device)
+        q = torch.clamp(torch.round(w.float() / s),
+                        -(_FROZEN_MAXQ + 1), _FROZEN_MAXQ)
+        return (s * q).to(w.dtype)
     sb.add_spinquant_to_syspath()
     from utils import quant_utils
     q = quant_utils.WeightQuantizer()
@@ -61,7 +86,9 @@ class FakeW4A4Linear(nn.Module):
         self.quant_act = quant_act
         self.w_bits = w_bits
         self.a_bits = a_bits
-        self.register_buffer("w_fake", _weight_fake_quant(weight.data, w_bits)
+        self.register_buffer("w_fake",
+                             _weight_fake_quant(weight.data, w_bits,
+                                                name=name)
                              if quant_weight else weight.data.clone())
         self.register_buffer("bias", bias.data.clone() if bias is not None else None)
         self.in_features = weight.shape[1]

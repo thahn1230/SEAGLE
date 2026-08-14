@@ -86,6 +86,19 @@ def main():
                     help="R-EP3-P rotation spec JSON (recurrent path)")
     ap.add_argument("--alpha-rec", type=float, default=None,
                     help="EP3-P pathwise recurrent migration factor")
+    # qanchor study: frozen-anchor-scale deployment (code-preserving eval
+    # of constructed/anchored models; contract section A2)
+    ap.add_argument("--anchor-scales", default=None,
+                    help="anchor_quant state .pt; deploys ALL 9 W4 sites "
+                         "with the FROZEN anchor scales")
+    ap.add_argument("--verify-codes", default=None,
+                    help="expected-codes .pt {site: int8}; assert the "
+                         "deployed w_fake codes equal it (needs "
+                         "--anchor-scales)")
+    ap.add_argument("--override-codes", default=None,
+                    help="constructed-codes .pt {site: int8}; deploy "
+                         "EXACTLY these codes (B1/B2 hybrid models; "
+                         "needs --anchor-scales)")
     ap.add_argument("--datasets", default="mtbench")
     ap.add_argument("--pool", default="eval", choices=["eval", "calib"],
                     help="calib = disjoint offset-500 pool (alpha sweeps)")
@@ -148,6 +161,35 @@ def main():
     alpha = args.alpha if args.alpha is not None else def_alpha
     D4 = dict(quant_first="fake_w4a4", quant_recurrent="fake_w4a4",
               quant_ar="fake_w4a4", ar_r2r4=True)
+
+    # qanchor: arm frozen-anchor-scale weight quantization BEFORE the
+    # adapter folds+quantizes (name-matched sites)
+    ANCHOR_NAME_MAP = {
+        "projection_first_preR": "W_first",
+        "projection_recurrent_preR": "W_rec",
+        "layers.0.self_attn.q_proj": "q",
+        "layers.0.self_attn.k_proj": "k",
+        "layers.0.self_attn.v_proj": "v",
+        "layers.0.self_attn.o_proj": "o",
+        "layers.0.mlp.gate_proj": "gate",
+        "layers.0.mlp.up_proj": "up",
+        "layers.0.mlp.down_proj": "down",
+    }
+    if args.anchor_scales:
+        from eagle_spinquant import fake_w4a4_draft as _fq
+        from eagle_spinquant import anchor_quant as _aq
+        _anchor = _aq.load_anchor(args.anchor_scales)
+        _codes = (torch.load(args.override_codes, map_location="cpu",
+                             weights_only=True)
+                  if args.override_codes else None)
+        _fq.FROZEN_WQ = {
+            n: dict(scale=_anchor[s]["scale"],
+                    codes=(_codes[s] if _codes is not None else None))
+            for n, s in ANCHOR_NAME_MAP.items()}
+        print(f"[al] FROZEN anchor scales armed for "
+              f"{len(_fq.FROZEN_WQ)} sites"
+              + (" with OVERRIDE CODES" if _codes is not None else ""),
+              flush=True)
 
     ad = None
     if args.draft_cfg in ("stock", "fp16_deploy"):
@@ -238,6 +280,34 @@ def main():
             first_hidden_mode=fhm, trace=False, **kw)
     if ad is not None:
         ad.install()
+
+    if args.verify_codes:
+        assert args.anchor_scales, "--verify-codes needs --anchor-scales"
+        from eagle_spinquant import fake_w4a4_draft as _fq
+        exp = torch.load(args.verify_codes, map_location="cpu",
+                         weights_only=True)
+        seen = {}
+        pools_mods = list(model.ea_layer.named_modules())
+        if hasattr(ad, "split"):
+            pools_mods += [("split_pf", ad.split.first),
+                           ("split_pr", ad.split.recurrent)] \
+                if hasattr(ad.split, "first") else \
+                [(f"split_{i}", m) for i, m in
+                 enumerate(ad.split.children())]
+        for _mn, m in pools_mods:
+            nm = getattr(m, "name", None)
+            if nm in ANCHOR_NAME_MAP and hasattr(m, "w_fake"):
+                site = ANCHOR_NAME_MAP[nm]
+                s = _fq.FROZEN_WQ[nm].to(m.w_fake.device)
+                got = torch.clamp(torch.round(m.w_fake.float() / s),
+                                  -8, 7).to(torch.int8).cpu()
+                ok = torch.equal(got, exp[site])
+                seen[site] = bool(ok)
+                assert ok, f"code mismatch at deployed site {site}"
+        missing = [s for s in exp if s not in seen]
+        print(f"[al] CODE-VERIFY: {len(seen)} sites equal; "
+              f"missing-from-walk: {missing}", flush=True)
+        assert not missing, f"sites not found in deployed walk: {missing}"
 
     for ds_spec in args.datasets.split(","):
         ds_name, _, ds_n = ds_spec.partition(":")
