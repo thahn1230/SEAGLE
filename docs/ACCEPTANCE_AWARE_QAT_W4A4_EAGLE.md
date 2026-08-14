@@ -141,6 +141,7 @@ Per-dataset (median seeds; PTQ rows = exact original-server values):
 | LS AA-tuned | 3.3125 | 3.8683 | 3.3874 | 3.8457 | 3.6035 |
 | LS+R5 AA-tuned | 3.3312 | 3.8264 | 3.4156 | 3.8369 | 3.6025 |
 | GS conv-tuned (control) | 3.3202 | 3.8386 | 3.4218 | 3.9193 | 3.6250 |
+| GS+R5 conv-tuned (control) | 3.3024 | 3.8243 | 3.4172 | 3.9152 | 3.6148 |
 | GS AA-matched (1e-5) | 3.1400 | 3.6467 | 3.2575 | 3.7368 | 3.4453 |
 | GS+R5 AA-matched (1e-5) | 3.1563 | 3.5987 | 3.2334 | 3.6118 | 3.4001 |
 
