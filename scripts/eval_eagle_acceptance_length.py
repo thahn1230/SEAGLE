@@ -167,13 +167,13 @@ def main():
     ANCHOR_NAME_MAP = {
         "projection_first_preR": "W_first",
         "projection_recurrent_preR": "W_rec",
-        "layers.0.self_attn.q_proj": "q",
-        "layers.0.self_attn.k_proj": "k",
-        "layers.0.self_attn.v_proj": "v",
-        "layers.0.self_attn.o_proj": "o",
-        "layers.0.mlp.gate_proj": "gate",
-        "layers.0.mlp.up_proj": "up",
-        "layers.0.mlp.down_proj": "down",
+        "ar.q_proj": "q",
+        "ar.k_proj": "k",
+        "ar.v_proj": "v",
+        "ar.o_proj": "o",
+        "ar.gate_proj": "gate",
+        "ar.up_proj": "up",
+        "ar.down_proj": "down",
     }
     if args.anchor_scales:
         from eagle_spinquant import fake_w4a4_draft as _fq
@@ -298,7 +298,9 @@ def main():
             nm = getattr(m, "name", None)
             if nm in ANCHOR_NAME_MAP and hasattr(m, "w_fake"):
                 site = ANCHOR_NAME_MAP[nm]
-                s = _fq.FROZEN_WQ[nm].to(m.w_fake.device)
+                _e = _fq.FROZEN_WQ[nm]
+                s = (_e["scale"] if isinstance(_e, dict) else _e) \
+                    .to(m.w_fake.device)
                 got = torch.clamp(torch.round(m.w_fake.float() / s),
                                   -8, 7).to(torch.int8).cpu()
                 ok = torch.equal(got, exp[site])

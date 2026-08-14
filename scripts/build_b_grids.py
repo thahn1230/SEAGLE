@@ -27,26 +27,13 @@ sys.path.insert(0, os.path.join(PROJECT_ROOT, "third_party", "EAGLE"))
 import torch
 from safetensors import safe_open
 from eagle_spinquant import experiment, study, anchor_quant as aq
-from eagle_spinquant.exact_qat_rotated_draft import ExactQATRotatedDraft
-from eagle_spinquant.residual_rotation import SharedRotation
+import importlib.util as _ilu
+_spec=_ilu.spec_from_file_location("caa", os.path.join(PROJECT_ROOT,"scripts","capture_adapter_anchor.py"))
+_caa=_ilu.module_from_spec(_spec); _spec.loader.exec_module(_caa)
 
 KIND = "learned_chat_w4a4kv16"
 
 
-def folded(sd, R_T, gamma, W_lm, rotM, dev):
-    rot = SharedRotation(rotM).to(dev)
-    m = ExactQATRotatedDraft(sd, R_T, gamma, W_lm, rot,
-                             alpha_init=32.89964245299412,
-                             train_alpha=False, w_bits=4, a_bits=4,
-                             draft_kv_bits=16, train_draft_core=False,
-                             device=dev, first_fold_R=R_T)
-    with torch.no_grad():
-        tw = {k: v.detach().float().cpu()
-              for k, v in m.transformed_weights(exact=False).items()
-              if k in aq.QSITES}
-    del m
-    torch.cuda.empty_cache()
-    return tw
 
 
 def grid_meta(codes_t, anchor):
@@ -93,14 +80,9 @@ def main():
             if "lm_head.weight" in f.keys() and W_lm is None:
                 W_lm = f.get_tensor("lm_head.weight").float()
     anchor = aq.load_anchor(args.anchor)
-    sd0 = torch.load(os.path.join(paths["draft_path"],
-                                  "pytorch_model.bin"),
-                     map_location="cpu", weights_only=True)
-    agg = torch.load(args.aggressive_sd, map_location="cpu",
-                     weights_only=False)
-    agg = agg.get("draft_state_dict", agg)
-    tw0 = folded(sd0, R_T, gamma, W_lm, rotM, dev)
-    twA = folded(agg, R_T, gamma, W_lm, rotM, dev)
+    tw0 = _caa.capture_adapter_folds(None, args.rd_ckpt, device=dev)
+    twA = _caa.capture_adapter_folds(args.aggressive_sd, args.rd_ckpt,
+                                     device=dev)
     cbad = {k: aq.codes(twA[k], anchor[k]["scale"])
             for k in aq.QSITES}
     meta = {}
