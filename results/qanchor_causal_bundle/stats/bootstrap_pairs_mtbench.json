@@ -1,0 +1,277 @@
+[
+ {
+  "name": "ptq_vs_dpconv",
+  "a": "CANON_B9@int4",
+  "b": "FIN_DP_B_conv_beta1_s2_st0600__mtbench@int4",
+  "dataset": "mtbench",
+  "status": "ok",
+  "tau_a": 3.1645,
+  "ci_a": [
+   3.0615,
+   3.2697
+  ],
+  "tau_b": 3.2806,
+  "ci_b": [
+   3.1856,
+   3.3767
+  ],
+  "delta_b_minus_a": 0.1161,
+  "ci_delta": [
+   0.0551,
+   0.1743
+  ],
+  "p_two_sided": 0.0004,
+  "n_common": 80,
+  "reps": 10000
+ },
+ {
+  "name": "ptq_vs_dphyb",
+  "a": "CANON_B9@int4",
+  "b": "FIN_DP_B_hybrid_beta0.1_s2_st0600__mtbench@int4",
+  "dataset": "mtbench",
+  "status": "ok",
+  "tau_a": 3.1645,
+  "ci_a": [
+   3.0623,
+   3.2731
+  ],
+  "tau_b": 3.2881,
+  "ci_b": [
+   3.1845,
+   3.3947
+  ],
+  "delta_b_minus_a": 0.1236,
+  "ci_delta": [
+   0.0576,
+   0.1896
+  ],
+  "p_two_sided": 0.0004,
+  "n_common": 80,
+  "reps": 10000
+ },
+ {
+  "name": "ptq_vs_fdconv",
+  "a": "CANON_B9@int4",
+  "b": "FIN_FD_B_conv_beta1_s1_st0600__mtbench@int4",
+  "dataset": "mtbench",
+  "status": "ok",
+  "tau_a": 3.1645,
+  "ci_a": [
+   3.0614,
+   3.2691
+  ],
+  "tau_b": 3.2094,
+  "ci_b": [
+   3.1074,
+   3.3135
+  ],
+  "delta_b_minus_a": 0.0449,
+  "ci_delta": [
+   -0.0212,
+   0.1111
+  ],
+  "p_two_sided": 0.191,
+  "n_common": 80,
+  "reps": 10000
+ },
+ {
+  "name": "ptq_vs_hb005h",
+  "a": "CANON_B9@int4",
+  "b": "FIN_HB_B_hybrid_b0.005_s0_st3000__mtbench@int4",
+  "dataset": "mtbench",
+  "status": "ok",
+  "tau_a": 3.1645,
+  "ci_a": [
+   3.0645,
+   3.2694
+  ],
+  "tau_b": 3.3797,
+  "ci_b": [
+   3.281,
+   3.4799
+  ],
+  "delta_b_minus_a": 0.2153,
+  "ci_delta": [
+   0.1477,
+   0.2815
+  ],
+  "p_two_sided": 0.0,
+  "n_common": 80,
+  "reps": 10000
+ },
+ {
+  "name": "ptq_vs_hb01h",
+  "a": "CANON_B9@int4",
+  "b": "FIN_HB_B_hybrid_b0.01_s0_st3000__mtbench@int4",
+  "dataset": "mtbench",
+  "status": "ok",
+  "tau_a": 3.1645,
+  "ci_a": [
+   3.0651,
+   3.2715
+  ],
+  "tau_b": 3.2926,
+  "ci_b": [
+   3.1848,
+   3.4047
+  ],
+  "delta_b_minus_a": 0.1281,
+  "ci_delta": [
+   0.0595,
+   0.1981
+  ],
+  "p_two_sided": 0.0002,
+  "n_common": 80,
+  "reps": 10000
+ },
+ {
+  "name": "ptq_vs_hb02h",
+  "a": "CANON_B9@int4",
+  "b": "FIN_HB_B_hybrid_b0.02_s0_st3000__mtbench@int4",
+  "dataset": "mtbench",
+  "status": "ok",
+  "tau_a": 3.1645,
+  "ci_a": [
+   3.064,
+   3.27
+  ],
+  "tau_b": 3.3433,
+  "ci_b": [
+   3.2306,
+   3.4527
+  ],
+  "delta_b_minus_a": 0.1789,
+  "ci_delta": [
+   0.1119,
+   0.2485
+  ],
+  "p_two_sided": 0.0,
+  "n_common": 80,
+  "reps": 10000
+ },
+ {
+  "name": "ptq_vs_hb02c",
+  "a": "CANON_B9@int4",
+  "b": "FIN_HB_B_conv_b0.02_s0_st3000__mtbench@int4",
+  "dataset": "mtbench",
+  "status": "ok",
+  "tau_a": 3.1645,
+  "ci_a": [
+   3.063,
+   3.2688
+  ],
+  "tau_b": 3.2939,
+  "ci_b": [
+   3.2008,
+   3.3908
+  ],
+  "delta_b_minus_a": 0.1294,
+  "ci_delta": [
+   0.0626,
+   0.1931
+  ],
+  "p_two_sided": 0.0004,
+  "n_common": 80,
+  "reps": 10000
+ },
+ {
+  "name": "ptq_vs_pc",
+  "a": "CANON_B9@int4",
+  "b": "FIN_PC_B_r16_lr1e-4_s0_st1500__mtbench@int4",
+  "dataset": "mtbench",
+  "status": "ok",
+  "tau_a": 3.1645,
+  "ci_a": [
+   3.0609,
+   3.271
+  ],
+  "tau_b": 3.1496,
+  "ci_b": [
+   3.0516,
+   3.2493
+  ],
+  "delta_b_minus_a": -0.0149,
+  "ci_delta": [
+   -0.0872,
+   0.0571
+  ],
+  "p_two_sided": 0.6776,
+  "n_common": 80,
+  "reps": 10000
+ },
+ {
+  "name": "ptq_vs_plain",
+  "a": "CANON_B9@int4",
+  "b": "CFIN_P2conv_gsr5_s0@int4",
+  "dataset": "mtbench",
+  "status": "ok",
+  "tau_a": 3.1645,
+  "ci_a": [
+   3.0635,
+   3.2698
+  ],
+  "tau_b": 3.1518,
+  "ci_b": [
+   3.0545,
+   3.2517
+  ],
+  "delta_b_minus_a": -0.0126,
+  "ci_delta": [
+   -0.0762,
+   0.0534
+  ],
+  "p_two_sided": 0.7036,
+  "n_common": 80,
+  "reps": 10000
+ },
+ {
+  "name": "plain_vs_hb005h",
+  "a": "CFIN_P2conv_gsr5_s0@int4",
+  "b": "FIN_HB_B_hybrid_b0.005_s0_st3000__mtbench@int4",
+  "dataset": "mtbench",
+  "status": "ok",
+  "tau_a": 3.1518,
+  "ci_a": [
+   3.055,
+   3.2491
+  ],
+  "tau_b": 3.3797,
+  "ci_b": [
+   3.2843,
+   3.4805
+  ],
+  "delta_b_minus_a": 0.2279,
+  "ci_delta": [
+   0.1573,
+   0.3003
+  ],
+  "p_two_sided": 0.0,
+  "n_common": 80,
+  "reps": 10000
+ },
+ {
+  "name": "plain_vs_dpconv",
+  "a": "CFIN_P2conv_gsr5_s0@int4",
+  "b": "FIN_DP_B_conv_beta1_s2_st0600__mtbench@int4",
+  "dataset": "mtbench",
+  "status": "ok",
+  "tau_a": 3.1518,
+  "ci_a": [
+   3.0562,
+   3.2501
+  ],
+  "tau_b": 3.2806,
+  "ci_b": [
+   3.1874,
+   3.3792
+  ],
+  "delta_b_minus_a": 0.1288,
+  "ci_delta": [
+   0.0613,
+   0.1971
+  ],
+  "p_two_sided": 0.0002,
+  "n_common": 80,
+  "reps": 10000
+ }
+]

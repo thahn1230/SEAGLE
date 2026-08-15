@@ -1,0 +1,165 @@
+tag,target,dataset,prompt_id,acceptance_list,n_cycles,gen_seconds
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/0,"[6, 4, 3, 6, 4, 4, 3, 5, 2, 2, 4, 6, 5, 3, 6, 4, 5, 2, 4, 2, 1, 2, 4, 4, 3, 6, 2, 3, 3, 3, 4, 4, 4, 4, 5]",35,7.494
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/1,"[6, 4, 2, 2, 4, 6, 6, 4, 5, 6, 2, 3, 5, 5, 4, 2, 2, 3, 6, 4, 4, 5, 3, 6, 4, 4, 6, 6, 2, 3, 3, 3]",32,5.605
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/2,"[6, 4, 6, 4, 4, 4, 3, 2, 3, 4, 3, 2, 4, 4, 5, 2, 2, 1, 3, 6, 4, 4, 6, 1, 4, 2, 2, 3, 2, 2, 3, 4, 1, 2, 6, 4, 3, 4]",38,6.377
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/3,"[5, 2, 2, 6, 6, 6, 4, 3, 4, 6, 1, 2, 4, 2, 2, 2, 6, 6, 6, 2, 5, 4, 2, 5, 4, 2, 1, 4, 6, 3, 3, 2, 5, 6]",34,5.206
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/4,"[6, 3, 6, 6, 4, 4, 5, 5, 3, 2, 4, 2, 4, 5, 5, 4, 5, 2, 4, 6, 4, 5, 3, 2, 6, 3, 5, 6, 6, 4]",30,4.221
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/5,"[4, 4, 1, 3, 6, 5, 4, 3, 3, 3, 4, 3, 4, 6, 2, 2, 3, 5, 1, 2, 4, 4, 5, 4, 6, 3, 5, 4, 5, 4, 4, 3, 4, 6]",34,4.473
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/6,"[3, 3, 3, 2, 1, 5, 6, 5, 3, 2, 4, 5, 1, 4, 3, 2, 4, 5, 4, 2, 2, 4, 4, 3, 4, 2, 1, 5, 3, 2, 4, 2, 1, 6, 1, 1, 2, 2, 3, 4, 6]",41,5.553
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/7,"[6, 1, 2, 3, 4, 5, 6, 4, 3, 5, 4, 3, 3, 3, 4, 5, 6, 3, 4, 3, 6, 5, 5, 3, 4, 3, 4, 4, 6, 2, 2, 4, 2, 4]",34,4.386
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/8,"[6, 3, 3, 4, 6, 4, 4, 5, 1, 5, 2, 5, 4, 6, 5, 3, 6, 3, 6, 3, 3, 2, 3, 5, 3, 6, 6, 4, 4, 4, 6]",31,3.924
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/9,"[6, 4, 6, 5, 3, 2, 3, 4, 4, 3, 5, 1, 3, 1, 3, 6, 1, 5, 3, 3, 6, 2, 6, 3, 4, 1, 4, 4, 5, 4, 6, 3, 4, 3, 2]",35,4.43
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/10,"[6, 2, 2, 2, 4, 3, 4, 3, 4, 6, 3, 5, 4, 5, 4, 4, 5, 2, 1, 5, 3, 4, 6, 5, 6, 6, 6, 4, 4, 4, 4, 3]",32,4.01
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/11,"[6, 3, 5, 6, 4, 4, 6, 3, 2, 3, 3, 3, 2, 6, 4, 2, 2, 3, 6, 3, 2, 1, 2, 3, 6, 4, 4, 3, 4, 6, 4, 5, 2, 6]",34,4.316
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/12,"[5, 2, 2, 2, 4, 4, 5, 2, 3, 4, 2, 4, 4, 6, 2, 3, 5, 4, 4, 3, 2, 2, 4, 3, 2, 6, 5, 5, 4, 4, 3, 2, 1, 3, 2, 4, 4, 1, 2]",39,4.903
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/13,"[6, 2, 4, 3, 6, 4, 3, 6, 6, 4, 4, 3, 1, 4, 3, 3, 4, 3, 2, 2, 2, 2, 5, 4, 1, 5, 3, 4, 5, 6, 5, 5, 3, 5]",34,4.26
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/14,"[4, 3, 2, 1, 3, 4, 5, 6, 3, 3, 4, 2, 3, 4, 3, 5, 5, 6, 6, 5, 3, 4, 2, 2, 3, 4, 4, 4, 6, 4, 6, 2, 3, 1, 3]",35,4.401
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/15,"[4, 2, 2, 1, 3, 2, 3, 2, 1, 5, 6, 4, 5, 1, 3, 3, 6, 1, 2, 1, 5, 4, 6, 4, 1, 4, 4, 2, 4, 3, 4, 2, 2, 3, 2, 5, 5, 1, 5, 3, 3]",41,5.122
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/16,"[4, 6, 3, 6, 4, 6, 6, 4, 4, 3, 4, 6, 4, 5, 1, 6, 2, 1, 6, 3, 6, 2, 1, 6, 5, 3, 1, 2, 4, 4, 5, 4, 4]",33,4.164
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/17,"[4, 4, 2, 4, 6, 5, 5, 5, 2, 4, 4, 3, 5, 5, 6, 3, 4, 2, 1, 4, 1, 3, 4, 4, 4, 4, 4, 6, 4, 4, 3, 3, 4, 4]",34,4.277
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/18,"[4, 3, 2, 6, 6, 4, 2, 4, 6, 3, 5, 6, 2, 6, 6, 6, 4, 6, 6, 3, 6, 4, 4, 3, 3, 2, 4, 6, 3, 4]",30,3.785
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/19,"[4, 2, 2, 2, 3, 4, 6, 4, 5, 1, 3, 6, 4, 4, 3, 3, 4, 3, 3, 5, 4, 6, 2, 3, 2, 6, 6, 6, 4, 6, 4, 4, 3, 4]",34,4.28
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/20,"[6, 4, 4, 4, 4, 6, 4, 2, 4, 3, 5, 1, 2, 4, 3, 5, 3, 4, 4, 3, 3, 4, 6, 4, 1, 2, 1, 3, 4, 5, 1, 4, 4, 4, 2, 6]",36,4.493
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/21,"[6, 2, 4, 6, 5, 4, 4, 4, 3, 2, 6, 5, 4, 4, 5, 4, 4, 2, 3, 6, 6, 6, 6, 5, 3, 6, 4, 6, 6]",29,3.65
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/22,"[6, 3, 6, 2, 4, 6, 5, 3, 4, 3, 1, 3, 4, 5, 2, 3, 4, 2, 3, 2, 1, 4, 2, 6, 6, 2, 1, 6, 5, 2, 3, 2, 3, 4, 4, 2, 1, 3]",38,4.763
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/23,"[4, 2, 3, 1, 5, 4, 5, 4, 5, 4, 3, 3, 4, 3, 3, 5, 5, 1, 3, 4, 6, 6, 4, 3, 3, 4, 3, 4, 4, 4, 2, 4, 1, 5, 6]",35,4.423
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/24,"[4, 4, 2, 3, 4, 2, 4, 6, 2, 4, 4, 6, 3, 1, 5, 4, 6, 2, 5, 5, 6, 2, 4, 5, 2, 1, 3, 5, 6, 5, 2, 3, 2, 3, 3]",35,4.413
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/25,"[5, 2, 2, 2, 3, 4, 4, 3, 4, 6, 2, 4, 2, 4, 5, 2, 4, 3, 2, 5, 5, 4, 2, 1, 2, 4, 2, 5, 5, 2, 1, 4, 3, 3, 2, 3, 6, 3, 4]",39,4.853
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/26,"[4, 4, 3, 5, 4, 6, 3, 4, 4, 4, 4, 2, 4, 6, 5, 6, 6, 3, 2, 4, 6, 6, 4, 4, 4, 4, 4, 4, 6, 6]",30,3.768
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/27,"[5, 3, 5, 6, 5, 5, 6, 4, 3, 3, 4, 2, 5, 2, 3, 6, 4, 1, 6, 4, 6, 3, 4, 4, 6, 4, 2, 3, 4, 2, 3, 3, 3]",33,4.136
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/28,"[4, 4, 4, 3, 4, 4, 5, 4, 6, 4, 6, 2, 3, 4, 3, 3, 6, 5, 3, 4, 3, 3, 6, 4, 5, 6, 4, 4, 4, 2, 4, 4]",32,4.025
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/29,"[4, 3, 4, 6, 4, 4, 5, 3, 4, 3, 3, 2, 5, 5, 1, 5, 4, 3, 3, 4, 2, 5, 6, 4, 4, 4, 5, 2, 6, 4, 4, 4, 4]",33,4.12
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/30,"[4, 4, 3, 5, 4, 6, 4, 4, 4, 5, 3, 6, 4, 6, 5, 6, 4, 3, 6, 1, 2, 4, 5, 3, 3, 4, 2, 4, 4, 3, 2, 5]",32,3.997
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/31,"[5, 3, 3, 4, 6, 4, 5, 5, 3, 4, 4, 2, 4, 4, 6, 5, 5, 5, 1, 4, 4, 1, 4, 3, 3, 4, 4, 2, 2, 3, 2, 6, 4, 4]",34,4.253
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/32,"[6, 3, 4, 6, 4, 5, 4, 3, 3, 3, 4, 4, 4, 2, 6, 4, 6, 2, 5, 3, 4, 3, 6, 4, 4, 5, 3, 2, 6, 3, 2, 4, 6]",33,4.107
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/33,"[6, 3, 2, 4, 4, 1, 4, 6, 3, 2, 3, 1, 2, 3, 3, 3, 4, 3, 6, 1, 5, 4, 4, 4, 6, 2, 4, 6, 4, 5, 4, 6, 3, 5, 4]",35,4.354
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/34,"[4, 3, 3, 1, 6, 4, 4, 5, 3, 6, 4, 4, 6, 4, 4, 2, 4, 3, 4, 3, 5, 5, 4, 4, 6, 4, 3, 4, 6, 4, 4, 1, 2]",33,4.096
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/35,"[6, 3, 1, 5, 5, 6, 4, 3, 4, 4, 4, 4, 6, 5, 6, 4, 3, 2, 6, 3, 5, 4, 4, 4, 2, 6, 3, 6, 4, 4, 2]",31,3.815
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/36,"[5, 3, 6, 6, 5, 3, 4, 5, 4, 5, 1, 3, 1, 5, 1, 2, 5, 3, 3, 4, 4, 5, 3, 4, 5, 4, 2, 3, 2, 2, 2, 3, 1, 3, 4, 3, 2, 1, 6]",39,4.787
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/37,"[5, 4, 3, 3, 1, 4, 4, 5, 5, 4, 3, 3, 2, 2, 4, 3, 3, 5, 5, 4, 2, 5, 5, 5, 4, 3, 4, 6, 3, 2, 6, 6, 6]",33,4.074
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/38,"[4, 3, 2, 2, 5, 4, 6, 6, 4, 2, 4, 3, 4, 4, 2, 2, 3, 4, 2, 4, 2, 2, 1, 3, 5, 4, 1, 5, 6, 5, 4, 4, 2, 1, 5, 5, 4]",37,4.57
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/39,"[6, 4, 6, 6, 6, 2, 6, 3, 4, 2, 2, 1, 2, 6, 5, 4, 2, 4, 3, 1, 4, 4, 4, 2, 4, 4, 6, 2, 2, 4, 4, 5, 5, 1, 6]",35,4.319
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/40,"[5, 3, 5, 5, 2, 6, 6, 5, 6, 1, 4, 4, 6, 5, 3, 4, 5, 1, 4, 3, 5, 1, 1, 6, 2, 6, 4, 4, 4, 6, 3, 6]",32,3.983
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/41,"[4, 6, 3, 4, 3, 4, 4, 6, 6, 5, 2, 4, 4, 4, 3, 2, 6, 4, 6, 3, 3, 4, 3, 4, 4, 4, 4, 4, 4, 3, 5, 5]",32,3.936
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/42,"[6, 3, 6, 5, 6, 5, 5, 4, 4, 4, 4, 6, 5, 4, 3, 3, 5, 6, 6, 2, 6, 5, 5, 6, 4, 6, 2, 3]",28,3.485
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/43,"[4, 2, 2, 3, 6, 3, 6, 6, 3, 3, 2, 3, 3, 4, 3, 2, 4, 3, 1, 3, 2, 1, 5, 2, 5, 5, 5, 5, 4, 3, 2, 2, 3, 2, 1, 1, 4, 4, 2, 3, 2]",41,5.052
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/44,"[4, 3, 4, 6, 4, 6, 3, 6, 1, 3, 3, 5, 3, 2, 3, 4, 4, 4, 2, 4, 4, 2, 3, 4, 5, 6, 5, 6, 3, 6, 4, 3, 3]",33,4.498
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/45,"[6, 6, 6, 4, 4, 4, 2, 4, 4, 1, 4, 3, 5, 6, 4, 4, 6, 6, 4, 2, 4, 3, 4, 6, 5, 4, 3, 4, 3, 1, 5, 4]",32,4.22
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/46,"[6, 3, 5, 4, 2, 2, 6, 5, 1, 4, 6, 4, 4, 6, 4, 6, 6, 6, 5, 4, 3, 5, 5, 4, 6, 6, 6, 4]",28,3.651
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/47,"[4, 4, 3, 4, 4, 3, 4, 5, 3, 1, 5, 1, 2, 4, 2, 4, 3, 4, 5, 4, 3, 5, 3, 4, 4, 4, 2, 5, 2, 4, 6, 4, 4, 6, 4]",35,4.435
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/48,"[4, 4, 1, 6, 6, 4, 4, 4, 6, 6, 1, 2, 3, 5, 6, 4, 4, 2, 6, 3, 4, 6, 6, 3, 3, 4, 6, 2, 5, 5, 6]",31,3.841
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/49,"[4, 3, 3, 1, 1, 4, 3, 4, 4, 6, 6, 5, 1, 3, 3, 4, 3, 3, 4, 4, 3, 6, 3, 6, 3, 2, 6, 4, 2, 4, 4, 4, 2, 2, 3, 6]",36,4.546
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/50,"[4, 3, 4, 6, 6, 6, 3, 2, 4, 5, 6, 3, 2, 4, 2, 2, 4, 3, 3, 6, 4, 3, 4, 4, 6, 4, 3, 3, 3, 4, 6, 4, 5]",33,4.676
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/51,"[3, 2, 3, 1, 6, 6, 6, 3, 4, 2, 2, 6, 3, 3, 5, 2, 2, 1, 2, 4, 5, 3, 6, 4, 6, 4, 3, 3, 4, 3, 2, 4, 3, 6, 4, 4]",36,5.234
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/52,"[5, 4, 4, 6, 3, 4, 4, 4, 4, 4, 6, 2, 2, 3, 3, 4, 5, 3, 3, 3, 4, 4, 3, 3, 3, 4, 4, 2, 2, 5, 1, 4, 1, 1, 5, 3, 3]",37,4.823
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/53,"[6, 3, 6, 3, 6, 5, 4, 4, 4, 3, 3, 4, 3, 1, 2, 5, 2, 4, 4, 4, 4, 3, 3, 6, 5, 2]",26,3.246
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/54,"[4, 2, 3, 4, 6, 1, 6, 4, 4, 6, 1, 2, 3, 2, 2, 2, 3, 4, 5, 5, 6, 5, 2, 2, 5, 1, 4, 4, 3, 4, 5, 4, 4, 6, 6]",35,4.322
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/55,"[6, 4, 2, 4, 4, 4, 6, 3, 6, 4, 6, 6, 6, 4, 4, 4, 2, 6, 6, 3, 3, 4, 1, 3, 4, 3, 6, 3, 5, 2, 4]",31,3.829
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/56,"[4, 4, 2, 2, 3, 1, 4, 6, 4, 5, 2, 3, 3, 4, 1, 4, 2, 4, 4, 5, 3, 5, 3, 4, 5, 5, 4, 3, 3, 6, 4, 3, 5, 3, 3, 6]",36,4.435
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/57,"[6, 3, 5, 6, 5, 2, 2, 5, 4, 6, 3, 4, 3, 3, 6, 2, 4, 4, 1, 3, 4, 2, 2, 6, 4, 5, 3, 4, 4, 2, 2, 4, 3, 3, 4]",35,4.326
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/58,"[4, 4, 2, 4, 6, 5, 6, 3, 5, 5, 5, 4, 5, 3, 4, 4, 3, 5, 2, 5, 6, 3, 4, 5, 1, 4, 2, 4, 5, 3, 2, 5]",32,3.97
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/59,"[4, 2, 2, 5, 6, 2, 6, 3, 4, 2, 2, 3, 4, 4, 3, 5, 5, 4, 4, 6, 5, 5, 4, 1, 1, 2, 4, 3, 1, 4, 3, 3, 4, 3, 2, 2, 2, 4]",38,4.678
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/60,"[5, 3, 2, 5, 4, 6, 4, 5, 4, 6, 2, 6, 5, 1, 3, 1, 3, 5, 4, 2, 3, 3, 4, 3, 4, 6, 4, 3, 4, 4, 1, 6, 4, 3]",34,4.208
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/61,"[5, 2, 2, 1, 2, 3, 1, 5, 6, 3, 4, 3, 2, 5, 4, 3, 3, 1, 3, 3, 2, 4, 5, 3, 5, 6, 5, 3, 2, 5, 2, 4, 6, 4, 5, 2, 3, 3]",38,4.684
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/62,"[4, 3, 2, 3, 4, 4, 3, 4, 1, 1, 4, 3, 4, 2, 3, 3, 4, 4, 5, 3, 3, 6, 2, 2, 3, 1, 2, 2, 2, 2, 2, 4, 3, 2, 4, 2, 2, 4, 4, 2, 4, 1, 4, 5]",44,5.374
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/63,"[4, 4, 2, 3, 6, 4, 5, 6, 6, 3, 4, 4, 6, 5, 6, 1, 2, 4, 6, 4, 4, 2, 2, 2, 2, 3, 4, 4, 3, 5, 3, 2, 3, 1, 1, 2]",36,4.448
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/64,"[4, 2, 4, 6, 6, 3, 4, 5, 4, 4, 4, 1, 6, 4, 3, 3, 1, 2, 5, 4, 5, 6, 5, 3, 2, 3, 3, 3, 2, 4, 2, 3, 1, 4, 3, 6]",36,4.464
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/65,"[4, 5, 5, 2, 4, 6, 4, 3, 3, 5, 3, 5, 2, 4, 4, 4, 5, 4, 4, 5, 3, 3, 4, 3, 6, 3, 4, 2, 3, 6, 4, 4, 1, 5]",34,4.261
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/66,"[6, 2, 5, 6, 3, 3, 2, 6, 6, 3, 1, 3, 4, 2, 5, 3, 3, 5, 3, 6, 5, 6, 6, 3, 4, 6, 3, 5, 6, 4, 6]",31,3.871
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/67,"[5, 3, 5, 5, 4, 4, 3, 5, 1, 6, 4, 4, 2, 6, 4, 1, 3, 6, 2, 4, 5, 2, 2, 3, 3, 1, 2, 3, 1, 6, 5, 5, 3, 2, 2, 2, 4]",37,4.563
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/68,"[4, 5, 6, 2, 3, 3, 5, 5, 3, 4, 5, 1, 5, 4, 3, 4, 3, 5, 5, 4, 5, 4, 4, 4, 1, 4, 3, 6, 1, 3, 4, 4, 6]",33,4.079
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/69,"[5, 4, 2, 2, 4, 5, 4, 3, 4, 3, 3, 3, 4, 4, 4, 5, 6, 4, 4, 2, 2, 2, 1, 2, 5, 4, 6, 5, 4, 4, 2, 5, 5, 2, 3, 4]",36,4.44
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/70,"[6, 2, 5, 6, 6, 3, 3, 3, 6, 4, 2, 4, 1, 6, 2, 4, 4, 4, 3, 6, 6, 3, 4, 6, 5, 4, 3, 6, 6, 4, 5]",31,3.834
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/71,"[4, 4, 3, 6, 4, 4, 4, 4, 5, 2, 4, 4, 5, 4, 5, 4, 1, 6, 3, 2, 3, 6, 4, 6, 5, 4, 2, 5, 2, 3, 4, 4, 3]",33,4.08
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/72,"[4, 2, 2, 5, 6, 3, 6, 3, 4, 3, 4, 2, 4, 5, 4, 3, 4, 4, 3, 5, 3, 4, 3, 3, 3, 6, 5, 3, 6, 4, 5, 6, 5]",33,4.09
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/73,"[4, 4, 5, 6, 4, 1, 3, 4, 4, 2, 3, 4, 3, 4, 3, 6, 3, 3, 1, 2, 4, 1, 4, 5, 2, 3, 4, 4, 4, 4, 4, 5, 4, 4, 6, 1]",36,4.439
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/74,"[4, 6, 6, 6, 6, 5, 6, 6, 3, 6, 5, 6, 4, 5, 6, 5, 6, 4, 5, 3, 2, 5, 4, 4, 2, 4, 3, 2]",28,3.464
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/75,"[6, 3, 5, 6, 2, 4, 3, 6, 6, 5, 6, 4, 5, 3, 5, 4, 3, 5, 4, 3, 4, 3, 1, 2, 6, 2, 1, 1, 4, 2, 3, 4, 1, 4, 3]",35,4.326
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/76,"[6, 2, 5, 6, 6, 3, 1, 1, 4, 4, 6, 3, 6, 4, 3, 6, 4, 1, 3, 6, 4, 4, 6, 4, 5, 6, 4, 4, 5, 3, 4]",31,3.885
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/77,"[5, 2, 2, 2, 4, 4, 6, 3, 3, 2, 1, 3, 4, 6, 4, 6, 4, 1, 1, 3, 6, 5, 4, 3, 4, 3, 1, 4, 5, 5, 2, 5, 3, 3, 6, 5]",36,4.434
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/78,"[5, 3, 2, 6, 4, 5, 4, 2, 1, 4, 2, 4, 3, 1, 4, 2, 4, 6, 3, 3, 2, 5, 2, 2, 4, 5, 4, 3, 3, 2, 5, 5, 4, 1, 2, 1, 4, 5, 4]",39,4.835
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/79,"[5, 3, 3, 3, 4, 6, 6, 2, 3, 5, 5, 2, 4, 3, 2, 1, 4, 4, 4, 2, 2, 4, 4, 2, 1, 4, 3, 4, 3, 2, 1, 3, 3, 2, 6, 2, 4, 4, 5]",39,4.793
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/80,"[5, 2, 4, 4, 3, 6, 5, 2, 2, 2, 4, 4, 2, 3, 4, 3, 6, 1, 2, 4, 4, 2, 3, 6, 5, 6, 3, 4, 4, 3, 4, 3, 3, 5, 2, 4]",36,4.439
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/81,"[5, 4, 3, 1, 2, 4, 5, 4, 2, 4, 4, 6, 5, 2, 2, 1, 4, 4, 4, 3, 6, 4, 5, 4, 5, 5, 6, 4, 6, 3, 2, 3, 2, 4]",34,4.236
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/82,"[5, 3, 3, 1, 3, 3, 5, 2, 6, 6, 3, 3, 3, 2, 5, 6, 1, 3, 2, 3, 5, 4, 2, 3, 4, 3, 3, 6, 2, 4, 4, 4, 3, 4, 6, 4]",36,4.43
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/83,"[6, 4, 2, 2, 2, 4, 5, 3, 4, 3, 4, 1, 2, 2, 4, 4, 6, 6, 6, 4, 3, 3, 2, 4, 3, 4, 4, 2, 6, 2, 3, 3, 1, 4, 4, 5, 4]",37,4.582
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/84,"[6, 3, 2, 3, 4, 3, 3, 1, 3, 3, 4, 2, 4, 3, 2, 1, 3, 4, 6, 4, 2, 4, 2, 6, 2, 6, 4, 1, 6, 6, 5, 6, 4, 6, 4]",35,4.354
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/85,"[6, 2, 5, 5, 4, 2, 2, 4, 6, 3, 3, 5, 4, 4, 5, 4, 3, 3, 4, 3, 4, 2, 4, 2, 2, 3, 4, 4, 4, 3, 6, 6, 4, 4]",34,4.22
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/86,"[6, 4, 4, 3, 4, 3, 6, 4, 3, 5, 4, 4, 4, 4, 6, 3, 4, 3, 4, 4, 2, 4, 1, 5, 4, 2, 3, 6, 2, 4, 2, 1, 4, 5, 4]",35,4.357
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/87,"[6, 6, 1, 6, 4, 6, 4, 3, 4, 4, 4, 4, 1, 4, 3, 4, 4, 1, 5, 6, 4, 4, 6, 3, 6, 4, 3, 4, 4, 4, 2, 3, 4]",33,4.084
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/88,"[5, 4, 4, 6, 4, 3, 4, 6, 6, 3, 3, 4, 2, 4, 1, 3, 1, 4, 5, 5, 6, 3, 3, 1, 1, 2, 1, 3, 6, 6, 5, 3, 2, 6, 4]",35,4.337
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/89,"[6, 5, 3, 5, 6, 3, 4, 4, 2, 3, 4, 4, 2, 3, 2, 1, 1, 2, 1, 1, 1, 6, 3, 1, 4, 4, 3, 5, 4, 3, 2, 2, 4, 3, 6, 3, 2, 2, 3, 4, 3]",41,5.064
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/90,"[5, 4, 4, 6, 6, 4, 5, 6, 4, 2, 3, 3, 6, 2, 4, 4, 1, 1, 3, 3, 6, 3, 4, 5, 4, 4, 2, 4, 3, 3, 4, 5, 5]",33,4.107
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/91,"[4, 4, 2, 2, 3, 5, 4, 4, 2, 3, 5, 2, 3, 3, 2, 4, 4, 3, 5, 3, 2, 4, 4, 4, 2, 3, 6, 2, 2, 6, 4, 4, 5, 4, 2, 2, 2, 4]",38,4.723
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/92,"[5, 3, 1, 5, 6, 6, 3, 3, 5, 4, 3, 3, 2, 1, 5, 3, 4, 4, 6, 1, 4, 4, 4, 3, 4, 5, 5, 5, 4, 6, 4, 6, 3]",33,4.105
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/93,"[4, 4, 6, 6, 1, 4, 6, 2, 4, 2, 4, 4, 4, 3, 5, 3, 2, 5, 5, 6, 2, 1, 1, 6, 2, 5, 5, 1, 4, 3, 2, 1, 4, 3, 4, 3, 2]",37,4.662
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/94,"[4, 4, 6, 1, 3, 2, 5, 1, 4, 4, 2, 5, 4, 4, 4, 6, 4, 4, 3, 3, 6, 4, 3, 1, 1, 3, 1, 3, 3, 5, 5, 2, 5, 4, 5, 3, 3]",37,4.648
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/95,"[5, 3, 5, 6, 6, 2, 3, 4, 6, 4, 5, 2, 5, 4, 4, 4, 4, 4, 3, 5, 4, 4, 2, 6, 5, 6, 4, 4, 4, 6]",30,3.799
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/96,"[5, 3, 5, 6, 4, 1, 5, 4, 2, 4, 3, 2, 4, 4, 4, 4, 4, 3, 4, 3, 3, 4, 4, 4, 3, 5, 5, 6, 4, 1, 4, 3, 2, 2, 6]",35,4.416
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/97,"[4, 4, 4, 6, 4, 1, 3, 4, 6, 6, 3, 3, 5, 5, 6, 2, 4, 3, 4, 3, 4, 1, 1, 4, 4, 1, 3, 5, 5, 1, 2, 2, 1, 4, 3, 4, 2, 3]",38,4.754
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/98,"[6, 2, 2, 4, 3, 4, 6, 6, 4, 5, 6, 4, 6, 4, 4, 2, 4, 3, 6, 3, 6, 1, 2, 4, 4, 2, 3, 3, 2, 2, 2, 4, 3, 3, 3]",35,4.378
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/99,"[5, 3, 5, 6, 4, 4, 2, 4, 4, 2, 3, 3, 2, 2, 4, 3, 3, 5, 3, 5, 1, 4, 4, 3, 5, 2, 4, 3, 4, 2, 2, 2, 3, 2, 2, 6, 1, 5, 4]",39,4.879
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/100,"[4, 5, 5, 4, 5, 3, 4, 2, 5, 3, 5, 3, 3, 1, 6, 2, 4, 6, 3, 3, 4, 3, 5, 2, 6, 4, 4, 3, 4, 4, 1, 4, 2, 3, 4]",35,4.353
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/101,"[6, 4, 4, 5, 6, 3, 2, 3, 1, 1, 2, 3, 4, 3, 5, 4, 3, 4, 6, 4, 4, 4, 2, 3, 6, 3, 3, 4, 4, 2, 4, 2, 4, 3, 2, 4, 3]",37,4.63
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/102,"[6, 3, 6, 6, 5, 3, 4, 2, 4, 2, 4, 5, 4, 4, 2, 2, 5, 2, 2, 2, 2, 4, 2, 5, 6, 3, 6, 2, 4, 1, 1, 5, 4, 6, 5]",35,4.417
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/103,"[5, 3, 5, 6, 6, 4, 4, 6, 2, 4, 4, 3, 2, 4, 3, 2, 4, 4, 3, 6, 3, 2, 6, 4, 4, 6, 3, 2, 6, 4, 4, 3, 3]",33,4.109
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/104,"[4, 6, 2, 3, 6, 6, 3, 6, 4, 3, 4, 5, 6, 4, 2, 4, 1, 4, 6, 4, 3, 5, 4, 5, 4, 6, 5, 6, 5, 4]",30,3.773
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/105,"[4, 4, 5, 3, 4, 3, 4, 5, 2, 2, 6, 2, 5, 2, 5, 4, 4, 3, 5, 4, 6, 2, 3, 4, 4, 6, 4, 6, 4, 6, 5, 2]",32,4.005
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/106,"[6, 2, 3, 2, 6, 4, 4, 4, 1, 3, 4, 4, 2, 4, 5, 4, 3, 2, 3, 4, 5, 4, 4, 2, 3, 4, 4, 4, 2, 4, 4, 6, 2, 4, 4, 2]",36,4.467
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/107,"[4, 4, 3, 3, 4, 4, 6, 3, 3, 3, 3, 6, 2, 4, 4, 2, 6, 4, 4, 4, 4, 4, 6, 5, 5, 4, 2, 4, 4, 6, 2, 5, 6]",33,4.133
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/108,"[6, 3, 5, 6, 4, 6, 3, 5, 4, 3, 2, 1, 1, 5, 5, 4, 3, 3, 4, 5, 3, 1, 2, 6, 3, 4, 4, 3, 5, 5, 4, 3, 4, 6]",34,4.256
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/109,"[4, 6, 2, 1, 4, 1, 4, 6, 5, 3, 4, 2, 3, 6, 6, 3, 1, 4, 4, 3, 4, 4, 4, 2, 3, 1, 3, 3, 6, 4, 3, 6, 5, 3, 5]",35,4.381
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/110,"[6, 2, 4, 5, 4, 5, 3, 2, 2, 6, 4, 5, 6, 4, 4, 2, 4, 2, 1, 5, 6, 5, 4, 5, 2, 4, 2, 4, 4, 2, 5, 3, 4, 6]",34,4.229
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/111,"[4, 5, 5, 2, 5, 6, 3, 4, 2, 5, 2, 2, 2, 6, 3, 4, 3, 3, 4, 6, 3, 4, 6, 5, 6, 4, 5, 3, 5, 1, 6, 6]",32,3.987
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/112,"[5, 5, 4, 6, 6, 4, 4, 3, 1, 4, 2, 6, 3, 3, 4, 4, 6, 3, 4, 1, 1, 4, 6, 5, 4, 3, 3, 4, 2, 3, 2, 3, 1, 1, 3, 3, 6]",37,4.636
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/113,"[6, 2, 3, 4, 4, 4, 1, 3, 3, 3, 5, 4, 6, 1, 3, 4, 4, 6, 1, 3, 4, 3, 6, 3, 4, 1, 1, 4, 3, 4, 4, 3, 6, 2, 4, 4, 2]",37,4.618
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/114,"[5, 4, 3, 3, 6, 1, 4, 4, 4, 4, 4, 4, 4, 4, 3, 5, 5, 4, 6, 4, 3, 4, 4, 2, 3, 6, 2, 4, 4, 5, 3, 3, 4]",33,4.118
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/115,"[4, 6, 3, 3, 4, 6, 4, 4, 4, 4, 3, 2, 4, 4, 5, 2, 4, 3, 3, 4, 3, 4, 4, 2, 2, 6, 5, 6, 4, 2, 1, 2, 4, 2, 3, 5]",36,4.492
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/116,"[5, 1, 4, 2, 3, 5, 2, 2, 6, 6, 4, 2, 4, 1, 6, 3, 5, 1, 6, 4, 4, 6, 3, 4, 4, 2, 4, 3, 4, 6, 6, 4, 4, 4]",34,4.226
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/117,"[4, 6, 3, 1, 4, 5, 3, 6, 6, 3, 4, 5, 5, 2, 4, 6, 3, 4, 3, 4, 5, 6, 2, 2, 4, 4, 5, 1, 2, 2, 2, 2, 2, 3, 1, 5]",36,4.494
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/118,"[6, 3, 4, 2, 2, 4, 4, 6, 6, 4, 4, 2, 5, 6, 3, 3, 2, 5, 6, 4, 4, 6, 3, 5, 4, 6, 1, 1, 2, 1, 3, 6, 2, 3]",34,4.242
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/119,"[6, 3, 6, 6, 6, 3, 3, 5, 4, 2, 5, 5, 4, 4, 1, 3, 4, 6, 4, 6, 3, 3, 5, 6, 3, 2, 4, 2, 3, 6, 5]",31,3.871
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/120,"[4, 6, 3, 3, 3, 4, 4, 6, 3, 4, 4, 4, 5, 2, 3, 4, 2, 4, 4, 2, 4, 4, 5, 4, 4, 4, 4, 5, 4, 6, 3, 4, 4]",33,4.104
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/121,"[6, 2, 6, 4, 4, 4, 2, 3, 2, 6, 5, 3, 4, 5, 4, 3, 6, 5, 6, 2, 4, 6, 4, 5, 1, 4, 6, 4, 4, 3, 3, 3]",32,3.974
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/122,"[5, 2, 3, 6, 5, 4, 2, 1, 1, 4, 6, 4, 4, 6, 2, 1, 4, 3, 1, 4, 6, 4, 5, 4, 4, 3, 5, 3, 5, 3, 3, 3, 6, 4, 5]",35,4.324
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/123,"[6, 3, 2, 2, 1, 3, 6, 3, 4, 6, 6, 4, 2, 1, 3, 3, 4, 5, 1, 5, 4, 5, 6, 5, 4, 4, 3, 6, 6, 5, 3, 4, 5]",33,4.114
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/124,"[5, 4, 3, 5, 4, 2, 2, 4, 4, 6, 6, 6, 2, 2, 4, 4, 4, 3, 3, 1, 2, 2, 3, 4, 2, 3, 3, 5, 3, 3, 4, 1, 4, 2, 4, 3, 3, 2, 4]",39,4.815
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/125,"[6, 3, 2, 5, 3, 6, 4, 2, 4, 5, 5, 4, 2, 4, 6, 3, 3, 4, 2, 3, 4, 4, 1, 1, 1, 2, 1, 6, 4, 2, 3, 3, 2, 3, 1, 3, 4, 4, 2, 1]",40,4.932
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/126,"[5, 4, 6, 4, 6, 6, 4, 2, 4, 4, 4, 4, 6, 6, 3, 1, 4, 4, 4, 4, 3, 4, 4, 4, 4, 5, 4, 3, 3, 4, 5]",31,3.858
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/127,"[5, 6, 1, 3, 6, 4, 5, 2, 1, 4, 2, 4, 5, 5, 2, 5, 6, 3, 4, 3, 4, 4, 4, 6, 4, 5, 6, 3, 1, 5, 3, 2, 4, 4]",34,4.226
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/128,"[6, 3, 1, 2, 3, 3, 6, 6, 4, 2, 1, 4, 6, 6, 5, 3, 4, 4, 3, 4, 3, 4, 2, 2, 2, 3, 4, 4, 3, 5, 2, 1, 5, 5, 3, 3, 4]",37,4.574
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/129,"[4, 4, 4, 6, 4, 6, 5, 4, 2, 3, 2, 2, 4, 6, 3, 3, 3, 2, 3, 4, 4, 2, 3, 3, 4, 3, 6, 3, 4, 4, 4, 6, 4, 2, 2]",35,4.366
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/130,"[4, 4, 1, 6, 6, 5, 5, 5, 2, 6, 6, 1, 4, 4, 3, 4, 4, 4, 2, 1, 2, 3, 4, 2, 6, 2, 3, 3, 3, 3, 4, 1, 1, 4, 4, 4, 6]",37,5.078
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/131,"[3, 3, 1, 2, 3, 5, 2, 4, 6, 4, 2, 4, 4, 3, 4, 5, 6, 2, 1, 6, 3, 6, 4, 4, 6, 4, 5, 4, 6, 3, 5, 1, 5, 4]",34,4.672
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/132,"[5, 3, 5, 6, 3, 1, 1, 4, 2, 3, 5, 4, 5, 2, 4, 2, 3, 3, 1, 2, 3, 4, 2, 5, 4, 5, 6, 2, 6, 2, 6, 4, 3, 6, 1, 4, 1]",37,4.918
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/133,"[4, 5, 5, 2, 5, 6, 4, 4, 6, 4, 1, 1, 3, 5, 2, 4, 2, 3, 4, 3, 2, 2, 3, 2, 4, 6, 4, 4, 1, 4, 4, 5, 2, 2, 4, 5, 4]",37,4.678
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/134,"[4, 4, 5, 4, 6, 6, 3, 4, 2, 4, 4, 2, 2, 4, 6, 1, 3, 3, 4, 3, 3, 4, 6, 4, 4, 4, 6, 6, 5, 3, 3, 4, 2]",33,4.073
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/135,"[6, 4, 3, 6, 5, 6, 4, 2, 4, 4, 4, 3, 4, 3, 3, 4, 3, 6, 2, 4, 4, 2, 4, 2, 5, 5, 5, 4, 2, 2, 2, 2, 1, 4, 6]",35,4.301
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/136,"[5, 3, 3, 4, 6, 6, 4, 3, 1, 2, 4, 5, 3, 4, 3, 4, 5, 3, 4, 1, 6, 3, 3, 4, 4, 5, 4, 4, 2, 6, 3, 6, 4, 3]",34,4.17
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/137,"[5, 3, 5, 6, 6, 3, 3, 4, 6, 4, 5, 3, 3, 1, 4, 4, 5, 3, 4, 6, 5, 4, 3, 4, 2, 6, 3, 3, 6, 6, 4]",31,3.797
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/138,"[6, 3, 5, 6, 5, 4, 4, 2, 4, 3, 6, 4, 2, 4, 1, 4, 4, 4, 5, 5, 4, 2, 4, 2, 2, 3, 4, 2, 2, 2, 6, 4, 5, 6]",34,4.177
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/139,"[6, 4, 3, 4, 4, 3, 4, 6, 4, 2, 4, 3, 3, 3, 5, 3, 6, 6, 6, 4, 3, 4, 2, 2, 4, 2, 4, 3, 2, 4, 3, 2, 2, 2, 2, 2, 5]",37,4.545
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/140,"[4, 3, 3, 4, 6, 4, 3, 5, 4, 3, 3, 5, 4, 4, 5, 3, 4, 2, 4, 4, 4, 5, 4, 6, 5, 4, 5, 6, 2, 5, 1, 5]",32,3.93
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/141,"[4, 4, 2, 3, 4, 4, 6, 6, 4, 4, 3, 5, 2, 6, 3, 4, 5, 6, 4, 2, 1, 4, 1, 4, 1, 3, 6, 4, 6, 4, 3, 5, 2, 4]",34,4.181
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/142,"[6, 3, 2, 1, 1, 2, 4, 6, 4, 3, 1, 6, 4, 6, 3, 4, 4, 5, 4, 6, 4, 4, 1, 5, 4, 3, 4, 4, 4, 4, 5, 2, 3, 2, 2, 4]",36,4.383
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/143,"[4, 4, 5, 4, 2, 6, 2, 2, 4, 2, 1, 4, 5, 6, 5, 1, 4, 6, 4, 3, 2, 3, 4, 4, 2, 4, 4, 4, 6, 3, 5, 4, 1, 6, 3]",35,4.303
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/144,"[6, 2, 1, 2, 2, 2, 1, 4, 6, 5, 4, 6, 1, 6, 1, 4, 2, 6, 2, 2, 4, 2, 2, 2, 4, 3, 5, 4, 4, 3, 5, 2, 5, 4, 6, 4, 6]",37,4.662
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/145,"[6, 2, 5, 6, 6, 2, 3, 4, 4, 3, 4, 4, 4, 2, 4, 3, 5, 3, 3, 6, 5, 4, 3, 3, 4, 2, 4, 4, 4, 3, 3, 4, 1, 4, 3]",35,4.386
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/146,"[6, 2, 6, 6, 5, 3, 2, 2, 2, 2, 3, 4, 4, 5, 6, 4, 5, 5, 4, 4, 4, 4, 4, 1, 3, 6, 5, 6, 4, 3, 4, 4]",32,4.003
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/147,"[4, 3, 2, 4, 2, 4, 6, 4, 3, 4, 2, 2, 6, 3, 3, 6, 6, 5, 5, 4, 4, 4, 4, 5, 1, 4, 5, 5, 4, 3, 2, 6, 2, 3]",34,4.228
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/148,"[4, 4, 3, 4, 4, 6, 6, 3, 1, 1, 4, 5, 2, 2, 4, 3, 3, 1, 3, 6, 6, 3, 3, 4, 3, 2, 4, 4, 4, 4, 3, 2, 6, 2, 4, 4, 4]",37,4.582
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/149,"[6, 5, 6, 3, 6, 6, 3, 4, 5, 1, 6, 3, 6, 4, 5, 4, 4, 3, 1, 3, 6, 3, 3, 6, 4, 4, 4, 4, 6, 6]",30,3.752
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/150,"[5, 2, 4, 6, 4, 6, 2, 4, 6, 6, 3, 2, 6, 5, 5, 2, 3, 6, 6, 4, 3, 4, 6, 6, 3, 4, 1, 6, 4, 5]",30,3.741
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/151,"[4, 3, 3, 4, 6, 5, 4, 2, 3, 6, 5, 4, 3, 2, 2, 2, 6, 6, 4, 6, 3, 4, 4, 2, 5, 5, 5, 6, 6, 4, 2, 3]",32,3.988
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/152,"[4, 6, 4, 3, 4, 6, 2, 2, 4, 6, 6, 1, 4, 5, 6, 4, 3, 6, 5, 2, 3, 2, 3, 4, 6, 3, 4, 3, 4, 4, 6, 4]",32,3.973
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/153,"[6, 4, 5, 6, 6, 4, 3, 5, 2, 2, 4, 3, 1, 6, 4, 1, 3, 2, 4, 2, 3, 4, 2, 5, 4, 4, 4, 3, 6, 1, 6, 6, 6, 3]",34,4.217
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/154,"[4, 3, 4, 4, 5, 6, 2, 2, 1, 4, 4, 3, 3, 3, 3, 3, 3, 4, 3, 4, 4, 2, 4, 5, 6, 4, 4, 4, 1, 2, 3, 2, 2, 5, 6, 3, 5]",37,4.59
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/155,"[4, 6, 3, 4, 4, 3, 6, 4, 2, 3, 5, 6, 4, 2, 1, 6, 6, 1, 4, 6, 4, 6, 4, 3, 2, 3, 4, 3, 4, 6, 2, 4, 3]",33,4.11
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/156,"[5, 4, 3, 4, 6, 6, 4, 2, 3, 4, 6, 2, 6, 3, 5, 4, 4, 4, 5, 6, 5, 4, 6, 6, 5, 6, 6, 6]",28,3.483
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/157,"[4, 3, 4, 6, 6, 6, 3, 6, 2, 2, 1, 3, 4, 3, 4, 6, 6, 6, 4, 6, 4, 4, 5, 2, 4, 6, 2, 2, 3, 2, 6, 2, 4]",33,4.075
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/158,"[4, 6, 5, 6, 6, 3, 2, 2, 5, 2, 4, 3, 4, 2, 1, 2, 5, 3, 6, 6, 2, 4, 4, 3, 4, 3, 6, 6, 4, 2, 4, 3, 4, 4]",34,4.185
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/159,"[4, 6, 2, 3, 3, 3, 6, 2, 2, 6, 4, 4, 4, 2, 4, 4, 4, 5, 4, 1, 1, 3, 4, 4, 3, 3, 4, 1, 3, 3, 1, 2, 6, 3, 3, 2, 3, 5, 4]",39,4.836
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/160,"[4, 6, 6, 3, 4, 6, 6, 4, 3, 4, 3, 3, 2, 4, 3, 5, 3, 5, 6, 3, 4, 4, 5, 5, 3, 5, 6, 4, 6, 4]",30,3.749
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/161,"[4, 4, 1, 5, 5, 3, 3, 4, 3, 2, 2, 2, 4, 4, 3, 2, 5, 4, 3, 4, 4, 1, 2, 1, 4, 4, 4, 3, 5, 6, 5, 4, 2, 6, 6, 3, 3]",37,4.603
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/162,"[5, 4, 3, 4, 4, 6, 6, 3, 1, 2, 2, 1, 2, 6, 1, 5, 4, 4, 4, 1, 3, 4, 4, 6, 1, 6, 2, 4, 4, 2, 2, 2, 1, 2, 4, 3, 3, 3, 3, 3]",40,4.946
+FIN_FD_B_conv_beta1_s0_st0600__humaneval,int4,humaneval,HumanEval/163,"[4, 3, 2, 6, 6, 6, 3, 2, 1, 3, 5, 2, 3, 2, 3, 4, 6, 5, 4, 3, 4, 1, 6, 1, 6, 3, 2, 4, 4, 3, 2, 6, 3, 4, 6]",35,4.331

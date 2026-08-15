@@ -1,0 +1,277 @@
+[
+ {
+  "name": "ptq_vs_dpconv",
+  "a": "CANON_B9@int4",
+  "b": "FIN_DP_B_conv_beta1_s2_st0600__sharegpt@int4",
+  "dataset": "sharegpt",
+  "status": "ok",
+  "tau_a": 3.2351,
+  "ci_a": [
+   3.134,
+   3.3327
+  ],
+  "tau_b": 3.3438,
+  "ci_b": [
+   3.2394,
+   3.4393
+  ],
+  "delta_b_minus_a": 0.1087,
+  "ci_delta": [
+   0.044,
+   0.1732
+  ],
+  "p_two_sided": 0.0004,
+  "n_common": 80,
+  "reps": 10000
+ },
+ {
+  "name": "ptq_vs_dphyb",
+  "a": "CANON_B9@int4",
+  "b": "FIN_DP_B_hybrid_beta0.1_s2_st0600__sharegpt@int4",
+  "dataset": "sharegpt",
+  "status": "ok",
+  "tau_a": 3.2351,
+  "ci_a": [
+   3.1344,
+   3.3307
+  ],
+  "tau_b": 3.3301,
+  "ci_b": [
+   3.2402,
+   3.4168
+  ],
+  "delta_b_minus_a": 0.095,
+  "ci_delta": [
+   0.0307,
+   0.16
+  ],
+  "p_two_sided": 0.0036,
+  "n_common": 80,
+  "reps": 10000
+ },
+ {
+  "name": "ptq_vs_fdconv",
+  "a": "CANON_B9@int4",
+  "b": "FIN_FD_B_conv_beta1_s1_st0600__sharegpt@int4",
+  "dataset": "sharegpt",
+  "status": "ok",
+  "tau_a": 3.2351,
+  "ci_a": [
+   3.1333,
+   3.333
+  ],
+  "tau_b": 3.2793,
+  "ci_b": [
+   3.1782,
+   3.3767
+  ],
+  "delta_b_minus_a": 0.0442,
+  "ci_delta": [
+   -0.0192,
+   0.108
+  ],
+  "p_two_sided": 0.1798,
+  "n_common": 80,
+  "reps": 10000
+ },
+ {
+  "name": "ptq_vs_hb005h",
+  "a": "CANON_B9@int4",
+  "b": "FIN_HB_B_hybrid_b0.005_s0_st3000__sharegpt@int4",
+  "dataset": "sharegpt",
+  "status": "ok",
+  "tau_a": 3.2351,
+  "ci_a": [
+   3.1355,
+   3.3332
+  ],
+  "tau_b": 3.4308,
+  "ci_b": [
+   3.3355,
+   3.5244
+  ],
+  "delta_b_minus_a": 0.1957,
+  "ci_delta": [
+   0.132,
+   0.2609
+  ],
+  "p_two_sided": 0.0,
+  "n_common": 80,
+  "reps": 10000
+ },
+ {
+  "name": "ptq_vs_hb01h",
+  "a": "CANON_B9@int4",
+  "b": "FIN_HB_B_hybrid_b0.01_s0_st3000__sharegpt@int4",
+  "dataset": "sharegpt",
+  "status": "ok",
+  "tau_a": 3.2351,
+  "ci_a": [
+   3.1345,
+   3.3333
+  ],
+  "tau_b": 3.4314,
+  "ci_b": [
+   3.3202,
+   3.5374
+  ],
+  "delta_b_minus_a": 0.1963,
+  "ci_delta": [
+   0.1317,
+   0.2633
+  ],
+  "p_two_sided": 0.0,
+  "n_common": 80,
+  "reps": 10000
+ },
+ {
+  "name": "ptq_vs_hb02h",
+  "a": "CANON_B9@int4",
+  "b": "FIN_HB_B_hybrid_b0.02_s0_st3000__sharegpt@int4",
+  "dataset": "sharegpt",
+  "status": "ok",
+  "tau_a": 3.2351,
+  "ci_a": [
+   3.1363,
+   3.3342
+  ],
+  "tau_b": 3.3965,
+  "ci_b": [
+   3.2881,
+   3.4973
+  ],
+  "delta_b_minus_a": 0.1614,
+  "ci_delta": [
+   0.0951,
+   0.23
+  ],
+  "p_two_sided": 0.0,
+  "n_common": 80,
+  "reps": 10000
+ },
+ {
+  "name": "ptq_vs_hb02c",
+  "a": "CANON_B9@int4",
+  "b": "FIN_HB_B_conv_b0.02_s0_st3000__sharegpt@int4",
+  "dataset": "sharegpt",
+  "status": "ok",
+  "tau_a": 3.2351,
+  "ci_a": [
+   3.1348,
+   3.3349
+  ],
+  "tau_b": 3.3943,
+  "ci_b": [
+   3.3003,
+   3.4835
+  ],
+  "delta_b_minus_a": 0.1592,
+  "ci_delta": [
+   0.0852,
+   0.232
+  ],
+  "p_two_sided": 0.0,
+  "n_common": 80,
+  "reps": 10000
+ },
+ {
+  "name": "ptq_vs_pc",
+  "a": "CANON_B9@int4",
+  "b": "FIN_PC_B_r16_lr1e-4_s0_st1500__sharegpt@int4",
+  "dataset": "sharegpt",
+  "status": "ok",
+  "tau_a": 3.2351,
+  "ci_a": [
+   3.1354,
+   3.3345
+  ],
+  "tau_b": 3.2199,
+  "ci_b": [
+   3.1253,
+   3.3125
+  ],
+  "delta_b_minus_a": -0.0152,
+  "ci_delta": [
+   -0.077,
+   0.0449
+  ],
+  "p_two_sided": 0.6292,
+  "n_common": 80,
+  "reps": 10000
+ },
+ {
+  "name": "ptq_vs_plain",
+  "a": "CANON_B9@int4",
+  "b": "CFIN_P2conv_gsr5_s0@int4",
+  "dataset": "sharegpt",
+  "status": "ok",
+  "tau_a": 3.2351,
+  "ci_a": [
+   3.1328,
+   3.3358
+  ],
+  "tau_b": 3.233,
+  "ci_b": [
+   3.1352,
+   3.3282
+  ],
+  "delta_b_minus_a": -0.0021,
+  "ci_delta": [
+   -0.0637,
+   0.0608
+  ],
+  "p_two_sided": 0.9608,
+  "n_common": 80,
+  "reps": 10000
+ },
+ {
+  "name": "plain_vs_hb005h",
+  "a": "CFIN_P2conv_gsr5_s0@int4",
+  "b": "FIN_HB_B_hybrid_b0.005_s0_st3000__sharegpt@int4",
+  "dataset": "sharegpt",
+  "status": "ok",
+  "tau_a": 3.233,
+  "ci_a": [
+   3.1331,
+   3.3298
+  ],
+  "tau_b": 3.4308,
+  "ci_b": [
+   3.3347,
+   3.5264
+  ],
+  "delta_b_minus_a": 0.1978,
+  "ci_delta": [
+   0.1302,
+   0.2669
+  ],
+  "p_two_sided": 0.0,
+  "n_common": 80,
+  "reps": 10000
+ },
+ {
+  "name": "plain_vs_dpconv",
+  "a": "CFIN_P2conv_gsr5_s0@int4",
+  "b": "FIN_DP_B_conv_beta1_s2_st0600__sharegpt@int4",
+  "dataset": "sharegpt",
+  "status": "ok",
+  "tau_a": 3.233,
+  "ci_a": [
+   3.1345,
+   3.327
+  ],
+  "tau_b": 3.3438,
+  "ci_b": [
+   3.2375,
+   3.4385
+  ],
+  "delta_b_minus_a": 0.1108,
+  "ci_delta": [
+   0.0456,
+   0.1705
+  ],
+  "p_two_sided": 0.0002,
+  "n_common": 80,
+  "reps": 10000
+ }
+]

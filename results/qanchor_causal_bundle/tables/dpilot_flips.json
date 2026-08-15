@@ -1,0 +1,34 @@
+{
+ "DP_B_conv_beta0.01_s0": {
+  "H_Q": 0.04443,
+  "down": 0.08215
+ },
+ "DP_B_conv_beta0.1_s0": {
+  "H_Q": 0.04438,
+  "down": 0.08208
+ },
+ "DP_B_conv_beta10_s0": {
+  "H_Q": 0.04149,
+  "down": 0.08424
+ },
+ "DP_B_conv_beta1_s0": {
+  "H_Q": 0.04422,
+  "down": 0.08271
+ },
+ "DP_B_hybrid_beta0.01_s0": {
+  "H_Q": 0.02817,
+  "down": 0.03464
+ },
+ "DP_B_hybrid_beta0.1_s0": {
+  "H_Q": 0.02818,
+  "down": 0.03492
+ },
+ "DP_B_hybrid_beta10_s0": {
+  "H_Q": 0.02778,
+  "down": 0.03516
+ },
+ "DP_B_hybrid_beta1_s0": {
+  "H_Q": 0.02812,
+  "down": 0.03469
+ }
+}

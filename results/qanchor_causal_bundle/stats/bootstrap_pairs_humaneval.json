@@ -1,0 +1,277 @@
+[
+ {
+  "name": "ptq_vs_dpconv",
+  "a": "CANON_B9@int4",
+  "b": "FIN_DP_B_conv_beta1_s2_st0600__humaneval@int4",
+  "dataset": "humaneval",
+  "status": "ok",
+  "tau_a": 3.8282,
+  "ci_a": [
+   3.7765,
+   3.8808
+  ],
+  "tau_b": 3.871,
+  "ci_b": [
+   3.8267,
+   3.9164
+  ],
+  "delta_b_minus_a": 0.0429,
+  "ci_delta": [
+   -0.0078,
+   0.0929
+  ],
+  "p_two_sided": 0.0978,
+  "n_common": 164,
+  "reps": 10000
+ },
+ {
+  "name": "ptq_vs_dphyb",
+  "a": "CANON_B9@int4",
+  "b": "FIN_DP_B_hybrid_beta0.1_s2_st0600__humaneval@int4",
+  "dataset": "humaneval",
+  "status": "ok",
+  "tau_a": 3.8282,
+  "ci_a": [
+   3.7768,
+   3.8794
+  ],
+  "tau_b": 3.8192,
+  "ci_b": [
+   3.773,
+   3.867
+  ],
+  "delta_b_minus_a": -0.009,
+  "ci_delta": [
+   -0.0658,
+   0.0453
+  ],
+  "p_two_sided": 0.7642,
+  "n_common": 164,
+  "reps": 10000
+ },
+ {
+  "name": "ptq_vs_fdconv",
+  "a": "CANON_B9@int4",
+  "b": "FIN_FD_B_conv_beta1_s1_st0600__humaneval@int4",
+  "dataset": "humaneval",
+  "status": "ok",
+  "tau_a": 3.8282,
+  "ci_a": [
+   3.7772,
+   3.8808
+  ],
+  "tau_b": 3.7945,
+  "ci_b": [
+   3.7508,
+   3.8389
+  ],
+  "delta_b_minus_a": -0.0336,
+  "ci_delta": [
+   -0.087,
+   0.0194
+  ],
+  "p_two_sided": 0.224,
+  "n_common": 164,
+  "reps": 10000
+ },
+ {
+  "name": "ptq_vs_hb005h",
+  "a": "CANON_B9@int4",
+  "b": "FIN_HB_B_hybrid_b0.005_s0_st3000__humaneval@int4",
+  "dataset": "humaneval",
+  "status": "ok",
+  "tau_a": 3.8282,
+  "ci_a": [
+   3.7765,
+   3.8799
+  ],
+  "tau_b": 3.8668,
+  "ci_b": [
+   3.8199,
+   3.9147
+  ],
+  "delta_b_minus_a": 0.0386,
+  "ci_delta": [
+   -0.0124,
+   0.0898
+  ],
+  "p_two_sided": 0.1394,
+  "n_common": 164,
+  "reps": 10000
+ },
+ {
+  "name": "ptq_vs_hb01h",
+  "a": "CANON_B9@int4",
+  "b": "FIN_HB_B_hybrid_b0.01_s0_st3000__humaneval@int4",
+  "dataset": "humaneval",
+  "status": "ok",
+  "tau_a": 3.8282,
+  "ci_a": [
+   3.7755,
+   3.8808
+  ],
+  "tau_b": 3.8631,
+  "ci_b": [
+   3.8101,
+   3.9172
+  ],
+  "delta_b_minus_a": 0.0349,
+  "ci_delta": [
+   -0.0185,
+   0.0877
+  ],
+  "p_two_sided": 0.2074,
+  "n_common": 164,
+  "reps": 10000
+ },
+ {
+  "name": "ptq_vs_hb02h",
+  "a": "CANON_B9@int4",
+  "b": "FIN_HB_B_hybrid_b0.02_s0_st3000__humaneval@int4",
+  "dataset": "humaneval",
+  "status": "ok",
+  "tau_a": 3.8282,
+  "ci_a": [
+   3.7773,
+   3.8811
+  ],
+  "tau_b": 3.8656,
+  "ci_b": [
+   3.8153,
+   3.917
+  ],
+  "delta_b_minus_a": 0.0374,
+  "ci_delta": [
+   -0.0217,
+   0.0947
+  ],
+  "p_two_sided": 0.2102,
+  "n_common": 164,
+  "reps": 10000
+ },
+ {
+  "name": "ptq_vs_hb02c",
+  "a": "CANON_B9@int4",
+  "b": "FIN_HB_B_conv_b0.02_s0_st3000__humaneval@int4",
+  "dataset": "humaneval",
+  "status": "ok",
+  "tau_a": 3.8282,
+  "ci_a": [
+   3.7769,
+   3.8801
+  ],
+  "tau_b": 3.9195,
+  "ci_b": [
+   3.872,
+   3.968
+  ],
+  "delta_b_minus_a": 0.0913,
+  "ci_delta": [
+   0.0336,
+   0.1472
+  ],
+  "p_two_sided": 0.0012,
+  "n_common": 164,
+  "reps": 10000
+ },
+ {
+  "name": "ptq_vs_pc",
+  "a": "CANON_B9@int4",
+  "b": "FIN_PC_B_r16_lr1e-4_s0_st1500__humaneval@int4",
+  "dataset": "humaneval",
+  "status": "ok",
+  "tau_a": 3.8282,
+  "ci_a": [
+   3.7775,
+   3.8812
+  ],
+  "tau_b": 3.6251,
+  "ci_b": [
+   3.5787,
+   3.6716
+  ],
+  "delta_b_minus_a": -0.2031,
+  "ci_delta": [
+   -0.2574,
+   -0.1502
+  ],
+  "p_two_sided": 0.0,
+  "n_common": 164,
+  "reps": 10000
+ },
+ {
+  "name": "ptq_vs_plain",
+  "a": "CANON_B9@int4",
+  "b": "CFIN_P2conv_gsr5_s0@int4",
+  "dataset": "humaneval",
+  "status": "ok",
+  "tau_a": 3.8282,
+  "ci_a": [
+   3.7775,
+   3.8812
+  ],
+  "tau_b": 3.7297,
+  "ci_b": [
+   3.6807,
+   3.7776
+  ],
+  "delta_b_minus_a": -0.0985,
+  "ci_delta": [
+   -0.1508,
+   -0.0458
+  ],
+  "p_two_sided": 0.0,
+  "n_common": 164,
+  "reps": 10000
+ },
+ {
+  "name": "plain_vs_hb005h",
+  "a": "CFIN_P2conv_gsr5_s0@int4",
+  "b": "FIN_HB_B_hybrid_b0.005_s0_st3000__humaneval@int4",
+  "dataset": "humaneval",
+  "status": "ok",
+  "tau_a": 3.7297,
+  "ci_a": [
+   3.6824,
+   3.7784
+  ],
+  "tau_b": 3.8668,
+  "ci_b": [
+   3.8198,
+   3.9139
+  ],
+  "delta_b_minus_a": 0.1371,
+  "ci_delta": [
+   0.0874,
+   0.1866
+  ],
+  "p_two_sided": 0.0,
+  "n_common": 164,
+  "reps": 10000
+ },
+ {
+  "name": "plain_vs_dpconv",
+  "a": "CFIN_P2conv_gsr5_s0@int4",
+  "b": "FIN_DP_B_conv_beta1_s2_st0600__humaneval@int4",
+  "dataset": "humaneval",
+  "status": "ok",
+  "tau_a": 3.7297,
+  "ci_a": [
+   3.6818,
+   3.7788
+  ],
+  "tau_b": 3.871,
+  "ci_b": [
+   3.8269,
+   3.916
+  ],
+  "delta_b_minus_a": 0.1413,
+  "ci_delta": [
+   0.0929,
+   0.1906
+  ],
+  "p_two_sided": 0.0,
+  "n_common": 164,
+  "reps": 10000
+ }
+]
