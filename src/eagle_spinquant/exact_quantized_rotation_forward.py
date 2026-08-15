@@ -342,8 +342,18 @@ class ExactQuantizedRotationForward(nn.Module):
             return self.aq(x)
         return x
 
+    # qanchor Phase D hard budget: when set, retain grads on the folded
+    # tensors of the LAST forward (STE identity => these equal the
+    # gradients wrt the deployed quantized weights)
+    capture_tw_grads = False
+
     def quantized_weights(self, exact=True):
         tw = self.transformed_weights(exact)
+        if self.capture_tw_grads:
+            for k in self.QSITES:
+                if tw[k].requires_grad:
+                    tw[k].retain_grad()
+            self._tw_cap = tw
         out = {k: self._qw(tw[k], site=k) for k in
                ("W_first", "W_rec", "q", "k", "v", "o", "gate", "up",
                 "down")}

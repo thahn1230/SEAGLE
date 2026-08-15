@@ -149,6 +149,13 @@ def main():
                          "penalty when --anchor-beta > 0")
     ap.add_argument("--anchor-beta", type=float, default=0.0)
     ap.add_argument("--anchor-rho", type=float, default=0.45)
+    # qanchor Phase D hard budget: periodic utility-ranked flip-budget
+    # projection of the masters through the exact inverse folds
+    # (anchor_quant.hard_budget_project; needs --anchor-ckpt)
+    ap.add_argument("--flip-budget", type=float, default=0.0,
+                    help="max fraction of projected-fold weights allowed "
+                         "to keep code flips vs the anchor (0 = off)")
+    ap.add_argument("--project-every", type=int, default=100)
     # qanchor Phase C: FP16 LoRA side-branch training with the base W4
     # codes completely frozen (masters NOT trainable; D_Q = 0)
     ap.add_argument("--lora-rank", type=int, default=0)
@@ -622,6 +629,14 @@ def main():
         if step in core_steps:
             save_core_ckpt(step)
         opt.zero_grad(set_to_none=True)
+        # hard budget: capture folded-weight grads on projection steps
+        # (utility comes from THIS step's batch gradient; with accum > 1
+        # only the last micro-batch's grads are retained — documented)
+        hb_now = (args.flip_budget > 0
+                  and ((step + 1) % args.project_every == 0
+                       or (step + 1) in core_steps
+                       or step == args.steps - 1))
+        model.capture_tw_grads = hb_now
         p_on = curriculum_p_onpolicy(step, args.steps, args.onpolicy)
         acc_alpha = []
         for _ in range(args.accum):
@@ -664,6 +679,25 @@ def main():
         if r2_rot is not None:
             oe2 = r2_rot.orth_error()
             assert oe2 < 1e-3, f"Gate R2-D: orth {oe2}"
+        if hb_now:
+            from eagle_spinquant import anchor_quant as AQ
+            assert anchor_state is not None, \
+                "--flip-budget needs --anchor-ckpt"
+            twc = model._tw_cap
+            grads_hb = {k: twc[k].grad for k in AQ.HB_SITES}
+            assert all(g is not None for g in grads_hb.values()), \
+                "hard budget: folded-weight grads missing"
+            hb = AQ.hard_budget_project(model, anchor_state,
+                                        args.flip_budget, grads_hb)
+            model._tw_cap = None
+            model.capture_tw_grads = False
+            log.append(dict(step=step, hard_budget={
+                k: v for k, v in hb.items() if k != "per_site"}))
+            if (step + 1) % 500 == 0 or step == args.steps - 1 \
+                    or (step + 1) in core_steps:
+                print(f"[lk] HB step {step}: flips {hb['n_flips_pre']}"
+                      f" -> kept {hb['kept']} (K={hb['budget_K']},"
+                      f" post {hb['post']})", flush=True)
         if step % 20 == 0 or step == args.steps - 1:
             am = torch.cat(acc_alpha).mean(0)
             log.append(dict(step=step,

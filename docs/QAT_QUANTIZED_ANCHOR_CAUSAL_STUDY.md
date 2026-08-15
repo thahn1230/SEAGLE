@@ -148,3 +148,168 @@ deployment).
   "flips cause damage"; the causal statement is that the aggressive
   configuration's EXCESS flips beyond a small useful subset reduce tau,
   and cross-module coupling makes naive partial reversion dangerous.
+
+## RESULTS — Phase C: code-frozen LoRA (Gate C, 2026-08-15)
+
+**Gate C: NEGATIVE — the code-frozen adapter does NOT dominate.**
+FP16 LoRA side-branches on the frozen anchor codes (D_Q = 0 by
+construction; ranks 4/8/16 @1e-4, r8 @1e-3; calib-selected
+r16 @1e-4 st1500, calib 3.2616 < PTQ 3.2794). Final 4-dataset
+deployment: mean4 3.3914 vs PTQ 3.4788; Holm verdict 0W/2L
+(gsm8k -0.117, humaneval -0.203, both p < 1e-4). Expressivity outside
+the quantized cells (a fp16 bypass) is NOT the mechanism; moving the
+codes themselves (a few, chosen well) is.
+
+## RESULTS — Phase D: anchored QAT (2026-08-15)
+
+All anchored deployments use the FROZEN anchor W4 scales
+(--anchor-scales; A4 stays dynamic). Baselines: PTQ anchor
+(CANON_B9) mean4 3.4788; plain aggressive chain-QAT at the same
+LR 1e-5 (CFIN_P2conv_gsr5, 3 seeds) 3.4443/3.4510/3.4237 — Holm vs
+PTQ 0W/1L (humaneval -0.0985, p < 1e-4), H_Q 13.90%, down flips 31%.
+
+**D1. Soft cell loss, 3000-step horizon (preregistered grid) is
+tau-NEUTRAL.** {conv,hybrid} x beta {0.1,1} x 3 seeds, cadence-selected
+on calib: every family's best calib (<= 3.2509) fell below the PTQ
+calib reference 3.2794; the best family (conv beta 1 @st600, median
+seed) finals at mean4 3.4812 ~= PTQ, Holm 0W/0L. The cell loss at
+these betas does not rescue the aggressive 1e-5 trajectory over a full
+horizon: H_Q still 6.76% at st600 (schedule keeps LR high early).
+
+**D2. Soft cell loss, 600-step horizon WINS.** The same recipe with
+the LR schedule compressed to 600 steps (decayed LR at the cadence):
+conv beta 1 -> mean4 3.5492/3.5538/3.5523 (3 seeds), hybrid beta 0.1 ->
+3.5523/3.5634/3.5525. Holm (median seed) vs PTQ: conv 2W/0L, hybrid
+3W/0L; vs plain QAT: conv 4W/0L. Drift at deployment (median seeds):
+conv H_Q 4.42% (down 8.3%), hybrid H_Q 2.82% (down 3.5%) — an order
+of magnitude closer to the anchor than plain QAT.
+
+**D3. Hard flip-budget projection is the best method in the study.**
+Trainer-side projection every 100 steps: utility
+u = -g*(Q_new - Q_anchor) per flipped weight (g = task gradient via
+the STE identity), deterministic top-K within budget
+K = frac * N_sites, only positive-utility flips kept, all other
+weights clamped into the anchor cell (|u - c0| <= 0.49; escapee
+retry with tightening margin for the down FWHT round-trip). Site
+policy per contract section 2: exact on the 7 uncoupled sites + W_rec
+(e-half -> W_e, h-half -> W_h via the recurrent fold); W_first
+measured-only. Budgets {0.25,0.5,1,2,5}% x {conv,hybrid}, LR 1e-5,
+no cell loss, calib-selected cadence (9/10 chose st3000):
+
+| model (st3000) | mean4 | vs PTQ (Holm) | H_Q | D_Q | down flip |
+|---|---|---|---|---|---|
+| hybrid b0.5% | **3.6276** | 3W/0L (humaneval n.s.) | 1.30% | 0.00066 | 0.002% |
+| hybrid b1% | 3.6021 | 3W/0L | 1.28% | 0.00065 | 0.003% |
+| hybrid b2% (= b5%) | 3.5991 | 3W/0L | 1.27% | 0.00065 | 0.003% |
+| conv b2% | 3.5877 | **4W/0L** | 1.56% | 0.00080 | 0.055% |
+| conv b0.5% | 3.5627 | — | 1.63% | 0.00084 | 0.040% |
+| conv b1% | 3.5600 | — | 1.58% | 0.00081 | 0.064% |
+| conv b5% | 3.5636 | — | 1.54% | 0.00079 | 0.070% |
+
+conv b2% sweeps ALL FOUR datasets post-Holm; hybrid b0.5% has the
+best mean4 (+0.149 over PTQ, +0.183 over plain QAT at the same LR).
+Every anchored candidate beats plain QAT 4W/0L (10k paired cluster
+bootstrap, p < 1e-4 on all four datasets for hybrid b0.5%).
+hybrid b2% and b5% converged to the IDENTICAL model (the
+positive-utility cap binds below both budgets; noted, deduplicated).
+The final kept-flip count self-limits at H_Q 1.3-1.6% for every
+budget — the converged models sit exactly in the Gate-B-predicted
+beneficial band (~1-2%), and their kept sets contain essentially NO
+down_proj flips (share <= 0.8% of kept vs 37% in the aggressive
+drift), i.e. utility selection independently discovers the module
+structure Gate B exposed.
+
+**Frontier verdict (the preregistered success criterion).** In the
+(tau, H_Q) and (tau, D_Q) planes the Pareto frontier is formed
+entirely by anchored candidates: PTQ (3.4788 @ 0), hard-budget
+(3.59-3.63 @ 1.3-1.6%), soft-cell-600 (3.55-3.56 @ 2.8-4.4%);
+plain QAT (3.44 @ 13.9%) and code-frozen LoRA (3.39 @ 0) are
+strictly dominated. Quantized-anchor preservation — not a specific
+tau number — is established as an optimization principle for
+speculative-draft QAT under this deployment contract.
+Figures: figures/pareto_tau_vs_{HQ,DQ,downflip}.png (+ raw CSV),
+figures/gateB_revert_curve.png; stats/final_stats_holm.json;
+tables/{final_taus,final_drift_metrics,selectivity,qsel_selection}.json.
+
+**Selectivity.** Kept-flip Jaccard across budgets within an objective:
+0.62-0.72 (approximately nested); across objectives ~0.40 (the
+utility ranking is objective-dependent but substantially shared).
+Per-site kept shares concentrate in W_rec/q/k/v/o/gate/up and avoid
+down (<= 0.8%).
+
+**Limitations (binding).** (1) All results are FAKE-quant
+(quantize-dequantize, fp16 GEMMs); no real-INT4 kernel claims.
+(2) W_first's h-half is measured-only under the preregistered site
+policy: its flip rate stays 10.4-12.2% in the HB finals (the first
+fold sees W_h through gamma_f o R1_T, which the recurrent-fold
+projection does not control) — tightening it is future work.
+(3) humaneval is the weakest dataset (n.s. for the hybrid HB models;
+only conv b2% sweeps it). (4) The FP16 A3 depth-collapse attribution
+remains DEFERRED (no validated FP16 control). (5) The 600-step
+soft-cell win is entangled with its LR schedule; we claim the
+combination, not the loss alone. (6) Single seed for HB (s0);
+soft-cell-600 has 3 seeds.
+
+## 30-item final summary
+
+1. Anchor = GS+R5 PTQ draft, captured from the ADAPTER's own folds
+   (sha d290220c), frozen W4 scales + c0 for the entire study.
+2. Gate A PASS: training-forward vs deployment parity max|dlogit|=0
+   (both structural modes); 7 anchor unit gates PASS.
+3. Frozen-c0 deployment reproduces PTQ EXACTLY (3.4788) — pipeline
+   validated end-to-end.
+4. Gate B verdict B-MIXED: drift is causal WITH structure.
+5. Gate B peak: retaining ~10% of aggressive flips (H_Q 1.4%) BEATS
+   both endpoints (3.509-3.534 vs 3.4788/3.4504); two independent
+   trajectories (revert, interpolation) agree.
+6. Gate B entanglement: down-only retention collapses to 2.314 —
+   partial reversion can be far worse than either endpoint.
+7. Aggressive plain QAT (1e-5): H_Q 13.9%, down 31%, finals 3.4443
+   (median), Holm 0W/1L vs PTQ — net harmful.
+8. Plain QAT loses to PTQ on humaneval (-0.0985, p<1e-4).
+9. Phase C code-frozen LoRA (D_Q=0): 3.3914, Holm 0W/2L — bypass
+   expressivity is NOT the mechanism; Gate C negative.
+10. Phase D soft cell loss @3000-step horizon: tau-neutral (0W/0L);
+    calib never beats PTQ; H_Q still 6.8% at best cadence.
+11. Phase D soft cell loss @600-step horizon: mean4 3.549-3.563
+    across 6 runs (2 objectives x 3 seeds) — all above PTQ.
+12. Holm: soft-cell-600 hybrid beta 0.1 3W/0L vs PTQ; conv beta 1
+    2W/0L; conv 4W/0L vs plain QAT.
+13. LR-schedule horizon is decisive for the soft penalty (600 vs 3000
+    at the same beta flips the verdict).
+14. Hard-budget projection: utility-ranked top-K flip retention +
+    in-cell clamping, exact on 8 folds, verified post-refold every
+    projection (zero non-kept flips, hard-gated).
+15. HB best mean4 3.6276 (hybrid b0.5%): +0.149 vs PTQ, +0.183 vs
+    plain QAT; p<1e-4 on 3 datasets (humaneval n.s.).
+16. HB conv b2% (3.5877) beats PTQ on ALL FOUR datasets post-Holm —
+    the only 4W/0L candidate vs PTQ.
+17. Every anchored candidate beats plain QAT 4W/0L.
+18. HB kept flips self-limit at H_Q 1.27-1.63% for ALL budgets
+    (positive-utility cap) — inside the Gate-B beneficial band.
+19. hybrid b2% == b5% bitwise (cap binds below both) — deduplicated.
+20. HB kept sets avoid down_proj (<=0.8% of kept vs 37% aggressive
+    share): utility selection rediscovers Gate B's module structure.
+21. HB drift: D_Q 0.00065-0.00084 (17-22x smaller than aggressive
+    0.0144); D_FP 0.002-0.0045.
+22. Selectivity: Jaccard 0.62-0.72 across budgets within objective
+    (nested-ish); ~0.40 across objectives.
+23. Pareto frontier (tau vs H_Q and tau vs D_Q) is formed entirely by
+    anchored candidates; plain QAT and LoRA strictly dominated —
+    preregistered success criterion (frontier dominance) MET.
+24. Cadence selection on calib c4:20 offset-500 only; finals on the
+    4 frozen pools, official micro-tau, greedy, mc_sim_7b_63.
+25. Statistics: 10k-rep paired same-prompt cluster bootstrap, p
+    floored at 1e-4, Holm across the 4 datasets within each family.
+26. All anchored deployments use frozen anchor W4 scales; A4 stays
+    per-token dynamic (deployment contract).
+27. Fake-quant only; no real-INT4 deployment claims.
+28. W_first h-half measured-only: 10.4-12.2% flips remain in HB
+    finals (preregistered limitation; first-fold control is future
+    work).
+29. FP16 A3 depth-collapse attribution stays DEFERRED (no validated
+    FP16 control); no claim made.
+30. Novelty claim limited to: quantized-anchor preservation as an
+    optimization principle for speculative-draft QAT (utility-selected
+    small flip budgets + frozen-scale deployment), demonstrated by
+    frontier dominance on one model/deployment contract.
