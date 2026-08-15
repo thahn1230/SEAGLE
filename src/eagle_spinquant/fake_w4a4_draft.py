@@ -39,6 +39,10 @@ def _act_quantizer(bits=4):
 # deployment of constructed/anchored models (anchor contract section A2).
 FROZEN_WQ = None
 _FROZEN_MAXQ = 7
+# qanchor Phase C: FP16 LoRA side-branches at deployment
+# (dict: site-name -> (A [r,in], B [out,r]) fp32 tensors); applied on
+# the UNQUANTIZED input, added to the quantized-GEMM output
+LORA_BRANCH = None
 
 
 def _weight_fake_quant(w, bits=4, name=None):
@@ -125,6 +129,10 @@ class FakeW4A4Linear(nn.Module):
         else:
             xq = x2
         y = torch.nn.functional.linear(xq, self.w_fake, self.bias)
+        if LORA_BRANCH is not None and self.name in LORA_BRANCH:
+            A, B = LORA_BRANCH[self.name]
+            y = y + (x2.float() @ A.t().to(x2.device)
+                     @ B.t().to(x2.device)).to(y.dtype)
         self.n_forward += 1
         self.last = dict(input_shape=list(x2.shape), output_shape=list(y.shape),
                          input_dtype=str(x2.dtype), output_dtype=str(y.dtype),

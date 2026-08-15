@@ -95,6 +95,10 @@ def main():
                     help="expected-codes .pt {site: int8}; assert the "
                          "deployed w_fake codes equal it (needs "
                          "--anchor-scales)")
+    ap.add_argument("--lora-ckpt", default=None,
+                    help="Phase-C LoRA side-branch .pt {lora: {site: "
+                         "(A,B)}}; deployed on the frozen-code base "
+                         "(needs --anchor-scales)")
     ap.add_argument("--override-codes", default=None,
                     help="constructed-codes .pt {site: int8}; deploy "
                          "EXACTLY these codes (B1/B2 hybrid models; "
@@ -190,6 +194,15 @@ def main():
               f"{len(_fq.FROZEN_WQ)} sites"
               + (" with OVERRIDE CODES" if _codes is not None else ""),
               flush=True)
+        if args.lora_ckpt:
+            _l = torch.load(args.lora_ckpt, map_location="cpu",
+                            weights_only=True)["lora"]
+            _s2n = {s: n for n, s in ANCHOR_NAME_MAP.items()}
+            _fq.LORA_BRANCH = {_s2n[s]: (a.float(), b.float())
+                               for s, (a, b) in _l.items()}
+            print(f"[al] LoRA side-branch armed on "
+                  f"{len(_fq.LORA_BRANCH)} sites from {args.lora_ckpt}",
+                  flush=True)
 
     ad = None
     if args.draft_cfg in ("stock", "fp16_deploy"):

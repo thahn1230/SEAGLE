@@ -310,6 +310,16 @@ class ExactQuantizedRotationForward(nn.Module):
     # qanchor study: optional FROZEN per-site anchor scales (dict
     # site->-scale set by the trainer); STE quant under a fixed scale
     anchor_scales = None
+    # qanchor Phase C: optional FP16 LoRA side-branches per site
+    # (dict site -> (A [r,in], B [out,r]) Parameters); the base W4 codes
+    # stay untouched => D_Q = 0 by construction
+    lora = None
+
+    def _lora_add(self, site, x, y):
+        if self.lora is not None and site in self.lora:
+            A, B = self.lora[site]
+            y = y + (x.float() @ A.t() @ B.t()).to(y.dtype)
+        return y
 
     def _qw(self, w, site=None):
         if self.w_bits < 16:
@@ -341,20 +351,22 @@ class ExactQuantizedRotationForward(nn.Module):
         return out, tw
 
     # ---- forward ----------------------------------------------------------
-    def _proj(self, z, Wq16, R):
+    def _proj(self, z, Wq16, R, site=None):
         zq = self._qa(z.half())
         y = F.linear(zq, Wq16, self.b_fc.half())
+        if site is not None:
+            y = self._lora_add(site, z.half(), y)
         return (y.float() @ R).to(y.dtype)          # PostProjectionR1
 
     def _attn_mlp(self, x, qw, pos, cache, attn_bias=None):
         B, T, D = x.shape
         h1 = x
-        qh = F.linear(self._qa(h1), qw["q"]).view(B, T, NH, HD) \
-            .transpose(1, 2)
-        kh = F.linear(self._qa(h1), qw["k"]).view(B, T, NH, HD) \
-            .transpose(1, 2)
-        vh = F.linear(self._qa(h1), qw["v"]).view(B, T, NH, HD) \
-            .transpose(1, 2)
+        qh = self._lora_add("q", h1, F.linear(self._qa(h1), qw["q"])) \
+            .view(B, T, NH, HD).transpose(1, 2)
+        kh = self._lora_add("k", h1, F.linear(self._qa(h1), qw["k"])) \
+            .view(B, T, NH, HD).transpose(1, 2)
+        vh = self._lora_add("v", h1, F.linear(self._qa(h1), qw["v"])) \
+            .view(B, T, NH, HD).transpose(1, 2)
         cos, sin = rope_cos_sin(pos, dim=HD, device=x.device)
         cos = cos[None, None].to(x.dtype)
         sin = sin[None, None].to(x.dtype)
@@ -389,7 +401,7 @@ class ExactQuantizedRotationForward(nn.Module):
             att = att + attn_bias.to(att.dtype)
         att = att.float().softmax(-1).to(x.dtype)
         o = (att @ v_all).transpose(1, 2).reshape(B, T, D)
-        x = x + F.linear(self._qa(o), qw["o"])
+        x = x + self._lora_add("o", o, F.linear(self._qa(o), qw["o"]))
         if getattr(self, "debug_capture", None) is not None:
             # Gate R2-A instrumentation: post-o_proj residual (the
             # attention-block OUTPUT, gauge-invariant under a correct
@@ -399,8 +411,9 @@ class ExactQuantizedRotationForward(nn.Module):
         h32 = x.float()
         var = h32.pow(2).mean(-1, keepdim=True)
         h2 = (h32 * torch.rsqrt(var + RMS_EPS)).to(x.dtype)
-        gt = F.linear(self._qa(h2), qw["gate"])
-        up = F.linear(self._qa(h2), qw["up"])
+        gt = self._lora_add("gate", h2, F.linear(self._qa(h2),
+                                                 qw["gate"]))
+        up = self._lora_add("up", h2, F.linear(self._qa(h2), qw["up"]))
         mid = F.silu(gt) * up
         if self.had_K is not None:
             sb.add_spinquant_to_syspath()
@@ -409,7 +422,8 @@ class ExactQuantizedRotationForward(nn.Module):
             mid = hadamard_utils.matmul_hadU_cuda(
                 mid.reshape(-1, ms[-1]), self.had_K, self.had_KK) \
                 .reshape(ms)
-        x = x + F.linear(self._qa(mid), qw["down"])
+        x = x + self._lora_add("down", mid,
+                               F.linear(self._qa(mid), qw["down"]))
         return x
 
     def forward_chain(self, tok_ids, a_seq, K, pos_offset=0,
@@ -426,7 +440,7 @@ class ExactQuantizedRotationForward(nn.Module):
         B, T = a_seq.shape[0], a_seq.shape[1]
         E = self.E[tok_ids] * a
         z = torch.cat([E[:, 1:T + 1].half(), a_seq.half()], dim=-1)
-        y = self._proj(z, qw["W_first"], R)
+        y = self._proj(z, qw["W_first"], R, site="W_first")
         cache = {}
         pos = torch.arange(pos_offset, pos_offset + T, device=y.device)
         h_all = self._attn_mlp(y, qw, pos, cache)
@@ -448,7 +462,7 @@ class ExactQuantizedRotationForward(nn.Module):
             if rr is not None:
                 e_k = e_k * rr
             z = torch.cat([e_k, h_last.half()], dim=-1)
-            y = self._proj(z, qw["W_rec"], R)
+            y = self._proj(z, qw["W_rec"], R, site="W_rec")
             pos_k = torch.arange(pos_offset + T + k,
                                  pos_offset + T + k + 1, device=y.device)
             h_all = self._attn_mlp(y, qw, pos_k, cache)

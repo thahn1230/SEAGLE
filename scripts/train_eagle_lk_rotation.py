@@ -149,6 +149,10 @@ def main():
                          "penalty when --anchor-beta > 0")
     ap.add_argument("--anchor-beta", type=float, default=0.0)
     ap.add_argument("--anchor-rho", type=float, default=0.45)
+    # qanchor Phase C: FP16 LoRA side-branch training with the base W4
+    # codes completely frozen (masters NOT trainable; D_Q = 0)
+    ap.add_argument("--lora-rank", type=int, default=0)
+    ap.add_argument("--lora-lr", type=float, default=1e-4)
     ap.add_argument("--save-core-steps", default="",
                     help="comma list of optimizer-step counts at which to "
                          "export the original-basis core weights to "
@@ -303,6 +307,29 @@ def main():
         core = [getattr(model, n) for n in model.CORE] + \
             [model.b_fc, model.gl64]
         groups.append(dict(params=core, lr=args.core_lr))
+    if args.lora_rank > 0:
+        assert not args.train_draft_core, \
+            "Phase C is code-frozen: masters must NOT train with LoRA"
+        import torch.nn as _nn
+        SHAPES = dict(W_first=(4096, 8192), W_rec=(4096, 8192),
+                      q=(4096, 4096), k=(4096, 4096), v=(4096, 4096),
+                      o=(4096, 4096), gate=(11008, 4096),
+                      up=(11008, 4096), down=(4096, 11008))
+        model.lora = {}
+        lora_params = []
+        g_l = torch.Generator().manual_seed(args.seed)
+        for site, (out_f, in_f) in SHAPES.items():
+            A = _nn.Parameter((torch.randn(args.lora_rank, in_f,
+                                           generator=g_l)
+                               * 0.01).to(dev))
+            Bm = _nn.Parameter(torch.zeros(out_f, args.lora_rank)
+                               .to(dev))          # B=0 -> identity start
+            model.lora[site] = (A, Bm)
+            lora_params += [A, Bm]
+        groups.append(dict(params=lora_params, lr=args.lora_lr))
+        print(f"[lk] LoRA r={args.lora_rank} on 9 sites "
+              f"({sum(p.numel() for p in lora_params)/1e6:.2f}M params, "
+              f"lr {args.lora_lr}); base codes FROZEN", flush=True)
     assert groups, "nothing trainable"
     opt = torch.optim.AdamW(groups, betas=(0.9, 0.95), weight_decay=0.0)
 
@@ -544,11 +571,23 @@ def main():
                           if x.strip() != ""})
                   if args.save_core_steps else [])
     if core_steps:
-        assert args.train_draft_core, "--save-core-steps needs core"
+        assert args.train_draft_core or args.lora_rank > 0, \
+            "--save-core-steps needs core or lora"
 
     def save_core_ckpt(nstep):
         """Original-basis draft state dict in the conv-QAT export format
-        (eval-compatible: {'draft_state_dict': ..., 'meta': ...})."""
+        (eval-compatible: {'draft_state_dict': ..., 'meta': ...});
+        LoRA runs save the side-branch tensors instead (base frozen)."""
+        if args.lora_rank > 0:
+            p = f"{args.out}.step{nstep:04d}.pt"
+            torch.save({"lora": {k: (A.detach().cpu(), Bm.detach().cpu())
+                                 for k, (A, Bm) in model.lora.items()},
+                        "meta": dict(step=nstep, lora_rank=args.lora_rank,
+                                     lora_lr=args.lora_lr,
+                                     objective=args.objective,
+                                     seed=args.seed)}, p)
+            print(f"[lk] lora ckpt step {nstep} -> {p}", flush=True)
+            return
         ex = model.export_original_state()
         sd_out = {k: v.clone() for k, v in sd.items()}
         sd_out["fc.weight"] = torch.cat([ex["W_e"], ex["W_h"]], dim=1)
