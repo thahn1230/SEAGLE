@@ -141,6 +141,14 @@ def main():
                     help="load a pretrained R_D from a rotation ckpt "
                          "(e.g. RD_GS_A1_s1001.pt) and hold it FIXED "
                          "(SharedRotation); overrides --rot")
+    # qanchor study (2026-08-15): anchor-cell regularization + frozen
+    # anchor weight-quant scales (contract section A2 / Phase D)
+    ap.add_argument("--anchor-ckpt", default=None,
+                    help="anchor_quant state .pt; enables frozen-scale "
+                         "weight quant on all 9 sites AND the cell "
+                         "penalty when --anchor-beta > 0")
+    ap.add_argument("--anchor-beta", type=float, default=0.0)
+    ap.add_argument("--anchor-rho", type=float, default=0.45)
     ap.add_argument("--save-core-steps", default="",
                     help="comma list of optimizer-step counts at which to "
                          "export the original-basis core weights to "
@@ -517,6 +525,21 @@ def main():
         per["n"] = len(ws)
         return per
 
+    # qanchor: frozen anchor scales + cell penalty
+    anchor_state = None
+    if args.anchor_ckpt:
+        from eagle_spinquant import anchor_quant as AQ
+        anchor_state = AQ.load_anchor(args.anchor_ckpt)
+        model.anchor_scales = {k: anchor_state[k]["scale"].to(dev)
+                               for k in AQ.QSITES}
+        for k in AQ.QSITES:
+            anchor_state[k]["c0"] = anchor_state[k]["c0"].to(dev)
+            anchor_state[k]["scale"] = anchor_state[k]["scale"].to(dev)
+        print(f"[lk] ANCHOR armed: frozen W4 scales on 9 sites"
+              + (f", cell beta={args.anchor_beta} "
+                 f"rho={args.anchor_rho}" if args.anchor_beta > 0
+                 else " (scales only)"), flush=True)
+
     core_steps = (sorted({int(x) for x in args.save_core_steps.split(",")
                           if x.strip() != ""})
                   if args.save_core_steps else [])
@@ -574,6 +597,21 @@ def main():
             pen = pen + r2_rot.penalty()
         if float(pen) != 0.0:
             pen.backward()
+        if anchor_state is not None and args.anchor_beta > 0:
+            from eagle_spinquant import anchor_quant as AQ
+            tw_cell = model.transformed_weights(exact=False)
+            lc = AQ.cell_loss(tw_cell, anchor_state,
+                              rho=args.anchor_rho)
+            (args.anchor_beta * lc).backward()
+            if step == 0 or step % 100 == 0:
+                gtask = sum(float(getattr(model, n).grad.norm())
+                            for n in model.CORE
+                            if getattr(model, n).grad is not None)
+                log.append(dict(step=step, L_cell=float(lc),
+                                grad_norm_total=round(gtask, 3)))
+                if step == 0:
+                    print(f"[lk] step0 L_cell={float(lc):.6f} "
+                          f"total|g|={gtask:.3f}", flush=True)
         torch.nn.utils.clip_grad_norm_(
             [p for gp in groups for p in gp["params"]], args.clip)
         opt.step()

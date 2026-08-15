@@ -307,9 +307,22 @@ class ExactQuantizedRotationForward(nn.Module):
         return dict(W_first=Wf, W_rec=Wr, q=q, k=k, v=v, o=o, gate=gate,
                     up=up, down=down, head=head, R=R.float())
 
-    def _qw(self, w):
+    # qanchor study: optional FROZEN per-site anchor scales (dict
+    # site->-scale set by the trainer); STE quant under a fixed scale
+    anchor_scales = None
+
+    def _qw(self, w, site=None):
         if self.w_bits < 16:
             self.counters["w_quant"] += 1
+            if (self.anchor_scales is not None and site is not None
+                    and site in self.anchor_scales):
+                s = self.anchor_scales[site].to(w.device)
+                with torch.no_grad():
+                    qw = (s * torch.clamp(torch.round(
+                        w.detach().float() / s), -8, 7)).to(w.dtype)
+                if not w.requires_grad:
+                    return qw
+                return w + (qw - w).detach()
             return ste_weight_quant(w, self.w_bits)
         return w
 
@@ -321,7 +334,7 @@ class ExactQuantizedRotationForward(nn.Module):
 
     def quantized_weights(self, exact=True):
         tw = self.transformed_weights(exact)
-        out = {k: self._qw(tw[k]) for k in
+        out = {k: self._qw(tw[k], site=k) for k in
                ("W_first", "W_rec", "q", "k", "v", "o", "gate", "up",
                 "down")}
         out["head"] = tw["head"]
