@@ -120,3 +120,31 @@ B-prep (`tables/b_prep_flip_stats.json`): same-lineage aggressive
 checkpoint = CAN_P2_B_conv_s0@st3000, H_Q 13.90%, down_proj 31.02%,
 D_Q 0.01435; monotone step trajectory captured (st100..st3000).
 Tuned-hybrid selected ckpt: H_Q 1.00% (down 1.20%).
+
+## RESULTS — Phase B / Gate B (2026-08-15 01:55)
+
+**Gate B verdict: B-MIXED (causal, with structure).** Full curves:
+`tables/gateB_curves.{json,csv}` (26 constructed-code configs + frozen
+PTQ endpoint, each 4-dataset mean4 under code-verified frozen-scale
+deployment).
+
+- Validation: frozen-scale c0 deployment = 3.4788, EXACTLY the
+  fresh-scale CANON_B9 PTQ value (anchor scales == W0's own scales).
+- Aggressive (H_Q 13.90%, down 31%) = 3.4504 (-0.028 vs PTQ) — mild
+  net damage at full deployment.
+- NON-MONOTONIC revert curve with a PEAK: retaining a random ~10% of
+  the aggressive flips (H_Q 1.39%) yields 3.509/3.525/3.534 across
+  three revert seeds (+0.03..+0.055 over PTQ); interpolation alpha=0.1
+  (H_Q 1.36%) gives 3.517 — two independent trajectories agree.
+  => a small subset of code flips is BENEFICIAL; most are
+  harmful-to-neutral. Direct empirical support for a small flip budget
+  (~1-2%) and for utility-selected retention (Phase D hard budget).
+- MODULE ENTANGLEMENT: keeping down_proj's 31% flips while reverting
+  the other sites COLLAPSES the model (nondown_f100 = 2.314;
+  f75 2.650; f50 3.079), while reverting ONLY down (down_f100) is mild
+  (3.457). down's drift is tolerable only jointly with compensating
+  flips elsewhere — partial reversion can be far worse than either
+  endpoint. Interpretation rule respected: we do NOT claim monotonic
+  "flips cause damage"; the causal statement is that the aggressive
+  configuration's EXCESS flips beyond a small useful subset reduce tau,
+  and cross-module coupling makes naive partial reversion dangerous.
