@@ -60,7 +60,8 @@ def main():
                     choices=["fp16", "int4", "w8a8"])
     ap.add_argument("--draft-cfg", required=True,
                     choices=["stock", "d4p3", "naive_w4a4", "p2", "rot",
-                             "fp16_deploy", "d4p3_deploy", "rot_ep3p"])
+                             "fp16_deploy", "d4p3_deploy", "rot_ep3p",
+                             "native_raw"])
     ap.add_argument("--tag", required=True)
     ap.add_argument("--ckpt", default=None, help="rotation ckpt (rot)")
     ap.add_argument("--draft-sd", default=None,
@@ -205,7 +206,17 @@ def main():
                   flush=True)
 
     ad = None
-    if args.draft_cfg in ("stock", "fp16_deploy"):
+    if args.draft_cfg == "native_raw":
+        # STRICT SEAGLE-RT: draft trained natively on the deployed
+        # rotated target's a_t. NO adapter, NO restore, NO fold, NO
+        # alpha — pure stock EAGLE runtime on the rotated target; the
+        # draft's proposals are scored by the deployed fused head
+        # (base_model.lm_head = W_lm*D_gamma*R1) that ea_model passes
+        # into topK_genrate. Requires a rotated target build.
+        assert args.target != "fp16", \
+            "native_raw is defined on the rotated target only"
+        assert args.draft_sd, "native_raw requires --draft-sd"
+    elif args.draft_cfg in ("stock", "fp16_deploy"):
         if args.target != "fp16":
             from eagle_spinquant.causal_interface import (
                 RestoredInterfaceCSAdapter)

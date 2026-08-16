@@ -1,0 +1,62 @@
+{
+ "P1": {
+  "n": 128,
+  "n_bitexact": 128,
+  "max_abs": 0.0,
+  "max_rel": 0.0,
+  "min_cos": 0.9999998807907104,
+  "shape_dtype_match": true,
+  "verdict": "PASS"
+ },
+ "P2": {
+  "loss_pairs_online": [
+   [
+    0.4857211709022522,
+    10.74215030670166
+   ],
+   [
+    0.4849482476711273,
+    10.774262428283691
+   ],
+   [
+    0.484898179769516,
+    10.760048866271973
+   ],
+   [
+    0.4840905964374542,
+    10.656597137451172
+   ]
+  ],
+  "loss_pairs_cached": [
+   [
+    0.4857211709022522,
+    10.74215030670166
+   ],
+   [
+    0.4849482476711273,
+    10.774262428283691
+   ],
+   [
+    0.484898179769516,
+    10.760048866271973
+   ],
+   [
+    0.4840905964374542,
+    10.656597137451172
+   ]
+  ],
+  "max_loss_diff": 0.0,
+  "max_grad_absdiff": 0.0,
+  "max_grad_reldiff": 0.0,
+  "verdict": "PASS"
+ },
+ "NR": {
+  "runtime_restore_calls": {
+   "eagle_spinquant.rotation_interface..unrotate_hidden": 0,
+   "eagle_spinquant.causal_interface.RestoredInterfaceCSAdapter.transform_hidden": 0,
+   "eagle_spinquant.study.UnrotateAdapter.transform_hidden": 0
+  },
+  "static_forbidden_patterns_found": [],
+  "verdict": "PASS"
+ }
+}

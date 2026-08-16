@@ -65,15 +65,35 @@ def main():
     ap.add_argument("--cache-dir",
                     default="/data/thahn1230/strict_rt_cache")
     ap.add_argument("--n-parity", type=int, default=128)
+    ap.add_argument("--only", choices=["all", "nr"], default="all")
     args = ap.parse_args()
     dev = "cuda:0"
     out = {}
+    prev = os.path.join(args.run_dir, "tables", "parity_gate.json")
+    if args.only == "nr" and os.path.exists(prev):
+        out = json.load(open(prev))
 
     blob = torch.load(srt.TOK_CACHE, weights_only=False)
     rows = blob["rows"]
 
-    # ---------- GATE P1 ----------
     cached = srt.CachedTeacher(args.cache_dir, dev)
+    if args.only == "nr":
+        hobj = torch.load(os.path.join(args.cache_dir,
+                                       "native_head.pt"),
+                          map_location="cpu", weights_only=False)
+        head = torch.nn.Linear(srt.D, hobj["weight"].shape[0],
+                               bias=False, dtype=torch.float16,
+                               device=dev)
+        head.weight.data.copy_(hobj["weight"])
+        head.weight.requires_grad_(False)
+        run_nr(out, cached, rows, dev, head, args)
+        ok = all(out[g]["verdict"].startswith("PASS")
+                 for g in ("P1", "P2", "NR") if g in out)
+        print("[gates]", "ALL PASS" if ok else "FAILURE", flush=True)
+        json.dump(out, open(prev, "w"), indent=1)
+        return 0 if ok else 1
+
+    # ---------- GATE P1 ----------
     online = srt.OnlineTeacher(rows, dev)
     ids = sorted(cached.idx.keys())
     probe = ids[:args.n_parity // 2] + \
@@ -126,6 +146,18 @@ def main():
         {k: v for k, v in out["P2"].items()
          if not k.startswith("loss_pairs")}), flush=True)
 
+    run_nr(out, cached, rows, dev, head, args)
+
+    os.makedirs(os.path.join(args.run_dir, "tables"), exist_ok=True)
+    json.dump(out, open(os.path.join(args.run_dir, "tables",
+                                     "parity_gate.json"), "w"), indent=1)
+    ok = all(out[g]["verdict"].startswith("PASS")
+             for g in ("P1", "P2", "NR"))
+    print("[gates]", "ALL PASS" if ok else "FAILURE", flush=True)
+    return 0 if ok else 1
+
+
+def run_nr(out, cached, rows, dev, head, args):
     # ---------- GATE NR ----------
     counters = {}
 
@@ -146,11 +178,22 @@ def main():
          "RestoredInterfaceCSAdapter", "transform_hidden")
     wrap("eagle_spinquant.study", "UnrotateAdapter", "transform_hidden")
     train_one_step(cached, rows, dev, head)
-    src = open(os.path.join(PROJECT_ROOT, "scripts", "strict_rt",
-                            "train_eagle1_strict_rt.py")).read()
+    # static scan on CODE ONLY (comments/docstrings stripped): the
+    # forbidden ops must not appear as executable code in the trainer.
+    import ast
+    tree = ast.parse(open(os.path.join(
+        PROJECT_ROOT, "scripts", "strict_rt",
+        "train_eagle1_strict_rt.py")).read())
+    for node in ast.walk(tree):
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef,
+                             ast.ClassDef, ast.Module)):
+            if (node.body and isinstance(node.body[0], ast.Expr)
+                    and isinstance(node.body[0].value, ast.Constant)):
+                node.body = node.body[1:] or [ast.Pass()]
+    code = ast.unparse(tree)
     static_bad = [p for p in ("R1.t()", "R1d.t()", "unrotate",
                               "gamma_f", "* gd", "embed_scale_alpha")
-                  if p in src]
+                  if p in code]
     out["NR"] = dict(runtime_restore_calls=counters,
                      static_forbidden_patterns_found=static_bad,
                      verdict="PASS" if (not any(counters.values())
