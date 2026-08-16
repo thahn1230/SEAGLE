@@ -1,0 +1,8 @@
+path,tensor,basis,definition,match
+first_path_input,"concat([E_orig(token_{i+1}), a_i + noise])","embedding half: ORIGINAL basis (official: draft embed_tokens copied from target safetensors, frozen; deployed draft runtime keeps its own original-basis embedding); hidden half: NATIVE a-basis","official record shift: input token row i = ids[i+1]; input hidden row i = a_i + AddUniformNoise((rand-0.5)*0.2*512/L)",N/A (input)
+feature_regression_prediction,"draft output feature f_i","NATIVE a-basis (by construction: regressed onto a_{i+1})","pf = Model(hidden, input_ids, attn) masked rows",MATCH
+feature_regression_label,"a_{i+1}","NATIVE a-basis (same deployed W4A4 tap, shifted)","target_h row i = a_{i+1}; SmoothL1(pf, tf) masked token-mean; NO R1_T.T, NO gamma, NO re-rotation (contrast: forbidden C7 label ((h@R1.T)*gamma)@R_int in train_eagle_draft_int4_qat.py:333)",MATCH
+token_logit_loss_teacher,"softmax(H_fused(a_{i+1}))","logit space via deployed fused head H_fused = W_lm*diag(gamma_f)*R1_T (fp16, frozen, sha-pinned)","target_p computed no-grad through head(tf.half())",MATCH
+token_logit_loss_prediction,"log_softmax(H_fused(f_i))","same head, same basis","out_logp through head(pf.half())",MATCH
+recurrent_path_training,"N/A","N/A","official EAGLE v1 training is single-step teacher-forced; no recurrent rollout exists in the official objective (multistep variant explicitly non-official and not used)",N/A
+recurrent_path_eval,"draft recycles its own f in NATIVE a-basis through the SAME shared fc (official architecture, one projection)","NATIVE a-basis (f approximates a_{t+1} by the regression objective)","cnets.py:592 self.fc(cat(inputs_embeds, hidden)); scored by deployed base_model.lm_head = H_fused; no adapter, no fold",MATCH

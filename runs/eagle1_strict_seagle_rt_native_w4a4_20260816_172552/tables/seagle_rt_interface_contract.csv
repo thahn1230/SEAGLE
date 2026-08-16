@@ -1,0 +1,15 @@
+field,value
+tensor_name,"h_RT_native (repo symbol a_t / h_hat)"
+producing_code,"third_party/EAGLE/eagle/model/modeling_llama_kv.py:1074  hidden_states = self.norm(hidden_states); returned as last_hidden_state / outputs[0]; consumed by draft at third_party/EAGLE/eagle/model/ea_model.py:132"
+deployed_build,"src/eagle_spinquant/study.py:build_study_target(rotation='full', rotation_type='learned_chat_w4a4kv16', quant='w4a4', seed=0) -> spinquant_bridge.apply_spinquant_pipeline(stage='full')"
+mathematical_definition,"a_t = RMSNorm0(x_R) where x_R is the R1_T-rotated residual stream; algebraically equal to (h / gamma_f) @ R1_T of the stock post-norm hidden h (verified: docs/fc_projection_fold_audit.md; fuse_layer_norms sets norm.weight=ones)"
+shape,"(B, T, 4096); measured (1, 2048, 4096)"
+dtype,torch.float16
+basis,"R1_T-rotated (learned R1 from outputs/rotations/learned_chat_w4a4kv16/R.bin sha256 4b7e91d2a7531bb8ccde55d35299d3bde38b0f849ebcca951c9320e42a48fa6e)"
+norm_state,"post final RMSNorm; norm.weight == ones asserted at cache build (gamma_f folded into lm_head by SpinQuant fuse_layer_norms)"
+gamma_scale_state,"gamma_f EXCLUDED from the hidden; carried entirely by the deployed fused head W_lm*diag(gamma_f)*R1_T (algebra check rel err asserted < 5e-3 at head extraction); measured tap RMS = 1.0"
+quantization_state,"tap is outside all activation quantizers (LlamaRMSNorm never wrapped; lm_head input forced 16-bit) but is the true W4A4 model output: all 32 decoder layers RTN-W4 per-out-channel sym + MSE clip and dynamic per-token asym A4 upstream; R4 online Hadamard on down_proj inputs"
+kv_policy,"KV16 (canonical 'w4a4' config; k_bits=v_bits=16; R3 inactive)"
+r2_policy,"per-layer target R2 (32x [128,128]) from R.bin applied inside rotate_model to V/O; never exposed at the interface"
+forbidden_restore_ops,"rotation_interface.unrotate_hidden (h@R1.T*gamma); causal_interface.RestoredInterfaceCSAdapter.transform_hidden; study.UnrotateAdapter.transform_hidden; tail_unfused.TailAdapter T2/T3 modes; w4a4_impl_fix.UnfusedTailAdapter; weight-folded equivalents W_h@D_gamma@R1 and W_h@R1 (concat_selective_projection.py fold_matrix); embed_scale_alpha (P3/GS/LS)"
+enforcement,"scripts/strict_rt/parity_and_norestore_gates.py gate NR: runtime monkeypatch counters must stay 0 + static pattern scan of the trainer"

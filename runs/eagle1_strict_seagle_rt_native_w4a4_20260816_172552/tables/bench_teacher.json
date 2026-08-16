@@ -1,0 +1,30 @@
+{
+ "convs_mean_len": 1558.0,
+ "w4a4_native": {
+  "sec_per_conv": 0.3761,
+  "tok_per_s": 4142.0,
+  "n_convs": 24,
+  "n_tokens": 37392,
+  "total_sec": 9.03,
+  "peak_mem_gib": 14.67
+ },
+ "tap": {
+  "shape": [
+   1,
+   2048,
+   4096
+  ],
+  "dtype": "torch.float16",
+  "rms": 1.0,
+  "bytes_per_token": 8192
+ },
+ "fp16_plain": {
+  "sec_per_conv": 0.1567,
+  "tok_per_s": 9940.3,
+  "n_convs": 24,
+  "n_tokens": 37392,
+  "total_sec": 3.76,
+  "peak_mem_gib": 13.75
+ },
+ "w4a4_over_fp16": 2.4
+}
