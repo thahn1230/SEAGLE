@@ -10,21 +10,18 @@ export HF_HOME=/data/thahn1230/hf_cache
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 export OMP_NUM_THREADS=8 MKL_NUM_THREADS=8
 
-# wait up to 30 min for gates
-for i in $(seq 1 60); do
-  grep -q "\[gates\] ALL PASS" $RUN/logs/parity_gates.log 2>/dev/null && break
-  grep -qE "FAILURE|Traceback" $RUN/logs/parity_gates.log 2>/dev/null && {
-    echo "GATES FAILED — aborting benches"; exit 1; }
-  sleep 30
-done
-grep -q "\[gates\] ALL PASS" $RUN/logs/parity_gates.log || {
-  echo "GATES TIMEOUT"; exit 1; }
+# gate check: authoritative JSON verdicts
+$PY - <<'EOF' || { echo "GATES FAILED — aborting benches"; exit 1; }
+import json
+g = json.load(open("runs/eagle1_strict_seagle_rt_native_w4a4_20260816_172552/tables/parity_gate.json"))
+assert all(g[k]["verdict"].startswith("PASS") for k in ("P1","P2","NR")), g
+EOF
 echo "gates passed; benches start $(date -u +%H:%M:%SZ)"
 
 bench () {  # name world teacher ckpt steps
   local name=$1 w=$2 teacher=$3 ck=$4 steps=$5
   echo "=== bench $name (world=$w teacher=$teacher ckpt=$ck) ==="
-  CUDA_VISIBLE_DEVICES=$(seq -s, 0 $((w-1))) torchrun \
+  CUDA_VISIBLE_DEVICES=$(seq -s, 0 $((w-1))) $PY -m torch.distributed.run \
     --nproc_per_node=$w --master_port=29655 \
     scripts/strict_rt/train_eagle1_strict_rt.py --run-dir $RUN \
     --teacher $teacher --grad-ckpt $ck --bench $steps \

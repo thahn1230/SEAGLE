@@ -28,7 +28,7 @@ split, per-epoch seeded permutation, val every 1000 steps on the first
 200 test convs. Checkpoint-selection rule: FINAL checkpoint (official
 v1 has no best-ckpt selection; bestval saved for reference only).
 """
-import argparse, hashlib, json, os, sys, time
+import argparse, contextlib, hashlib, json, os, sys, time
 from concurrent.futures import ThreadPoolExecutor
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(
@@ -112,6 +112,12 @@ class OnlineTeacher:
     at bs=1 (mode-A benchmark + parity reference)."""
 
     def __init__(self, rows, dev):
+        # stagger heavy build phases across ranks (transient RTN/rotate
+        # peaks on 24GB cards; STRICT_RT_BUILD_STAGGER seconds/rank)
+        stag = float(os.environ.get("STRICT_RT_BUILD_STAGGER", "0"))
+        rk = int(os.environ.get("RANK", 0))
+        if stag > 0 and rk > 0:
+            time.sleep(stag * rk)
         from eagle_spinquant import experiment, study
         cfg = experiment.load_config(None)
         paths = experiment.resolve_paths(cfg)
@@ -121,6 +127,11 @@ class OnlineTeacher:
             device=dev, rotations_root=None)
         nw = model.base_model.model.norm.weight.detach().float()
         assert torch.allclose(nw, torch.ones_like(nw))
+        # teacher uses ONLY base_model.model: drop the unused draft
+        # (~700 MB) and target lm_head (~262 MB) to reclaim VRAM
+        model.ea_layer = None
+        model.base_model.lm_head = None
+        torch.cuda.empty_cache()
         self.bm, self.rows, self.dev = model.base_model, rows, dev
         self.stash = stash
         self.wait_s = 0.0
@@ -276,8 +287,11 @@ def main():
     world = int(os.environ.get("WORLD_SIZE", 1))
     local = int(os.environ.get("LOCAL_RANK", 0))
     if world > 1:
-        dist.init_process_group("nccl")
+        # set_device BEFORE nccl init: otherwise every rank's NCCL
+        # bootstrap plants a ~384 MiB context on GPU 0 (measured; the
+        # 7x384 MiB sum was the OOM margin on 24 GB cards)
         torch.cuda.set_device(local)
+        dist.init_process_group("nccl")
     dev = f"cuda:{local}"
     t0 = time.time()
 
@@ -393,7 +407,16 @@ def main():
                                        noise_gen)
                 loss, vloss, ploss, _, _ = compute_loss(
                     model, head, batch, crit)
-                (loss / TC["accum"]).backward()
+                # one allreduce per OPTIMIZER step, not per micro-batch:
+                # mathematically identical (linearity of the average);
+                # same fp-reorder class as the validated run's world-
+                # size changes. (speed deviation SD3)
+                sync = (a == TC["accum"] - 1) or world == 1 \
+                    or args.grad_ckpt == "on"   # static_graph needs sync
+                ctx = (model.no_sync() if (world > 1 and not sync)
+                       else contextlib.nullcontext())
+                with ctx:
+                    (loss / TC["accum"]).backward()
                 acc_v += float(vloss) / TC["accum"]
                 acc_p += float(ploss) / TC["accum"]
             vloss, ploss = acc_v, acc_p
