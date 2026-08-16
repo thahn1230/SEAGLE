@@ -1,0 +1,12 @@
+family_key,seed,mean4
+hard-budget:conv:1e-5:0.02,0,3.5877
+hard-budget:hybrid:1e-5:0.005,0,3.6276
+plain:conv:1e-5:-,0,3.4443
+plain:conv:1e-5:-,1,3.451
+plain:conv:1e-5:-,2,3.4237
+plain:conv:1e-6:-,0,3.5977
+plain:conv:1e-6:-,1,3.6148
+plain:conv:1e-6:-,2,3.6198
+plain:hybrid:1e-6:-,0,3.6198
+plain:hybrid:1e-6:-,1,3.6113
+plain:hybrid:1e-6:-,2,3.5914

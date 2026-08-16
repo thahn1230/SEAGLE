@@ -1,0 +1,252 @@
+[
+ {
+  "name": "A_hbhyb_med_vs_T6conv_med",
+  "a": "CFIN_T6conv_gsr5_s1@int4",
+  "b": "CLFIN_HB_B_hybrid_b0.005_s2_st3000@int4",
+  "dataset": "mtbench",
+  "status": "ok",
+  "tau_a": 3.3024,
+  "ci_a": [
+   3.1966,
+   3.4117
+  ],
+  "tau_b": 3.3639,
+  "ci_b": [
+   3.2575,
+   3.4704
+  ],
+  "delta_b_minus_a": 0.0615,
+  "ci_delta": [
+   -0.0146,
+   0.1384
+  ],
+  "p_two_sided": 0.126,
+  "n_common": 80,
+  "reps": 10000
+ },
+ {
+  "name": "A2_hbhyb_med_vs_T6conv_best",
+  "a": "CLFIN_CAN_T6_gsr5_conv_s2_st2000@int4",
+  "b": "CLFIN_HB_B_hybrid_b0.005_s2_st3000@int4",
+  "dataset": "mtbench",
+  "status": "ok",
+  "tau_a": 3.3141,
+  "ci_a": [
+   3.2151,
+   3.4175
+  ],
+  "tau_b": 3.3639,
+  "ci_b": [
+   3.2598,
+   3.4703
+  ],
+  "delta_b_minus_a": 0.0498,
+  "ci_delta": [
+   -0.0145,
+   0.1171
+  ],
+  "p_two_sided": 0.1352,
+  "n_common": 80,
+  "reps": 10000
+ },
+ {
+  "name": "B_hbhyb_med_vs_T6hyb_med",
+  "a": "CFIN_T6hybrid_gsr5_s1@int4",
+  "b": "CLFIN_HB_B_hybrid_b0.005_s2_st3000@int4",
+  "dataset": "mtbench",
+  "status": "ok",
+  "tau_a": 3.3158,
+  "ci_a": [
+   3.1983,
+   3.4366
+  ],
+  "tau_b": 3.3639,
+  "ci_b": [
+   3.2561,
+   3.4727
+  ],
+  "delta_b_minus_a": 0.0482,
+  "ci_delta": [
+   -0.0269,
+   0.1204
+  ],
+  "p_two_sided": 0.1902,
+  "n_common": 80,
+  "reps": 10000
+ },
+ {
+  "name": "B2_hbhyb_med_vs_T6hyb_best",
+  "a": "CLFIN_CAN_T6_gsr5_hybrid_s0_st2500@int4",
+  "b": "CLFIN_HB_B_hybrid_b0.005_s2_st3000@int4",
+  "dataset": "mtbench",
+  "status": "ok",
+  "tau_a": 3.3641,
+  "ci_a": [
+   3.2671,
+   3.4662
+  ],
+  "tau_b": 3.3639,
+  "ci_b": [
+   3.2559,
+   3.4699
+  ],
+  "delta_b_minus_a": -0.0002,
+  "ci_delta": [
+   -0.0716,
+   0.0734
+  ],
+  "p_two_sided": 0.9798,
+  "n_common": 80,
+  "reps": 10000
+ },
+ {
+  "name": "C_hbconv_med_vs_T6conv_med",
+  "a": "CFIN_T6conv_gsr5_s1@int4",
+  "b": "CLFIN_HB_B_conv_b0.02_s0_st3000@int4",
+  "dataset": "mtbench",
+  "status": "ok",
+  "tau_a": 3.3024,
+  "ci_a": [
+   3.1986,
+   3.4112
+  ],
+  "tau_b": 3.2939,
+  "ci_b": [
+   3.1984,
+   3.3914
+  ],
+  "delta_b_minus_a": -0.0085,
+  "ci_delta": [
+   -0.0762,
+   0.0597
+  ],
+  "p_two_sided": 0.795,
+  "n_common": 80,
+  "reps": 10000
+ },
+ {
+  "name": "D_hbconv_med_vs_T6hyb_med",
+  "a": "CFIN_T6hybrid_gsr5_s1@int4",
+  "b": "CLFIN_HB_B_conv_b0.02_s0_st3000@int4",
+  "dataset": "mtbench",
+  "status": "ok",
+  "tau_a": 3.3158,
+  "ci_a": [
+   3.2006,
+   3.4318
+  ],
+  "tau_b": 3.2939,
+  "ci_b": [
+   3.2018,
+   3.3879
+  ],
+  "delta_b_minus_a": -0.0218,
+  "ci_delta": [
+   -0.098,
+   0.051
+  ],
+  "p_two_sided": 0.5576,
+  "n_common": 80,
+  "reps": 10000
+ },
+ {
+  "name": "S0_hbhyb_s0_vs_T6conv_med",
+  "a": "CFIN_T6conv_gsr5_s1@int4",
+  "b": "CLFIN_HB_B_hybrid_b0.005_s0_st3000@int4",
+  "dataset": "mtbench",
+  "status": "ok",
+  "tau_a": 3.3024,
+  "ci_a": [
+   3.1941,
+   3.4082
+  ],
+  "tau_b": 3.3797,
+  "ci_b": [
+   3.2834,
+   3.4785
+  ],
+  "delta_b_minus_a": 0.0773,
+  "ci_delta": [
+   0.0102,
+   0.1451
+  ],
+  "p_two_sided": 0.023,
+  "n_common": 80,
+  "reps": 10000
+ },
+ {
+  "name": "S1_hbhyb_s1_vs_T6conv_med",
+  "a": "CFIN_T6conv_gsr5_s1@int4",
+  "b": "CLFIN_HB_B_hybrid_b0.005_s1_st3000@int4",
+  "dataset": "mtbench",
+  "status": "ok",
+  "tau_a": 3.3024,
+  "ci_a": [
+   3.1966,
+   3.4099
+  ],
+  "tau_b": 3.3399,
+  "ci_b": [
+   3.2276,
+   3.454
+  ],
+  "delta_b_minus_a": 0.0374,
+  "ci_delta": [
+   -0.0318,
+   0.1069
+  ],
+  "p_two_sided": 0.2832,
+  "n_common": 80,
+  "reps": 10000
+ },
+ {
+  "name": "P_hbhyb_s0_vs_PTQ",
+  "a": "CANON_B9@int4",
+  "b": "CLFIN_HB_B_hybrid_b0.005_s0_st3000@int4",
+  "dataset": "mtbench",
+  "status": "ok",
+  "tau_a": 3.1645,
+  "ci_a": [
+   3.0635,
+   3.2698
+  ],
+  "tau_b": 3.3797,
+  "ci_b": [
+   3.2832,
+   3.4792
+  ],
+  "delta_b_minus_a": 0.2153,
+  "ci_delta": [
+   0.1467,
+   0.2832
+  ],
+  "p_two_sided": 0.0,
+  "n_common": 80,
+  "reps": 10000
+ },
+ {
+  "name": "Q_T6conv_med_vs_PTQ",
+  "a": "CANON_B9@int4",
+  "b": "CFIN_T6conv_gsr5_s1@int4",
+  "dataset": "mtbench",
+  "status": "ok",
+  "tau_a": 3.1645,
+  "ci_a": [
+   3.0618,
+   3.2713
+  ],
+  "tau_b": 3.3024,
+  "ci_b": [
+   3.1979,
+   3.4096
+  ],
+  "delta_b_minus_a": 0.1379,
+  "ci_delta": [
+   0.0689,
+   0.2078
+  ],
+  "p_two_sided": 0.0,
+  "n_common": 80,
+  "reps": 10000
+ }
+]

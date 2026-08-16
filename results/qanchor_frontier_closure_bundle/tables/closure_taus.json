@@ -1,0 +1,211 @@
+{
+ "CANON_B9": {
+  "gsm8k": 3.6875,
+  "humaneval": 3.8282,
+  "mean4": 3.4788,
+  "mtbench": 3.1645,
+  "sharegpt": 3.2351
+ },
+ "CFIN_P2conv_gsr5_s0": {
+  "gsm8k": 3.6628,
+  "humaneval": 3.7297,
+  "mean4": 3.4443,
+  "mtbench": 3.1518,
+  "sharegpt": 3.233
+ },
+ "CFIN_P2hybrid_gsr5_s0": {
+  "gsm8k": 3.5987,
+  "humaneval": 3.6118,
+  "mean4": 3.4001,
+  "mtbench": 3.1563,
+  "sharegpt": 3.2334
+ },
+ "CFIN_T6conv_gsr5_s1": {
+  "gsm8k": 3.8243,
+  "humaneval": 3.9152,
+  "mean4": 3.6148,
+  "mtbench": 3.3024,
+  "sharegpt": 3.4172
+ },
+ "CFIN_T6hybrid_gsr5_s1": {
+  "gsm8k": 3.8381,
+  "humaneval": 3.8872,
+  "mean4": 3.6113,
+  "mtbench": 3.3158,
+  "sharegpt": 3.4041
+ },
+ "CF_HB_WfirstH_only": {
+  "gsm8k": 3.8023,
+  "humaneval": 3.8392,
+  "mean4": 3.5904,
+  "mtbench": 3.3578,
+  "sharegpt": 3.3623
+ },
+ "CF_HB_Wfirst_only": {
+  "gsm8k": 3.8352,
+  "humaneval": 3.8363,
+  "mean4": 3.6184,
+  "mtbench": 3.3891,
+  "sharegpt": 3.4129
+ },
+ "CF_HB_no_Wfirst": {
+  "gsm8k": 3.7197,
+  "humaneval": 3.8623,
+  "mean4": 3.5207,
+  "mtbench": 3.203,
+  "sharegpt": 3.2979
+ },
+ "CF_HB_no_WfirstH": {
+  "gsm8k": 3.7145,
+  "humaneval": 3.8447,
+  "mean4": 3.5168,
+  "mtbench": 3.2042,
+  "sharegpt": 3.3039
+ },
+ "CLFIN_CAN_T6_gsr5_conv_s0_st1500": {
+  "gsm8k": 3.7875,
+  "humaneval": 3.9258,
+  "mean4": 3.5977,
+  "mtbench": 3.2731,
+  "sharegpt": 3.4044
+ },
+ "CLFIN_CAN_T6_gsr5_conv_s2_st2000": {
+  "gsm8k": 3.8256,
+  "humaneval": 3.9361,
+  "mean4": 3.6198,
+  "mtbench": 3.3141,
+  "sharegpt": 3.4033
+ },
+ "CLFIN_CAN_T6_gsr5_hybrid_s0_st2500": {
+  "gsm8k": 3.8448,
+  "humaneval": 3.8549,
+  "mean4": 3.6198,
+  "mtbench": 3.3641,
+  "sharegpt": 3.4155
+ },
+ "CLFIN_CAN_T6_gsr5_hybrid_s2_st2500": {
+  "gsm8k": 3.8226,
+  "humaneval": 3.824,
+  "mean4": 3.5914,
+  "mtbench": 3.3005,
+  "sharegpt": 3.4184
+ },
+ "CLFIN_HB_B_conv_b0.02_s0_st3000": {
+  "gsm8k": 3.7431,
+  "humaneval": 3.9195,
+  "mean4": 3.5877,
+  "mtbench": 3.2939,
+  "sharegpt": 3.3943
+ },
+ "CLFIN_HB_B_conv_b0.02_s1_st3000": {
+  "gsm8k": 3.7627,
+  "humaneval": 3.9006,
+  "mean4": 3.5705,
+  "mtbench": 3.2578,
+  "sharegpt": 3.3608
+ },
+ "CLFIN_HB_B_conv_b0.02_s2_st3000": {
+  "gsm8k": 3.7538,
+  "humaneval": 3.9066,
+  "mean4": 3.5655,
+  "mtbench": 3.2577,
+  "sharegpt": 3.3439
+ },
+ "CLFIN_HB_B_hybrid_b0.005_s0_st3000": {
+  "gsm8k": 3.8331,
+  "humaneval": 3.8668,
+  "mean4": 3.6276,
+  "mtbench": 3.3797,
+  "sharegpt": 3.4308
+ },
+ "CLFIN_HB_B_hybrid_b0.005_s1_st3000": {
+  "gsm8k": 3.8121,
+  "humaneval": 3.8542,
+  "mean4": 3.5986,
+  "mtbench": 3.3399,
+  "sharegpt": 3.3883
+ },
+ "CLFIN_HB_B_hybrid_b0.005_s2_st3000": {
+  "gsm8k": 3.8077,
+  "humaneval": 3.8935,
+  "mean4": 3.6126,
+  "mtbench": 3.3639,
+  "sharegpt": 3.3852
+ },
+ "CLFIN_JB_B_hybrid_b0.005_lf1_s0_st3000": {
+  "mtbench": 3.3027
+ },
+ "CLFIN_QA_LRF_B_conv_3e-6_s1_st1000": {
+  "gsm8k": 3.8234,
+  "humaneval": 3.8915,
+  "mean4": 3.5866,
+  "mtbench": 3.2729,
+  "sharegpt": 3.3586
+ },
+ "CLFIN_QA_LRF_B_conv_3e-7_s0_st1000": {
+  "gsm8k": 3.7298,
+  "humaneval": 3.8606,
+  "mean4": 3.5484,
+  "mtbench": 3.2941,
+  "sharegpt": 3.3092
+ },
+ "CLFIN_QA_LRF_B_hybrid_3e-6_s0_st1500": {
+  "gsm8k": 3.8598,
+  "humaneval": 3.845,
+  "mean4": 3.5972,
+  "mtbench": 3.3031,
+  "sharegpt": 3.381
+ },
+ "CLFIN_QA_LRF_B_hybrid_3e-7_s2_st1500": {
+  "gsm8k": 3.8175,
+  "humaneval": 3.8296,
+  "mean4": 3.5763,
+  "mtbench": 3.2921,
+  "sharegpt": 3.3662
+ },
+ "QSEL_HB_B_conv_b0.02_s1_st0600": {
+  "c4": 2.3865
+ },
+ "QSEL_HB_B_conv_b0.02_s1_st1500": {
+  "c4": 2.6136
+ },
+ "QSEL_HB_B_conv_b0.02_s1_st3000": {
+  "c4": 3.2805
+ },
+ "QSEL_HB_B_conv_b0.02_s2_st0600": {
+  "c4": 2.3874
+ },
+ "QSEL_HB_B_conv_b0.02_s2_st1500": {
+  "c4": 2.2346
+ },
+ "QSEL_HB_B_conv_b0.02_s2_st3000": {
+  "c4": 3.3312
+ },
+ "QSEL_HB_B_hybrid_b0.005_s1_st0600": {
+  "c4": 3.1449
+ },
+ "QSEL_HB_B_hybrid_b0.005_s1_st1500": {
+  "c4": 3.2503
+ },
+ "QSEL_HB_B_hybrid_b0.005_s1_st3000": {
+  "c4": 3.3052
+ },
+ "QSEL_HB_B_hybrid_b0.005_s2_st0600": {
+  "c4": 2.8181
+ },
+ "QSEL_HB_B_hybrid_b0.005_s2_st1500": {
+  "c4": 3.1663
+ },
+ "QSEL_HB_B_hybrid_b0.005_s2_st3000": {
+  "c4": 3.283
+ },
+ "QSEL_JB_B_hybrid_b0.005_lf1_s0_st0600": {
+  "c4": 3.0739
+ },
+ "QSEL_JB_B_hybrid_b0.005_lf1_s0_st1500": {
+  "c4": 3.1732
+ },
+ "QSEL_JB_B_hybrid_b0.005_lf1_s0_st3000": {
+  "c4": 3.3641
+ }
+}

@@ -1,0 +1,8 @@
+counterfactual,mean4
+PTQ (C0),3.4788
+"HB_controlled_only
+(= no_Wfirst)",3.5207
+HB_no_WfirstH,3.5168
+HB_WfirstH_only,3.5904
+HB_Wfirst_only,3.6184
+full HB (CHB),3.6276

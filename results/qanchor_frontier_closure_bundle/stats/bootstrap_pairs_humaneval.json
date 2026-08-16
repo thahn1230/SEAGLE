@@ -1,0 +1,252 @@
+[
+ {
+  "name": "A_hbhyb_med_vs_T6conv_med",
+  "a": "CFIN_T6conv_gsr5_s1@int4",
+  "b": "CLFIN_HB_B_hybrid_b0.005_s2_st3000@int4",
+  "dataset": "humaneval",
+  "status": "ok",
+  "tau_a": 3.9152,
+  "ci_a": [
+   3.8678,
+   3.9651
+  ],
+  "tau_b": 3.8935,
+  "ci_b": [
+   3.8405,
+   3.946
+  ],
+  "delta_b_minus_a": -0.0217,
+  "ci_delta": [
+   -0.0735,
+   0.031
+  ],
+  "p_two_sided": 0.404,
+  "n_common": 164,
+  "reps": 10000
+ },
+ {
+  "name": "A2_hbhyb_med_vs_T6conv_best",
+  "a": "CLFIN_CAN_T6_gsr5_conv_s2_st2000@int4",
+  "b": "CLFIN_HB_B_hybrid_b0.005_s2_st3000@int4",
+  "dataset": "humaneval",
+  "status": "ok",
+  "tau_a": 3.9361,
+  "ci_a": [
+   3.8827,
+   3.9903
+  ],
+  "tau_b": 3.8935,
+  "ci_b": [
+   3.8419,
+   3.9448
+  ],
+  "delta_b_minus_a": -0.0427,
+  "ci_delta": [
+   -0.0954,
+   0.0104
+  ],
+  "p_two_sided": 0.117,
+  "n_common": 164,
+  "reps": 10000
+ },
+ {
+  "name": "B_hbhyb_med_vs_T6hyb_med",
+  "a": "CFIN_T6hybrid_gsr5_s1@int4",
+  "b": "CLFIN_HB_B_hybrid_b0.005_s2_st3000@int4",
+  "dataset": "humaneval",
+  "status": "ok",
+  "tau_a": 3.8872,
+  "ci_a": [
+   3.8397,
+   3.9341
+  ],
+  "tau_b": 3.8935,
+  "ci_b": [
+   3.8412,
+   3.9452
+  ],
+  "delta_b_minus_a": 0.0063,
+  "ci_delta": [
+   -0.0497,
+   0.06
+  ],
+  "p_two_sided": 0.7992,
+  "n_common": 164,
+  "reps": 10000
+ },
+ {
+  "name": "B2_hbhyb_med_vs_T6hyb_best",
+  "a": "CLFIN_CAN_T6_gsr5_hybrid_s0_st2500@int4",
+  "b": "CLFIN_HB_B_hybrid_b0.005_s2_st3000@int4",
+  "dataset": "humaneval",
+  "status": "ok",
+  "tau_a": 3.8549,
+  "ci_a": [
+   3.8046,
+   3.9054
+  ],
+  "tau_b": 3.8935,
+  "ci_b": [
+   3.8414,
+   3.946
+  ],
+  "delta_b_minus_a": 0.0386,
+  "ci_delta": [
+   -0.0163,
+   0.0946
+  ],
+  "p_two_sided": 0.1798,
+  "n_common": 164,
+  "reps": 10000
+ },
+ {
+  "name": "C_hbconv_med_vs_T6conv_med",
+  "a": "CFIN_T6conv_gsr5_s1@int4",
+  "b": "CLFIN_HB_B_conv_b0.02_s0_st3000@int4",
+  "dataset": "humaneval",
+  "status": "ok",
+  "tau_a": 3.9152,
+  "ci_a": [
+   3.8682,
+   3.9646
+  ],
+  "tau_b": 3.9195,
+  "ci_b": [
+   3.871,
+   3.9671
+  ],
+  "delta_b_minus_a": 0.0043,
+  "ci_delta": [
+   -0.0539,
+   0.0607
+  ],
+  "p_two_sided": 0.877,
+  "n_common": 164,
+  "reps": 10000
+ },
+ {
+  "name": "D_hbconv_med_vs_T6hyb_med",
+  "a": "CFIN_T6hybrid_gsr5_s1@int4",
+  "b": "CLFIN_HB_B_conv_b0.02_s0_st3000@int4",
+  "dataset": "humaneval",
+  "status": "ok",
+  "tau_a": 3.8872,
+  "ci_a": [
+   3.8403,
+   3.9346
+  ],
+  "tau_b": 3.9195,
+  "ci_b": [
+   3.8712,
+   3.9683
+  ],
+  "delta_b_minus_a": 0.0323,
+  "ci_delta": [
+   -0.021,
+   0.0853
+  ],
+  "p_two_sided": 0.2272,
+  "n_common": 164,
+  "reps": 10000
+ },
+ {
+  "name": "S0_hbhyb_s0_vs_T6conv_med",
+  "a": "CFIN_T6conv_gsr5_s1@int4",
+  "b": "CLFIN_HB_B_hybrid_b0.005_s0_st3000@int4",
+  "dataset": "humaneval",
+  "status": "ok",
+  "tau_a": 3.9152,
+  "ci_a": [
+   3.8666,
+   3.9648
+  ],
+  "tau_b": 3.8668,
+  "ci_b": [
+   3.821,
+   3.9143
+  ],
+  "delta_b_minus_a": -0.0484,
+  "ci_delta": [
+   -0.1025,
+   0.0041
+  ],
+  "p_two_sided": 0.0714,
+  "n_common": 164,
+  "reps": 10000
+ },
+ {
+  "name": "S1_hbhyb_s1_vs_T6conv_med",
+  "a": "CFIN_T6conv_gsr5_s1@int4",
+  "b": "CLFIN_HB_B_hybrid_b0.005_s1_st3000@int4",
+  "dataset": "humaneval",
+  "status": "ok",
+  "tau_a": 3.9152,
+  "ci_a": [
+   3.8673,
+   3.9653
+  ],
+  "tau_b": 3.8542,
+  "ci_b": [
+   3.8077,
+   3.9015
+  ],
+  "delta_b_minus_a": -0.061,
+  "ci_delta": [
+   -0.1155,
+   -0.0084
+  ],
+  "p_two_sided": 0.0214,
+  "n_common": 164,
+  "reps": 10000
+ },
+ {
+  "name": "P_hbhyb_s0_vs_PTQ",
+  "a": "CANON_B9@int4",
+  "b": "CLFIN_HB_B_hybrid_b0.005_s0_st3000@int4",
+  "dataset": "humaneval",
+  "status": "ok",
+  "tau_a": 3.8282,
+  "ci_a": [
+   3.7775,
+   3.8812
+  ],
+  "tau_b": 3.8668,
+  "ci_b": [
+   3.8197,
+   3.9143
+  ],
+  "delta_b_minus_a": 0.0386,
+  "ci_delta": [
+   -0.0132,
+   0.0886
+  ],
+  "p_two_sided": 0.1442,
+  "n_common": 164,
+  "reps": 10000
+ },
+ {
+  "name": "Q_T6conv_med_vs_PTQ",
+  "a": "CANON_B9@int4",
+  "b": "CFIN_T6conv_gsr5_s1@int4",
+  "dataset": "humaneval",
+  "status": "ok",
+  "tau_a": 3.8282,
+  "ci_a": [
+   3.7761,
+   3.8811
+  ],
+  "tau_b": 3.9152,
+  "ci_b": [
+   3.8666,
+   3.9646
+  ],
+  "delta_b_minus_a": 0.0871,
+  "ci_delta": [
+   0.0388,
+   0.1338
+  ],
+  "p_two_sided": 0.0002,
+  "n_common": 164,
+  "reps": 10000
+ }
+]

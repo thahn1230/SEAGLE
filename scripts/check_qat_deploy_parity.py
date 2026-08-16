@@ -149,6 +149,30 @@ def main():
             mx = float((rt_w[name].float() - qw[name].float())
                        .abs().max())
             wres[name] = dict(equal=bool(ok), max_abs_diff=mx)
+            if not ok:
+                # closure F6 forensics: byte-level vs value-level
+                A = rt_w[name].detach().cpu().to(torch.float16)
+                B = qw[name].detach().cpu().to(torch.float16)
+                bm = (A.view(torch.int16) != B.view(torch.int16))
+                zz = (A == 0) & (B == 0)
+                wres[name].update(
+                    dtype_a=str(rt_w[name].dtype),
+                    dtype_b=str(qw[name].dtype),
+                    shape=list(A.shape),
+                    contiguous_a=bool(rt_w[name].is_contiguous()),
+                    contiguous_b=bool(qw[name].is_contiguous()),
+                    nan_a=int(torch.isnan(A).sum()),
+                    nan_b=int(torch.isnan(B).sum()),
+                    inf_a=int(torch.isinf(A).sum()),
+                    inf_b=int(torch.isinf(B).sum()),
+                    torch_equal=bool(torch.equal(A, B)),
+                    allclose_rtol0_atol0=bool(
+                        torch.allclose(A.float(), B.float(),
+                                       rtol=0, atol=0)),
+                    n_byte_mismatch_elems=int(bm.sum()),
+                    n_signed_zero_pairs=int((bm & zz).sum()),
+                    all_mismatches_are_signed_zero=bool(
+                        (bm & ~zz).sum() == 0))
             if not ok and mx > 2e-3:
                 fails.append(f"{mode}:{name} weight mismatch max={mx}")
 

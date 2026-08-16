@@ -149,6 +149,16 @@ def main():
                          "penalty when --anchor-beta > 0")
     ap.add_argument("--anchor-beta", type=float, default=0.0)
     ap.add_argument("--anchor-rho", type=float, default=0.45)
+    # closure section 24: restrict the soft cell loss to a site subset
+    # (e.g. "W_first" for the joint-basis variant: hard budget on the
+    # recurrent-basis folds + differentiable cell term on the first
+    # fold). Default = all 9 sites (unchanged behavior).
+    ap.add_argument("--anchor-sites", default="",
+                    help="comma list of cell-loss sites; empty = all")
+    ap.add_argument("--anchor-grad-norm", action="store_true",
+                    help="if step-0 cell-grad norm exceeds 10x the "
+                         "task-grad norm, rescale beta by their ratio "
+                         "(logged; closure section 24 rule)")
     # qanchor Phase D hard budget: periodic utility-ranked flip-budget
     # projection of the masters through the exact inverse folds
     # (anchor_quant.hard_budget_project; needs --anchor-ckpt)
@@ -653,9 +663,33 @@ def main():
             pen.backward()
         if anchor_state is not None and args.anchor_beta > 0:
             from eagle_spinquant import anchor_quant as AQ
+            cell_sites = (tuple(s for s in
+                                args.anchor_sites.split(",") if s)
+                          or AQ.QSITES)
             tw_cell = model.transformed_weights(exact=False)
             lc = AQ.cell_loss(tw_cell, anchor_state,
-                              rho=args.anchor_rho)
+                              rho=args.anchor_rho, sites=cell_sites)
+            if step == 0 and args.anchor_grad_norm:
+                # closure section 24: one-shot beta normalization by
+                # initial gradient-norm ratio (>10x rule), measured on
+                # separate grad passes over the masters
+                gtask0 = sum(float(getattr(model, n).grad.norm())
+                             for n in model.CORE
+                             if getattr(model, n).grad is not None)
+                gc = torch.autograd.grad(
+                    args.anchor_beta * lc,
+                    [getattr(model, n) for n in model.CORE],
+                    retain_graph=True, allow_unused=True)
+                gcell0 = sum(float(x.norm()) for x in gc
+                             if x is not None)
+                if gcell0 > 10 * max(gtask0, 1e-9):
+                    scale = gtask0 / gcell0
+                    args.anchor_beta *= scale
+                    print(f"[lk] joint-basis beta normalized x"
+                          f"{scale:.4g} (cell|g|={gcell0:.3f} vs "
+                          f"task|g|={gtask0:.3f})", flush=True)
+                    log.append(dict(step=0, beta_norm_scale=scale,
+                                    gcell0=gcell0, gtask0=gtask0))
             (args.anchor_beta * lc).backward()
             if step == 0 or step % 100 == 0:
                 gtask = sum(float(getattr(model, n).grad.norm())

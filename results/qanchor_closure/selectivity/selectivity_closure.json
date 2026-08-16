@@ -1,0 +1,304 @@
+{
+ "down_audit": {
+  "HB_conv_b0.02_s0": {
+   "H_Q_all": 0.015551,
+   "H_Q_controlled": 0.000412,
+   "down_changed_codes": 25008,
+   "down_flip_rate_within_down": 0.000555,
+   "down_fraction_of_all_flips": 0.005967,
+   "total_changed_codes": 4190874,
+   "wfirst_h_flips": 3951777,
+   "wfirst_h_fraction_of_all": 0.942948
+  },
+  "HB_hybrid_b0.005_s0": {
+   "H_Q_all": 0.013014,
+   "H_Q_controlled": 3.1e-05,
+   "down_changed_codes": 793,
+   "down_flip_rate_within_down": 1.8e-05,
+   "down_fraction_of_all_flips": 0.000226,
+   "total_changed_codes": 3506993,
+   "wfirst_h_flips": 3410182,
+   "wfirst_h_fraction_of_all": 0.972395
+  },
+  "T6conv_1e-6_s1": {
+   "H_Q_all": 0.022133,
+   "H_Q_controlled": 0.021946,
+   "down_changed_codes": 1738628,
+   "down_flip_rate_within_down": 0.03856,
+   "down_fraction_of_all_flips": 0.29149,
+   "total_changed_codes": 5964622,
+   "wfirst_h_flips": 767588,
+   "wfirst_h_fraction_of_all": 0.12869
+  },
+  "T6hybrid_1e-6_s1": {
+   "H_Q_all": 0.010011,
+   "H_Q_controlled": 0.009585,
+   "down_changed_codes": 539031,
+   "down_flip_rate_within_down": 0.011955,
+   "down_fraction_of_all_flips": 0.199795,
+   "total_changed_codes": 2697917,
+   "wfirst_h_flips": 427609,
+   "wfirst_h_fraction_of_all": 0.158496
+  },
+  "aggressive_P2conv_s0": {
+   "H_Q_all": 0.13898,
+   "H_Q_controlled": 0.142838,
+   "down_changed_codes": 13985037,
+   "down_flip_rate_within_down": 0.310167,
+   "down_fraction_of_all_flips": 0.373404,
+   "total_changed_codes": 37452791,
+   "wfirst_h_flips": 3633992,
+   "wfirst_h_fraction_of_all": 0.097029
+  }
+ },
+ "overlaps": {
+  "HB_conv_b0.02_s0__vs__T6conv_1e-6_s1": {
+   "intersection": 597353,
+   "jaccard_all": 0.0625,
+   "per_module": {
+    "W_first": {
+     "intersection": 585254,
+     "jaccard": 0.1363,
+     "unique_a": 3508404,
+     "unique_b": 201625
+    },
+    "W_rec": {
+     "intersection": 4175,
+     "jaccard": 0.0052,
+     "unique_a": 23239,
+     "unique_b": 773190
+    },
+    "down": {
+     "intersection": 2545,
+     "jaccard": 0.0014,
+     "unique_a": 22463,
+     "unique_b": 1736083
+    },
+    "gate": {
+     "intersection": 2678,
+     "jaccard": 0.0026,
+     "unique_a": 20425,
+     "unique_b": 1004673
+    },
+    "k": {
+     "intersection": 47,
+     "jaccard": 0.0002,
+     "unique_a": 348,
+     "unique_b": 189554
+    },
+    "o": {
+     "intersection": 32,
+     "jaccard": 0.0002,
+     "unique_a": 305,
+     "unique_b": 177524
+    },
+    "q": {
+     "intersection": 79,
+     "jaccard": 0.0004,
+     "unique_a": 638,
+     "unique_b": 205316
+    },
+    "up": {
+     "intersection": 2516,
+     "jaccard": 0.0027,
+     "unique_a": 17492,
+     "unique_b": 895221
+    },
+    "v": {
+     "intersection": 27,
+     "jaccard": 0.0001,
+     "unique_a": 207,
+     "unique_b": 184083
+    }
+   },
+   "unique_a": 3593521,
+   "unique_b": 5367269
+  },
+  "HB_hybrid_b0.005_s0__vs__HB_conv_b0.02_s0": {
+   "intersection": 2210454,
+   "jaccard_all": 0.4028,
+   "per_module": {
+    "W_first": {
+     "intersection": 2210383,
+     "jaccard": 0.4106,
+     "unique_a": 1289334,
+     "unique_b": 1883275
+    },
+    "W_rec": {
+     "intersection": 59,
+     "jaccard": 0.0018,
+     "unique_a": 5252,
+     "unique_b": 27355
+    },
+    "down": {
+     "intersection": 4,
+     "jaccard": 0.0002,
+     "unique_a": 789,
+     "unique_b": 25004
+    },
+    "gate": {
+     "intersection": 3,
+     "jaccard": 0.0001,
+     "unique_a": 686,
+     "unique_b": 23100
+    },
+    "k": {
+     "intersection": 1,
+     "jaccard": 0.0024,
+     "unique_a": 21,
+     "unique_b": 394
+    },
+    "o": {
+     "intersection": 0,
+     "jaccard": 0.0,
+     "unique_a": 5,
+     "unique_b": 337
+    },
+    "q": {
+     "intersection": 0,
+     "jaccard": 0.0,
+     "unique_a": 34,
+     "unique_b": 717
+    },
+    "up": {
+     "intersection": 4,
+     "jaccard": 0.0002,
+     "unique_a": 405,
+     "unique_b": 20004
+    },
+    "v": {
+     "intersection": 0,
+     "jaccard": 0.0,
+     "unique_a": 13,
+     "unique_b": 234
+    }
+   },
+   "unique_a": 1296539,
+   "unique_b": 1980420
+  },
+  "HB_hybrid_b0.005_s0__vs__T6conv_1e-6_s1": {
+   "intersection": 520279,
+   "jaccard_all": 0.0581,
+   "per_module": {
+    "W_first": {
+     "intersection": 519268,
+     "jaccard": 0.1378,
+     "unique_a": 2980449,
+     "unique_b": 267611
+    },
+    "W_rec": {
+     "intersection": 750,
+     "jaccard": 0.001,
+     "unique_a": 4561,
+     "unique_b": 776615
+    },
+    "down": {
+     "intersection": 122,
+     "jaccard": 0.0001,
+     "unique_a": 671,
+     "unique_b": 1738506
+    },
+    "gate": {
+     "intersection": 76,
+     "jaccard": 0.0001,
+     "unique_a": 613,
+     "unique_b": 1007275
+    },
+    "k": {
+     "intersection": 1,
+     "jaccard": 0.0,
+     "unique_a": 21,
+     "unique_b": 189600
+    },
+    "o": {
+     "intersection": 0,
+     "jaccard": 0.0,
+     "unique_a": 5,
+     "unique_b": 177556
+    },
+    "q": {
+     "intersection": 6,
+     "jaccard": 0.0,
+     "unique_a": 28,
+     "unique_b": 205389
+    },
+    "up": {
+     "intersection": 52,
+     "jaccard": 0.0001,
+     "unique_a": 357,
+     "unique_b": 897685
+    },
+    "v": {
+     "intersection": 4,
+     "jaccard": 0.0,
+     "unique_a": 9,
+     "unique_b": 184106
+    }
+   },
+   "unique_a": 2986714,
+   "unique_b": 5444343
+  },
+  "HB_hybrid_b0.005_s0__vs__T6hybrid_1e-6_s1": {
+   "intersection": 314125,
+   "jaccard_all": 0.0533,
+   "per_module": {
+    "W_first": {
+     "intersection": 313531,
+     "jaccard": 0.0865,
+     "unique_a": 3186186,
+     "unique_b": 122960
+    },
+    "W_rec": {
+     "intersection": 447,
+     "jaccard": 0.001,
+     "unique_a": 4864,
+     "unique_b": 430178
+    },
+    "down": {
+     "intersection": 65,
+     "jaccard": 0.0001,
+     "unique_a": 728,
+     "unique_b": 538966
+    },
+    "gate": {
+     "intersection": 47,
+     "jaccard": 0.0001,
+     "unique_a": 642,
+     "unique_b": 462055
+    },
+    "k": {
+     "intersection": 0,
+     "jaccard": 0.0,
+     "unique_a": 22,
+     "unique_b": 113489
+    },
+    "o": {
+     "intersection": 0,
+     "jaccard": 0.0,
+     "unique_a": 5,
+     "unique_b": 89184
+    },
+    "q": {
+     "intersection": 4,
+     "jaccard": 0.0,
+     "unique_a": 30,
+     "unique_b": 121377
+    },
+    "up": {
+     "intersection": 28,
+     "jaccard": 0.0001,
+     "unique_a": 381,
+     "unique_b": 398285
+    },
+    "v": {
+     "intersection": 3,
+     "jaccard": 0.0,
+     "unique_a": 10,
+     "unique_b": 107298
+    }
+   },
+   "unique_a": 3192868,
+   "unique_b": 2383792
+  }
+ }
+}

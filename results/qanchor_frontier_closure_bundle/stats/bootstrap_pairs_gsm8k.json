@@ -1,0 +1,252 @@
+[
+ {
+  "name": "A_hbhyb_med_vs_T6conv_med",
+  "a": "CFIN_T6conv_gsr5_s1@int4",
+  "b": "CLFIN_HB_B_hybrid_b0.005_s2_st3000@int4",
+  "dataset": "gsm8k",
+  "status": "ok",
+  "tau_a": 3.8243,
+  "ci_a": [
+   3.781,
+   3.8678
+  ],
+  "tau_b": 3.8077,
+  "ci_b": [
+   3.7648,
+   3.8518
+  ],
+  "delta_b_minus_a": -0.0165,
+  "ci_delta": [
+   -0.0624,
+   0.0298
+  ],
+  "p_two_sided": 0.4968,
+  "n_common": 200,
+  "reps": 10000
+ },
+ {
+  "name": "A2_hbhyb_med_vs_T6conv_best",
+  "a": "CLFIN_CAN_T6_gsr5_conv_s2_st2000@int4",
+  "b": "CLFIN_HB_B_hybrid_b0.005_s2_st3000@int4",
+  "dataset": "gsm8k",
+  "status": "ok",
+  "tau_a": 3.8256,
+  "ci_a": [
+   3.785,
+   3.8665
+  ],
+  "tau_b": 3.8077,
+  "ci_b": [
+   3.7648,
+   3.8514
+  ],
+  "delta_b_minus_a": -0.0179,
+  "ci_delta": [
+   -0.066,
+   0.0301
+  ],
+  "p_two_sided": 0.4834,
+  "n_common": 200,
+  "reps": 10000
+ },
+ {
+  "name": "B_hbhyb_med_vs_T6hyb_med",
+  "a": "CFIN_T6hybrid_gsr5_s1@int4",
+  "b": "CLFIN_HB_B_hybrid_b0.005_s2_st3000@int4",
+  "dataset": "gsm8k",
+  "status": "ok",
+  "tau_a": 3.8381,
+  "ci_a": [
+   3.8002,
+   3.8772
+  ],
+  "tau_b": 3.8077,
+  "ci_b": [
+   3.7653,
+   3.8506
+  ],
+  "delta_b_minus_a": -0.0304,
+  "ci_delta": [
+   -0.0754,
+   0.0147
+  ],
+  "p_two_sided": 0.1924,
+  "n_common": 200,
+  "reps": 10000
+ },
+ {
+  "name": "B2_hbhyb_med_vs_T6hyb_best",
+  "a": "CLFIN_CAN_T6_gsr5_hybrid_s0_st2500@int4",
+  "b": "CLFIN_HB_B_hybrid_b0.005_s2_st3000@int4",
+  "dataset": "gsm8k",
+  "status": "ok",
+  "tau_a": 3.8448,
+  "ci_a": [
+   3.8077,
+   3.8827
+  ],
+  "tau_b": 3.8077,
+  "ci_b": [
+   3.7642,
+   3.8499
+  ],
+  "delta_b_minus_a": -0.0371,
+  "ci_delta": [
+   -0.0801,
+   0.0054
+  ],
+  "p_two_sided": 0.0918,
+  "n_common": 200,
+  "reps": 10000
+ },
+ {
+  "name": "C_hbconv_med_vs_T6conv_med",
+  "a": "CFIN_T6conv_gsr5_s1@int4",
+  "b": "CLFIN_HB_B_conv_b0.02_s0_st3000@int4",
+  "dataset": "gsm8k",
+  "status": "ok",
+  "tau_a": 3.8243,
+  "ci_a": [
+   3.7811,
+   3.8672
+  ],
+  "tau_b": 3.7431,
+  "ci_b": [
+   3.7,
+   3.7864
+  ],
+  "delta_b_minus_a": -0.0812,
+  "ci_delta": [
+   -0.1275,
+   -0.0349
+  ],
+  "p_two_sided": 0.0012,
+  "n_common": 200,
+  "reps": 10000
+ },
+ {
+  "name": "D_hbconv_med_vs_T6hyb_med",
+  "a": "CFIN_T6hybrid_gsr5_s1@int4",
+  "b": "CLFIN_HB_B_conv_b0.02_s0_st3000@int4",
+  "dataset": "gsm8k",
+  "status": "ok",
+  "tau_a": 3.8381,
+  "ci_a": [
+   3.7999,
+   3.8775
+  ],
+  "tau_b": 3.7431,
+  "ci_b": [
+   3.7015,
+   3.7859
+  ],
+  "delta_b_minus_a": -0.095,
+  "ci_delta": [
+   -0.1408,
+   -0.0498
+  ],
+  "p_two_sided": 0.0,
+  "n_common": 200,
+  "reps": 10000
+ },
+ {
+  "name": "S0_hbhyb_s0_vs_T6conv_med",
+  "a": "CFIN_T6conv_gsr5_s1@int4",
+  "b": "CLFIN_HB_B_hybrid_b0.005_s0_st3000@int4",
+  "dataset": "gsm8k",
+  "status": "ok",
+  "tau_a": 3.8243,
+  "ci_a": [
+   3.7808,
+   3.8678
+  ],
+  "tau_b": 3.8331,
+  "ci_b": [
+   3.7936,
+   3.8741
+  ],
+  "delta_b_minus_a": 0.0088,
+  "ci_delta": [
+   -0.0351,
+   0.0531
+  ],
+  "p_two_sided": 0.6924,
+  "n_common": 200,
+  "reps": 10000
+ },
+ {
+  "name": "S1_hbhyb_s1_vs_T6conv_med",
+  "a": "CFIN_T6conv_gsr5_s1@int4",
+  "b": "CLFIN_HB_B_hybrid_b0.005_s1_st3000@int4",
+  "dataset": "gsm8k",
+  "status": "ok",
+  "tau_a": 3.8243,
+  "ci_a": [
+   3.7803,
+   3.8685
+  ],
+  "tau_b": 3.8121,
+  "ci_b": [
+   3.77,
+   3.8546
+  ],
+  "delta_b_minus_a": -0.0122,
+  "ci_delta": [
+   -0.0581,
+   0.0341
+  ],
+  "p_two_sided": 0.607,
+  "n_common": 200,
+  "reps": 10000
+ },
+ {
+  "name": "P_hbhyb_s0_vs_PTQ",
+  "a": "CANON_B9@int4",
+  "b": "CLFIN_HB_B_hybrid_b0.005_s0_st3000@int4",
+  "dataset": "gsm8k",
+  "status": "ok",
+  "tau_a": 3.6875,
+  "ci_a": [
+   3.6443,
+   3.7309
+  ],
+  "tau_b": 3.8331,
+  "ci_b": [
+   3.7924,
+   3.8731
+  ],
+  "delta_b_minus_a": 0.1456,
+  "ci_delta": [
+   0.0999,
+   0.1927
+  ],
+  "p_two_sided": 0.0,
+  "n_common": 200,
+  "reps": 10000
+ },
+ {
+  "name": "Q_T6conv_med_vs_PTQ",
+  "a": "CANON_B9@int4",
+  "b": "CFIN_T6conv_gsr5_s1@int4",
+  "dataset": "gsm8k",
+  "status": "ok",
+  "tau_a": 3.6875,
+  "ci_a": [
+   3.6447,
+   3.7318
+  ],
+  "tau_b": 3.8243,
+  "ci_b": [
+   3.7797,
+   3.8672
+  ],
+  "delta_b_minus_a": 0.1368,
+  "ci_delta": [
+   0.0881,
+   0.1856
+  ],
+  "p_two_sided": 0.0,
+  "n_common": 200,
+  "reps": 10000
+ }
+]

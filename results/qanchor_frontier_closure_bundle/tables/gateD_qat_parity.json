@@ -1,0 +1,95 @@
+{
+ "verdict": "PASS",
+ "fails": [],
+ "alpha": 45.254834,
+ "draft_sd": null,
+ "results": {
+  "identity": {
+   "weights": {
+    "W_first": {
+     "equal": false,
+     "max_abs_diff": 0.0,
+     "dtype_a": "torch.float16",
+     "dtype_b": "torch.float16",
+     "shape": [
+      4096,
+      8192
+     ],
+     "contiguous_a": true,
+     "contiguous_b": true,
+     "nan_a": 0,
+     "nan_b": 0,
+     "inf_a": 0,
+     "inf_b": 0,
+     "torch_equal": true,
+     "allclose_rtol0_atol0": true,
+     "n_byte_mismatch_elems": 37,
+     "n_signed_zero_pairs": 37,
+     "all_mismatches_are_signed_zero": true
+    },
+    "W_rec": {
+     "equal": true,
+     "max_abs_diff": 0.0
+    },
+    "q": {
+     "equal": true,
+     "max_abs_diff": 0.0
+    },
+    "k": {
+     "equal": true,
+     "max_abs_diff": 0.0
+    },
+    "v": {
+     "equal": true,
+     "max_abs_diff": 0.0
+    },
+    "o": {
+     "equal": true,
+     "max_abs_diff": 0.0
+    },
+    "gate": {
+     "equal": true,
+     "max_abs_diff": 0.0
+    },
+    "up": {
+     "equal": true,
+     "max_abs_diff": 0.0
+    },
+    "down": {
+     "equal": true,
+     "max_abs_diff": 0.0
+    },
+    "head": {
+     "equal": true,
+     "max_abs_diff": 0.0
+    }
+   },
+   "chain": [
+    {
+     "depth": 0,
+     "max_dlogits": 0.0,
+     "max_dh": 0.0,
+     "greedy_tok_equal": true
+    },
+    {
+     "depth": 1,
+     "max_dlogits": 0.0,
+     "max_dh": 0.0,
+     "greedy_tok_equal": true
+    },
+    {
+     "depth": 2,
+     "max_dlogits": 0.0,
+     "max_dh": 0.0,
+     "greedy_tok_equal": true
+    },
+    {
+     "depth": 3,
+     "max_dlogits": 0.0,
+     "max_dh": 0.0,
+     "greedy_tok_equal": true
+    }
+   ]
+  }
+ }
+}

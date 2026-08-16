@@ -1,0 +1,12 @@
+ M docs/QAT_QUANTIZED_ANCHOR_CAUSAL_STUDY.md
+ M giveGPT.sh
+ M scripts/check_qat_deploy_parity.py
+ M scripts/train_eagle_lk_rotation.py
+ M tests/__pycache__/test_lk_losses.cpython-312-pytest-7.4.4.pyc
+?? docs/QAT_QUANTIZED_ANCHOR_FRONTIER_CLOSURE.md
+?? qanchor_for_gpt/
+?? scripts/closure_drift_metrics.py
+?? seagle_aaqat_for_gpt_20260814/
+?? seagle_aaqat_slim_20260814/
+?? seagle_acceptance_aware_qat_final_20260814.tar.zst
+?? seagle_acceptance_aware_qat_final_20260814/

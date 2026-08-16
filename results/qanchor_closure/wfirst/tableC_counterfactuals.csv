@@ -1,0 +1,7 @@
+counterfactual,mtbench,gsm8k,sharegpt,humaneval,mean4,delta_vs_PTQ,delta_vs_fullHB,fraction_of_HB_gain_preserved,H_Q_all,H_Q_Wfirst_h,H_Q_controlled
+PTQ anchor (C0),3.1645,3.6875,3.2351,3.8282,3.4788,0.0,-0.1488,0.0,0.0,0.0,0.0
+HB_controlled_only (== HB_no_Wfirst),3.203,3.7197,3.2979,3.8623,3.5207,0.0419,-0.1069,0.282,,,
+HB_no_WfirstH,3.2042,3.7145,3.3039,3.8447,3.5168,0.038,-0.1108,0.255,,,
+HB_WfirstH_only,3.3578,3.8023,3.3623,3.8392,3.5904,0.1116,-0.0372,0.75,,,
+HB_Wfirst_only,3.3891,3.8352,3.4129,3.8363,3.6184,0.1396,-0.0092,0.938,,,
+full HB (CHB),3.3797,3.8331,3.4308,3.8668,3.6276,0.1488,0.0,1.0,0.013014,0.203263,3.1e-05

@@ -1,0 +1,38 @@
+{
+ "S_controlled": {
+  "elements": 235929600,
+  "flips": 7276,
+  "flip_rate": 3.1e-05,
+  "fraction_of_all_flips": 0.002075
+ },
+ "S_Wfirst_e": {
+  "elements": 16777216,
+  "flips": 89535,
+  "flip_rate": 0.005337,
+  "fraction_of_all_flips": 0.02553
+ },
+ "S_Wfirst_h": {
+  "elements": 16777216,
+  "flips": 3410182,
+  "flip_rate": 0.203263,
+  "fraction_of_all_flips": 0.972395
+ },
+ "S_down": {
+  "elements": 45088768,
+  "flips": 793,
+  "note": "subset of S_controlled",
+  "flip_rate": 1.8e-05,
+  "fraction_of_all_flips": 0.000226
+ },
+ "S_other": {
+  "elements": 0,
+  "flips": 0,
+  "flip_rate": 0.0,
+  "fraction_of_all_flips": 0.0
+ },
+ "totals": {
+  "elements": 269484032,
+  "flips": 3506993,
+  "H_Q_all": 0.013014
+ }
+}

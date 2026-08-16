@@ -1,0 +1,252 @@
+[
+ {
+  "name": "A_hbhyb_med_vs_T6conv_med",
+  "a": "CFIN_T6conv_gsr5_s1@int4",
+  "b": "CLFIN_HB_B_hybrid_b0.005_s2_st3000@int4",
+  "dataset": "sharegpt",
+  "status": "ok",
+  "tau_a": 3.4172,
+  "ci_a": [
+   3.3074,
+   3.5236
+  ],
+  "tau_b": 3.3852,
+  "ci_b": [
+   3.2819,
+   3.4841
+  ],
+  "delta_b_minus_a": -0.032,
+  "ci_delta": [
+   -0.1041,
+   0.0401
+  ],
+  "p_two_sided": 0.384,
+  "n_common": 80,
+  "reps": 10000
+ },
+ {
+  "name": "A2_hbhyb_med_vs_T6conv_best",
+  "a": "CLFIN_CAN_T6_gsr5_conv_s2_st2000@int4",
+  "b": "CLFIN_HB_B_hybrid_b0.005_s2_st3000@int4",
+  "dataset": "sharegpt",
+  "status": "ok",
+  "tau_a": 3.4033,
+  "ci_a": [
+   3.3093,
+   3.4956
+  ],
+  "tau_b": 3.3852,
+  "ci_b": [
+   3.2832,
+   3.4847
+  ],
+  "delta_b_minus_a": -0.0181,
+  "ci_delta": [
+   -0.0902,
+   0.0551
+  ],
+  "p_two_sided": 0.6324,
+  "n_common": 80,
+  "reps": 10000
+ },
+ {
+  "name": "B_hbhyb_med_vs_T6hyb_med",
+  "a": "CFIN_T6hybrid_gsr5_s1@int4",
+  "b": "CLFIN_HB_B_hybrid_b0.005_s2_st3000@int4",
+  "dataset": "sharegpt",
+  "status": "ok",
+  "tau_a": 3.4041,
+  "ci_a": [
+   3.3008,
+   3.5051
+  ],
+  "tau_b": 3.3852,
+  "ci_b": [
+   3.2857,
+   3.4844
+  ],
+  "delta_b_minus_a": -0.0189,
+  "ci_delta": [
+   -0.0905,
+   0.051
+  ],
+  "p_two_sided": 0.5992,
+  "n_common": 80,
+  "reps": 10000
+ },
+ {
+  "name": "B2_hbhyb_med_vs_T6hyb_best",
+  "a": "CLFIN_CAN_T6_gsr5_hybrid_s0_st2500@int4",
+  "b": "CLFIN_HB_B_hybrid_b0.005_s2_st3000@int4",
+  "dataset": "sharegpt",
+  "status": "ok",
+  "tau_a": 3.4155,
+  "ci_a": [
+   3.3088,
+   3.5198
+  ],
+  "tau_b": 3.3852,
+  "ci_b": [
+   3.2857,
+   3.4859
+  ],
+  "delta_b_minus_a": -0.0303,
+  "ci_delta": [
+   -0.1121,
+   0.0499
+  ],
+  "p_two_sided": 0.4542,
+  "n_common": 80,
+  "reps": 10000
+ },
+ {
+  "name": "C_hbconv_med_vs_T6conv_med",
+  "a": "CFIN_T6conv_gsr5_s1@int4",
+  "b": "CLFIN_HB_B_conv_b0.02_s0_st3000@int4",
+  "dataset": "sharegpt",
+  "status": "ok",
+  "tau_a": 3.4172,
+  "ci_a": [
+   3.3071,
+   3.5227
+  ],
+  "tau_b": 3.3943,
+  "ci_b": [
+   3.3022,
+   3.4839
+  ],
+  "delta_b_minus_a": -0.0229,
+  "ci_delta": [
+   -0.0943,
+   0.0493
+  ],
+  "p_two_sided": 0.5248,
+  "n_common": 80,
+  "reps": 10000
+ },
+ {
+  "name": "D_hbconv_med_vs_T6hyb_med",
+  "a": "CFIN_T6hybrid_gsr5_s1@int4",
+  "b": "CLFIN_HB_B_conv_b0.02_s0_st3000@int4",
+  "dataset": "sharegpt",
+  "status": "ok",
+  "tau_a": 3.4041,
+  "ci_a": [
+   3.3023,
+   3.5045
+  ],
+  "tau_b": 3.3943,
+  "ci_b": [
+   3.301,
+   3.4825
+  ],
+  "delta_b_minus_a": -0.0098,
+  "ci_delta": [
+   -0.0756,
+   0.0572
+  ],
+  "p_two_sided": 0.777,
+  "n_common": 80,
+  "reps": 10000
+ },
+ {
+  "name": "S0_hbhyb_s0_vs_T6conv_med",
+  "a": "CFIN_T6conv_gsr5_s1@int4",
+  "b": "CLFIN_HB_B_hybrid_b0.005_s0_st3000@int4",
+  "dataset": "sharegpt",
+  "status": "ok",
+  "tau_a": 3.4172,
+  "ci_a": [
+   3.3065,
+   3.5227
+  ],
+  "tau_b": 3.4308,
+  "ci_b": [
+   3.3351,
+   3.5258
+  ],
+  "delta_b_minus_a": 0.0136,
+  "ci_delta": [
+   -0.0691,
+   0.0919
+  ],
+  "p_two_sided": 0.732,
+  "n_common": 80,
+  "reps": 10000
+ },
+ {
+  "name": "S1_hbhyb_s1_vs_T6conv_med",
+  "a": "CFIN_T6conv_gsr5_s1@int4",
+  "b": "CLFIN_HB_B_hybrid_b0.005_s1_st3000@int4",
+  "dataset": "sharegpt",
+  "status": "ok",
+  "tau_a": 3.4172,
+  "ci_a": [
+   3.3083,
+   3.5193
+  ],
+  "tau_b": 3.3883,
+  "ci_b": [
+   3.2899,
+   3.4859
+  ],
+  "delta_b_minus_a": -0.0289,
+  "ci_delta": [
+   -0.1021,
+   0.039
+  ],
+  "p_two_sided": 0.4374,
+  "n_common": 80,
+  "reps": 10000
+ },
+ {
+  "name": "P_hbhyb_s0_vs_PTQ",
+  "a": "CANON_B9@int4",
+  "b": "CLFIN_HB_B_hybrid_b0.005_s0_st3000@int4",
+  "dataset": "sharegpt",
+  "status": "ok",
+  "tau_a": 3.2351,
+  "ci_a": [
+   3.1328,
+   3.3358
+  ],
+  "tau_b": 3.4308,
+  "ci_b": [
+   3.3342,
+   3.5274
+  ],
+  "delta_b_minus_a": 0.1957,
+  "ci_delta": [
+   0.129,
+   0.2616
+  ],
+  "p_two_sided": 0.0,
+  "n_common": 80,
+  "reps": 10000
+ },
+ {
+  "name": "Q_T6conv_med_vs_PTQ",
+  "a": "CANON_B9@int4",
+  "b": "CFIN_T6conv_gsr5_s1@int4",
+  "dataset": "sharegpt",
+  "status": "ok",
+  "tau_a": 3.2351,
+  "ci_a": [
+   3.1362,
+   3.3303
+  ],
+  "tau_b": 3.4172,
+  "ci_b": [
+   3.3085,
+   3.523
+  ],
+  "delta_b_minus_a": 0.1821,
+  "ci_delta": [
+   0.1127,
+   0.2551
+  ],
+  "p_two_sided": 0.0,
+  "n_common": 80,
+  "reps": 10000
+ }
+]

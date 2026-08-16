@@ -1,0 +1,6 @@
+ docs/QAT_QUANTIZED_ANCHOR_CAUSAL_STUDY.md          |  33 ++-
+ giveGPT.sh                                         | 329 +++++----------------
+ scripts/check_qat_deploy_parity.py                 |  24 ++
+ scripts/train_eagle_lk_rotation.py                 |  36 ++-
+ .../test_lk_losses.cpython-312-pytest-7.4.4.pyc    | Bin 34113 -> 34099 bytes
+ 5 files changed, 163 insertions(+), 259 deletions(-)

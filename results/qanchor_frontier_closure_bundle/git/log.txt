@@ -1,0 +1,3 @@
+7d9db96 qanchor: results bundle (tables/stats/figures/shards/configs, 2.8MB)
+64453c2 qanchor Phase D complete: hard flip-budget projection (utility top-K, in-cell clamp, converging escapee retry) + soft-cell 600/3000 horizons + Gate C LoRA negative; frontier dominance achieved (HB conv b2% 4W/0L vs PTQ post-Holm, hybrid b0.5% mean4 3.6276; all anchored beat plain QAT 4W/0L); 10k bootstrap+Holm, Pareto+selectivity figures, 30-item summary, results bundle
+3b7380a qanchor Phase C: code-frozen LoRA side-branches (train+deploy, D_Q=0 by construction), 4 runs queued

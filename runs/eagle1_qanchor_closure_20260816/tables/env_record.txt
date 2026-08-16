@@ -1,0 +1,14 @@
+# Closure audit environment record (2026-08-16)
+base_branch: exp/eagle1-qat-quantized-anchor-causal
+base_HEAD: 7d9db96f28beab1115aa86e751a56c04b21b6f43
+ancestor_64453c2: CONFIRMED
+closure_branch: exp/eagle1-qanchor-frontier-closure-audit
+gpu: RTX 4090 x8; cuda 12.4; torch 2.6.0+cu124; python seagle env
+R_bin(target learned_chat_w4a4kv16): 4b7e91d2a7531bb8
+R5 RD_HYB_s2: 20c03f004d6edbf8
+anchor_gsr5_ptq: d290220cd41e012b
+qat_anchor(fp16 draft): a7c6ccc85ac1e1db
+GS_alpha: 32.89964245299412
+W4: per-out-channel symmetric RTN+MSE-clip maxq=7, frozen anchor scales for anchored deploys
+A4: per-token asymmetric dynamic (deployment contract)
+HB best ckpts: hybrid_b0.005_s0 56bd6fc11d95337b, conv_b0.02_s0 7ed8c27457e2f971

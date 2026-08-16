@@ -1,0 +1,31 @@
+method,dataset,sum_tau,cycles,micro_tau,reported_tau,absolute_difference,pass
+GS+R5 PTQ,mtbench,9870,3119,3.164476,3.1645,2.4e-05,True
+GS+R5 PTQ,gsm8k,25890,7021,3.687509,3.6875,9e-06,True
+GS+R5 PTQ,sharegpt,10197,3152,3.235089,3.2351,1.1e-05,True
+GS+R5 PTQ,humaneval,21185,5534,3.828153,3.8282,4.7e-05,True
+GS+R5 PTQ,mean4,,,3.478807,3.4788,7e-06,True
+plain QAT 1e-5 (s0),mtbench,9985,3168,3.151831,3.1518,3.1e-05,True
+plain QAT 1e-5 (s0),gsm8k,25896,7070,3.662801,3.6628,1e-06,True
+plain QAT 1e-5 (s0),sharegpt,10145,3138,3.232951,3.233,4.9e-05,True
+plain QAT 1e-5 (s0),humaneval,21263,5701,3.729697,3.7297,3e-06,True
+plain QAT 1e-5 (s0),mean4,,,3.44432,3.4443,2e-05,True
+HB conv b2% (s0),mtbench,9918,3011,3.293922,3.2939,2.2e-05,True
+HB conv b2% (s0),gsm8k,25771,6885,3.743065,3.7431,3.5e-05,True
+HB conv b2% (s0),sharegpt,10183,3000,3.394333,3.3943,3.3e-05,True
+HB conv b2% (s0),humaneval,21275,5428,3.919492,3.9195,8e-06,True
+HB conv b2% (s0),mean4,,,3.587703,3.5877,3e-06,True
+HB hybrid b0.5% (s0),mtbench,10004,2960,3.37973,3.3797,3e-05,True
+HB hybrid b0.5% (s0),gsm8k,25716,6709,3.83306,3.8331,4e-05,True
+HB hybrid b0.5% (s0),sharegpt,10162,2962,3.43079,3.4308,1e-05,True
+HB hybrid b0.5% (s0),humaneval,21279,5503,3.8668,3.8668,0.0,True
+HB hybrid b0.5% (s0),mean4,,,3.627595,3.6276,5e-06,True
+code-frozen LoRA r16,mtbench,9855,3129,3.149569,3.1496,3.1e-05,True
+code-frozen LoRA r16,gsm8k,25915,7257,3.571035,3.571,3.5e-05,True
+code-frozen LoRA r16,sharegpt,10162,3156,3.219899,3.2199,1e-06,True
+code-frozen LoRA r16,humaneval,21185,5844,3.625086,3.6251,1.4e-05,True
+code-frozen LoRA r16,mean4,,,3.391397,3.3914,3e-06,True
+best soft-cell (DP hybrid b0.1 s1),mtbench,10042,3075,3.265691,3.2657,9e-06,True
+best soft-cell (DP hybrid b0.1 s1),gsm8k,25746,6818,3.776181,3.7762,1.9e-05,True
+best soft-cell (DP hybrid b0.1 s1),sharegpt,10142,2995,3.386311,3.3863,1.1e-05,True
+best soft-cell (DP hybrid b0.1 s1),humaneval,21270,5560,3.82554,3.8255,4e-05,True
+best soft-cell (DP hybrid b0.1 s1),mean4,,,3.56343,3.5634,3e-05,True
