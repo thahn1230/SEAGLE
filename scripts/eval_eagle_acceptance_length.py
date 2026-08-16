@@ -216,6 +216,22 @@ def main():
         assert args.target != "fp16", \
             "native_raw is defined on the rotated target only"
         assert args.draft_sd, "native_raw requires --draft-sd"
+        # optional Stage-B RAW quantization (no folds; Gate L):
+        # --quant-first carries the QUANT_BITS mode for ALL sites
+        # (fp16 = FP16 arm), --ar-mask restricts to a site subset,
+        # --quant-embed quantizes the embedding table weight.
+        nr_mode = args.quant_first or "fp16"
+        nr_embed = args.quant_embed or "fp16"
+        if nr_mode != "fp16" or nr_embed != "fp16":
+            from eagle_spinquant.native_raw_draft import (
+                apply_native_raw_quant)
+            nr_man = apply_native_raw_quant(
+                model, nr_mode,
+                site_mask=(args.ar_mask.split(",") if args.ar_mask
+                           else None),
+                quant_embed=nr_embed)
+            print(f"[al] native_raw quant: {json.dumps(nr_man)}",
+                  flush=True)
     elif args.draft_cfg in ("stock", "fp16_deploy"):
         if args.target != "fp16":
             from eagle_spinquant.causal_interface import (

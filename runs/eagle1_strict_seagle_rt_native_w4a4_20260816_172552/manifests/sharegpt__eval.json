@@ -1,0 +1,409 @@
+{
+  "name": "sharegpt",
+  "split": "eval",
+  "dataset_revision": "0.0.0",
+  "n": 80,
+  "rows": [
+    {
+      "row_id": "sharegpt_0",
+      "sha256": "232e243cc0a3f16490539ee9e3506613e6e22b5970f18ea565e0b2c6c70c0a79",
+      "n_chars": 190
+    },
+    {
+      "row_id": "sharegpt_1",
+      "sha256": "e84296385575a118acc07e395393d98701ec89808c7e07cb3dae0d0fe0aa0e64",
+      "n_chars": 72
+    },
+    {
+      "row_id": "sharegpt_2",
+      "sha256": "878b52c30fe92b658ee578a65fbf51026422b9c5c4492382b7f0fb041f4a6bb1",
+      "n_chars": 191
+    },
+    {
+      "row_id": "sharegpt_4",
+      "sha256": "99e79fc6f80d7080701f12bee92ac337ab0d8aea36bc47183c66c98af8a33b25",
+      "n_chars": 1060
+    },
+    {
+      "row_id": "sharegpt_5",
+      "sha256": "a6aba9db96b1bb0ef9eaba122dc6822a693eeaa7b27441c9c722c7eefaa1a875",
+      "n_chars": 69
+    },
+    {
+      "row_id": "sharegpt_6",
+      "sha256": "ce74f1002974025d1c3d13bad87ded45b13951ea48d218d01a156d3e588c147d",
+      "n_chars": 236
+    },
+    {
+      "row_id": "sharegpt_8",
+      "sha256": "654e79af8181e6f8b1ae031e969fb8b911479f2cee8b94fe781c0622162e49a2",
+      "n_chars": 87
+    },
+    {
+      "row_id": "sharegpt_9",
+      "sha256": "ac8b97869f124ea0bb6589933706c0acb8ade482117405858b219e9dea3f3aca",
+      "n_chars": 133
+    },
+    {
+      "row_id": "sharegpt_10",
+      "sha256": "9b86237507780079df3c80facb32c5c8f3b06a9f133cac10c34770b5684dcbfc",
+      "n_chars": 280
+    },
+    {
+      "row_id": "sharegpt_13",
+      "sha256": "360d1b44c845c942dcd34c433d25e09a79855449d51d43397b658636d2ca8e94",
+      "n_chars": 228
+    },
+    {
+      "row_id": "sharegpt_15",
+      "sha256": "cc48cda2b677082fdd1c73256596c81056210a6503dafab1f4ebbfedd8f2d829",
+      "n_chars": 95
+    },
+    {
+      "row_id": "sharegpt_16",
+      "sha256": "b4de9dff5a484f3d853d7856ce005b0668d5734b49fba9198b02949b1fd5281c",
+      "n_chars": 315
+    },
+    {
+      "row_id": "sharegpt_19",
+      "sha256": "111ef7681fcc8d4dfc837b23efdbccde15aa6d577db7ef5e239ffd81c4dd6d69",
+      "n_chars": 119
+    },
+    {
+      "row_id": "sharegpt_23",
+      "sha256": "2b88480542c4c2b05c28777a95429508c3551862ed2690e46d2f44928b3a6fd1",
+      "n_chars": 118
+    },
+    {
+      "row_id": "sharegpt_24",
+      "sha256": "6f586b78d443ba9e30cf418769c93c0289bd69a2bc0a189302a68e1b5ec698df",
+      "n_chars": 659
+    },
+    {
+      "row_id": "sharegpt_25",
+      "sha256": "41dea13847a13bf783d1a1455d6e62e733e55e7c2c6052b9301c07542f561e3e",
+      "n_chars": 70
+    },
+    {
+      "row_id": "sharegpt_26",
+      "sha256": "d8f2a0863ea0dabd0d83ea72178014ecf551250004bec93a99ff18015873d465",
+      "n_chars": 90
+    },
+    {
+      "row_id": "sharegpt_28",
+      "sha256": "50fbaa8fd13d3d58979fc9b10a8a97856372ee4cf1d850ac9c4cf4b90355ec63",
+      "n_chars": 82
+    },
+    {
+      "row_id": "sharegpt_29",
+      "sha256": "a5e5d35bf34e2e477332e07f9e50b642032d9724ae6f36d2b395a6f004fb4712",
+      "n_chars": 132
+    },
+    {
+      "row_id": "sharegpt_31",
+      "sha256": "956d2fa206e8e425257ef5e310f9474ede3390be202f873be4e90478bd11bb58",
+      "n_chars": 620
+    },
+    {
+      "row_id": "sharegpt_34",
+      "sha256": "3b8f62dad44c99ae1817166703bb831dfa7f0f7472e036af79532614bc6a4559",
+      "n_chars": 84
+    },
+    {
+      "row_id": "sharegpt_35",
+      "sha256": "06733aea3f2e99488b6ebdbb0c3c025ae2799476dcc832372a888ff3156cc581",
+      "n_chars": 187
+    },
+    {
+      "row_id": "sharegpt_36",
+      "sha256": "f8ca09f998a8a7e84af52fe0c859225b45d94dd69b3dbe705993b8630fdd86fe",
+      "n_chars": 150
+    },
+    {
+      "row_id": "sharegpt_39",
+      "sha256": "48202d30eee4bbb4a3aca4874e4b191bde02162901cfd6400aea3a705a759fb3",
+      "n_chars": 60
+    },
+    {
+      "row_id": "sharegpt_41",
+      "sha256": "1b03492e95e0fb7fdd4197c767e3052a0a52fab3e2a5f5b3735ee363fef6da46",
+      "n_chars": 675
+    },
+    {
+      "row_id": "sharegpt_43",
+      "sha256": "4c9e3831f3ba101aecc0340a0612c9f33476457707e42413502313181087e851",
+      "n_chars": 76
+    },
+    {
+      "row_id": "sharegpt_46",
+      "sha256": "6ad6f2ba1b102419319eb58171884a857525aeb74b0a5721196f48195c0975bf",
+      "n_chars": 243
+    },
+    {
+      "row_id": "sharegpt_48",
+      "sha256": "2126b42e86bb0827a72da585a3dad89dde79666b415832bb490c67231bfc6136",
+      "n_chars": 103
+    },
+    {
+      "row_id": "sharegpt_54",
+      "sha256": "b5afbec01161c0ee7b458319aab43576d691e09955cf6cec95784048738968c3",
+      "n_chars": 266
+    },
+    {
+      "row_id": "sharegpt_56",
+      "sha256": "0ad417f76f19c7c32f11edd7df872ef1ed4fe48a3890304105c9e37937237eac",
+      "n_chars": 106
+    },
+    {
+      "row_id": "sharegpt_58",
+      "sha256": "704eabebab7509e5f1ce0b6dcb1c516fddc0162bf03777417b10b33e25d05888",
+      "n_chars": 110
+    },
+    {
+      "row_id": "sharegpt_60",
+      "sha256": "df39ab6e1535bc865e82e65850c89ae959a6bb8cd38d36d66eaedf7aea769c62",
+      "n_chars": 156
+    },
+    {
+      "row_id": "sharegpt_65",
+      "sha256": "77b11c9f718720636ea97f46ed4b05a96f8e8a6ba7596b032ec04b5f2eca37de",
+      "n_chars": 482
+    },
+    {
+      "row_id": "sharegpt_66",
+      "sha256": "9625973d31cd317ca26863f19be63a6e47685a853675fe2cadc5419ee5298e80",
+      "n_chars": 62
+    },
+    {
+      "row_id": "sharegpt_67",
+      "sha256": "265efef1ffd89b4369fef3982f03110357f62ba246a1403568c209351ef058a7",
+      "n_chars": 88
+    },
+    {
+      "row_id": "sharegpt_69",
+      "sha256": "824664b7d2778f15b0d69404a56431a8d711301e670d667f07e34e4130b82e52",
+      "n_chars": 78
+    },
+    {
+      "row_id": "sharegpt_70",
+      "sha256": "af4e17c825530d47570cb14219d7e6b89e728273e87b10c560dd04802bfced3b",
+      "n_chars": 81
+    },
+    {
+      "row_id": "sharegpt_73",
+      "sha256": "738902f109ffa2b814346614a1f14f74c00f412d236ab729ce4a91158e22d048",
+      "n_chars": 985
+    },
+    {
+      "row_id": "sharegpt_74",
+      "sha256": "7c9421da118cc1b78fe4290a143f23dfb3e5969b0368e63d820125683a8621ad",
+      "n_chars": 120
+    },
+    {
+      "row_id": "sharegpt_75",
+      "sha256": "04945440061bc014f3991c344e98273a611594c2dfa876b01581465c97d10f5a",
+      "n_chars": 347
+    },
+    {
+      "row_id": "sharegpt_76",
+      "sha256": "8a69c1c4c5e14a8b2eedb9dc4c076e771423ae7c4852eb1f09481950da4743da",
+      "n_chars": 255
+    },
+    {
+      "row_id": "sharegpt_77",
+      "sha256": "278e9ba99aeffb0f66e97e2bdc77fe18b9923fc77dc0867c1f3e2e5844211ca3",
+      "n_chars": 101
+    },
+    {
+      "row_id": "sharegpt_79",
+      "sha256": "341dec881f4ee0c3a97a00cf3be462bf017116334992f67ad5f214e1b1951be7",
+      "n_chars": 78
+    },
+    {
+      "row_id": "sharegpt_80",
+      "sha256": "a360a36051752cb22ca5336bf7f0f6b5c8596afac555dc51a07631cd38012a1b",
+      "n_chars": 817
+    },
+    {
+      "row_id": "sharegpt_83",
+      "sha256": "cb662bdd84390cd47746f0bccb701be56398beab033d2eeb61dcd46a4ef2fba1",
+      "n_chars": 156
+    },
+    {
+      "row_id": "sharegpt_84",
+      "sha256": "8a3ddd7042c95e0c54b2d501c417315c8b33cad6cf8a7af51c6343b94867030f",
+      "n_chars": 585
+    },
+    {
+      "row_id": "sharegpt_86",
+      "sha256": "23143642a29ec06f58a805df6eba50e54db3779244756915b0aa0193e5bba3d7",
+      "n_chars": 79
+    },
+    {
+      "row_id": "sharegpt_90",
+      "sha256": "82c77626eb344fdf7d9573ad25ee590ef7b2265c30212e5d885cab111abe273f",
+      "n_chars": 472
+    },
+    {
+      "row_id": "sharegpt_91",
+      "sha256": "34705b1d2d45eb73d671b7c208632f18bc7105c7d558055ba51c7c4615e5d98c",
+      "n_chars": 100
+    },
+    {
+      "row_id": "sharegpt_93",
+      "sha256": "43fae3619041a0d55311cef657119c801945a75beb2999976db5cdea5adb5e47",
+      "n_chars": 96
+    },
+    {
+      "row_id": "sharegpt_95",
+      "sha256": "5d8226c98da3ab32afd08724310f2234a67d72a8b942e2d043f661c87866bbe8",
+      "n_chars": 74
+    },
+    {
+      "row_id": "sharegpt_96",
+      "sha256": "b470ee777550183f7d80a3511253f0568129c6dfa5db4e8a54ada1e9ca9872b6",
+      "n_chars": 268
+    },
+    {
+      "row_id": "sharegpt_99",
+      "sha256": "bfe197b68a43f015b6903ee9e37f6837a7d7ecfb76993be9ad1560a242d82044",
+      "n_chars": 433
+    },
+    {
+      "row_id": "sharegpt_105",
+      "sha256": "4d00b9962cd04d1d110aa4a920e3f0e86f7f558f46eccb59316f57b567d7cdc2",
+      "n_chars": 91
+    },
+    {
+      "row_id": "sharegpt_106",
+      "sha256": "71d36581934189a714e79ebcc6b25a63e8d00cbf5520f779b543d16daef94f0d",
+      "n_chars": 349
+    },
+    {
+      "row_id": "sharegpt_108",
+      "sha256": "ddd363b7b93fcf24dd828d2192e5d26651ed5d529ce9116cda65f61557e67a72",
+      "n_chars": 174
+    },
+    {
+      "row_id": "sharegpt_110",
+      "sha256": "7658b3366a3cf883f569375bc603d7370b3403302ab1a2b0d85230957f2f9815",
+      "n_chars": 153
+    },
+    {
+      "row_id": "sharegpt_111",
+      "sha256": "f402cd0c448cf71928d48d16c68bb315e3a02673b12461d2368b2e96d6a44d96",
+      "n_chars": 110
+    },
+    {
+      "row_id": "sharegpt_113",
+      "sha256": "9a3168140734c2eb94ecd1ff46d1b57f0fa9b7d2d4ac0ba72e8926cfdb988317",
+      "n_chars": 460
+    },
+    {
+      "row_id": "sharegpt_114",
+      "sha256": "901015f6d51c89f788d011ba9d4ac4a0abdf3dd63de94b4040395d576391c81a",
+      "n_chars": 86
+    },
+    {
+      "row_id": "sharegpt_116",
+      "sha256": "6360022ba2d418547734f43954ec9077afe98eef05070427c055930f8b42518d",
+      "n_chars": 452
+    },
+    {
+      "row_id": "sharegpt_118",
+      "sha256": "9cd2047c01f8db8367f872bb75300453b0d9f260b62163240f27f4b6c2afd8d2",
+      "n_chars": 110
+    },
+    {
+      "row_id": "sharegpt_119",
+      "sha256": "ab794a2da78d0e3f4cd503bc8af4d4fb1a62161a21298ceef778552a8b5c5fce",
+      "n_chars": 221
+    },
+    {
+      "row_id": "sharegpt_120",
+      "sha256": "d30bc81b8fb21587d5b268f247d454d2b74fc1662cf7ed84e5ebf7c92a41bba7",
+      "n_chars": 67
+    },
+    {
+      "row_id": "sharegpt_121",
+      "sha256": "5d2cd755be0e441f15a50d60326c440cd55df9902f6e3c3af28167cd6378174e",
+      "n_chars": 109
+    },
+    {
+      "row_id": "sharegpt_122",
+      "sha256": "eea666ac280ea5bec9ad003545b617048ecc9439383cb5566c8c87b505a8029e",
+      "n_chars": 764
+    },
+    {
+      "row_id": "sharegpt_124",
+      "sha256": "019f0c7d902d36690dcb5cf40ce0379e0e680c5ec9682d16e6db0538d1a8c6e5",
+      "n_chars": 100
+    },
+    {
+      "row_id": "sharegpt_125",
+      "sha256": "b38e7b9315ed02d479ee303dd40f3cdea6747c64982be7fe83458241418993e9",
+      "n_chars": 274
+    },
+    {
+      "row_id": "sharegpt_133",
+      "sha256": "ef283610dc045d658b2b615bf925dfa92c17ee1f5325a76b27191d91d2073553",
+      "n_chars": 133
+    },
+    {
+      "row_id": "sharegpt_138",
+      "sha256": "d704a7557930a9fa87bb4aec0309c558aad0890cc5e59bbfb014c5b23b5f1c04",
+      "n_chars": 266
+    },
+    {
+      "row_id": "sharegpt_140",
+      "sha256": "1e6a922182beeb6a43284aff656d91e57bb94f4d7797dfe9e14289aa0d485abf",
+      "n_chars": 1196
+    },
+    {
+      "row_id": "sharegpt_141",
+      "sha256": "0e01872ba03b3883cbe4dfbb04234ba32d4c7018cccc2feb6a6af2f04d7b492a",
+      "n_chars": 1154
+    },
+    {
+      "row_id": "sharegpt_142",
+      "sha256": "1b7e4a050b2e0b1f0982d6b73e584a70fb3b4d332b7e93ce2384570ef9d75c98",
+      "n_chars": 226
+    },
+    {
+      "row_id": "sharegpt_143",
+      "sha256": "5f13181dbe35d299b15c97e618a763da6da7620dedd198c739080af2e3836a4d",
+      "n_chars": 946
+    },
+    {
+      "row_id": "sharegpt_145",
+      "sha256": "1449b5065682a32d2877e21398ef9c9167738a09e637a153d65f94e78dff2d45",
+      "n_chars": 1126
+    },
+    {
+      "row_id": "sharegpt_146",
+      "sha256": "a24ffe5c589f7732bbf81f6965d8a0570e6d782f8e8e1a77b02af3056956688a",
+      "n_chars": 963
+    },
+    {
+      "row_id": "sharegpt_147",
+      "sha256": "64f9b3c91d5f2be34aec817c0ec003dde99800cd64eb875a726ed1daca941adf",
+      "n_chars": 70
+    },
+    {
+      "row_id": "sharegpt_148",
+      "sha256": "97de9e3c71ccf28ce9ff5b8e4a9b7f77614f478a8e5d14f11d3f42d7eecb5c82",
+      "n_chars": 86
+    },
+    {
+      "row_id": "sharegpt_150",
+      "sha256": "60dca31ec81c69d2cf9278d5171928e4652f768701effec4addbd35c918c480e",
+      "n_chars": 124
+    },
+    {
+      "row_id": "sharegpt_153",
+      "sha256": "14dcf83c5d1190d7f6c0712d59b9bfbf2d7368035169c7509324b5e92ee43344",
+      "n_chars": 78
+    }
+  ],
+  "manifest_sha256": "96060988a46742273be3a57566c0bcdd87c7ef0462df3092b81cacecabf47edd"
+}
