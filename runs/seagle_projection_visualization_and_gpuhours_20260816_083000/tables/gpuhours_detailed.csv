@@ -1,0 +1,15 @@
+method,substage,run_job,n_gpu,wall_hours,gpu_hours,included,source
+SEAGLE-PTQ,scale (beta_GS/alpha) selection grid,EP3-P/PMG scale grid (original server),1,3.0,3.0,yes,study docs (from-scratch study documents the analog 2x9-eval alpha grid = 3 GPU-h); logs not on this server [ESTIMATE]
+SEAGLE-PTQ,PTQ fold+quantize deploy,adapter install,1,0.02,0.02,yes,measured ~60s per install
+SEAGLE-PTQ,rotation: R_D residual (RD_HYB_s2),runs/eagle1_draft_residual_rotation_ep3p_20260804_165317,1,1.8,1.8,yes (rotation col),3000 steps x measured 2.2s/step of the SAME chain trainer on identical GPUs [ESTIMATE]
+SEAGLE-PTQ,rotation: target R_T SpinQuant (shared),"outputs/rotations/learned_chat_w4a4kv16 (100 steps, torchrun 8 GPU)",8,1.25,10.0,yes (rotation col),trainer_state.json steps; wall-time not preserved -> 1.25h x 8 [ESTIMATE 8-12]
+SEAGLE-PTQ,confirmatory eval (CANON_B9 4ds),CRUN shards,1,0.97,0.97,optional row D,measured shard gen_seconds + 240s load/job
+SEAGLE-QAT,3-seed training (T6 gsr5 conv 1e-6),can_t6_gsr5_conv_s0/1/2,1,5.45,5.45,yes,"MEASURED: in-log elapsed 6590+6518+6791s? (gsr5: 19626s total), 1 GPU each"
+SEAGLE-QAT,cadence-selection calibs (8 cad x 3 seeds),CSEL_CAN_T6_gsr5_conv_*,1,2.58,2.58,yes,MEASURED shard gen_seconds (3514s) + 24x240s load
+SEAGLE-QAT,rotation: R_D + R_T (same artifacts as PTQ),shared,,,11.8,yes (rotation col),same jobs as SEAGLE-PTQ rotation rows (deploy = gsr5)
+SEAGLE-QAT,median-seed 4-ds finals,CFIN_T6conv_gsr5_s1,1,0.96,0.96,optional row D,measured gen_seconds + load
+SEAGLE-RT,from-scratch official-recipe training,"eagle1_official_fromscratch (43.9k steps, world 8/7/6/8)",8,,155.0,yes,DOCUMENTED in study report section 11
+SEAGLE-RT,alpha recalibration (2x9 evals),same study,1,3.0,3.0,yes,DOCUMENTED
+SEAGLE-RT,rotation: target R_T SpinQuant (shared),shared,8,1.25,10.0,yes (rotation col),same artifact as PTQ/QAT [ESTIMATE]
+SEAGLE-RT,optional: Q1 low-LR QAT arm (6 runs + pilots + multistep),same study,1,,40.0,optional,DOCUMENTED
+SEAGLE-RT,optional: best-ckpt selection calibs,same study,1,,6.0,optional,DOCUMENTED

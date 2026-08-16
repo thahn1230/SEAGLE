@@ -1,0 +1,4 @@
+method,core_gpu_h,rotation_gpu_h,total_gpu_h,notes
+SEAGLE-PTQ,3.02,11.8,14.8,core=scale-selection grid ~3.0 [EST/doc-analog] + fold/deploy 0.02 [meas]; rotation = R_D 1.8 [EST from measured same-trainer rate] + shared target R_T ~10 [EST]
+SEAGLE-QAT,8.03,11.8,19.8,core=3 seed trainings 5.45 [MEASURED logs] + cadence-selection calibs 2.58 [MEASURED gen_seconds+load]; rotation same as PTQ (gsr5 deploy)
+SEAGLE-RT,158.0,10.0,168.0,core=from-scratch reproduction 155 [DOCUMENTED] + alpha recalibration 3 [DOCUMENTED]; rotation = shared target R_T only ~10 [EST]; optional Q1 QAT arm +40 and ckpt selection +6 [DOCUMENTED] not in core

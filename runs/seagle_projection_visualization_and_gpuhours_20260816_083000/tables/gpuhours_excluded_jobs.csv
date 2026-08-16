@@ -1,0 +1,7 @@
+excluded_item,gpu_hours,reason
+CANON_B1..B9 cross-server bit-exact verification,6.05 GPU-h [MEASURED],"server-migration verification, not part of any method"
+EP3-P rotation screening (13 candidates + finalists beyond the canonical job),~24 GPU-h [EST],research screening; canonical R_D charged as 1 training job
+"AA-QAT LK-objective arms, D-pilots, B-grids, qanchor causal study, closure audit","~150+ GPU-h (this server, Aug 12-16)",research studies; only their T6-conv arm defines SEAGLE-QAT
+QA_LRF LR-frontier trainings/evals,~20 GPU-h,"frontier science (closure audit), not the method itself"
+July study C-cells incl. C7 full-recipe retraining on int4 interface,~30 GPU-h [doc-EST],harmful-recipe variant (tau -0.65); listed as RT nearest-variant only
+"Failed/buggy runs (OOM, collided babysitters, corrupted-path evals)",~8 GPU-h [EST],"excluded per accounting rule; bugs, not method"

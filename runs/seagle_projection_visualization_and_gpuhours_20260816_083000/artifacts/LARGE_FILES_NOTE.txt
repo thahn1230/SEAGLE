@@ -1,0 +1,1 @@
+full-resolution npz kept ON SERVER at runs/seagle_projection_visualization_and_gpuhours_20260816_083000/artifacts/ (320MB each, excluded from git; slim fp16 versions committed)

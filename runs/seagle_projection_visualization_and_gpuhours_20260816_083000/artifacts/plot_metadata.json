@@ -1,0 +1,78 @@
+{
+ "pooling": {
+  "SEAGLE_PTQ_first_act": {
+   "ry": 1,
+   "rx": 16,
+   "mode": "max-abs"
+  },
+  "SEAGLE_PTQ_first_w": {
+   "ry": 32,
+   "rx": 16,
+   "mode": "max-abs"
+  },
+  "SEAGLE_PTQ_recurrent_act": {
+   "ry": 1,
+   "rx": 16,
+   "mode": "max-abs"
+  },
+  "SEAGLE_PTQ_recurrent_w": {
+   "ry": 32,
+   "rx": 16,
+   "mode": "max-abs"
+  },
+  "SEAGLE_QAT_first_act": {
+   "ry": 1,
+   "rx": 16,
+   "mode": "max-abs"
+  },
+  "SEAGLE_QAT_first_w": {
+   "ry": 32,
+   "rx": 16,
+   "mode": "max-abs"
+  },
+  "SEAGLE_QAT_recurrent_act": {
+   "ry": 1,
+   "rx": 16,
+   "mode": "max-abs"
+  },
+  "SEAGLE_QAT_recurrent_w": {
+   "ry": 32,
+   "rx": 16,
+   "mode": "max-abs"
+  },
+  "SEAGLE_RT_first_act": {
+   "ry": 1,
+   "rx": 16,
+   "mode": "max-abs"
+  },
+  "SEAGLE_RT_first_w": {
+   "ry": 32,
+   "rx": 16,
+   "mode": "max-abs"
+  },
+  "SEAGLE_RT_recurrent_act": {
+   "ry": 1,
+   "rx": 16,
+   "mode": "max-abs"
+  },
+  "SEAGLE_RT_recurrent_w": {
+   "ry": 32,
+   "rx": 16,
+   "mode": "max-abs"
+  }
+ },
+ "zscales": {
+  "SEAGLE_PTQ_first_act": 73.91958618164062,
+  "SEAGLE_PTQ_first_w": 0.74365234375,
+  "SEAGLE_PTQ_recurrent_act": 29.778682708740234,
+  "SEAGLE_PTQ_recurrent_w": 0.74365234375,
+  "SEAGLE_QAT_first_act": 77.43526458740234,
+  "SEAGLE_QAT_first_w": 0.744140625,
+  "SEAGLE_QAT_recurrent_act": 25.980379104614258,
+  "SEAGLE_QAT_recurrent_w": 0.744140625,
+  "SEAGLE_RT_first_act": 77.43526458740234,
+  "SEAGLE_RT_first_w": 0.5791015625,
+  "SEAGLE_RT_recurrent_act": 26.235618591308594,
+  "SEAGLE_RT_recurrent_w": 0.5791015625
+ }
+}

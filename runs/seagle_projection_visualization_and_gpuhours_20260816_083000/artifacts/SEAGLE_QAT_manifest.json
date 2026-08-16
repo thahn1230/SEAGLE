@@ -1,0 +1,118 @@
+{
+ "manifest": {
+  "method": "SEAGLE_QAT",
+  "alpha": 32.89964245299412,
+  "rd_ckpt": "/home/thahn1230/SEAGLE/runs/eagle1_draft_residual_rotation_ep3p_20260804_165317/rotations/RD_HYB_s2.pt",
+  "draft_sd": "/data/thahn1230/aaq_ckpts/CAN_T6_gsr5_conv_s1.pt.step1500.pt",
+  "prompts_dataset": "mtbench:eval-pool",
+  "prompt_ids": [
+   81,
+   82,
+   83,
+   84,
+   85,
+   86,
+   87,
+   88,
+   89,
+   90,
+   91,
+   92
+  ],
+  "max_new": 64,
+  "window_rule": "median-energy contiguous 128-row window over pooled captured rows",
+  "boundary_channel": 4096,
+  "first_window": [
+   832,
+   960
+  ],
+  "first_rows_captured": 1972,
+  "recurrent_window": [
+   906,
+   1034
+  ],
+  "recurrent_rows_captured": 2640
+ },
+ "stats": {
+  "act_first_after": {
+   "rms": 0.7677081487552169,
+   "absmax": 5.06640625,
+   "kurtosis": 1.4897828484912763,
+   "top01pct_channel_energy": 0.005761781251817887,
+   "shape": [
+    128,
+    8192
+   ]
+  },
+  "act_first_original": {
+   "rms": 1.2739243653629735,
+   "absmax": 77.43526458740234,
+   "kurtosis": 66.16582566477206,
+   "top01pct_channel_energy": 0.08223072046849345,
+   "shape": [
+    128,
+    8192
+   ]
+  },
+  "act_recurrent_after": {
+   "rms": 0.9911142898756379,
+   "absmax": 7.9140625,
+   "kurtosis": 2.192655999157876,
+   "top01pct_channel_energy": 0.005880037221442137,
+   "shape": [
+    128,
+    8192
+   ]
+  },
+  "act_recurrent_original": {
+   "rms": 0.9429025019712532,
+   "absmax": 25.980379104614258,
+   "kurtosis": 17.976149165349103,
+   "top01pct_channel_energy": 0.05540998985280211,
+   "shape": [
+    128,
+    8192
+   ]
+  },
+  "w_first_original": {
+   "rms": 0.05111701154156119,
+   "absmax": 0.744140625,
+   "kurtosis": 3.277142098295746,
+   "top01pct_channel_energy": 0.006255353170966704,
+   "shape": [
+    4096,
+    8192
+   ]
+  },
+  "w_first_after": {
+   "rms": 0.006250424265307263,
+   "absmax": 0.0599365234375,
+   "kurtosis": 2.32261567479276,
+   "top01pct_channel_energy": 0.002028357794861404,
+   "shape": [
+    4096,
+    8192
+   ]
+  },
+  "w_rec_original": {
+   "rms": 0.05111701154156119,
+   "absmax": 0.744140625,
+   "kurtosis": 3.277142098295746,
+   "top01pct_channel_energy": 0.006255353170966704,
+   "shape": [
+    4096,
+    8192
+   ]
+  },
+  "w_rec_after": {
+   "rms": 0.003816080151110079,
+   "absmax": 0.035797119140625,
+   "kurtosis": 1.4107125237659748,
+   "top01pct_channel_energy": 0.0019756292588812693,
+   "shape": [
+    4096,
+    8192
+   ]
+  }
+ }
+}
