@@ -81,6 +81,10 @@ def main():
                     help="csv of AR linears to quantize (subset of "
                          "q_proj,k_proj,v_proj,o_proj,gate_proj,"
                          "up_proj,down_proj)")
+    ap.add_argument("--native-rot", default="none",
+                    help="native_raw only: 'had' = fixed Hadamard "
+                         "interface rotation (SRT_W4A4_HAD), or a "
+                         "rotation ckpt path with R_D (SRT_W4A4_SQ)")
     ap.add_argument("--proj-rot-first", default=None,
                     help="R-EP3-P rotation spec JSON (first path)")
     ap.add_argument("--proj-rot-rec", default=None,
@@ -222,7 +226,20 @@ def main():
         # --quant-embed quantizes the embedding table weight.
         nr_mode = args.quant_first or "fp16"
         nr_embed = args.quant_embed or "fp16"
-        if nr_mode != "fp16" or nr_embed != "fp16":
+        if args.native_rot != "none":
+            # SRT_W4A4_HAD / SRT_W4A4_SQ: interface-boundary rotation
+            from eagle_spinquant.native_raw_draft import (
+                apply_interface_rotation)
+            assert nr_mode != "fp16", "--native-rot needs --quant-first"
+            R = None
+            if args.native_rot != "had":
+                ck = torch.load(args.native_rot, map_location="cpu",
+                                weights_only=False)
+                R = ck["R_D"].double()
+            nr_man = apply_interface_rotation(model, nr_mode, R=R)
+            print(f"[al] native_rot({args.native_rot}): "
+                  f"{json.dumps(nr_man)}", flush=True)
+        elif nr_mode != "fp16" or nr_embed != "fp16":
             from eagle_spinquant.native_raw_draft import (
                 apply_native_raw_quant)
             nr_man = apply_native_raw_quant(

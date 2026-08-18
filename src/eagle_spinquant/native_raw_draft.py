@@ -25,6 +25,110 @@ from .fake_w4a4_draft import FakeW4A4Linear, _weight_fake_quant
 
 SITES = ("fc", "q_proj", "k_proj", "v_proj", "o_proj",
          "gate_proj", "up_proj", "down_proj")
+D = 4096
+
+
+def hadamard_4096(device, dtype=torch.float64):
+    """Normalized 4096 Sylvester Hadamard (exact orthogonal)."""
+    H = torch.ones(1, 1, dtype=dtype, device=device)
+    while H.shape[0] < D:
+        H = torch.cat([torch.cat([H, H], 1), torch.cat([H, -H], 1)], 0)
+    return H / (D ** 0.5)
+
+
+class RotatedFcInput(torch.nn.Module):
+    """SRT_W4A4_HAD / _SQ interface-boundary rotation: applies R to the
+    HIDDEN half of the fc input at runtime while the wrapped quantized
+    fc holds W_h@R folded weights — function-preserving in exact
+    arithmetic (x@R @ (W_h R)^T == x W_h^T); the quantizers therefore
+    see the ROTATED activation and weight (energy mixing), with zero
+    change to the draft's external interface (no restore semantics).
+    Covers BOTH the first path (a_t) and the recurrent path (recycled
+    f) because cnets routes both through this single fc."""
+
+    def __init__(self, fq_fc, R):
+        super().__init__()
+        self.fq = fq_fc
+        self.register_buffer("R", R.half())
+
+    @property
+    def weight(self):                       # device-discovery shim
+        return self.fq.w_fake
+
+    def forward(self, z):
+        e, h = z[..., :D], z[..., D:]
+        h = (h.half() @ self.R).to(z.dtype)
+        return self.fq(torch.cat([e, h], dim=-1))
+
+
+def apply_interface_rotation(ea_model, mode, R=None, r4_downproj=True):
+    """Stage-B fixed/learned rotation arm on the RAW-quantized draft.
+
+    Call INSTEAD of quantizing fc via apply_native_raw_quant: quantizes
+    all 8 sites, but fc gets W_h@R folded (fp64 fold, then fp16
+    RTN-quantized) + runtime input rotation, and down_proj gets the
+    canonical exact R4 Hadamard fold + online Hadamard.
+    R=None -> normalized Hadamard-4096 (SRT_W4A4_HAD). Pass a learned
+    orthogonal R (fp64) for SRT_W4A4_SQ.
+    """
+    ea = ea_model.ea_layer if hasattr(ea_model, "ea_layer") else ea_model
+    w_bits, a_bits = QUANT_BITS[mode]
+    dev = ea.fc.weight.device
+    if R is None:
+        R = hadamard_4096(dev)
+    R = R.to(dev, torch.float64)
+    err = (R @ R.T - torch.eye(D, dtype=torch.float64,
+                               device=dev)).abs().max()
+    assert float(err) < 1e-9, f"R not orthogonal ({float(err)})"
+
+    # fc: fold W_h @ R in fp64, then quantize; wrap with runtime R
+    lin = ea.fc
+    assert isinstance(lin, torch.nn.Linear), "fc already replaced"
+    W = lin.weight.data.double()
+    Wf = torch.cat([W[:, :D], W[:, D:] @ R], dim=1).half()
+    fq = FakeW4A4Linear(Wf, lin.bias, "native_had.fc",
+                        online_had=False, quant_weight=w_bits < 16,
+                        quant_act=a_bits < 16,
+                        w_bits=w_bits, a_bits=a_bits).to(dev)
+    ea.fc = RotatedFcInput(fq, R)
+
+    # AR sites: raw RTN; down_proj additionally gets canonical R4
+    from . import spinquant_bridge as sb
+    sb.add_spinquant_to_syspath()
+    from utils import hadamard_utils
+    man = apply_native_raw_quant(
+        ea, mode, site_mask=[s for s in SITES
+                             if s not in ("fc", "down_proj")])
+    layer = ea.layers[0]
+    dp = layer.mlp.down_proj
+    if r4_downproj:
+        import copy
+        dp2 = copy.deepcopy(dp)
+        hadamard_utils.apply_exact_had_to_linear(
+            dp2, had_dim=-1, output=False)
+        had_K, K = hadamard_utils.get_hadK(dp.in_features)
+        fqd = FakeW4A4Linear(dp2.weight.data.half(), dp2.bias,
+                             "native_had.down_proj", online_had=True,
+                             had_K=(had_K.to(dev) if had_K is not None
+                                    else None), K=K,
+                             quant_weight=w_bits < 16,
+                             quant_act=a_bits < 16,
+                             w_bits=w_bits, a_bits=a_bits).to(dev)
+    else:
+        fqd = FakeW4A4Linear(dp.weight.data.half(), dp.bias,
+                             "native_had.down_proj", online_had=False,
+                             quant_weight=w_bits < 16,
+                             quant_act=a_bits < 16,
+                             w_bits=w_bits, a_bits=a_bits).to(dev)
+    layer.mlp.down_proj = fqd
+    man["fc"] = dict(mode=mode, rotated="W_h@R + runtime input R")
+    man["down_proj"] = dict(mode=mode,
+                            r4="exact fold + online" if r4_downproj
+                            else "none")
+    man["_contract"] = ("interface-boundary rotation: quantizers see "
+                        "rotated act/weight; function preserved exactly "
+                        "in fp64; no restore, no alpha, no R2")
+    return man
 
 
 def _get(ea, site):
