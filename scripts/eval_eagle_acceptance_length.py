@@ -85,6 +85,9 @@ def main():
                     help="native_raw only: 'had' = fixed Hadamard "
                          "interface rotation (SRT_W4A4_HAD), or a "
                          "rotation ckpt path with R_D (SRT_W4A4_SQ)")
+    ap.add_argument("--native-alpha", type=float, default=None,
+                    help="native_raw rescue arm: exact embed/W_e "
+                         "branch-balancing alpha (no default coupling)")
     ap.add_argument("--proj-rot-first", default=None,
                     help="R-EP3-P rotation spec JSON (first path)")
     ap.add_argument("--proj-rot-rec", default=None,
@@ -226,6 +229,13 @@ def main():
         # --quant-embed quantizes the embedding table weight.
         nr_mode = args.quant_first or "fp16"
         nr_embed = args.quant_embed or "fp16"
+        if args.native_alpha is not None:
+            from eagle_spinquant.native_raw_draft import (
+                apply_embed_alpha)
+            print("[al] native_alpha:",
+                  json.dumps(apply_embed_alpha(model,
+                                               args.native_alpha)),
+                  flush=True)
         if args.native_rot != "none":
             # SRT_W4A4_HAD / SRT_W4A4_SQ: interface-boundary rotation
             from eagle_spinquant.native_raw_draft import (
@@ -242,10 +252,11 @@ def main():
         elif nr_mode != "fp16" or nr_embed != "fp16":
             from eagle_spinquant.native_raw_draft import (
                 apply_native_raw_quant)
+            nr_mask = (None if not args.ar_mask
+                       else ([] if args.ar_mask == "none"
+                             else args.ar_mask.split(",")))
             nr_man = apply_native_raw_quant(
-                model, nr_mode,
-                site_mask=(args.ar_mask.split(",") if args.ar_mask
-                           else None),
+                model, nr_mode, site_mask=nr_mask,
                 quant_embed=nr_embed)
             print(f"[al] native_raw quant: {json.dumps(nr_man)}",
                   flush=True)

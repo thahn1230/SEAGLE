@@ -1,0 +1,26 @@
+{
+ "stats": [
+  {
+   "branch": "e_embed",
+   "rms": 0.0168,
+   "absmax": 0.134,
+   "kurtosis": 3.1,
+   "p999": 0.0564,
+   "top01pct_energy": 0.0043
+  },
+  {
+   "branch": "h_native",
+   "rms": 1.0,
+   "absmax": 5.133,
+   "kurtosis": 3.0,
+   "p999": 3.2637,
+   "top01pct_energy": 0.0031
+  }
+ ],
+ "rms_ratio_h_over_e": 59.52,
+ "nmse_A_only": 0.0817,
+ "nmse_W_only": 0.7614,
+ "nmse_AW": 0.8295,
+ "nmse_A_only_alpha32": 0.0199,
+ "nmse_A_only_alpha64": 0.0234
+}

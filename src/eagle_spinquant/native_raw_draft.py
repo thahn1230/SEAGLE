@@ -140,6 +140,20 @@ def _get(ea, site):
     return layer.mlp, site, getattr(layer.mlp, site)
 
 
+def apply_embed_alpha(ea_model, alpha):
+    """SEAGLE P3/GS-style branch balancing for the RAW native draft:
+    E' = alpha*E and W_e' = W_e/alpha — EXACT reparameterization (the
+    draft embedding output feeds only the fc e-half), changing only
+    what the fc quantizers see. Apply BEFORE quantization."""
+    ea = ea_model.ea_layer if hasattr(ea_model, "ea_layer") else ea_model
+    assert isinstance(ea.fc, torch.nn.Linear), \
+        "apply_embed_alpha must run before fc quantization"
+    ea.embed_tokens.weight.data = ea.embed_tokens.weight.data * alpha
+    ea.fc.weight.data[:, :D] = ea.fc.weight.data[:, :D] / alpha
+    return dict(alpha=alpha,
+                note="exact reparam E*=a, W_e/=a (pre-quant)")
+
+
 def apply_native_raw_quant(ea_model, mode, site_mask=None,
                            quant_embed="fp16", site_modes=None):
     """In-place raw quantization of the strict draft.
