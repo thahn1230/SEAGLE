@@ -1,0 +1,5 @@
+{
+ "head": "fe0c49d87cb0c18d49a8aced1b1ef3b0db0f4230 RCAL capture: native_raw arm support (nr-quant/nr-rot/nr-alpha)",
+ "branch": "exp/eagle1-strict-seagle-rt-native-w4a4-target",
+ "base": "b2eb71e"
+}

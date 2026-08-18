@@ -1,0 +1,26 @@
+{
+ "trainer": "scripts/strict_rt/train_eagle1_strict_rt.py",
+ "TC": {
+  "lr": 3e-05,
+  "bs": 1,
+  "accum": 4,
+  "num_epochs": 20,
+  "warmup": 2000,
+  "horizon": 800000,
+  "p_w": 0.1,
+  "v_w": 1.0,
+  "noise_std": 0.2,
+  "max_len": 2048,
+  "betas": [
+   0.9,
+   0.95
+  ],
+  "grad_clip": 0.5
+ },
+ "epochs": 21,
+ "world": 8,
+ "steps": 41685,
+ "teacher": "hybrid cache(65.3%)+online, bit-exact gated",
+ "head": "native_head.pt sha16 0335833c38f8187c",
+ "init": "official fresh, seed 0, emb sha 054c038d"
+}

@@ -1,0 +1,5 @@
+{
+ "seed": 0,
+ "init": "PyTorch-default kaiming-uniform (official)",
+ "emb_sha16": "054c038df2610a9e5b610029"
+}

@@ -1,0 +1,177 @@
+[
+ {
+  "name": "P1_ctrl_vs_fp16",
+  "a": "CTRL_OI@int4",
+  "b": "SRT_FP16@int4",
+  "dataset": "humaneval",
+  "status": "ok",
+  "tau_a": 3.8466,
+  "ci_a": [
+   3.7974,
+   3.8961
+  ],
+  "tau_b": 4.1842,
+  "ci_b": [
+   4.1315,
+   4.2369
+  ],
+  "delta_b_minus_a": 0.3376,
+  "ci_delta": [
+   0.2793,
+   0.3939
+  ],
+  "p_two_sided": 0.0,
+  "n_common": 164,
+  "reps": 10000
+ },
+ {
+  "name": "P2_fp16_vs_w8a8rtn",
+  "a": "SRT_FP16@int4",
+  "b": "SRT_W8A8_RTN@int4",
+  "dataset": "humaneval",
+  "status": "ok",
+  "tau_a": 4.1842,
+  "ci_a": [
+   4.1317,
+   4.2374
+  ],
+  "tau_b": 4.0759,
+  "ci_b": [
+   4.0256,
+   4.1265
+  ],
+  "delta_b_minus_a": -0.1083,
+  "ci_delta": [
+   -0.1581,
+   -0.0593
+  ],
+  "p_two_sided": 0.0,
+  "n_common": 164,
+  "reps": 10000
+ },
+ {
+  "name": "P3_w8a8rtn_vs_sq",
+  "a": "SRT_W8A8_RTN@int4",
+  "b": "SRT_W8A8_SQ@int4",
+  "dataset": "humaneval",
+  "status": "ok",
+  "tau_a": 4.0759,
+  "ci_a": [
+   4.0252,
+   4.1276
+  ],
+  "tau_b": 4.0314,
+  "ci_b": [
+   3.9807,
+   4.0828
+  ],
+  "delta_b_minus_a": -0.0446,
+  "ci_delta": [
+   -0.0897,
+   0.0014
+  ],
+  "p_two_sided": 0.0582,
+  "n_common": 164,
+  "reps": 10000
+ },
+ {
+  "name": "P4_fp16_vs_w4a4rtn",
+  "a": "SRT_FP16@int4",
+  "b": "SRT_W4A4_RTN@int4",
+  "dataset": "humaneval",
+  "status": "ok",
+  "tau_a": 4.1842,
+  "ci_a": [
+   4.1317,
+   4.2368
+  ],
+  "tau_b": 1.3092,
+  "ci_b": [
+   1.2988,
+   1.3203
+  ],
+  "delta_b_minus_a": -2.875,
+  "ci_delta": [
+   -2.929,
+   -2.8209
+  ],
+  "p_two_sided": 0.0,
+  "n_common": 164,
+  "reps": 10000
+ },
+ {
+  "name": "P5_rtn_vs_had",
+  "a": "SRT_W4A4_RTN@int4",
+  "b": "SRT_W4A4_HAD@int4",
+  "dataset": "humaneval",
+  "status": "ok",
+  "tau_a": 1.3092,
+  "ci_a": [
+   1.2987,
+   1.3201
+  ],
+  "tau_b": 1.3097,
+  "ci_b": [
+   1.2995,
+   1.3204
+  ],
+  "delta_b_minus_a": 0.0005,
+  "ci_delta": [
+   -0.0112,
+   0.0122
+  ],
+  "p_two_sided": 0.933,
+  "n_common": 164,
+  "reps": 10000
+ },
+ {
+  "name": "P6_had_vs_sq",
+  "a": "SRT_W4A4_HAD@int4",
+  "b": "SRT_W4A4_SQ@int4",
+  "dataset": "humaneval",
+  "status": "ok",
+  "tau_a": 1.3097,
+  "ci_a": [
+   1.2996,
+   1.3204
+  ],
+  "tau_b": 1.4473,
+  "ci_b": [
+   1.4354,
+   1.4591
+  ],
+  "delta_b_minus_a": 0.1376,
+  "ci_delta": [
+   0.1253,
+   0.1508
+  ],
+  "p_two_sided": 0.0,
+  "n_common": 164,
+  "reps": 10000
+ },
+ {
+  "name": "P7_sq_vs_rescue",
+  "a": "SRT_W4A4_SQ@int4",
+  "b": "SRT_RESCUE_ASQ@int4",
+  "dataset": "humaneval",
+  "status": "ok",
+  "tau_a": 1.4473,
+  "ci_a": [
+   1.4354,
+   1.4595
+  ],
+  "tau_b": 3.7587,
+  "ci_b": [
+   3.7149,
+   3.8026
+  ],
+  "delta_b_minus_a": 2.3115,
+  "ci_delta": [
+   2.2652,
+   2.3588
+  ],
+  "p_two_sided": 0.0,
+  "n_common": 164,
+  "reps": 10000
+ }
+]

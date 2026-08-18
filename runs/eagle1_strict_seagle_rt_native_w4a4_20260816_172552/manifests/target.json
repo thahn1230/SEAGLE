@@ -1,0 +1,6 @@
+{
+ "model": "meta-llama/Llama-2-7b-chat-hf",
+ "rev": "f5db02db724555f92da89c216ac04704f23d4590",
+ "build": "study.build_study_target(rotation=full, learned_chat_w4a4kv16, quant=w4a4, seed=0)",
+ "quant": "W4 per-out-ch sym RTN+MSEclip; A4 dyn per-token asym; KV16; R4 online"
+}

@@ -1,0 +1,4 @@
+method,core_adaptation_gpu_h,draft_rotation_gpu_h,provenance,mean4_w4a4_deploy,mean4_fp16_draft
+SEAGLE-PTQ,3.0,1.8,existing canonical (est/measured),3.4788,
+SEAGLE-QAT,8.03,1.8,existing canonical (measured),3.6108,
+SEAGLE-RT (strict),267.9,0.5,THIS RUN measured (train timestamps; +4.66 cache gen),3.4487,3.9018

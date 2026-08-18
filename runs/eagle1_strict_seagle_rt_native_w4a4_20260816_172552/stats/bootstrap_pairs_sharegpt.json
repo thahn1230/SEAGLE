@@ -1,0 +1,177 @@
+[
+ {
+  "name": "P1_ctrl_vs_fp16",
+  "a": "CTRL_OI@int4",
+  "b": "SRT_FP16@int4",
+  "dataset": "sharegpt",
+  "status": "ok",
+  "tau_a": 3.2718,
+  "ci_a": [
+   3.162,
+   3.3793
+  ],
+  "tau_b": 3.7378,
+  "ci_b": [
+   3.645,
+   3.8291
+  ],
+  "delta_b_minus_a": 0.466,
+  "ci_delta": [
+   0.3846,
+   0.5465
+  ],
+  "p_two_sided": 0.0,
+  "n_common": 80,
+  "reps": 10000
+ },
+ {
+  "name": "P2_fp16_vs_w8a8rtn",
+  "a": "SRT_FP16@int4",
+  "b": "SRT_W8A8_RTN@int4",
+  "dataset": "sharegpt",
+  "status": "ok",
+  "tau_a": 3.7378,
+  "ci_a": [
+   3.6473,
+   3.8285
+  ],
+  "tau_b": 3.6035,
+  "ci_b": [
+   3.5137,
+   3.6947
+  ],
+  "delta_b_minus_a": -0.1343,
+  "ci_delta": [
+   -0.195,
+   -0.0758
+  ],
+  "p_two_sided": 0.0,
+  "n_common": 80,
+  "reps": 10000
+ },
+ {
+  "name": "P3_w8a8rtn_vs_sq",
+  "a": "SRT_W8A8_RTN@int4",
+  "b": "SRT_W8A8_SQ@int4",
+  "dataset": "sharegpt",
+  "status": "ok",
+  "tau_a": 3.6035,
+  "ci_a": [
+   3.5111,
+   3.6931
+  ],
+  "tau_b": 3.637,
+  "ci_b": [
+   3.5548,
+   3.7207
+  ],
+  "delta_b_minus_a": 0.0336,
+  "ci_delta": [
+   -0.0338,
+   0.1054
+  ],
+  "p_two_sided": 0.3412,
+  "n_common": 80,
+  "reps": 10000
+ },
+ {
+  "name": "P4_fp16_vs_w4a4rtn",
+  "a": "SRT_FP16@int4",
+  "b": "SRT_W4A4_RTN@int4",
+  "dataset": "sharegpt",
+  "status": "ok",
+  "tau_a": 3.7378,
+  "ci_a": [
+   3.6473,
+   3.8316
+  ],
+  "tau_b": 1.2136,
+  "ci_b": [
+   1.2019,
+   1.2253
+  ],
+  "delta_b_minus_a": -2.5242,
+  "ci_delta": [
+   -2.6152,
+   -2.4327
+  ],
+  "p_two_sided": 0.0,
+  "n_common": 80,
+  "reps": 10000
+ },
+ {
+  "name": "P5_rtn_vs_had",
+  "a": "SRT_W4A4_RTN@int4",
+  "b": "SRT_W4A4_HAD@int4",
+  "dataset": "sharegpt",
+  "status": "ok",
+  "tau_a": 1.2136,
+  "ci_a": [
+   1.2021,
+   1.2256
+  ],
+  "tau_b": 1.2558,
+  "ci_b": [
+   1.2426,
+   1.2693
+  ],
+  "delta_b_minus_a": 0.0421,
+  "ci_delta": [
+   0.028,
+   0.0566
+  ],
+  "p_two_sided": 0.0,
+  "n_common": 80,
+  "reps": 10000
+ },
+ {
+  "name": "P6_had_vs_sq",
+  "a": "SRT_W4A4_HAD@int4",
+  "b": "SRT_W4A4_SQ@int4",
+  "dataset": "sharegpt",
+  "status": "ok",
+  "tau_a": 1.2558,
+  "ci_a": [
+   1.2426,
+   1.2693
+  ],
+  "tau_b": 1.3423,
+  "ci_b": [
+   1.3265,
+   1.3593
+  ],
+  "delta_b_minus_a": 0.0865,
+  "ci_delta": [
+   0.0713,
+   0.1021
+  ],
+  "p_two_sided": 0.0,
+  "n_common": 80,
+  "reps": 10000
+ },
+ {
+  "name": "P7_sq_vs_rescue",
+  "a": "SRT_W4A4_SQ@int4",
+  "b": "SRT_RESCUE_ASQ@int4",
+  "dataset": "sharegpt",
+  "status": "ok",
+  "tau_a": 1.3423,
+  "ci_a": [
+   1.3268,
+   1.359
+  ],
+  "tau_b": 3.2687,
+  "ci_b": [
+   3.1824,
+   3.3524
+  ],
+  "delta_b_minus_a": 1.9264,
+  "ci_delta": [
+   1.843,
+   2.0058
+  ],
+  "p_two_sided": 0.0,
+  "n_common": 80,
+  "reps": 10000
+ }
+]

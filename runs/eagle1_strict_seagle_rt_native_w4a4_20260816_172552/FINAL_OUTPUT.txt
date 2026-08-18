@@ -1,0 +1,57 @@
+STRICT SEAGLE-RT — FINAL OUTPUT (2026-08-18)
+run: runs/eagle1_strict_seagle_rt_native_w4a4_20260816_172552
+branch: exp/eagle1-strict-seagle-rt-native-w4a4-target (base b2eb71e)
+
+VERDICT: CASE D — strongest SEAGLE support, with a sharpened mechanism.
+
+ 1. SEAGLE-RT (strict) = fresh official-recipe EAGLE-1 draft trained
+    21 epochs / 41,685 steps consuming the DEPLOYED W4A4 SpinQuant
+    target's native a_t=(h/γ)@R1 as input AND label, scored by the
+    deployed fused head; no restore op (gated). Ckpt sha ca0e6533.
+ 2. Stage A: SRT_FP16 mean4 3.9018 vs original-interface control
+    3.5141 (P1 +0.38, 4/4 Holm) — basis adaptation solved AND best
+    FP16-draft acceptance ever on this target.
+ 3. Stage B: W8A8-RTN 3.7829 (96.9%); W4A4-RTN 1.2540 (32.1%) —
+    COLLAPSE persists after true native retraining (P4 −2.44, 4/4).
+ 4. Rotations fail: HAD 1.2881; learned Cayley R_D 1.3819 (P5 +0.05,
+    P6 +0.08 — micro-gains only). NOT Case C.
+ 5. Canonical SEAGLE rescue (validation-selected α=32 + R_D):
+    3.4487 (88.4%), P7 mean4 +2.07 (MT +1.87) 4/4 Holm — at
+    SEAGLE-PTQ level. α alone: 3.2454. Rotation helps only atop α.
+ 6. W8A8-SQ 3.7614: P3 0/4 n.s. — rotation useless at 8-bit.
+ 7. Mechanism: native-basis fc input is OUTLIER-FREE (kurt 3.0,
+    absmax 5.1) but 59.5× e/h branch-RMS imbalanced; fc alone
+    collapses to 1.254 vs full-draft 1.207 on the matched calib pool
+    (essentially the entire collapse from one site); NMSE W-only 0.76 / A-only 0.08;
+    α=32 cuts A-NMSE to 0.02. Native retraining transforms the
+    projection pathology from outliers to branch-scale imbalance —
+    rotations (norm-preserving) cannot fix it, α-balancing can.
+ 8. RCAL (mtbench): AFS 0.82-0.91 across the 5 replayed headline
+    arms, no deceptive-AL flags;
+    collapse and rescue are reference-consistent phenomena.
+ 9. Compute (measured, timestamps): training 267.9 GPU-h (33.48 h ×
+    8 from trainer t0 incl. ~3 min setup; 2.89 s/step realized) +
+    cache generation 4.64 + evals 16.4 (78 jobs) + bench/gate/debug
+    ~10 (EST) + draft-rotation training 0.5 (separate) + target
+    rotation ~10 (shared, separate, EST); study total ≈307 GPU-h.
+10. Compute-quality: strict-RT+rescue (267.9 GPU-h) = 3.4487 at W4A4
+    < SEAGLE-QAT (8.0 GPU-h) 3.6108, ≈ SEAGLE-PTQ (3.0) 3.4788.
+    Native RT pays off only for FP16/W8A8 drafts.
+11. Paper-claim gates (§33): "Even native from-scratch draft
+    retraining does not remove the W4A4 projection bottleneck" —
+    SUPPORTED. "SEAGLE: comparable quality at much lower compute" —
+    SUPPORTED (at W4A4 deployment).
+12. Renaming: the old "SEAGLE-RT" (anchor a7c6ccc8 + D4P3) is the
+    "Original-interface scratch reference" in all new documents.
+
+Artifacts: docs/EAGLE1_STRICT_SEAGLE_RT_STUDY.md (full report),
+docs/EAGLE1_STRICT_SEAGLE_RT_BASIS_AUDIT.md, PREFLIGHT_24ITEM.md,
+PREFLIGHT_SPEED_20ITEM.md, tables/ (al_4dataset, al_retention,
+bootstrap, holm, rcal, component CS_* shards, projection_stats.json,
+seagle_rt_gpuhours, compute_quality_tradeoff, parity_gate,
+interface+basis contracts), stats/ (bootstrap_pairs_*, holm.json,
+rcal_bootstrap_mtbench.json), manifests/ (git, target, rotations,
+recipe, data, init, selected_checkpoint, environment, gpuhours_train,
+aaq prune record), configs/preregistration.md, cycles/ (5 arms),
+rotations/ (RD_NATIVE_*), cache /data/thahn1230/strict_rt_cache
+(495 GiB, local), ckpts /data/thahn1230/strict_rt_ckpts (local).

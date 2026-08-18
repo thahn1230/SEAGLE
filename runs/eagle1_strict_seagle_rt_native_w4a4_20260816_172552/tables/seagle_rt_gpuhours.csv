@@ -1,0 +1,8 @@
+category,gpu_hours,provenance
+A_draft_from_scratch_training,267.9,"MEASURED train_start/end 20260816T2016Z..20260818T0542Z, world 8, 41685 steps"
+data_generation_cache,4.64,MEASURED sum of 8 worker walls (16719s)
+data_generation_tokenize,0.0,CPU-only ~24 min
+C_evaluation_all_arms,16.35,MEASURED gen_seconds 40142s + 78 jobs x 240s load (all waves)
+E_draft_rotation_training,0.5,MEASURED rd logs 4 runs x ~7.4 min
+B_target_rotation_shared,10.0,"EXISTING ESTIMATE, separate"
+D_benches_gates_debug,10.0,ESTIMATE from preflight logs

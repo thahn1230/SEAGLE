@@ -1,0 +1,8 @@
+{
+ "python": "~/anaconda3/envs/seagle (3.10.20)",
+ "torch": "2.6.0+cu124",
+ "transformers": "4.51.3",
+ "gpus": "8x RTX 4090 24GB",
+ "host": "gpusystem",
+ "HF_HOME": "/data/thahn1230/hf_cache"
+}

@@ -1,0 +1,11 @@
+{
+ "corpus": "ShareGPT V3 official 68k coverage",
+ "usable": 66890,
+ "skipped": 1110,
+ "split": [
+  63545,
+  3345
+ ],
+ "tokens": 99303654,
+ "tok_cache": "/data/thahn1230/datasets/eagle1_official/official_tok_68k_v1.pt"
+}

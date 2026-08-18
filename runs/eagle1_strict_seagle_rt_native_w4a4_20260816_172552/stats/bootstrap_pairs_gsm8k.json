@@ -1,0 +1,177 @@
+[
+ {
+  "name": "P1_ctrl_vs_fp16",
+  "a": "CTRL_OI@int4",
+  "b": "SRT_FP16@int4",
+  "dataset": "gsm8k",
+  "status": "ok",
+  "tau_a": 3.6586,
+  "ci_a": [
+   3.6182,
+   3.7
+  ],
+  "tau_b": 4.0225,
+  "ci_b": [
+   3.9803,
+   4.0642
+  ],
+  "delta_b_minus_a": 0.3638,
+  "ci_delta": [
+   0.3182,
+   0.4108
+  ],
+  "p_two_sided": 0.0,
+  "n_common": 200,
+  "reps": 10000
+ },
+ {
+  "name": "P2_fp16_vs_w8a8rtn",
+  "a": "SRT_FP16@int4",
+  "b": "SRT_W8A8_RTN@int4",
+  "dataset": "gsm8k",
+  "status": "ok",
+  "tau_a": 4.0225,
+  "ci_a": [
+   3.9802,
+   4.0639
+  ],
+  "tau_b": 3.9151,
+  "ci_b": [
+   3.8782,
+   3.9521
+  ],
+  "delta_b_minus_a": -0.1074,
+  "ci_delta": [
+   -0.1495,
+   -0.0656
+  ],
+  "p_two_sided": 0.0,
+  "n_common": 200,
+  "reps": 10000
+ },
+ {
+  "name": "P3_w8a8rtn_vs_sq",
+  "a": "SRT_W8A8_RTN@int4",
+  "b": "SRT_W8A8_SQ@int4",
+  "dataset": "gsm8k",
+  "status": "ok",
+  "tau_a": 3.9151,
+  "ci_a": [
+   3.8772,
+   3.9518
+  ],
+  "tau_b": 3.8763,
+  "ci_b": [
+   3.8369,
+   3.9151
+  ],
+  "delta_b_minus_a": -0.0388,
+  "ci_delta": [
+   -0.0783,
+   0.0005
+  ],
+  "p_two_sided": 0.053,
+  "n_common": 200,
+  "reps": 10000
+ },
+ {
+  "name": "P4_fp16_vs_w4a4rtn",
+  "a": "SRT_FP16@int4",
+  "b": "SRT_W4A4_RTN@int4",
+  "dataset": "gsm8k",
+  "status": "ok",
+  "tau_a": 4.0225,
+  "ci_a": [
+   3.9799,
+   4.0634
+  ],
+  "tau_b": 1.2683,
+  "ci_b": [
+   1.2603,
+   1.2767
+  ],
+  "delta_b_minus_a": -2.7542,
+  "ci_delta": [
+   -2.796,
+   -2.7123
+  ],
+  "p_two_sided": 0.0,
+  "n_common": 200,
+  "reps": 10000
+ },
+ {
+  "name": "P5_rtn_vs_had",
+  "a": "SRT_W4A4_RTN@int4",
+  "b": "SRT_W4A4_HAD@int4",
+  "dataset": "gsm8k",
+  "status": "ok",
+  "tau_a": 1.2683,
+  "ci_a": [
+   1.2603,
+   1.2765
+  ],
+  "tau_b": 1.3158,
+  "ci_b": [
+   1.3076,
+   1.3242
+  ],
+  "delta_b_minus_a": 0.0475,
+  "ci_delta": [
+   0.0384,
+   0.0569
+  ],
+  "p_two_sided": 0.0,
+  "n_common": 200,
+  "reps": 10000
+ },
+ {
+  "name": "P6_had_vs_sq",
+  "a": "SRT_W4A4_HAD@int4",
+  "b": "SRT_W4A4_SQ@int4",
+  "dataset": "gsm8k",
+  "status": "ok",
+  "tau_a": 1.3158,
+  "ci_a": [
+   1.3076,
+   1.3243
+  ],
+  "tau_b": 1.3902,
+  "ci_b": [
+   1.3804,
+   1.4003
+  ],
+  "delta_b_minus_a": 0.0744,
+  "ci_delta": [
+   0.0649,
+   0.0838
+  ],
+  "p_two_sided": 0.0,
+  "n_common": 200,
+  "reps": 10000
+ },
+ {
+  "name": "P7_sq_vs_rescue",
+  "a": "SRT_W4A4_SQ@int4",
+  "b": "SRT_RESCUE_ASQ@int4",
+  "dataset": "gsm8k",
+  "status": "ok",
+  "tau_a": 1.3902,
+  "ci_a": [
+   1.3805,
+   1.4007
+  ],
+  "tau_b": 3.5478,
+  "ci_b": [
+   3.5096,
+   3.5851
+  ],
+  "delta_b_minus_a": 2.1576,
+  "ci_delta": [
+   2.1207,
+   2.1942
+  ],
+  "p_two_sided": 0.0,
+  "n_common": 200,
+  "reps": 10000
+ }
+]

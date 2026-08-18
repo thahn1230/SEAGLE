@@ -1,0 +1,177 @@
+[
+ {
+  "name": "P1_ctrl_vs_fp16",
+  "a": "CTRL_OI@int4",
+  "b": "SRT_FP16@int4",
+  "dataset": "mtbench",
+  "status": "ok",
+  "tau_a": 3.2795,
+  "ci_a": [
+   3.1758,
+   3.386
+  ],
+  "tau_b": 3.6626,
+  "ci_b": [
+   3.5584,
+   3.7665
+  ],
+  "delta_b_minus_a": 0.3832,
+  "ci_delta": [
+   0.3106,
+   0.4537
+  ],
+  "p_two_sided": 0.0,
+  "n_common": 80,
+  "reps": 10000
+ },
+ {
+  "name": "P2_fp16_vs_w8a8rtn",
+  "a": "SRT_FP16@int4",
+  "b": "SRT_W8A8_RTN@int4",
+  "dataset": "mtbench",
+  "status": "ok",
+  "tau_a": 3.6626,
+  "ci_a": [
+   3.5596,
+   3.7689
+  ],
+  "tau_b": 3.5372,
+  "ci_b": [
+   3.4489,
+   3.6304
+  ],
+  "delta_b_minus_a": -0.1255,
+  "ci_delta": [
+   -0.1822,
+   -0.0675
+  ],
+  "p_two_sided": 0.0,
+  "n_common": 80,
+  "reps": 10000
+ },
+ {
+  "name": "P3_w8a8rtn_vs_sq",
+  "a": "SRT_W8A8_RTN@int4",
+  "b": "SRT_W8A8_SQ@int4",
+  "dataset": "mtbench",
+  "status": "ok",
+  "tau_a": 3.5372,
+  "ci_a": [
+   3.4474,
+   3.6299
+  ],
+  "tau_b": 3.5009,
+  "ci_b": [
+   3.4037,
+   3.5991
+  ],
+  "delta_b_minus_a": -0.0363,
+  "ci_delta": [
+   -0.0985,
+   0.0263
+  ],
+  "p_two_sided": 0.257,
+  "n_common": 80,
+  "reps": 10000
+ },
+ {
+  "name": "P4_fp16_vs_w4a4rtn",
+  "a": "SRT_FP16@int4",
+  "b": "SRT_W4A4_RTN@int4",
+  "dataset": "mtbench",
+  "status": "ok",
+  "tau_a": 3.6626,
+  "ci_a": [
+   3.5615,
+   3.7676
+  ],
+  "tau_b": 1.2249,
+  "ci_b": [
+   1.211,
+   1.2393
+  ],
+  "delta_b_minus_a": -2.4377,
+  "ci_delta": [
+   -2.5346,
+   -2.3428
+  ],
+  "p_two_sided": 0.0,
+  "n_common": 80,
+  "reps": 10000
+ },
+ {
+  "name": "P5_rtn_vs_had",
+  "a": "SRT_W4A4_RTN@int4",
+  "b": "SRT_W4A4_HAD@int4",
+  "dataset": "mtbench",
+  "status": "ok",
+  "tau_a": 1.2249,
+  "ci_a": [
+   1.2111,
+   1.2398
+  ],
+  "tau_b": 1.2712,
+  "ci_b": [
+   1.2572,
+   1.2851
+  ],
+  "delta_b_minus_a": 0.0462,
+  "ci_delta": [
+   0.0341,
+   0.0581
+  ],
+  "p_two_sided": 0.0,
+  "n_common": 80,
+  "reps": 10000
+ },
+ {
+  "name": "P6_had_vs_sq",
+  "a": "SRT_W4A4_HAD@int4",
+  "b": "SRT_W4A4_SQ@int4",
+  "dataset": "mtbench",
+  "status": "ok",
+  "tau_a": 1.2712,
+  "ci_a": [
+   1.2577,
+   1.2848
+  ],
+  "tau_b": 1.3478,
+  "ci_b": [
+   1.3285,
+   1.3689
+  ],
+  "delta_b_minus_a": 0.0766,
+  "ci_delta": [
+   0.0583,
+   0.0959
+  ],
+  "p_two_sided": 0.0,
+  "n_common": 80,
+  "reps": 10000
+ },
+ {
+  "name": "P7_sq_vs_rescue",
+  "a": "SRT_W4A4_SQ@int4",
+  "b": "SRT_RESCUE_ASQ@int4",
+  "dataset": "mtbench",
+  "status": "ok",
+  "tau_a": 1.3478,
+  "ci_a": [
+   1.328,
+   1.3679
+  ],
+  "tau_b": 3.2197,
+  "ci_b": [
+   3.1262,
+   3.316
+  ],
+  "delta_b_minus_a": 1.8719,
+  "ci_delta": [
+   1.7884,
+   1.9584
+  ],
+  "p_two_sided": 0.0,
+  "n_common": 80,
+  "reps": 10000
+ }
+]

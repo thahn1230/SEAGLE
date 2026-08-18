@@ -1,0 +1,2 @@
+{"event": "train_start", "iso": "2026-08-16T20:16:47Z", "world": 8, "step": 0, "seed": 0, "teacher": "hybrid"}
+{"event": "train_end", "iso": "2026-08-18T05:42:36Z", "world": 8, "step": 41685, "wall_hours": 33.483, "val_hours": 0.053, "ckpt_hours": 0.075}

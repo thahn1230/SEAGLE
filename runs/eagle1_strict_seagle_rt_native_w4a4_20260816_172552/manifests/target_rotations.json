@@ -1,0 +1,5 @@
+{
+ "r_bin": "outputs/rotations/learned_chat_w4a4kv16/R.bin",
+ "sha256": "4b7e91d2a7531bb8ccde55d35299d3bde38b0f849ebcca951c9320e42a48fa6e",
+ "contents": "R1[4096,4096]fp32 + 32x self_attn.R2[128,128]fp32"
+}
