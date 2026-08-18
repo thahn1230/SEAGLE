@@ -281,6 +281,11 @@ def main():
     ap.add_argument("--save-every-steps", type=int, default=2000)
     ap.add_argument("--val-every-steps", type=int, default=1000)
     ap.add_argument("--resume", default=None)
+    ap.add_argument("--bench-cached-only", action="store_true",
+                    help="bench mode only: restrict the step loop to "
+                         "cache-resident conversations (RT-A cost view "
+                         "— cached-teacher throughput; bit-identical "
+                         "step semantics per Gate P1/P2)")
     args = ap.parse_args()
 
     rank = int(os.environ.get("RANK", 0))
@@ -307,8 +312,10 @@ def main():
         cached = CachedTeacher(args.cache_dir, dev)
         missing = [i for i in range(len(rows)) if i not in cached]
         if args.teacher == "cache":
-            assert not missing, (f"{len(missing)} convs missing from "
-                                 "cache; use --teacher hybrid")
+            assert not missing or (args.bench and
+                                   args.bench_cached_only), (
+                f"{len(missing)} convs missing from cache; "
+                "use --teacher hybrid")
             teacher = cached
         else:
             teacher = HybridTeacher(cached, OnlineTeacher(rows, dev)) \
@@ -389,6 +396,10 @@ def main():
         g = torch.Generator().manual_seed(args.seed * 1000 + epoch)
         perm = torch.randperm(len(train_idx_all), generator=g).tolist()
         my = perm[rank::world]
+        if args.bench and args.bench_cached_only:
+            cset = teacher.c.idx if isinstance(teacher, HybridTeacher) \
+                else teacher.idx
+            my = [j for j in my if train_idx_all[j] in cset]
         eff = TC["bs"] * TC["accum"]
         n_common = (min(len(perm[r::world]) for r in range(world))
                     // eff) * eff
@@ -424,6 +435,10 @@ def main():
             opt.step()
             sched.step()
             step += 1
+            if args.bench and rank == 0:
+                if not hasattr(main, "_stept"):
+                    main._stept = []
+                main._stept.append(time.monotonic())
             if step == 10:
                 t_bench = time.time()
                 if hasattr(teacher, "wait_s"):
@@ -481,6 +496,17 @@ def main():
             dist.barrier()
 
     if args.bench and rank == 0:
+        ts = getattr(main, "_stept", [])
+        if len(ts) > 2:
+            deltas = [round(b - a, 4) for a, b in zip(ts, ts[1:])]
+            json.dump(dict(teacher=args.teacher,
+                           grad_ckpt=args.grad_ckpt, world=world,
+                           step_deltas=deltas),
+                      open(os.path.join(
+                          args.run_dir, "logs",
+                          f"bench_steptimes_{args.teacher}_"
+                          f"{args.grad_ckpt}_w{world}_"
+                          f"{os.getpid()}.json"), "w"))
         n = step - start_step - 10
         dt = time.time() - t_bench
         peak = torch.cuda.max_memory_allocated() / 2**30
