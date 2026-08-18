@@ -44,7 +44,14 @@ def main():
                     choices=["fp16", "int4", "w8a8"])
     ap.add_argument("--draft-cfg", required=True,
                     choices=["stock", "naive_w4a4", "d4p3", "d4p3_deploy",
-                             "rot", "fp16_deploy", "rot_ep3p"])
+                             "rot", "fp16_deploy", "rot_ep3p",
+                             "native_raw"])
+    ap.add_argument("--nr-quant", default="fp16",
+                    help="native_raw: QUANT_BITS mode for all sites")
+    ap.add_argument("--nr-rot", default="none",
+                    help="native_raw: 'had' or R_D ckpt path")
+    ap.add_argument("--nr-alpha", type=float, default=None,
+                    help="native_raw: exact embed/W_e balancing alpha")
     ap.add_argument("--alpha", type=float, default=None)
     ap.add_argument("--proj-rot-first", default=None,
                     help="R-EP3-P rotation spec JSON (first path)")
@@ -96,7 +103,27 @@ def main():
     D4 = dict(quant_first="fake_w4a4", quant_recurrent="fake_w4a4",
               quant_ar="fake_w4a4", ar_r2r4=True)
     ad = None
-    if args.draft_cfg in ("d4p3", "d4p3_deploy"):
+    if args.draft_cfg == "native_raw":
+        # strict SEAGLE-RT arms: no adapter/restore; optional raw
+        # quant / interface rotation / alpha (mirrors the AL evaluator)
+        assert args.target != "fp16"
+        if args.nr_alpha is not None:
+            from eagle_spinquant.native_raw_draft import (
+                apply_embed_alpha)
+            apply_embed_alpha(model, args.nr_alpha)
+        if args.nr_rot != "none":
+            from eagle_spinquant.native_raw_draft import (
+                apply_interface_rotation)
+            R = None
+            if args.nr_rot != "had":
+                R = torch.load(args.nr_rot, map_location="cpu",
+                               weights_only=False)["R_D"].double()
+            apply_interface_rotation(model, args.nr_quant, R=R)
+        elif args.nr_quant != "fp16":
+            from eagle_spinquant.native_raw_draft import (
+                apply_native_raw_quant)
+            apply_native_raw_quant(model, args.nr_quant)
+    elif args.draft_cfg in ("d4p3", "d4p3_deploy"):
         kw = dict(embed_scale_alpha=args.alpha, **D4)
         if args.alpha_rec is not None:
             kw["embed_scale_alpha_rec"] = args.alpha_rec
