@@ -1,0 +1,24 @@
+[lk] 4500 train / 500 val windows obj=hybrid rot=shared trust=none onpolicy=tf core=False
+[lk] param audit: trainable=['r2_rot.W'] -> runs/seagle_training_cost_benchmark_20260818_144952/gradchecks/param_audit__bench_r3.pt.json
+[lk] step 0: mean_alpha=[0.422, 0.337, 0.185, 0.237] (2s)
+[lk] step 20: mean_alpha=[0.544, 0.494, 0.235, 0.205] (35s)
+[lk] step 40: mean_alpha=[0.455, 0.428, 0.232, 0.174] (67s)
+[lk] step 60: mean_alpha=[0.429, 0.287, 0.152, 0.214] (100s)
+[lk] step 80: mean_alpha=[0.416, 0.263, 0.132, 0.172] (133s)
+[lk] step 100: mean_alpha=[0.411, 0.322, 0.206, 0.272] (167s)
+[lk] step 120: mean_alpha=[0.472, 0.255, 0.164, 0.299] (200s)
+[lk] step 140: mean_alpha=[0.428, 0.283, 0.243, 0.239] (233s)
+[lk] step 160: mean_alpha=[0.468, 0.293, 0.169, 0.148] (265s)
+[lk] step 180: mean_alpha=[0.392, 0.373, 0.211, 0.177] (298s)
+[lk] step 200: mean_alpha=[0.398, 0.262, 0.239, 0.28] (332s)
+[lk] step 220: mean_alpha=[0.444, 0.217, 0.132, 0.141] (365s)
+[lk] step 240: mean_alpha=[0.448, 0.23, 0.207, 0.207] (398s)
+[lk] step 260: mean_alpha=[0.454, 0.325, 0.188, 0.196] (431s)
+[lk] step 280: mean_alpha=[0.439, 0.217, 0.194, 0.249] (464s)
+[lk] step 300: mean_alpha=[0.28, 0.159, 0.246, 0.148] (497s)
+[lk] step 320: mean_alpha=[0.379, 0.228, 0.175, 0.223] (529s)
+[lk] step 340: mean_alpha=[0.369, 0.323, 0.271, 0.131] (560s)
+[lk] step 359: mean_alpha=[0.429, 0.301, 0.223, 0.203] (591s)
+[lk] VAL step 359: alpha_by_depth=[0.4162, 0.196, 0.2336, 0.1454] expected_tau=1.5896 val_loss=6.93186 r2_orth=6.02e-06 r2_genB=7.8820
+[lk] PANEL step 359: alpha=[0.41621, 0.196, 0.23365, 0.14539] top1=[0.4375, 0.26562, 0.26562, 0.20312] exp_tau=1.5896 sl1=[0.70985, 0.85451, 0.87597, 0.93963]
+[lk] saved runs/seagle_training_cost_benchmark_20260818_144952/logs/PTQ_R6/bench_r3.pt sha=227caffb2f16c334 policy=final_step step=359 best_val={'metric': 6.9318578243255615, 'step': 359, 'val_loss': 6.9318578243255615, 'val_expected_tau': 1.5896151065826416}

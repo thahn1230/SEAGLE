@@ -1,0 +1,31 @@
+[lk] fixed R_D from runs/eagle1_draft_residual_rotation_ep3p_20260804_165317/rotations/RD_HYB_s2.pt (sha 20c03f004d6edbf8, trained_step None)
+[lk] 4500 train / 500 val windows obj=conv rot=shared trust=none onpolicy=tf core=True
+[lk] param audit: trainable=['W_e', 'W_h', 'Wdown', 'Wgate', 'Wk', 'Wo', 'Wq', 'Wup', 'Wv', 'b_fc', 'gl64'] -> runs/seagle_training_cost_benchmark_20260818_144952/gradchecks/param_audit__bench_r1.pt.json
+[lk] step 0: mean_alpha=[0.521, 0.645, 0.544, 0.495] (2s)
+[lk] step 20: mean_alpha=[0.547, 0.577, 0.419, 0.526] (37s)
+[lk] step 40: mean_alpha=[0.548, 0.672, 0.57, 0.5] (71s)
+[lk] step 60: mean_alpha=[0.676, 0.658, 0.537, 0.562] (105s)
+[lk] step 80: mean_alpha=[0.564, 0.572, 0.64, 0.575] (139s)
+[lk] VAL step 99: alpha_by_depth=[0.6358, 0.5973, 0.5893, 0.5687] expected_tau=2.6203 val_loss=0.90041
+[lk] PANEL step 99: alpha=[0.63582, 0.59732, 0.58935, 0.56868] top1=[0.59375, 0.67188, 0.5625, 0.60938] exp_tau=2.6203 sl1=[0.62689, 0.72604, 0.71656, 0.75521]
+[lk] step 100: mean_alpha=[0.691, 0.651, 0.492, 0.433] (186s)
+[lk] step 120: mean_alpha=[0.637, 0.639, 0.636, 0.564] (220s)
+[lk] step 140: mean_alpha=[0.668, 0.723, 0.51, 0.679] (255s)
+[lk] step 160: mean_alpha=[0.702, 0.697, 0.529, 0.522] (289s)
+[lk] step 180: mean_alpha=[0.62, 0.647, 0.642, 0.63] (323s)
+[lk] VAL step 199: alpha_by_depth=[0.6691, 0.6186, 0.6355, 0.6014] expected_tau=2.7899 val_loss=0.85265
+[lk] PANEL step 199: alpha=[0.66911, 0.61858, 0.63555, 0.60142] top1=[0.65625, 0.64062, 0.67188, 0.59375] exp_tau=2.7899 sl1=[0.6005, 0.69776, 0.68286, 0.7197]
+[lk] step 200: mean_alpha=[0.644, 0.663, 0.625, 0.514] (370s)
+[lk] step 220: mean_alpha=[0.701, 0.656, 0.44, 0.5] (404s)
+[lk] step 240: mean_alpha=[0.706, 0.806, 0.764, 0.62] (437s)
+[lk] step 260: mean_alpha=[0.661, 0.705, 0.656, 0.665] (471s)
+[lk] step 280: mean_alpha=[0.686, 0.601, 0.66, 0.596] (505s)
+[lk] VAL step 299: alpha_by_depth=[0.6699, 0.6312, 0.6447, 0.5856] expected_tau=2.8190 val_loss=0.84454
+[lk] PANEL step 299: alpha=[0.66987, 0.63115, 0.6447, 0.58558] top1=[0.625, 0.70312, 0.625, 0.6875] exp_tau=2.8190 sl1=[0.59482, 0.69017, 0.67677, 0.71411]
+[lk] step 300: mean_alpha=[0.704, 0.772, 0.604, 0.62] (551s)
+[lk] step 320: mean_alpha=[0.675, 0.778, 0.669, 0.655] (584s)
+[lk] step 340: mean_alpha=[0.742, 0.768, 0.616, 0.614] (618s)
+[lk] step 359: mean_alpha=[0.647, 0.609, 0.584, 0.527] (650s)
+[lk] VAL step 359: alpha_by_depth=[0.6607, 0.6188, 0.6365, 0.5955] expected_tau=2.7624 val_loss=0.84561
+[lk] PANEL step 359: alpha=[0.66072, 0.61885, 0.63649, 0.59552] top1=[0.59375, 0.64062, 0.64062, 0.60938] exp_tau=2.7624 sl1=[0.59372, 0.68988, 0.67255, 0.7133]
+[lk] saved runs/seagle_training_cost_benchmark_20260818_144952/logs/QAT_valcad/bench_r1.pt sha=e3da961d878473c1 policy=final_step step=359 best_val={'metric': 0.8445426821708679, 'step': 299, 'val_loss': 0.8445426821708679, 'val_expected_tau': 2.819028377532959}

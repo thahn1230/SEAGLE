@@ -1,0 +1,25 @@
+[lk] fixed R_D from runs/eagle1_draft_residual_rotation_ep3p_20260804_165317/rotations/RD_HYB_s2.pt (sha 20c03f004d6edbf8, trained_step None)
+[lk] 4500 train / 500 val windows obj=conv rot=shared trust=none onpolicy=tf core=True
+[lk] param audit: trainable=['W_e', 'W_h', 'Wdown', 'Wgate', 'Wk', 'Wo', 'Wq', 'Wup', 'Wv', 'b_fc', 'gl64'] -> runs/seagle_training_cost_benchmark_20260818_144952/gradchecks/param_audit__bench_r2.pt.json
+[lk] step 0: mean_alpha=[0.699, 0.586, 0.52, 0.401] (2s)
+[lk] step 20: mean_alpha=[0.633, 0.49, 0.523, 0.502] (37s)
+[lk] step 40: mean_alpha=[0.615, 0.643, 0.557, 0.629] (71s)
+[lk] step 60: mean_alpha=[0.517, 0.512, 0.503, 0.51] (105s)
+[lk] step 80: mean_alpha=[0.622, 0.607, 0.623, 0.52] (139s)
+[lk] step 100: mean_alpha=[0.663, 0.614, 0.587, 0.516] (174s)
+[lk] step 120: mean_alpha=[0.67, 0.631, 0.642, 0.532] (208s)
+[lk] step 140: mean_alpha=[0.643, 0.613, 0.698, 0.533] (242s)
+[lk] step 160: mean_alpha=[0.624, 0.64, 0.592, 0.642] (276s)
+[lk] step 180: mean_alpha=[0.666, 0.58, 0.625, 0.584] (310s)
+[lk] step 200: mean_alpha=[0.666, 0.734, 0.635, 0.606] (344s)
+[lk] step 220: mean_alpha=[0.721, 0.721, 0.641, 0.64] (378s)
+[lk] step 240: mean_alpha=[0.647, 0.759, 0.677, 0.708] (413s)
+[lk] step 260: mean_alpha=[0.696, 0.763, 0.7, 0.626] (446s)
+[lk] step 280: mean_alpha=[0.665, 0.597, 0.613, 0.654] (481s)
+[lk] step 300: mean_alpha=[0.716, 0.655, 0.617, 0.686] (515s)
+[lk] step 320: mean_alpha=[0.694, 0.659, 0.686, 0.597] (549s)
+[lk] step 340: mean_alpha=[0.706, 0.75, 0.607, 0.664] (584s)
+[lk] step 359: mean_alpha=[0.667, 0.678, 0.66, 0.542] (616s)
+[lk] VAL step 359: alpha_by_depth=[0.6756, 0.6358, 0.6418, 0.5846] expected_tau=2.8346 val_loss=0.83956
+[lk] PANEL step 359: alpha=[0.67564, 0.63583, 0.64176, 0.58458] top1=[0.65625, 0.71875, 0.67188, 0.64062] exp_tau=2.8346 sl1=[0.59125, 0.68938, 0.67034, 0.71047]
+[lk] saved runs/seagle_training_cost_benchmark_20260818_144952/logs/QAT/bench_r2.pt sha=75729b3893360966 policy=final_step step=359 best_val={'metric': 0.8395624160766602, 'step': 359, 'val_loss': 0.8395624160766602, 'val_expected_tau': 2.8346152305603027}

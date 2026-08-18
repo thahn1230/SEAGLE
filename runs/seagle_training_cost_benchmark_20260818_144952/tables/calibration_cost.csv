@@ -1,0 +1,3 @@
+item,gpu_h,provenance
+alpha/GS calibration (PTQ & QAT shared),3.0,"historical DOCUMENTED (2x9 grid evals); calibration, not training"
+strict-RT rescue alpha grid (post-hoc arm),1.4,measured this-study eval jobs; not core RT

@@ -1,0 +1,7 @@
+{
+ "gpu": "NVIDIA GeForce RTX 4090 24564MiB (GPU 7, benchmark-dedicated, user-selected)",
+ "driver": "550.163.01",
+ "cuda": "12.4",
+ "host": "gpusystem",
+ "note": "GPUs 0-3,5 occupied by user dflash jobs at benchmark time; GPU 7 idle and reserved"
+}

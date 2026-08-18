@@ -1,0 +1,10 @@
+{
+ "python": "~/anaconda3/envs/seagle 3.10.20",
+ "torch": "2.6.0+cu124",
+ "transformers": "4.51.3",
+ "tf32": "off (default, matches all prior training)",
+ "compile": "off",
+ "sdpa": "trainer-default (unchanged across methods)",
+ "fused_optim": "off (AdamW default everywhere)",
+ "dtype": "bf16 autocast (RT/QAT) per canonical recipes"
+}

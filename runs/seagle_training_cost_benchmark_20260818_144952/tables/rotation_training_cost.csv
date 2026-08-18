@@ -1,0 +1,5 @@
+method,rotation,canonical_steps,sec_per_step,wall_h,gpu_h,note
+SEAGLE-PTQ,R5,3000,1.75,1.458,1.458,REQUIRED
+SEAGLE-PTQ,R6,3000,1.6316,1.36,1.36,OPTIONAL/ablation — NOT in headline
+SEAGLE-QAT,R5 (reused),0,-,0,0,reuses PTQ's R5; counted once in QAT-total
+SEAGLE-RT,none in core training,0,-,0,0,strict RT trains no draft rotation

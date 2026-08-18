@@ -1,0 +1,123 @@
+{
+ "trainable": [
+  "W_e",
+  "W_h",
+  "Wdown",
+  "Wgate",
+  "Wk",
+  "Wo",
+  "Wq",
+  "Wup",
+  "Wv",
+  "b_fc",
+  "gl64"
+ ],
+ "optimizer_param_count": 11,
+ "all_params": [
+  {
+   "param": "b_fc",
+   "shape": [
+    4096
+   ],
+   "requires_grad": true
+  },
+  {
+   "param": "gl64",
+   "shape": [
+    4096
+   ],
+   "requires_grad": true
+  },
+  {
+   "param": "W_e",
+   "shape": [
+    4096,
+    4096
+   ],
+   "requires_grad": true
+  },
+  {
+   "param": "W_h",
+   "shape": [
+    4096,
+    4096
+   ],
+   "requires_grad": true
+  },
+  {
+   "param": "Wq",
+   "shape": [
+    4096,
+    4096
+   ],
+   "requires_grad": true
+  },
+  {
+   "param": "Wk",
+   "shape": [
+    4096,
+    4096
+   ],
+   "requires_grad": true
+  },
+  {
+   "param": "Wv",
+   "shape": [
+    4096,
+    4096
+   ],
+   "requires_grad": true
+  },
+  {
+   "param": "Wo",
+   "shape": [
+    4096,
+    4096
+   ],
+   "requires_grad": true
+  },
+  {
+   "param": "Wgate",
+   "shape": [
+    11008,
+    4096
+   ],
+   "requires_grad": true
+  },
+  {
+   "param": "Wup",
+   "shape": [
+    11008,
+    4096
+   ],
+   "requires_grad": true
+  },
+  {
+   "param": "Wdown",
+   "shape": [
+    4096,
+    11008
+   ],
+   "requires_grad": true
+  },
+  {
+   "param": "log_alpha",
+   "shape": [],
+   "requires_grad": false
+  }
+ ],
+ "weight_hashes_before": {
+  "W_e": "b76d28d90d41cc51",
+  "W_h": "c830e140fc492184",
+  "Wq": "b91e69fa374affb6",
+  "Wk": "b8c392af5ceff676",
+  "Wv": "78fd034bd1f074db",
+  "Wo": "fb9454fd14853c8d",
+  "Wgate": "5f9735d769314a85",
+  "Wup": "16d869660037730b",
+  "Wdown": "a21f4c17a6c962d8",
+  "E": "b4f79a4374a649df",
+  "W_lm16": "c82acf0f390411b8",
+  "b_fc": "a9b0fe708ccaa4eb"
+ }
+}

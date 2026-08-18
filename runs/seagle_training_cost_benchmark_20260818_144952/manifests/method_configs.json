@@ -1,0 +1,8 @@
+{
+ "PTQ_R5": "train_eagle_lk_rotation.py --corpus lkcorpus__can_all --teacher t4 --kv-bits 16 --K 4 --batch 32 --accum 1 --alpha-init 32.89964245299412 --steps 360(bench;canonical 3000) --objective hybrid --rot residual --r2-mode frozen --lr 3e-4",
+ "PTQ_R6": "same + --rot shared --r2-mode residual --lr 1e-3 (OPTIONAL ablation)",
+ "QAT": "same corpus/teacher + --objective conv --train-draft-core --core-lr 1e-6 --rot shared --rot-fixed-ckpt RD_HYB_s2.pt(sha 20c03f00) --r2-mode frozen --lr 3e-4 (canonical CAN_T6_gsr5_conv args from ckpt meta)",
+ "RT_A": "strict_rt/train_eagle1_strict_rt.py --teacher cache --bench-cached-only --grad-ckpt on --bench 560 (world 1)",
+ "RT_B": "--teacher hybrid (otherwise identical)",
+ "val_cadence": "canonical LK eval-every 100; measured factor +6.6% (QAT_valcad controlled round)"
+}

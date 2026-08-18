@@ -1,0 +1,16 @@
+field,value
+gpu,"RTX 4090 24GB, GPU index 7 (user-selected), no foreign process (guarded 3x sustained-free checks)"
+driver,550.163.01
+cuda,12.4
+torch,2.6.0+cu124
+power_limit,450W
+clocks_sm_idle,2775MHz
+repo_commit,f34b4a7 (branch exp/eagle1-strict-seagle-rt-native-w4a4-target)
+tf32,off (all methods)
+compile,off (all)
+fused_optim,off (all)
+dtype,each method's canonical policy (bf16 autocast RT; LK trainer canonical)
+timing,synchronized wall-clock around complete optimizer steps; LK via 20-step cumulative markers (integer-second granularity +-0.05 s/step); RT per-step monotonic deltas
+warmup_drop,steps<60
+measured,"LK 300 steps, RT 500 steps, 3 rounds interleaved"
+contention_note,"historical runs shared the box with 5-8 jobs; this bench is contention-free -> uniform -22..-24% vs history, direction-preserving"

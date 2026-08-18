@@ -1,0 +1,16 @@
+{"job":"PTQ_R5","round":1,"rc":0,"setup_plus_total_s":668}
+{"job":"PTQ_R6","round":1,"rc":0,"setup_plus_total_s":614}
+{"job":"QAT","round":1,"rc":0,"setup_plus_total_s":658}
+{"job":"RT_A","round":1,"rc":0,"setup_plus_total_s":140}
+{"job":"RT_B","round":1,"rc":0,"setup_plus_total_s":576}
+{"job":"PTQ_R5","round":2,"rc":0,"setup_plus_total_s":670}
+{"job":"PTQ_R6","round":2,"rc":0,"setup_plus_total_s":625}
+{"job":"QAT","round":2,"rc":0,"setup_plus_total_s":659}
+{"job":"RT_A","round":2,"rc":0,"setup_plus_total_s":138}
+{"job":"RT_B","round":2,"rc":0,"setup_plus_total_s":543}
+{"job":"PTQ_R5","round":3,"rc":0,"setup_plus_total_s":671}
+{"job":"PTQ_R6","round":3,"rc":0,"setup_plus_total_s":625}
+{"job":"QAT","round":3,"rc":0,"setup_plus_total_s":658}
+{"job":"RT_A","round":3,"rc":0,"setup_plus_total_s":137}
+{"job":"RT_B","round":3,"rc":0,"setup_plus_total_s":580}
+{"job":"QAT_valcad","round":1,"rc":0,"setup_plus_total_s":689}

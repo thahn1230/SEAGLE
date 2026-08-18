@@ -1,0 +1,4 @@
+method,what_is_trained,trainable_params,canonical_steps,batch_contract,lr,source_of_truth
+SEAGLE-PTQ,rotation R5 only (R_D Cayley residual); R6 optional ablation; NO draft weights,16.78M (A[4096x4096]),3000,"batch32 x accum1, LK windows T48/K4, teacher t4",3e-4,jobs_train.txt A1 form; canonical artifact RD_HYB_s2 sha 20c03f00
+SEAGLE-QAT,"draft core (W_e,W_h,q,k,v,o,gate,up,down,b_fc,gl64) with R5 FROZEN",236.0M,3000,"batch32 x accum1, LK windows T48/K4, teacher t4","core-lr 1e-6 (rot lr 3e-4 unused, rot fixed)",CAN_T6_gsr5_conv_s1.pt meta (exact args)
+SEAGLE-RT,"full draft from scratch (235.9M), native W4A4 teacher",235.9M,41685,"bs1 x accum4 per rank, full conversations (mean 1485 tok)",3e-5 official,completed strict run manifests/gpuhours_train.jsonl

@@ -1,0 +1,6 @@
+method,examples_per_step,approx_tokens_per_step,sec_per_step,tokens_per_s,opt_steps_per_s
+RT_A,4,5940,0.227,26167.4,4.405
+RT_B,4,5940,0.7264,8177.3,1.377
+QAT,32,1536,1.7,903.5,0.588
+PTQ_R5,32,1536,1.75,877.7,0.571
+PTQ_R6,32,1536,1.6316,941.4,0.613

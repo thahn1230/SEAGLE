@@ -1,0 +1,4 @@
+method,gpus,prep_wall_h,gpu_h,basis
+SEAGLE-PTQ (R5 + calib),1,4.46,4.46,bench-projected + hist calib
+SEAGLE-QAT incremental,1,1.417,1.417,bench-projected
+SEAGLE-RT,8,33.48,267.9,ACTUAL completed strict run

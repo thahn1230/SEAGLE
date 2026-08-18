@@ -1,0 +1,4 @@
+ratio,gpu_h_ratio,normalized_wall_ratio
+SEAGLE-RT / SEAGLE-PTQ,1.8,1.8
+SEAGLE-RT / SEAGLE-QAT incremental,1.9,1.9
+SEAGLE-RT / SEAGLE-QAT total,0.9,0.9

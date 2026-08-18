@@ -1,0 +1,4 @@
+ratio,RT_A_based,RT_B_based
+SEAGLE-RT / SEAGLE-PTQ,1.67,5.34
+SEAGLE-RT / SEAGLE-QAT incremental,1.71,5.49
+SEAGLE-RT / SEAGLE-QAT total,0.84,2.71

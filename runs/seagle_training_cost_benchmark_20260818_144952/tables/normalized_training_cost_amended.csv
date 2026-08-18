@@ -1,0 +1,6 @@
+method,canonical_steps,sec_per_step_windowmean,interval,gpu_h_pure_loop,val_factor,gpu_h_canonical_val_amortized,note
+PTQ_R5,3000,1.7557,"[1.70,1.80]",1.463,1.066,1.56,canonical eval-every 100 (same-trainer measured factor)
+PTQ_R6,3000,1.6254,"[1.60,1.65]",1.355,1.066,1.444,OPTIONAL ablation
+QAT,3000,1.7089,"[1.70,1.75]",1.424,1.066,1.518,canonical eval-every 100 (factor measured directly on QAT)
+RT_A,41685,0.224,"[0.2247,0.2306] (bootstrap, per-step timing)",2.594,1.0015,2.598,RT val 0.053h/33.48h actual
+RT_B,41685,0.7188,"[0.6992,0.7381] (bootstrap)",8.323,1.0015,8.335,

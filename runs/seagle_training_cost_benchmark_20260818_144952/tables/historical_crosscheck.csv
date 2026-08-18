@@ -1,0 +1,4 @@
+quantity,bench_projection,historical_actual,rel_err_pct,note
+QAT sec/step,1.7,2.181,-22.0,AAQ canonical logs 19626s/3/3000 (same GPU class)
+RT hybrid w1 sec/step,0.7264,0.953,-23.8,strict-RT preflight w1 bench
+RT practical GPU-h (w8 actual vs w1-hybrid normalized),8.4,267.9,-96.9,"difference = DDP/comm overhead of world-8 (no-P2P 4090s), not benchmark error"
