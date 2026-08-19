@@ -1,0 +1,6 @@
+[srt] world=1 bs/rank=1x32 eff_batch=32 trainable=235.9M teacher=cache grad_ckpt=on train=63545 test=3345 epochs=21 emb_sha=054c038df2610a9e5b610029 native_head_sha=0335833c38f8187c
+/home/thahn1230/SEAGLE/scripts/strict_rt/train_eagle1_strict_rt.py:93: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:203.)
+  t.copy_(torch.from_numpy(np.ascontiguousarray(mm)))
+/home/thahn1230/anaconda3/envs/seagle/lib/python3.10/site-packages/torch/_dynamo/eval_frame.py:745: UserWarning: torch.utils.checkpoint: the use_reentrant parameter should be passed explicitly. In version 2.5 we will raise an exception if use_reentrant is not passed. use_reentrant=False is recommended, but if you need to preserve the current default behavior, you can pass use_reentrant=True. Refer to docs for more details on the differences between the two variants.
+  return fn(*args, **kwargs)
+{"bench": {"world": 1, "steps": 80, "s_per_step": 1.658, "data_wait_pct": 0.4, "peak_mem_gib": 6.81, "teacher": "cache", "grad_ckpt": "on"}}

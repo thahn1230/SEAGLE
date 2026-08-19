@@ -291,6 +291,13 @@ def main():
     rank = int(os.environ.get("RANK", 0))
     world = int(os.environ.get("WORLD_SIZE", 1))
     local = int(os.environ.get("LOCAL_RANK", 0))
+    # BENCH-ONLY: emulate the canonical 32-conv effective batch on
+    # fewer ranks via extra accumulation (batch-semantics-equivalent
+    # normalized costing; refuses to activate outside --bench)
+    ba = os.environ.get("STRICT_RT_BENCH_ACCUM")
+    if ba:
+        assert args.bench, "STRICT_RT_BENCH_ACCUM is bench-only"
+        TC["accum"] = int(ba)
     if world > 1:
         # set_device BEFORE nccl init: otherwise every rank's NCCL
         # bootstrap plants a ~384 MiB context on GPU 0 (measured; the

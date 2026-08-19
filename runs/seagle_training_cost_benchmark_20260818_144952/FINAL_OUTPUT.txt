@@ -1,46 +1,48 @@
-SEAGLE TRAINING-COST BENCHMARK — FINAL OUTPUT (2026-08-18)
-run: runs/seagle_training_cost_benchmark_20260818_144952 (GPU 7, one
-RTX 4090, contention-free; 16/16 jobs OK; 3 interleaved rounds; all
-numbers adversarially verified vs raw logs by a 2-agent workflow,
-4 measurement caveats found and folded in).
+SEAGLE TRAINING-COST BENCHMARK - FINAL OUTPUT (2026-08-19, CORRECTED)
+run: runs/seagle_training_cost_benchmark_20260818_144952 (GPU 7)
 
-HEADLINE (View A, normalized 1-GPU, canonical val-amortized GPU-h):
-  SEAGLE-PTQ  (R5 3,000 steps @1.756 s/step)        1.56
+CORRECTION: first release understated RT by x8 (world-1 bench step =
+eff batch 4 vs canonical 32 = 63,545x21/41,685). Fixed with a
+MEASURED bs1xaccum32 diagnostic (80 canonical-equivalent steps):
+cached 1.658 s/step, hybrid 5.792 s/step (naive x8: 1.792/5.750).
+The RT-cheaper-than-QAT-total inversion is RETRACTED. PTQ/QAT rows
+always ran the canonical batch-32 step and are unchanged.
+
+HEADLINE (View A, normalized 1-GPU, canonical batch + val-amortized):
+  SEAGLE-PTQ  (R5, 3,000 steps @1.756)              1.56 GPU-h
   SEAGLE-QAT  incremental (3,000 @1.709)            1.52
   SEAGLE-QAT  total from base ckpt (R5 once)        3.08
-  SEAGLE-RT   RT-A cached teacher (41,685 @0.224)   2.60
-  SEAGLE-RT   RT-B inline teacher (41,685 @0.719)   8.34
-  (alpha/GS calibration ~3.0 shared PTQ/QAT, category D separate;
-   RT teacher-cache generation 4.64 measured, category E separate;
-   R6 1.44 OPTIONAL ablation, not in headline; target R_T shared.)
+  SEAGLE-RT   RT-B strict teacher-inclusive
+              (41,685 @5.792 measured)             67.17  <- PRIMARY
+  SEAGLE-RT   RT-A optimizer-only, cached teacher
+              (41,685 @1.658 measured)             19.23
+  (alpha/GS calib ~3.0 separate; RT cache-gen 4.64 separate;
+   R6 1.44 OPTIONAL; target R_T shared.)
 
-RATIOS (RT-A | RT-B): vs PTQ 1.7 | 5.3 · vs QAT-incr 1.7 | 5.5 ·
-vs QAT-total 0.84 | 2.7. Practical view: RT actual 267.9 GPU-h
-(8 GPUs, 33.5 h) vs PTQ 4.56 / QAT-incr 1.52 → ~59x / ~176x.
+RATIOS (RT-B primary | RT-A): vs PTQ 43.1 | 12.3 - vs QAT-incr
+44.2 | 12.7 - vs QAT-total 21.8 | 6.2.
+Practical: RT actual 267.9 GPU-h (8 GPU, 33.5h wall) vs PTQ 4.56 /
+QAT-incr 1.52 -> ~59x / ~176x.
 
-KEY FINDING: the large practical RT cost is NOT algorithmic. The
-optimizer loop of the 1-layer draft is ~29x cheaper per token than
-the LK-family step; 41,685 steps cost only 2.6 GPU-h on one GPU.
-Actual-run overhead decomposes into inline W4A4 teacher (x3.2) and
-world-8 sync-DDP on P2P-less 4090s + grad-ckpt (x31.9 vs w1-hybrid),
-both measured. Cross-checks: QAT 1.70 vs historical 2.18 s/step and
-RT-B 0.726 vs 0.953 — a uniform -22/-24% contention factor
-(historical runs shared the box), direction-preserving.
+RECONCILIATION (fully measured): 267.9 / 67.17 = x3.99 = world-8
+sync-DDP overhead on P2P-less 4090s + historical contention
+(23.1 GPU-s per w8 step vs 5.79 GPU-s per identical w1 step;
+crosschecks QAT 1.70-vs-2.18, RT 0.726-vs-0.953 = uniform -22/-24%).
 
-PAPER-SAFE (§26): "Under a normalized identical single-GPU
-environment, full native drafter retraining requires 2.6 GPU-hours
-of optimizer-side compute (8.3 including inline teacher
-computation), compared with 1.6 for SEAGLE-PTQ's rotation learning
-and 1.5 for SEAGLE-QAT's incremental training." / "The gap arises
-from the required optimization budget and trainable scope, rather
-than deliberately asymmetric hardware — and RT's dominant practical
-costs are teacher-feature production and multi-GPU synchronization
-overhead, not the draft optimizer updates."
+DECOMPOSITION QAT 1.709 vs RT 1.658 s/step at SAME batch-32 step:
+QAT: 1.5k ctx tokens but K=4 chain unroll + per-step STE weight
+re-quantization of 236M params + T=48 kernel underutilization.
+RT: 47.5k tokens of efficient long-seq compute (per-token ~29x
+cheaper). At canonical batch the two steps cost nearly the same -
+RT's 13.9x step count and teacher production drive the total gap.
 
-Tables: canonical_method_contract, benchmark_environment,
-benchmark_step_times, normalized_training_cost(+_amended),
-rotation_training_cost, calibration_cost, cost_ratios(+_amended),
-practical_wallclock, historical_crosscheck, throughput_normalized,
-job_walls.jsonl, headline_summary.json. Report:
-docs/SEAGLE_TRAINING_COST_BENCHMARK.md. Scripts: scripts/ (autopilot
-+ analyze). Manifests: git/hardware/software/method_configs.
+PAPER NUMBERS: practical retraining cost = 267.9 GPU-h (measured
+actual, 8 GPUs). Normalized algorithmic cost = 67 GPU-h strict
+teacher-inclusive (19 optimizer-only + 4.6 cache-gen separate) vs
+PTQ 1.6 / QAT-incr 1.5 / QAT-total 3.1.
+
+Audit artifacts: tables/normalized_training_cost_corrected.csv,
+cost_ratios_corrected.csv (authoritative); pre-correction tables
+retained for the audit trail (RT rows invalid); batch-semantics
+audit + diagnostics in logs/diag_accum32_*.log and the report's
+correction banner.

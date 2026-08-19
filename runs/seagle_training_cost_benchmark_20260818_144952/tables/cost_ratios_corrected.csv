@@ -1,0 +1,4 @@
+ratio,RT_A_based,RT_B_based (primary: teacher-inclusive)
+SEAGLE-RT / SEAGLE-PTQ,12.3,43.1
+SEAGLE-RT / SEAGLE-QAT incremental,12.7,44.2
+SEAGLE-RT / SEAGLE-QAT total,6.2,21.8
